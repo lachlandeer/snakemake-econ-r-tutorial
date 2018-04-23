@@ -1,6 +1,7 @@
 ---
-title: "A Minimal Book Example"
-author: "Yihui Xie"
+title: "Wrangling Economic Data with Python"
+subtitle: "An introduction to Pandas and Matplotlib"
+author: "Lachlan Deer"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
@@ -8,8 +9,8 @@ documentclass: book
 bibliography: [references.bib]
 biblio-style: apalike
 link-citations: yes
-github-repo: rstudio/bookdown-demo
-description: "This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook."
+github-repo: lachlandeer/wrangling-econ-data-python
+description: "In progress"
 ---
 
 # Prerequisites
