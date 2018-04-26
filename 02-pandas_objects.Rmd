@@ -1,3 +1,0 @@
-# Importing and Exporting Data
-
-Here is a review of existing methods.

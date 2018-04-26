@@ -1,4 +1,4 @@
-# Motivating Pandas {#intro}
+# Motivating & Rationale {#intro}
 
 Your text comes here. Separate text sections with
 

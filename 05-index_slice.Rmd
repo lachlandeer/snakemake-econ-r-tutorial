@@ -1,3 +1,0 @@
-# Indexing and Selecting Data
-
-We have finished a nice article.

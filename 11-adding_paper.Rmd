@@ -1,0 +1,3 @@
+# Building a Paper and Slides with Rmarkdown
+
+Content is TBD
