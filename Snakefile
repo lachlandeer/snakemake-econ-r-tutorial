@@ -1,13 +1,13 @@
-# Bookdown: data + python
+# Book: snakemake-econ-r-tutorial
 #
 #
-# contributor: @lachlandeer
+# contributors: @lachlandeer & julianlanger
 
 import glob, os
 
 # --- PROJECT NAME --- #
 
-PROJ_NAME = "wrangling-econ-data-python"
+PROJ_NAME = "snakemake-econ-r-tutorial"
 
 # --- Dictionaries --- #
 RMD_FILES  = glob.glob("*.Rmd")

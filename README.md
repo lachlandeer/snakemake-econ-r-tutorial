@@ -1,9 +1,10 @@
-# Wrangling Economic Data With Python
+# Reproducibile Workflows with Snakemake and R
+## An Extended Tutorial
 
-* Contact: @lachlandeer
+* Contact: @lachlandeer & @julianlanger
 
 ## What this Repo does
-Source files for my small book on using Pandas and Matplotlib to economic data.
+Source files for an extended tutorial on using Snakemake, R and packrat to execute a reproducible project
 
 ## Installing relevant packages:
 

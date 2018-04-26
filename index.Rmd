@@ -1,7 +1,9 @@
 ---
-title: "Wrangling Economic Data with Python"
-subtitle: "An introduction to Pandas and Matplotlib"
-author: "Lachlan Deer"
+title: "Reproducible Research Workflows with Snakemake and `R`"
+subtitle: "An Extended Tutorial for Economists and Social Scientists"
+author:
+    - "Lachlan Deer"
+    - "Julian Langer"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
@@ -9,7 +11,7 @@ documentclass: book
 bibliography: [references.bib]
 biblio-style: apalike
 link-citations: yes
-github-repo: lachlandeer/wrangling-econ-data-python
+github-repo: lachlandeer/snakemake-econ-r-tutorial
 description: "In progress"
 ---
 
