@@ -1,0 +1,15 @@
+[
+["index.html", "Reproducible Research Workflows with Snakemake and R Chapter 1 Prerequisites", " Reproducible Research Workflows with Snakemake and R An Extended Tutorial for Economists and Social Scientists Lachlan Deer Julian Langer 2018-07-30 Chapter 1 Prerequisites This is a sample book written in Markdown. You can use anything that Pandoc’s Markdown supports, e.g., a math equation \\(a^2 + b^2 = c^2\\). The bookdown package can be installed from CRAN or Github: "],
+["intro.html", "Chapter 2 Motivating &amp; Rationale 2.1 Citations", " Chapter 2 Motivating &amp; Rationale Your text comes here. Separate text sections with 2.1 Citations You can write citations, too. For example, we are using the bookdown package (Xie 2018) in this sample book, which was built on top of R Markdown and knitr (Xie 2015). References "],
+["project-organization.html", "Chapter 3 Project Organization", " Chapter 3 Project Organization Content is TBD "],
+["initial-steps-with-snakemake.html", "Chapter 4 Initial Steps with Snakemake", " Chapter 4 Initial Steps with Snakemake Content is TBD "],
+["automatic-variables.html", "Chapter 5 Automatic Variables", " Chapter 5 Automatic Variables Content is TBD "],
+["getting-dependencies-right.html", "Chapter 6 Getting Dependencies Right", " Chapter 6 Getting Dependencies Right Content is TBD "],
+["packrat-managing-package-dependencies.html", "Chapter 7 Packrat: Managing Package Dependencies", " Chapter 7 Packrat: Managing Package Dependencies Content is TBD "],
+["pattern-rules.html", "Chapter 8 Pattern Rules", " Chapter 8 Pattern Rules Content is TBD "],
+["building-the-entire-project.html", "Chapter 9 Building The Entire Project", " Chapter 9 Building The Entire Project Content is TBD "],
+["configuration-files-for-tidy-paths.html", "Chapter 10 Configuration Files for Tidy Paths", " Chapter 10 Configuration Files for Tidy Paths Content is TBD "],
+["subworkflows-divide-and-conquer.html", "Chapter 11 Subworkflows: Divide and Conquer", " Chapter 11 Subworkflows: Divide and Conquer Content is TBD "],
+["building-a-paper-and-slides-with-rmarkdown.html", "Chapter 12 Building a Paper and Slides with Rmarkdown", " Chapter 12 Building a Paper and Slides with Rmarkdown Content is TBD "],
+["concluding-thoughts.html", "Chapter 13 Concluding Thoughts", " Chapter 13 Concluding Thoughts Content is TBD "]
+]
