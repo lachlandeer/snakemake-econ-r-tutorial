@@ -1,3 +1,45 @@
 # Project Organization
 
-Content is TBD
+## Working Example: Replicating Mankiw, Romer and Weil's 1992 QJE
+
+Throughout our tutorial we are going to use a running example to illustrate the concepts we discuss.
+
+
+## Project Structure I: Separating Inputs and Outputs
+
+Structuring our project and the locations of files is an important concept.
+
+We recommend the following structure for any project:
+
+* Root Folder
+* `src` folder for input files
+* `out` folder for output files
+* a `log` folder to store computer logs
+
+We discuss each of these in turn.
+
+### The Root Folder
+
+TBD
+
+### The `src` folder
+
+TBD
+
+### The `out` folder
+
+TBD
+
+### The `log` folder
+
+## Project Structure II: Separating Logical Chunks of the Project
+
+TBD - disciplined subdirectory structure
+
+## Exploring the Structure of the MRW replication
+
+TBD - openly discuss the structure of our working example
+
+## Project Structure III: Separating Input Parameters from Code
+
+TBD
