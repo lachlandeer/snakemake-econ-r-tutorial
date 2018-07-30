@@ -27,10 +27,10 @@ rule all:
     input:
         pdf  = "docs/book.pdf",
         html = "docs/index.html"
-    output:
-        pdf  = "docs/" + PROJ_NAME + ".pdf",
-    shell:
-        "cp {input.pdf} {output.pdf}"
+    # output:
+    #     pdf  = "docs/" + PROJ_NAME + ".pdf",
+    # shell:
+    #     "cp {input.pdf} {output.pdf}"
 
 rule pdf:
     input:
