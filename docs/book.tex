@@ -128,21 +128,93 @@ The \textbf{bookdown} package can be installed from CRAN or Github:
 
 \chapter{Motivating \& Rationale}\label{intro}
 
-Your text comes here. Separate text sections with
+\section{A Case for Reproducibility}\label{a-case-for-reproducibility}
 
-\section{Citations}\label{citations}
+\subsection{How far to go in the quest for
+reproducibility?}\label{how-far-to-go-in-the-quest-for-reproducibility}
 
-You can write citations, too. For example, we are using the bookdown
-package \citep{R-bookdown} in this sample book, which was built on top
-of R Markdown and knitr \citep{xie2015}.
+\section{\texorpdfstring{What is \texttt{Snakemake} \& Why Should you
+use
+it?}{What is Snakemake \& Why Should you use it?}}\label{what-is-snakemake-why-should-you-use-it}
 
-\chapter{Project Organization}\label{project-organization}
+\section{\texorpdfstring{Why \texttt{R}?}{Why R?}}\label{why-r}
 
 \section{Working Example: Replicating Mankiw, Romer and Weil's 1992
 QJE}\label{working-example-replicating-mankiw-romer-and-weils-1992-qje}
 
 Throughout our tutorial we are going to use a running example to
 illustrate the concepts we discuss.
+
+\section{The way forward}\label{the-way-forward}
+
+For the purpose of this tutorial we will focus on replicating the
+following aspects of the MRW paper:\footnote{A complete replication
+  using the concepts presented in this tutorial is available
+  \textbf{here}}
+
+\begin{itemize}
+\tightlist
+\item
+  Regression Tables 1 and 2: Estimating the Textbook- and Augmented
+  Solow Model
+\item
+  Figure 1: Unconditional Versus Conditional Convergence
+\end{itemize}
+
+To replicate these we will need to proceed as follows:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Perform some data management
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Prepare the data before we run regressions
+  \end{itemize}
+\item
+  Run regressions for:
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    Different subsets of data
+  \item
+    Alternative econometric specifications
+  \end{enumerate}
+\item
+  Turn the statistical output of the regressions into a tabular format
+  that we can insert into a document
+\item
+  Construct a set of graphs
+\item
+  Integrate the tables and graphs into a paper and a set of slides
+  (optional)
+\end{enumerate}
+
+We hope that these 5 steps look familiar - as they were designed to
+represent a simplifed workflow for an applied economist or social
+science researcher.
+
+Before proceeding to understanding how to use Snakemake and R to
+construct a reproducible workflow, the next chapter first takes a deeper
+dive into the a protypical way to set up a research project on our
+computer.
+
+\subsection{Exercise: Your own project's
+steps}\label{exercise-your-own-projects-steps}
+
+Think about a project you are working on or have worked on in the past
+(it may be a Bachelor or Master's thesis or a recent / active research
+project). Does your project fit into the 5 steps we described above? If
+not, what would you modify or add to our 5 steps? (Do you think this
+would destroy the general principles we will encourage over the next
+chapters?)
+
+\chapter{Project Organization}\label{project-organization}
 
 \section{Project Structure I: Separating Inputs and
 Outputs}\label{project-structure-i-separating-inputs-and-outputs}
