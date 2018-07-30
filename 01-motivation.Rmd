@@ -34,7 +34,7 @@ We hope that these 5 steps look familiar - as they were designed to represent a 
 
 Before proceeding to understanding how to use Snakemake and R to construct a reproducible workflow, the next chapter first takes a deeper dive into the a protypical way to set up a research project on our computer.
 
-### Exercise: Your own project's steps
+### Exercise: Your own project's steps {.exercise}
 
 Think about a project you are working on or have worked on in the past (it may be a Bachelor or Master's thesis or a recent / active research project).
 Does your project fit into the 5 steps we described above?
