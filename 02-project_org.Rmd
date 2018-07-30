@@ -1,9 +1,5 @@
 # Project Organization
 
-## Working Example: Replicating Mankiw, Romer and Weil's 1992 QJE
-
-Throughout our tutorial we are going to use a running example to illustrate the concepts we discuss.
-
 
 ## Project Structure I: Separating Inputs and Outputs
 
