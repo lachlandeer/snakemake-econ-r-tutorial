@@ -14,11 +14,11 @@ pre code {
 }
 
 .exercise {
-  background-color: #C4EFE4;
-  padding:2em;
+  background-color: #DCDCDC;
+  padding:1em;
   display:block;
-  min-height: 100px;
-  margin: 0 2em 2em 1em;
+  min-height: 75px;
+  margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
   box-shadow: 5px 5px 10px -2px rgba(33,33,33,.3);
   transform: rotate(1deg);
