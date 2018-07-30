@@ -32,14 +32,18 @@ TBD
 
 ### The `log` folder
 
+### Exploring the Structure of the MRW Replication Project
+
 ## Project Structure II: Separating Logical Chunks of the Project
 
 TBD - disciplined subdirectory structure
 
-## Exploring the Structure of the MRW replication
+### Exploring the Structure of the MRW Replication Subdirectories
 
 TBD - openly discuss the structure of our working example
 
 ## Project Structure III: Separating Input Parameters from Code
 
 TBD
+
+### Exploring Parameter Separation in the MRW Replication Project
