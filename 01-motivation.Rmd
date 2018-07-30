@@ -1,6 +1,42 @@
 # Motivating & Rationale {#intro}
 
-Your text comes here. Separate text sections with
+## A Case for Reproducibility
 
-## Citations
-You can write citations, too. For example, we are using the bookdown package [@R-bookdown] in this sample book, which was built on top of R Markdown and knitr [@xie2015].
+### How far to go in the quest for reproducibility?
+
+## What is `Snakemake` & Why Should you use it?
+
+## Why `R`?
+
+## Working Example: Replicating Mankiw, Romer and Weil's 1992 QJE
+
+Throughout our tutorial we are going to use a running example to illustrate the concepts we discuss.
+
+## The way forward
+
+For the purpose of this tutorial we will focus on replicating the following aspects of the MRW paper:^[A complete replication using the concepts presented in this tutorial is available **here**]
+
+* Regression Tables 1 and 2: Estimating the Textbook- and Augmented Solow Model
+* Figure 1: Unconditional Versus Conditional Convergence
+
+To replicate these we will need to proceed as follows:
+
+1. Perform some data management
+    * Prepare the data before we run regressions
+2. Run regressions for:
+    1. Different subsets of data
+    2. Alternative econometric specifications
+3. Turn the statistical output of the regressions into a tabular format that we can insert into a document
+4. Construct a set of graphs
+5. Integrate the tables and graphs into a paper and a set of slides (optional)
+
+We hope that these 5 steps look familiar - as they were designed to represent a simplifed workflow for an applied economist or social science researcher.
+
+Before proceeding to understanding how to use Snakemake and R to construct a reproducible workflow, the next chapter first takes a deeper dive into the a protypical way to set up a research project on our computer.
+
+### Exercise: Your own project's steps
+
+Think about a project you are working on or have worked on in the past (it may be a Bachelor or Master's thesis or a recent / active research project).
+Does your project fit into the 5 steps we described above?
+If not, what would you modify or add to our 5 steps?
+(Do you think this would destroy the general principles we will encourage over the next chapters?)
