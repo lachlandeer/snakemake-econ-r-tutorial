@@ -23,7 +23,7 @@ To replicate these we will need to proceed as follows:
 
 1. Perform some data management
     * Prepare the data before we run regressions
-2. Run regressions for:
+2. Do some analysis. For example, run regressions for:
     1. Different subsets of data
     2. Alternative econometric specifications
 3. Turn the statistical output of the regressions into a tabular format that we can insert into a document

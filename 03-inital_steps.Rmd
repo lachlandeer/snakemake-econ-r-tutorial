@@ -1,3 +1,103 @@
 # Initial Steps with Snakemake
 
-Content is TBD
+## Starting a Research Project
+
+We are now ready to get started working with the code and data to build a fully reproducible pipeline.
+In Chapter XX we described a simplified research workflow to be:
+
+1. Perform some data management
+2. Do some analysis
+3. Turn the output of the analysis into a tabular format
+4. Construct a set of graphs
+5. Integrate the tables and graphs into a paper and a set of slides (optional)
+
+We are going to start at the beginning with data management.
+
+Recall that we have the following files in our data management subdirectory, `src/data-management`:
+
+```{r datamgt-scripts, engine = 'bash', eval = FALSE}
+rename_variables.R
+gen_reg_vars.R
+```
+
+We will need to run each of these scripts sequentially.
+First we want to run the script `rename_variables.R` to tidy up the variable names in our data set.
+Second, `gen_reg_vars.R` will create the some additional variables in our data that will be needed to run some regressions in later steps.
+Over the next few sections we are going to build up 2 **rules**, one for each file, that will execute these scripts and deliver output.
+
+## The Beginning of a Snakefile
+
+We are going to put the collection of rules that build our project into a file.
+We can then use the `Snakemake` to execute these rules and build our project.
+The set of rules we want to construct are going to go into the file called `Snakefile` - which is the name of a file that Snakemake will look into by default to execite a project.
+Lets open the file called `Snakefile` in the project's main directory.
+When you open it it should look as follows:
+
+```{r snakefile-start, engine = 'python', eval = FALSE}
+# Main Workflow - SOME PROJECT
+# Contributors: YOUR NAME(S)
+
+import glob, os
+
+# --- Variable Declarations ---- #
+runR = "Rscript --no-save --no-restore --verbose"
+logAll = "2>&1"
+
+# --- Main Build Rules --- #
+## To be constructed
+```
+
+Note that the amount of structure we have here is not totally necessary.
+However, good structure will make understanding easier later.
+Let's go through what we see.
+The first lines of code are comments, to help us navigate a little and understand what we are looking at.
+The very first line tells us that this is a project workflow, and then tells us what the particular project is.
+The second line tells us who contributed to this file.
+This can be useful so we know who to contact with questions.
+You should do update the name of the project, and add your name to the list of contributors.
+For us, the top 2 lines becomes:
+
+```{r snakefile-start-2, engine = 'bash', eval = FALSE}
+# Main Workflow - Replicating MRW
+# Contributors: @lachlandeer, @julianlanger
+```
+
+Next, we see the line:
+
+```{r snakefile-start-3, engine = 'python', eval = FALSE}
+import glob, os
+```
+
+What we are doing here is loading two additional libraries that will help us later on with some functionality.
+Essentially, we want some "helper" functions to make the rest of our Snakemake process easier to build.
+When we get to the point we need them, we will be more explicit.
+
+The lines:
+
+```{r snakefile-start-4, engine = 'python', eval = FALSE}
+# --- Variable Declarations ---- #
+runR = "Rscript --no-save --no-restore --verbose"
+logAll = "2>&1"
+```
+
+are creating some shorthand notation for us.
+`runR` will be what we want to use when we need to execute an `R` script.
+We declare the shorthand so will not need to always write out the rather long statement we have assigned to the value `runR.`
+`logAll` is a code snippet that will log all the output from code execution and all error messages to one file.
+This is useful when debugging errors in our code - which we hope won't happen too often.
+The exact value here (`"2>&1"`) is specific to the R language.
+
+The next few lines are:
+
+```{r snakefile-start-5, engine = 'bash', eval = FALSE}
+# --- Main Build Rules --- #
+## To be constructed
+```
+
+These are comments.
+We are using the `# --- Something --- #` notation to break up the code into logical blocks.
+It is in this block that we will assemble the rules on which our project will be built.
+
+Looking generally at the code, if you have some familarity with the Python programming language you might recognise that this looks quite some form of Python code.
+You are correct - Snakemake is written using Python, so lots of what we do here will look like Python code.
+If you are unfamiliar with Python, do not worry - there is nothing here that will prohibit you from going further, and we will explain what is happening as we go.
