@@ -667,6 +667,61 @@ are unfamiliar with Python, do not worry - there is nothing here that
 will prohibit you from going further, and we will explain what is
 happening as we go.
 
+\section{Rule Structure}\label{rule-structure}
+
+A \texttt{Snakefile} is a collection of rules that together define the
+order in which a project will be executed. In our \texttt{Snakefile} we
+will start to assemble rules under the
+\texttt{\#\ -\/-\/-\ Main\ Build\ Rules\ -\/-\/-\ \#} section to keep
+things tidy. Each rule can be thought of as a recipe that combines
+different \textbf{inputs}, such as data and and R script together to
+produce one or more \textbf{output(s)}. The key components we are going
+to use to construct a rule are:
+
+\begin{enumerate}
+\def\labelenumi{(\roman{enumi})}
+\tightlist
+\item
+  a name for the rule,
+\item
+  the list of inputs
+\item
+  the list of outputs produced
+\item
+  a log file, that captures any output that is printed out of \texttt{R}
+\item
+  a shell command that tells snakemake how to combine the inputs to
+  produce a outputs.
+\end{enumerate}
+
+\texttt{Snakemake} expects these components to be provided in a
+particular way so that it knows what to do with the information you
+provided. We are going to specify rules in the following format:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{rule_name:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{input_name1} \NormalTok{= }\StringTok{"PATH/TO/input_one"}\NormalTok{,}
+        \KeywordTok{input_name2} \NormalTok{= }\StringTok{"PATH/TO/input_two"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{output_name1} \NormalTok{= }\StringTok{"PATH/TO/SAVE/output_one"}\NormalTok{,}
+        \KeywordTok{output_name2} \NormalTok{= }\StringTok{"PATH/TO/SAVE/output_two"}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{txt_file} \NormalTok{= }\StringTok{"PATH/TO/SAVE/LOGFILE/log_file"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"HOW TO MIX IT ALL TOGETHER"}
+\end{Highlighting}
+\end{Shaded}
+
+We can have as many inputs and outputs as we need to have per rule. Each
+input and each output are given names, for example \texttt{input\_name1}
+which take the value to the file path and name of the file. It is
+important to wrap each of these paths into quotations, and to separate
+each of the multiple inputs and outputs with a comma.
+
+\section{Our First Rule}\label{our-first-rule}
+
 \chapter{Automatic Variables}\label{automatic-variables}
 
 Content is TBD
