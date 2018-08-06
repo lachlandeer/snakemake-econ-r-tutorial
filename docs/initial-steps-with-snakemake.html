@@ -132,7 +132,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.3.1" data-path="project-organization.html"><a href="project-organization.html#exploring-parameter-separation-in-the-mrw-replication-project"><i class="fa fa-check"></i><b>3.3.1</b> Exploring Parameter Separation in the MRW Replication Project</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html"><i class="fa fa-check"></i><b>4</b> Initial Steps with Snakemake</a></li>
+<li class="chapter" data-level="4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html"><i class="fa fa-check"></i><b>4</b> Initial Steps with Snakemake</a><ul>
+<li class="chapter" data-level="4.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#starting-a-research-project"><i class="fa fa-check"></i><b>4.1</b> Starting a Research Project</a></li>
+<li class="chapter" data-level="4.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-beginning-of-a-snakefile"><i class="fa fa-check"></i><b>4.2</b> The Beginning of a Snakefile</a></li>
+</ul></li>
 <li class="chapter" data-level="5" data-path="automatic-variables.html"><a href="automatic-variables.html"><i class="fa fa-check"></i><b>5</b> Automatic Variables</a></li>
 <li class="chapter" data-level="6" data-path="getting-dependencies-right.html"><a href="getting-dependencies-right.html"><i class="fa fa-check"></i><b>6</b> Getting Dependencies Right</a></li>
 <li class="chapter" data-level="7" data-path="packrat-managing-package-dependencies.html"><a href="packrat-managing-package-dependencies.html"><i class="fa fa-check"></i><b>7</b> Packrat: Managing Package Dependencies</a></li>
@@ -164,8 +167,51 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="initial-steps-with-snakemake" class="section level1">
 <h1><span class="header-section-number">Chapter 4</span> Initial Steps with Snakemake</h1>
-<p>Content is TBD</p>
+<div id="starting-a-research-project" class="section level2">
+<h2><span class="header-section-number">4.1</span> Starting a Research Project</h2>
+<p>We are now ready to get started working with the code and data to build a fully reproducible pipeline. In Chapter XX we described a simplified research workflow to be:</p>
+<ol style="list-style-type: decimal">
+<li>Perform some data management</li>
+<li>Do some analysis</li>
+<li>Turn the output of the analysis into a tabular format</li>
+<li>Construct a set of graphs</li>
+<li>Integrate the tables and graphs into a paper and a set of slides (optional)</li>
+</ol>
+<p>We are going to start at the beginning with data management.</p>
+<p>Recall that we have the following files in our data management subdirectory, <code>src/data-management</code>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rename_variables.R</span>
+<span class="kw">gen_reg_vars.R</span></code></pre></div>
+<p>We will need to run each of these scripts sequentially. First we want to run the script <code>rename_variables.R</code> to tidy up the variable names in our data set. Second, <code>gen_reg_vars.R</code> will create the some additional variables in our data that will be needed to run some regressions in later steps. Over the next few sections we are going to build up 2 <strong>rules</strong>, one for each file, that will execute these scripts and deliver output.</p>
+</div>
+<div id="the-beginning-of-a-snakefile" class="section level2">
+<h2><span class="header-section-number">4.2</span> The Beginning of a Snakefile</h2>
+<p>We are going to put the collection of rules that build our project into a file. We can then use the <code>Snakemake</code> to execute these rules and build our project. The set of rules we want to construct are going to go into the file called <code>Snakefile</code> - which is the name of a file that Snakemake will look into by default to execite a project. Lets open the file called <code>Snakefile</code> in the project’s main directory. When you open it it should look as follows:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Main Workflow - SOME PROJECT</span>
+<span class="co"># Contributors: YOUR NAME(S)</span>
+<span class="im">import</span> glob, os
+<span class="co"># --- Variable Declarations ---- #</span>
+runR <span class="op">=</span> <span class="st">&quot;Rscript --no-save --no-restore --verbose&quot;</span>
+logAll <span class="op">=</span> <span class="st">&quot;2&gt;&amp;1&quot;</span>
+<span class="co"># --- Main Build Rules --- #</span>
+<span class="co">## To be constructed</span></code></pre></div>
+<p>Note that the amount of structure we have here is not totally necessary. However, good structure will make understanding easier later. Let’s go through what we see. The first lines of code are comments, to help us navigate a little and understand what we are looking at. The very first line tells us that this is a project workflow, and then tells us what the particular project is. The second line tells us who contributed to this file. This can be useful so we know who to contact with questions. You should do update the name of the project, and add your name to the list of contributors. For us, the top 2 lines becomes:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Main Workflow - Replicating MRW</span>
+<span class="co"># Contributors: @lachlandeer, @julianlanger</span></code></pre></div>
+<p>Next, we see the line:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> glob, os</code></pre></div>
+<p>What we are doing here is loading two additional libraries that will help us later on with some functionality. Essentially, we want some “helper” functions to make the rest of our Snakemake process easier to build. When we get to the point we need them, we will be more explicit.</p>
+<p>The lines:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># --- Variable Declarations ---- #</span>
+runR <span class="op">=</span> <span class="st">&quot;Rscript --no-save --no-restore --verbose&quot;</span>
+logAll <span class="op">=</span> <span class="st">&quot;2&gt;&amp;1&quot;</span></code></pre></div>
+<p>are creating some shorthand notation for us. <code>runR</code> will be what we want to use when we need to execute an <code>R</code> script. We declare the shorthand so will not need to always write out the rather long statement we have assigned to the value <code>runR.</code> <code>logAll</code> is a code snippet that will log all the output from code execution and all error messages to one file. This is useful when debugging errors in our code - which we hope won’t happen too often. The exact value here (<code>&quot;2&gt;&amp;1&quot;</code>) is specific to the R language.</p>
+<p>The next few lines are:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># --- Main Build Rules --- #</span>
+<span class="co">## To be constructed</span></code></pre></div>
+<p>These are comments. We are using the <code># --- Something --- #</code> notation to break up the code into logical blocks. It is in this block that we will assemble the rules on which our project will be built.</p>
+<p>Looking generally at the code, if you have some familarity with the Python programming language you might recognise that this looks quite some form of Python code. You are correct - Snakemake is written using Python, so lots of what we do here will look like Python code. If you are unfamiliar with Python, do not worry - there is nothing here that will prohibit you from going further, and we will explain what is happening as we go.</p>
 
+</div>
 </div>
             </section>
 
