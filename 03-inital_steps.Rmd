@@ -101,3 +101,39 @@ It is in this block that we will assemble the rules on which our project will be
 Looking generally at the code, if you have some familarity with the Python programming language you might recognise that this looks quite some form of Python code.
 You are correct - Snakemake is written using Python, so lots of what we do here will look like Python code.
 If you are unfamiliar with Python, do not worry - there is nothing here that will prohibit you from going further, and we will explain what is happening as we go.
+
+## Rule Structure
+
+A `Snakefile` is a collection of rules that together define the order in which a project will be executed.
+In our `Snakefile` we will start to assemble rules under the `# --- Main Build Rules --- #` section to keep things tidy.
+Each rule can be thought of as a recipe that combines different **inputs**, such as data and and R script together to produce one or more **output(s)**.
+The key components we are going to use to construct a rule are:
+
+(i) a name for the rule,
+(ii) the list of inputs
+(iii) the list of outputs produced
+(iv) a log file, that captures any output that is printed out of `R`
+(iv) a shell command that tells snakemake how to combine the inputs to produce a outputs.
+
+`Snakemake` expects these components to be provided in a particular way so that it knows what to do with the information you provided.
+We are going to specify rules in the following format:
+
+```{r snakefile-rule-str, engine = 'bash', eval = FALSE}
+rule rule_name:
+    input:
+        input_name1 = "PATH/TO/input_one",
+        input_name2 = "PATH/TO/input_two"
+    output:
+        output_name1 = "PATH/TO/SAVE/output_one",
+        output_name2 = "PATH/TO/SAVE/output_two"
+    log:
+        txt_file = "PATH/TO/SAVE/LOGFILE/log_file"
+    shell:
+        "HOW TO MIX IT ALL TOGETHER"
+```
+
+We can have as many inputs and outputs as we need to have per rule.
+Each input and each output are given names, for example `input_name1` which take the value to the file path and name of the file.
+It is important to wrap each of these paths into quotations, and to separate each of the multiple inputs and outputs with a comma.
+
+## Our First Rule
