@@ -81,14 +81,123 @@ TODO: explain these two files
 
 ## Project Structure II: Separating Logical Chunks of the Project
 
-TBD - disciplined subdirectory structure
+As we have mentioned above, to keep our project's structure clean, we want to keep all the computer code inside the `src` directory.
+Let's have a look at the content of `src`.
+
+```{r ls-bash-src, engine = 'bash', eval = FALSE}
+ls -F src/
+```
+
+We see the following output:
+```{r ls-bash-src-res, engine = 'bash', eval = FALSE}
+./
+    |src/
+        |- data/
+        |- data-management/
+        |- data-specs/
+        |- analysis/
+        |- model-specs/
+        |- lib/
+        |- figures/
+        |- tables/
+```
+
+The type of content we expect in each file is:
+
+TBD
+
 
 ### Exploring the Structure of the MRW Replication Subdirectories
 
-TBD - openly discuss the structure of our working example
+We begin our exploration of the project by looking at the folders that appear to be related to the data.
+If we look inside the `data` directory
+
+```{r ls-bash-data, engine = 'bash', eval = FALSE}
+ls -F src/data/
+```
+
+```{r ls-bash-data-res, engine = 'bash', eval = FALSE}
+mrw.dta
+```
+
+That is, our `data/` directory contains the project's original data set.
+
+Note that in more extensive projects, the `data/` subfolder would typically have more than one data set.
+For example:
+
+```{r ls-bash-data-2, engine = 'bash', eval = FALSE}
+dataset1.dta
+dataset2.dta
+dataset3.csv
+```
+
+TBD - aside on file endings.
+
+Further, your data folder may even contain further subdirectories that organize data further
+
+```{r ls-bash-data-3, engine = 'bash', eval = FALSE}
+./
+    |src/
+        |- data/
+            |- data-provider-a/
+                |- dataset1.csv
+                |- dataset2.csv
+            |- data-provider-b/
+                |- dataset3.txt
+                |- dataset4.txt
+```
+
+If we now turn to the `data-management` directory, we can explore it's contents too:
+
+```{r ls-bash-datamgt, engine = 'bash', eval = FALSE}
+ls -F src/data-management/
+```
+
+```{r ls-bash-datamgt-res, engine = 'bash', eval = FALSE}
+rename_variables.R
+gen_reg_vars.R
+```
+
+TODO:
+
+* meaningful filenames
+* Note two different ways to name files
+
+
+### Exercise: Exploring the Remaining Subdirectories {- .exercise}
+TBD
 
 ## Project Structure III: Separating Input Parameters from Code
 
-TBD
+Next we look at the somewhat mysteriously named `data-specs` folder.
+
+And if we explore the folder's contents:
+
+```{r ls-bash-dataspec, engine = 'bash', eval = FALSE}
+ls -F src/data-specs/
+```
+
+```{r ls-bash-dataspec-res, engine = 'bash', eval = FALSE}
+subset_intermediate.json
+subset_nonoil.json
+subset_oecd.json
+```
+
+Again, the file names are somewhat meaningful on their own - they appear to be some way of subsetting data (selecting some rows).
+If we look inside one of these files:
+
+```{r ls-bash-dataspec2, engine = 'bash', eval = FALSE}
+cat src/data-specs/subset_oecd.json
+```
+
+```{r ls-bash-dataspec2-res, engine = 'bash', eval = FALSE}
+{
+    "KEEP_CONDITION": "oecd == 1"
+}
+```
+
+We see an a variable `KEEP_CONDITION` which is storing a string `"oecd == 1"`.
+
+TBD: Why have we done this? See below.
 
 ### Exploring Parameter Separation in the MRW Replication Project
