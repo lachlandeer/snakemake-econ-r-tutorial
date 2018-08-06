@@ -363,17 +363,166 @@ TODO: explain these two files
 \section{Project Structure II: Separating Logical Chunks of the
 Project}\label{project-structure-ii-separating-logical-chunks-of-the-project}
 
-TBD - disciplined subdirectory structure
+As we have mentioned above, to keep our project's structure clean, we
+want to keep all the computer code inside the \texttt{src} directory.
+Let's have a look at the content of \texttt{src}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ls} \NormalTok{-F src/}
+\end{Highlighting}
+\end{Shaded}
+
+We see the following output:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{./}
+    \KeywordTok{|src/}
+        \KeywordTok{|-} \NormalTok{data/}
+        \KeywordTok{|-} \NormalTok{data-management/}
+        \KeywordTok{|-} \NormalTok{data-specs/}
+        \KeywordTok{|-} \NormalTok{analysis/}
+        \KeywordTok{|-} \NormalTok{model-specs/}
+        \KeywordTok{|-} \NormalTok{lib/}
+        \KeywordTok{|-} \NormalTok{figures/}
+        \KeywordTok{|-} \NormalTok{tables/}
+\end{Highlighting}
+\end{Shaded}
+
+The type of content we expect in each file is:
+
+TBD
 
 \subsection{Exploring the Structure of the MRW Replication
 Subdirectories}\label{exploring-the-structure-of-the-mrw-replication-subdirectories}
 
-TBD - openly discuss the structure of our working example
+We begin our exploration of the project by looking at the folders that
+appear to be related to the data. If we look inside the \texttt{data}
+directory
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ls} \NormalTok{-F src/data/}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{mrw.dta}
+\end{Highlighting}
+\end{Shaded}
+
+That is, our \texttt{data/} directory contains the project's original
+data set.
+
+Note that in more extensive projects, the \texttt{data/} subfolder would
+typically have more than one data set. For example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{dataset1.dta}
+\KeywordTok{dataset2.dta}
+\KeywordTok{dataset3.csv}
+\end{Highlighting}
+\end{Shaded}
+
+TBD - aside on file endings.
+
+Further, your data folder may even contain further subdirectories that
+organize data further
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{./}
+    \KeywordTok{|src/}
+        \KeywordTok{|-} \NormalTok{data/}
+            \KeywordTok{|-} \NormalTok{data-provider-a/}
+                \KeywordTok{|-} \NormalTok{dataset1.csv}
+                \KeywordTok{|-} \NormalTok{dataset2.csv}
+            \KeywordTok{|-} \NormalTok{data-provider-b/}
+                \KeywordTok{|-} \NormalTok{dataset3.txt}
+                \KeywordTok{|-} \NormalTok{dataset4.txt}
+\end{Highlighting}
+\end{Shaded}
+
+If we now turn to the \texttt{data-management} directory, we can explore
+it's contents too:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ls} \NormalTok{-F src/data-management/}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rename_variables.R}
+\KeywordTok{gen_reg_vars.R}
+\end{Highlighting}
+\end{Shaded}
+
+TODO:
+
+\begin{itemize}
+\tightlist
+\item
+  meaningful filenames
+\item
+  Note two different ways to name files
+\end{itemize}
+
+\subsection*{Exercise: Exploring the Remaining
+Subdirectories}\label{exercise-exploring-the-remaining-subdirectories}
+\addcontentsline{toc}{subsection}{Exercise: Exploring the Remaining
+Subdirectories}
+
+TBD
 
 \section{Project Structure III: Separating Input Parameters from
 Code}\label{project-structure-iii-separating-input-parameters-from-code}
 
-TBD
+Next we look at the somewhat mysteriously named \texttt{data-specs}
+folder.
+
+And if we explore the folder's contents:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ls} \NormalTok{-F src/data-specs/}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{subset_intermediate.json}
+\KeywordTok{subset_nonoil.json}
+\KeywordTok{subset_oecd.json}
+\end{Highlighting}
+\end{Shaded}
+
+Again, the file names are somewhat meaningful on their own - they appear
+to be some way of subsetting data (selecting some rows). If we look
+inside one of these files:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{cat} \NormalTok{src/data-specs/subset_oecd.json}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{\{}
+    \StringTok{"KEEP_CONDITION"}\NormalTok{: }\StringTok{"oecd == 1"}
+\KeywordTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+We see an a variable \texttt{KEEP\_CONDITION} which is storing a string
+\texttt{"oecd\ ==\ 1"}.
+
+TBD: Why have we done this? See below.
 
 \subsection{Exploring Parameter Separation in the MRW Replication
 Project}\label{exploring-parameter-separation-in-the-mrw-replication-project}
