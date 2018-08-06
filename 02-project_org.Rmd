@@ -5,12 +5,36 @@
 
 Structuring our project and the locations of files is an important concept.
 
+Let's look at the structure of our project's folder.
+Open a terminal and change into this directory
+
+```{r cd-bash, engine = 'bash', eval = FALSE}
+cd YOUR/PATH/TO/snakemake-econ-r-student
+```
+
+And list the subdirectories of the main directory
+
+```{r ls-bash, engine = 'bash', eval = FALSE}
+ls -d */
+```
+
+We see the following folder structure
+```{r ls-bash-res, engine = 'bash', eval = FALSE}
+./
+    |- src/
+    |- out/
+    |- log/
+    |- sandbox/
+```
+
+
 We recommend the following structure for any project:
 
 * Root Folder
 * `src` folder for input files
 * `out` folder for output files
 * a `log` folder to store computer logs
+* a `sandbox` folder that gives us a 'safe place' to develop new code
 
 We discuss each of these in turn.
 
@@ -28,7 +52,32 @@ TBD
 
 ### The `log` folder
 
-### Exploring the Structure of the MRW Replication Project
+### Exploring the Full Structure of the MRW Replication Project
+
+Now, let's look at all contents of this main projects directory:
+
+```{r ls-bash-2, engine = 'bash', eval = FALSE}
+ls -F .
+```
+
+We see the following folder structure
+```{r ls-bash-res-2, engine = 'bash', eval = FALSE}
+./
+    |- src/
+    |- out/
+    |- log/
+    |- sandbox/
+    | README.md
+    | Snakefile
+```
+
+Notice that there are no instances of:
+    (i) scripts,
+    (ii) files containing content of the paper or slides
+    (iii) something else we haven't thought of yet
+Instead, there are only two files, a `README.md` and a file called `Snakefile.`
+
+TODO: explain these two files
 
 ## Project Structure II: Separating Logical Chunks of the Project
 
