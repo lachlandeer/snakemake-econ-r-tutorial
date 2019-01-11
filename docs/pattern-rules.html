@@ -145,8 +145,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.5" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#creating-a-second-rule"><i class="fa fa-check"></i><b>3.5</b> Creating a Second Rule</a><ul>
 <li class="chapter" data-level="" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#exercise-creating-rules"><i class="fa fa-check"></i>Exercise: Creating Rules</a></li>
 </ul></li>
+<li class="chapter" data-level="3.6" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#clean-rules"><i class="fa fa-check"></i><b>3.6</b> Clean Rules</a><ul>
+<li class="chapter" data-level="" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#exercise-creating-cleaning-rules"><i class="fa fa-check"></i>Exercise: Creating Cleaning Rules</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="pattern-rules.html"><a href="pattern-rules.html"><i class="fa fa-check"></i><b>4</b> Pattern Rules</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="pattern-rules.html"><a href="pattern-rules.html"><i class="fa fa-check"></i><b>4</b> Pattern Rules</a><ul>
+<li class="chapter" data-level="4.1" data-path="pattern-rules.html"><a href="pattern-rules.html#where-we-are-now"><i class="fa fa-check"></i><b>4.1</b> Where we are now?</a></li>
+</ul></li>
 <li class="chapter" data-level="5" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>5</b> Wildcards</a></li>
 <li class="chapter" data-level="6" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>6</b> Adding Parameters</a></li>
 <li class="chapter" data-level="7" data-path="an-all-rule.html"><a href="an-all-rule.html"><i class="fa fa-check"></i><b>7</b> An <code>all</code> Rule</a></li>
@@ -181,8 +186,91 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="pattern-rules" class="section level1">
 <h1><span class="header-section-number">Chapter 4</span> Pattern Rules</h1>
-<p>Content is TBD</p>
+<div id="where-we-are-now" class="section level2">
+<h2><span class="header-section-number">4.1</span> Where we are now?</h2>
+<p>Your Snakefile should look something like this:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">## Snakemake - MRW Replication</span>
+<span class="co">##</span>
+<span class="co">## @yourname</span>
 
+
+<span class="co"># --- Build Rules --- #</span>
+
+<span class="kw">rule</span> solow_intermediate:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,
+        <span class="kw">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,
+        <span class="kw">model</span>  = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,
+        <span class="kw">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">model_est</span> = <span class="st">&quot;out/analysis/model_solow_subset_intermediate.rds&quot;</span>,
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --model {input.model} \</span>
+<span class="st">            --subset {input.subset} \</span>
+<span class="st">            --out {output.model_est}&quot;</span>
+
+<span class="kw">rule</span> solow_nonoil:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,
+        <span class="kw">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,
+        <span class="kw">model</span>  = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,
+        <span class="kw">subset</span> = <span class="st">&quot;src/data-specs/subset_nonoil.json&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">model_est</span> = <span class="st">&quot;out/analysis/model_solow_subset_nonoil.rds&quot;</span>,
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --model {input.model} \</span>
+<span class="st">            --subset {input.subset} \</span>
+<span class="st">            --out {output.model_est}&quot;</span>
+
+<span class="kw">rule</span> solow_oecd:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,
+        <span class="kw">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,
+        <span class="kw">model</span>  = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,
+        <span class="kw">subset</span> = <span class="st">&quot;src/data-specs/subset_oecd.json&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">model_est</span> = <span class="st">&quot;out/analysis/model_solow_subset_oecd.rds&quot;</span>,
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --model {input.model} \</span>
+<span class="st">            --subset {input.subset} \</span>
+<span class="st">            --out {output.model_est}&quot;</span>
+
+<span class="kw">rule</span> gen_regression_vars:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,
+        <span class="kw">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,
+        <span class="kw">params</span> = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span>,
+    <span class="kw">output</span>:
+        <span class="kw">data</span> = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --param {input.params} \</span>
+<span class="st">            --out {output.data}&quot;</span>
+
+<span class="kw">rule</span> rename_vars:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,
+        <span class="kw">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --out {output.data}&quot;</span>
+
+<span class="co"># --- Clean Rules --- #</span>
+<span class="kw">rule</span> clean:
+    <span class="kw">shell</span>:
+        <span class="st">&quot;rm -rf out/*&quot;</span></code></pre></div>
+
+</div>
 </div>
             </section>
 

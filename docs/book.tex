@@ -982,9 +982,178 @@ inputs.
   data.
 \end{enumerate}
 
+\section{Clean Rules}\label{clean-rules}
+
+So far, we have built up our Snakefile to:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Clean data
+\item
+  Run a regression model on different subsets of data
+\end{enumerate}
+
+As we continue to extend our Snakefile in the coming chapters we might
+want to be able to delete all of the produced outputs, and see if we can
+rebuild our project from the first step. One way to do this would be to
+go to our terminal window and enter the following command each time:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{rm} \NormalTok{-rf out/*}
+\end{Highlighting}
+\end{Shaded}
+
+Instead of doing this each time, we can integrate this \emph{cleaning}
+of computer produced outputs into our Snakefile. We can create a rule
+called \texttt{clean} that stores the shell command from above:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{clean:}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"rm -rf out/*"}
+\end{Highlighting}
+\end{Shaded}
+
+Note that this rule has no inputs or outputs.
+
+To use this rule, we enter the following into our terminal:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake} \NormalTok{clean}
+\end{Highlighting}
+\end{Shaded}
+
+Notice that to use the clean rule we had to call the rule name, clean,
+explicitly.
+
+Now if we look out the output of running the summary call with
+snakemake, we see the following output:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{snakemake} \NormalTok{--summary}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Building} \NormalTok{DAG of jobs...}
+\KeywordTok{output_file}                                        \NormalTok{date   rule  version log-file(s)     }\KeywordTok{status}  \NormalTok{plan}
+\KeywordTok{out/analysis/model_solow_subset_intermediate.rds}    \NormalTok{-     inter        -                missing update pending}
+\KeywordTok{out/analysis/model_solow_subset_nonoil.rds}          \NormalTok{-     nonoil       -                missing update pending}
+\KeywordTok{out/analysis/model_solow_subset_oecd.rds}            \NormalTok{-     oecd         -                missing update pending}
+\KeywordTok{out/data/mrw_complete.csv}                           \NormalTok{-     gen_regression_vars           missing update pending}
+\KeywordTok{out/data/mrw_renamed.csv}                            \NormalTok{-     rename_vars                   missing update pending}
+\end{Highlighting}
+\end{Shaded}
+
+Which reveals snakemake's plan the next time its run will be to build
+all outputs.
+
+\subsection*{Exercise: Creating Cleaning
+Rules}\label{exercise-creating-cleaning-rules}
+\addcontentsline{toc}{subsection}{Exercise: Creating Cleaning Rules}
+
+So far we have written a cleaning rule that deletes everything in the
+\texttt{out/} directory. Construct rules that would separately clean the
+\texttt{out/data/} and \texttt{out/analysis} subdirectories. Why might
+we want to do this?
+
 \chapter{Pattern Rules}\label{pattern-rules}
 
-Content is TBD
+\section{Where we are now?}\label{where-we-are-now}
+
+Your Snakefile should look something like this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Snakemake - MRW Replication}
+\CommentTok{##}
+\CommentTok{## @yourname}
+
+
+\CommentTok{# --- Build Rules --- #}
+
+\KeywordTok{rule} \NormalTok{solow_intermediate:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/analysis/estimate_ols_model.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"out/data/mrw_complete.csv"}\NormalTok{,}
+        \KeywordTok{model}  \NormalTok{= }\StringTok{"src/model-specs/model_solow.json"}\NormalTok{,}
+        \KeywordTok{subset} \NormalTok{= }\StringTok{"src/data-specs/subset_intermediate.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{model_est} \NormalTok{= }\StringTok{"out/analysis/model_solow_subset_intermediate.rds"}\NormalTok{,}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --model \{input.model\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.model_est\}"}
+
+\KeywordTok{rule} \NormalTok{solow_nonoil:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/analysis/estimate_ols_model.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"out/data/mrw_complete.csv"}\NormalTok{,}
+        \KeywordTok{model}  \NormalTok{= }\StringTok{"src/model-specs/model_solow.json"}\NormalTok{,}
+        \KeywordTok{subset} \NormalTok{= }\StringTok{"src/data-specs/subset_nonoil.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{model_est} \NormalTok{= }\StringTok{"out/analysis/model_solow_subset_nonoil.rds"}\NormalTok{,}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --model \{input.model\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.model_est\}"}
+
+\KeywordTok{rule} \NormalTok{solow_oecd:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/analysis/estimate_ols_model.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"out/data/mrw_complete.csv"}\NormalTok{,}
+        \KeywordTok{model}  \NormalTok{= }\StringTok{"src/model-specs/model_solow.json"}\NormalTok{,}
+        \KeywordTok{subset} \NormalTok{= }\StringTok{"src/data-specs/subset_oecd.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{model_est} \NormalTok{= }\StringTok{"out/analysis/model_solow_subset_oecd.rds"}\NormalTok{,}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --model \{input.model\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.model_est\}"}
+
+\KeywordTok{rule} \NormalTok{gen_regression_vars:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/data-management/gen_reg_vars.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"out/data/mrw_renamed.csv"}\NormalTok{,}
+        \KeywordTok{params} \NormalTok{= }\StringTok{"src/data-specs/param_solow.json"}\NormalTok{,}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{data} \NormalTok{= }\StringTok{"out/data/mrw_complete.csv"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --param \{input.params\} \textbackslash{}}
+\StringTok{            --out \{output.data\}"}
+
+\KeywordTok{rule} \NormalTok{rename_vars:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/data-management/rename_variables.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"src/data/mrw.dta"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{data} \NormalTok{= }\StringTok{"out/data/mrw_renamed.csv"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --out \{output.data\}"}
+
+\CommentTok{# --- Clean Rules --- #}
+\KeywordTok{rule} \NormalTok{clean:}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"rm -rf out/*"}
+\end{Highlighting}
+\end{Shaded}
 
 \chapter{Wildcards}\label{wildcards}
 

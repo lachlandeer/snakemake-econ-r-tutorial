@@ -145,8 +145,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.5" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#creating-a-second-rule"><i class="fa fa-check"></i><b>3.5</b> Creating a Second Rule</a><ul>
 <li class="chapter" data-level="" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#exercise-creating-rules"><i class="fa fa-check"></i>Exercise: Creating Rules</a></li>
 </ul></li>
+<li class="chapter" data-level="3.6" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#clean-rules"><i class="fa fa-check"></i><b>3.6</b> Clean Rules</a><ul>
+<li class="chapter" data-level="" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#exercise-creating-cleaning-rules"><i class="fa fa-check"></i>Exercise: Creating Cleaning Rules</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="pattern-rules.html"><a href="pattern-rules.html"><i class="fa fa-check"></i><b>4</b> Pattern Rules</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="pattern-rules.html"><a href="pattern-rules.html"><i class="fa fa-check"></i><b>4</b> Pattern Rules</a><ul>
+<li class="chapter" data-level="4.1" data-path="pattern-rules.html"><a href="pattern-rules.html#where-we-are-now"><i class="fa fa-check"></i><b>4.1</b> Where we are now?</a></li>
+</ul></li>
 <li class="chapter" data-level="5" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>5</b> Wildcards</a></li>
 <li class="chapter" data-level="6" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>6</b> Adding Parameters</a></li>
 <li class="chapter" data-level="7" data-path="an-all-rule.html"><a href="an-all-rule.html"><i class="fa fa-check"></i><b>7</b> An <code>all</code> Rule</a></li>
@@ -382,6 +387,38 @@ out/data/mrw_renamed.csv    Fri Jan 11 13:40:07 2019    rename_vars             
 <li>What outputs will be produced?</li>
 <li>Write Snakemake rules to estimate the solow model for each subset of data.</li>
 </ol>
+</div>
+</div>
+<div id="clean-rules" class="section level2">
+<h2><span class="header-section-number">3.6</span> Clean Rules</h2>
+<p>So far, we have built up our Snakefile to:</p>
+<ol style="list-style-type: decimal">
+<li>Clean data</li>
+<li>Run a regression model on different subsets of data</li>
+</ol>
+<p>As we continue to extend our Snakefile in the coming chapters we might want to be able to delete all of the produced outputs, and see if we can rebuild our project from the first step. One way to do this would be to go to our terminal window and enter the following command each time:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">rm</span> -rf out/*</code></pre></div>
+<p>Instead of doing this each time, we can integrate this <em>cleaning</em> of computer produced outputs into our Snakefile. We can create a rule called <code>clean</code> that stores the shell command from above:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rule</span> clean:
+    <span class="kw">shell</span>:
+        <span class="st">&quot;rm -rf out/*&quot;</span></code></pre></div>
+<p>Note that this rule has no inputs or outputs.</p>
+<p>To use this rule, we enter the following into our terminal:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span> clean</code></pre></div>
+<p>Notice that to use the clean rule we had to call the rule name, clean, explicitly.</p>
+<p>Now if we look out the output of running the summary call with snakemake, we see the following output:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">snakemake</span> --summary</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">Building</span> DAG of jobs...
+<span class="kw">output_file</span>                                        date   rule  version log-file(s)     <span class="kw">status</span>  plan
+<span class="kw">out/analysis/model_solow_subset_intermediate.rds</span>    -     inter        -                missing update pending
+<span class="kw">out/analysis/model_solow_subset_nonoil.rds</span>          -     nonoil       -                missing update pending
+<span class="kw">out/analysis/model_solow_subset_oecd.rds</span>            -     oecd         -                missing update pending
+<span class="kw">out/data/mrw_complete.csv</span>                           -     gen_regression_vars           missing update pending
+<span class="kw">out/data/mrw_renamed.csv</span>                            -     rename_vars                   missing update pending</code></pre></div>
+<p>Which reveals snakemake’s plan the next time its run will be to build all outputs.</p>
+<div id="exercise-creating-cleaning-rules" class="section level3 unnumbered exercise">
+<h3>Exercise: Creating Cleaning Rules</h3>
+<p>So far we have written a cleaning rule that deletes everything in the <code>out/</code> directory. Construct rules that would separately clean the <code>out/data/</code> and <code>out/analysis</code> subdirectories. Why might we want to do this?</p>
 
 </div>
 </div>
