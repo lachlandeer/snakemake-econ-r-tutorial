@@ -137,7 +137,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#starting-a-research-project"><i class="fa fa-check"></i><b>3.1</b> Starting a Research Project</a></li>
 <li class="chapter" data-level="3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-beginning-of-a-snakefile"><i class="fa fa-check"></i><b>3.2</b> The Beginning of a Snakefile</a></li>
 <li class="chapter" data-level="3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#rule-structure"><i class="fa fa-check"></i><b>3.3</b> Rule Structure</a></li>
-<li class="chapter" data-level="3.4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#our-first-rule"><i class="fa fa-check"></i><b>3.4</b> Our First Rule</a></li>
+<li class="chapter" data-level="3.4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#our-first-rule"><i class="fa fa-check"></i><b>3.4</b> Our First Rule</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#constructing-the-rule"><i class="fa fa-check"></i><b>3.4.1</b> Constructing the Rule</a></li>
+<li class="chapter" data-level="3.4.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#analysing-output"><i class="fa fa-check"></i><b>3.4.2</b> Analysing Output</a></li>
+<li class="chapter" data-level="" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#exercise-deleting-output"><i class="fa fa-check"></i>Exercise: Deleting Output</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#creating-a-second-rule"><i class="fa fa-check"></i><b>3.5</b> Creating a Second Rule</a><ul>
+<li class="chapter" data-level="" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#exercise-creating-rules"><i class="fa fa-check"></i>Exercise: Creating Rules</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="pattern-rules.html"><a href="pattern-rules.html"><i class="fa fa-check"></i><b>4</b> Pattern Rules</a></li>
 <li class="chapter" data-level="5" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>5</b> Wildcards</a></li>
@@ -186,8 +193,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ol>
 <p>We are going to start at the beginning with data management.</p>
 <p>Recall that we have the following files in our data management subdirectory, <code>src/data-management</code>:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rename_variables.R</span>
-<span class="kw">gen_reg_vars.R</span></code></pre></div>
+<pre class="out"><code>rename_variables.R
+gen_reg_vars.R</code></pre>
 <p>We will need to run each of these scripts sequentially. First we want to run the script <code>rename_variables.R</code> to tidy up the variable names in our data set. Second, <code>gen_reg_vars.R</code> will create the some additional variables in our data that will be needed to run some regressions in later steps. Over the next few sections we are going to build up 2 <strong>rules</strong>, one for each file, that will execute these scripts and deliver output.</p>
 </div>
 <div id="the-beginning-of-a-snakefile" class="section level2">
@@ -228,7 +235,155 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="our-first-rule" class="section level2">
 <h2><span class="header-section-number">3.4</span> Our First Rule</h2>
+<div id="constructing-the-rule" class="section level3">
+<h3><span class="header-section-number">3.4.1</span> Constructing the Rule</h3>
+<p>As mentioned above, we will start with the data management step.</p>
+<p>First script to run is <code>rename_variables.R</code> which is located in the data management subdirectory. This is a simple script that renames some variables for us to be easier to understand.</p>
+<p>We can then start our snakemake script by adding this script as an input:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rule</span> rule_name:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,
+        <span class="kw">input_name2</span> = <span class="st">&quot;PATH/TO/input_two&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">output_name1</span> = <span class="st">&quot;PATH/TO/SAVE/output_one&quot;</span>,
+        <span class="kw">output_name2</span> = <span class="st">&quot;PATH/TO/SAVE/output_two&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;HOW TO MIX IT ALL TOGETHER&quot;</span></code></pre></div>
+<p>Next, we want to add any additional inputs and also specify any outputs that the file produces. We have set up all R scripts in this example to provide us with ‘help’ so that we know what we might need to add. To find out what inputs are required and what outputs are produced, we use the <code>--help</code> flag when calling the file with <code>R</code>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">Rscript</span> src/data-management/rename_variables.R --help</code></pre></div>
+<p>And the following output is produced:</p>
+<pre class="out"><code>Usage: src/data-management/rename_variables.R [options]
 
+
+Options:
+    -d CHARACTER, --data=CHARACTER
+        stata dataset file name
+
+    -o CHARACTER, --out=CHARACTER
+        output file name [default = out.csv]
+
+    -h, --help
+        Show this help message and exit</code></pre>
+<p>This suggests the script needs …</p>
+<p>We update our <code>rename_variables</code> as:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rule</span> rename_vars:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,
+        <span class="kw">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;HOW TO MIX IT ALL TOGETHER&quot;</span></code></pre></div>
+<p>Next we provide a recipe telling snakemake how to mix the inputs to create the outputs:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rule</span> rename_vars:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,
+        <span class="kw">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --out {output.data}&quot;</span></code></pre></div>
+<p>We can now try and run snakemake to execute this rule …</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span></code></pre></div>
+<p>Stuff happens …</p>
+</div>
+<div id="analysing-output" class="section level3">
+<h3><span class="header-section-number">3.4.2</span> Analysing Output</h3>
+<p>We can look into our output directory to see if anything has happened:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">ls</span> out/data/</code></pre></div>
+<p>which yields</p>
+<pre class="out"><code>mrw_renamed.csv</code></pre>
+<p>Our file has been created as we expected.</p>
+<p>Try and run snakemake again</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span></code></pre></div>
+<p>and we see the following output:</p>
+<pre class="out"><code>Building DAG of jobs...
+Nothing to be done.</code></pre>
+<p>Why?</p>
+<p>Snakemake provides the a <em>summary</em> option which tells us what is going on:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">snakemake</span> --summary</code></pre></div>
+<p>The output is:</p>
+<pre class="out"><code>Building DAG of jobs...
+output_file                       date                    rule      version  log-file(s)    status  plan
+out/data/mrw_renamed.csv    Thu Jan 10 20:31:08 2019    rename_vars    -                     ok     no update
+</code></pre>
+<p>Explain what this tells us …</p>
+<p>Suppose we updated one of the inputs …</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">touch</span> src/data-management/rename_variables.R</code></pre></div>
+<p>and then look at the summary from snakemake:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span></code></pre></div>
+<pre class="out"><code>Building DAG of jobs...
+output_file                        date                    rule     version log-file(s)      status                plan
+out/data/mrw_renamed.csv    Thu Jan 10 20:31:08 2019    rename_vars    -                updated input files update pending</code></pre>
+<p>What this means?</p>
+<p>Run snakemake to build the output:</p>
+<pre><code>snakemake</code></pre>
+</div>
+<div id="exercise-deleting-output" class="section level3 unnumbered exercise">
+<h3>Exercise: Deleting Output</h3>
+<p>Delete the output <code>out/data/mrw_renamed.csv</code>. Run <code>snakemake --summary</code> and explain the output it produced.</p>
+</div>
+</div>
+<div id="creating-a-second-rule" class="section level2">
+<h2><span class="header-section-number">3.5</span> Creating a Second Rule</h2>
+<p>The second step in our data management is to create some variables we will use in our regression analysis. The script <code>gen_reg_vars.R</code> in the <code>src/data-management</code> folder does this for us. We are going to build a rule called <code>gen_regression_vars</code> to do this in Snakemake. Let’s see what the script expects to be passed:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">Rscript</span> src/data-management/gen_reg_vars.R --help</code></pre></div>
+<pre class="out"><code>Usage: src/data-management/gen_reg_vars.R [options]
+
+
+Options:
+    -d CHARACTER, --data=CHARACTER
+        a csv file name
+
+    -p CHARACTER, --param=CHARACTER
+        a file name containing model parameters
+
+    -o CHARACTER, --out=CHARACTER
+        output file name [default = out.csv]
+
+    -h, --help
+        Show this help message and exit
+</code></pre>
+<p>So we need to provide:</p>
+<p>to provide the output …</p>
+<p>Let’s create this rule:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rule</span> gen_regression_vars:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,
+        <span class="kw">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,
+        <span class="kw">params</span> = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span>,
+    <span class="kw">output</span>:
+        <span class="kw">data</span> = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --param {input.params} \</span>
+<span class="st">            --out {output.data}&quot;</span></code></pre></div>
+<p>What will Snakemake want to do next? Let’s use the summary option to see …</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span> --summary</code></pre></div>
+<pre class="out"><code>Building DAG of jobs...
+output_file                    date                     rule                  version   log-file(s) status     plan
+out/data/mrw_complete.csv   -                           gen_regression_vars     -                   missing update pending
+out/data/mrw_renamed.csv    Fri Jan 11 13:40:07 2019    rename_vars             -                   ok          no update</code></pre>
+<p>Explain what this means</p>
+<p>Let’s run snakemake to build our new file:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span></code></pre></div>
+<p>When we look at our output directory:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">ls</span> out/data/</code></pre></div>
+<pre class="out"><code>mrw_complete.csv  mrw_renamed.csv</code></pre>
+<p>So we see that our data set has been built.</p>
+<div id="exercise-creating-rules" class="section level3 unnumbered exercise">
+<h3>Exercise: Creating Rules</h3>
+<p>The MRW paper estimates the Solow model for three subsets of data. You need to create rules to do estimate the Solow model for each of these data sets. The R script <code>src/analysis/estimate_ols.R</code> will estimate a OLS model for a given dataset when you provide the necessary inputs.</p>
+<ol style="list-style-type: decimal">
+<li>What inputs do you need to provide?</li>
+<li>What outputs will be produced?</li>
+<li>Write Snakemake rules to estimate the solow model for each subset of data.</li>
+</ol>
+
+</div>
 </div>
 </div>
             </section>

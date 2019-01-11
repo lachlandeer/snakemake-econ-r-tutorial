@@ -561,12 +561,10 @@ We are going to start at the beginning with data management.
 Recall that we have the following files in our data management
 subdirectory, \texttt{src/data-management}:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{rename_variables.R}
-\KeywordTok{gen_reg_vars.R}
-\end{Highlighting}
-\end{Shaded}
+\begin{verbatim}
+rename_variables.R
+gen_reg_vars.R
+\end{verbatim}
 
 We will need to run each of these scripts sequentially. First we want to
 run the script \texttt{rename\_variables.R} to tidy up the variable
@@ -677,6 +675,312 @@ important to wrap each of these paths into quotations, and to separate
 each of the multiple inputs and outputs with a comma.
 
 \section{Our First Rule}\label{our-first-rule}
+
+\subsection{Constructing the Rule}\label{constructing-the-rule}
+
+As mentioned above, we will start with the data management step.
+
+First script to run is \texttt{rename\_variables.R} which is located in
+the data management subdirectory. This is a simple script that renames
+some variables for us to be easier to understand.
+
+We can then start our snakemake script by adding this script as an
+input:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{rule_name:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/data-management/rename_variables.R"}\NormalTok{,}
+        \KeywordTok{input_name2} \NormalTok{= }\StringTok{"PATH/TO/input_two"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{output_name1} \NormalTok{= }\StringTok{"PATH/TO/SAVE/output_one"}\NormalTok{,}
+        \KeywordTok{output_name2} \NormalTok{= }\StringTok{"PATH/TO/SAVE/output_two"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"HOW TO MIX IT ALL TOGETHER"}
+\end{Highlighting}
+\end{Shaded}
+
+Next, we want to add any additional inputs and also specify any outputs
+that the file produces. We have set up all R scripts in this example to
+provide us with `help' so that we know what we might need to add. To
+find out what inputs are required and what outputs are produced, we use
+the \texttt{-\/-help} flag when calling the file with \texttt{R}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{Rscript} \NormalTok{src/data-management/rename_variables.R --help}
+\end{Highlighting}
+\end{Shaded}
+
+And the following output is produced:
+
+\begin{verbatim}
+Usage: src/data-management/rename_variables.R [options]
+
+
+Options:
+    -d CHARACTER, --data=CHARACTER
+        stata dataset file name
+
+    -o CHARACTER, --out=CHARACTER
+        output file name [default = out.csv]
+
+    -h, --help
+        Show this help message and exit
+\end{verbatim}
+
+This suggests the script needs \ldots{}
+
+We update our \texttt{rename\_variables} as:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{rename_vars:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/data-management/rename_variables.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"src/data/mrw.dta"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{data} \NormalTok{= }\StringTok{"out/data/mrw_renamed.csv"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"HOW TO MIX IT ALL TOGETHER"}
+\end{Highlighting}
+\end{Shaded}
+
+Next we provide a recipe telling snakemake how to mix the inputs to
+create the outputs:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{rename_vars:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/data-management/rename_variables.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"src/data/mrw.dta"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{data} \NormalTok{= }\StringTok{"out/data/mrw_renamed.csv"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --out \{output.data\}"}
+\end{Highlighting}
+\end{Shaded}
+
+We can now try and run snakemake to execute this rule \ldots{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake}
+\end{Highlighting}
+\end{Shaded}
+
+Stuff happens \ldots{}
+
+\subsection{Analysing Output}\label{analysing-output}
+
+We can look into our output directory to see if anything has happened:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{ls} \NormalTok{out/data/}
+\end{Highlighting}
+\end{Shaded}
+
+which yields
+
+\begin{verbatim}
+mrw_renamed.csv
+\end{verbatim}
+
+Our file has been created as we expected.
+
+Try and run snakemake again
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake}
+\end{Highlighting}
+\end{Shaded}
+
+and we see the following output:
+
+\begin{verbatim}
+Building DAG of jobs...
+Nothing to be done.
+\end{verbatim}
+
+Why?
+
+Snakemake provides the a \emph{summary} option which tells us what is
+going on:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{snakemake} \NormalTok{--summary}
+\end{Highlighting}
+\end{Shaded}
+
+The output is:
+
+\begin{verbatim}
+Building DAG of jobs...
+output_file                       date                    rule      version  log-file(s)    status  plan
+out/data/mrw_renamed.csv    Thu Jan 10 20:31:08 2019    rename_vars    -                     ok     no update
+\end{verbatim}
+
+Explain what this tells us \ldots{}
+
+Suppose we updated one of the inputs \ldots{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{touch} \NormalTok{src/data-management/rename_variables.R}
+\end{Highlighting}
+\end{Shaded}
+
+and then look at the summary from snakemake:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Building DAG of jobs...
+output_file                        date                    rule     version log-file(s)      status                plan
+out/data/mrw_renamed.csv    Thu Jan 10 20:31:08 2019    rename_vars    -                updated input files update pending
+\end{verbatim}
+
+What this means?
+
+Run snakemake to build the output:
+
+\begin{verbatim}
+snakemake
+\end{verbatim}
+
+\subsection*{Exercise: Deleting Output}\label{exercise-deleting-output}
+\addcontentsline{toc}{subsection}{Exercise: Deleting Output}
+
+Delete the output \texttt{out/data/mrw\_renamed.csv}. Run
+\texttt{snakemake\ -\/-summary} and explain the output it produced.
+
+\section{Creating a Second Rule}\label{creating-a-second-rule}
+
+The second step in our data management is to create some variables we
+will use in our regression analysis. The script
+\texttt{gen\_reg\_vars.R} in the \texttt{src/data-management} folder
+does this for us. We are going to build a rule called
+\texttt{gen\_regression\_vars} to do this in Snakemake. Let's see what
+the script expects to be passed:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{Rscript} \NormalTok{src/data-management/gen_reg_vars.R --help}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Usage: src/data-management/gen_reg_vars.R [options]
+
+
+Options:
+    -d CHARACTER, --data=CHARACTER
+        a csv file name
+
+    -p CHARACTER, --param=CHARACTER
+        a file name containing model parameters
+
+    -o CHARACTER, --out=CHARACTER
+        output file name [default = out.csv]
+
+    -h, --help
+        Show this help message and exit
+\end{verbatim}
+
+So we need to provide:
+
+to provide the output \ldots{}
+
+Let's create this rule:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{gen_regression_vars:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/data-management/gen_reg_vars.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"out/data/mrw_renamed.csv"}\NormalTok{,}
+        \KeywordTok{params} \NormalTok{= }\StringTok{"src/data-specs/param_solow.json"}\NormalTok{,}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{data} \NormalTok{= }\StringTok{"out/data/mrw_complete.csv"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --param \{input.params\} \textbackslash{}}
+\StringTok{            --out \{output.data\}"}
+\end{Highlighting}
+\end{Shaded}
+
+What will Snakemake want to do next? Let's use the summary option to see
+\ldots{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake} \NormalTok{--summary}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Building DAG of jobs...
+output_file                    date                     rule                  version   log-file(s) status     plan
+out/data/mrw_complete.csv   -                           gen_regression_vars     -                   missing update pending
+out/data/mrw_renamed.csv    Fri Jan 11 13:40:07 2019    rename_vars             -                   ok          no update
+\end{verbatim}
+
+Explain what this means
+
+Let's run snakemake to build our new file:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake}
+\end{Highlighting}
+\end{Shaded}
+
+When we look at our output directory:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{ls} \NormalTok{out/data/}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+mrw_complete.csv  mrw_renamed.csv
+\end{verbatim}
+
+So we see that our data set has been built.
+
+\subsection*{Exercise: Creating Rules}\label{exercise-creating-rules}
+\addcontentsline{toc}{subsection}{Exercise: Creating Rules}
+
+The MRW paper estimates the Solow model for three subsets of data. You
+need to create rules to do estimate the Solow model for each of these
+data sets. The R script \texttt{src/analysis/estimate\_ols.R} will
+estimate a OLS model for a given dataset when you provide the necessary
+inputs.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  What inputs do you need to provide?
+\item
+  What outputs will be produced?
+\item
+  Write Snakemake rules to estimate the solow model for each subset of
+  data.
+\end{enumerate}
 
 \chapter{Pattern Rules}\label{pattern-rules}
 
