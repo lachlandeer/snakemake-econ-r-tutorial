@@ -15,7 +15,7 @@ We are going to start at the beginning with data management.
 
 Recall that we have the following files in our data management subdirectory, `src/data-management`:
 
-```{r datamgt-scripts, engine = 'bash', eval = FALSE}
+```{r datamgt-scripts, engine = 'out', eval = FALSE}
 rename_variables.R
 gen_reg_vars.R
 ```
@@ -98,3 +98,254 @@ Each input and each output are given names, for example `input_name1` which take
 It is important to wrap each of these paths into quotations, and to separate each of the multiple inputs and outputs with a comma.
 
 ## Our First Rule
+
+
+### Constructing the Rule
+As mentioned above, we will start with the data management step.
+
+First script to run is `rename_variables.R` which is located in the data management subdirectory.
+This is a simple script that renames some variables for us to be easier to understand.
+
+We can then start our snakemake script by adding this script as an input:
+
+```{r rename-vars, engine = 'bash', eval = FALSE}
+rule rule_name:
+    input:
+        script = "src/data-management/rename_variables.R",
+        input_name2 = "PATH/TO/input_two"
+    output:
+        output_name1 = "PATH/TO/SAVE/output_one",
+        output_name2 = "PATH/TO/SAVE/output_two"
+    shell:
+        "HOW TO MIX IT ALL TOGETHER"
+```
+
+Next, we want to add any additional inputs and also specify any outputs that the file produces.
+We have set up all R scripts in this example to provide us with 'help' so that we know what we might need to add.
+To find out what inputs are required and what outputs are produced, we use the `--help` flag when calling the file with `R`:
+
+```{r rename-vars-2, engine = 'bash', eval = FALSE}
+$ Rscript src/data-management/rename_variables.R --help
+```
+
+And the following output is produced:
+
+```{r rename-vars-3, engine = 'out', eval = FALSE}
+Usage: src/data-management/rename_variables.R [options]
+
+
+Options:
+	-d CHARACTER, --data=CHARACTER
+		stata dataset file name
+
+	-o CHARACTER, --out=CHARACTER
+		output file name [default = out.csv]
+
+	-h, --help
+		Show this help message and exit
+```
+
+This suggests the script needs ...
+
+We update our `rename_variables` as:
+
+```{r rename-vars-4, engine = 'bash', eval = FALSE}
+rule rename_vars:
+    input:
+        script = "src/data-management/rename_variables.R",
+        data   = "src/data/mrw.dta"
+    output:
+        data = "out/data/mrw_renamed.csv"
+    shell:
+        "HOW TO MIX IT ALL TOGETHER"
+```
+
+Next we provide a recipe telling snakemake how to mix the inputs to create the outputs:
+
+```{r rename-vars-5, engine = 'bash', eval = FALSE}
+rule rename_vars:
+    input:
+        script = "src/data-management/rename_variables.R",
+        data   = "src/data/mrw.dta"
+    output:
+        data = "out/data/mrw_renamed.csv"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --out {output.data}"
+```
+
+We can now try and run snakemake to execute this rule ...
+
+```{r rename-vars-6, engine = 'bash', eval = FALSE}
+$ snakemake
+```
+
+Stuff happens ...
+
+### Analysing Output
+
+We can look into our output directory to see if anything has happened:
+
+```{r, engine = 'bash', eval = FALSE}
+$ ls out/data/
+```
+which yields
+
+```{r, engine = 'out', eval=FALSE}
+mrw_renamed.csv
+```
+
+Our file has been created as we expected.
+
+Try and run snakemake again
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake
+```
+
+and we see the following output:
+
+```{r, engine = 'out', eval = FALSE}
+Building DAG of jobs...
+Nothing to be done.
+```
+
+Why?
+
+Snakemake provides the a *summary* option which tells us what is going on:
+```{r, engine = 'bash', eval = FALSE}
+snakemake --summary
+```
+
+The output is:
+```{r, engine = 'out', eval = FALSE}
+Building DAG of jobs...
+output_file	                      date	                  rule	    version	 log-file(s)	status	plan
+out/data/mrw_renamed.csv	Thu Jan 10 20:31:08 2019	rename_vars	   -		             ok	    no update
+
+```
+
+Explain what this tells us ...
+
+Suppose we updated one of the inputs ...
+
+```{r, engine = 'bash', eval = FALSE}
+$ touch src/data-management/rename_variables.R
+```
+
+and then look at the summary from snakemake:
+
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake
+```
+
+```{r, engine = 'out', eval = FALSE}
+Building DAG of jobs...
+output_file	                       date	                   rule	    version	log-file(s)	     status	               plan
+out/data/mrw_renamed.csv	Thu Jan 10 20:31:08 2019	rename_vars	   -		        updated input files	update pending
+```
+
+What this means?
+
+Run snakemake to build the output:
+
+```
+snakemake
+```
+
+### Exercise: Deleting Output {- .exercise}
+Delete the output `out/data/mrw_renamed.csv`.
+Run `snakemake --summary` and explain the output it produced.
+
+## Creating a Second Rule
+
+The second step in our data management is to create some variables we will use in our regression analysis.
+The script `gen_reg_vars.R` in the `src/data-management` folder does this for us.
+We are going to build a rule called `gen_regression_vars` to do this in Snakemake.
+Let's see what the script expects to be passed:
+
+```{r, engine = 'bash', eval = FALSE}
+$ Rscript src/data-management/gen_reg_vars.R --help
+```
+
+```{r, engine = 'out', eval = FALSE}
+Usage: src/data-management/gen_reg_vars.R [options]
+
+
+Options:
+	-d CHARACTER, --data=CHARACTER
+		a csv file name
+
+	-p CHARACTER, --param=CHARACTER
+		a file name containing model parameters
+
+	-o CHARACTER, --out=CHARACTER
+		output file name [default = out.csv]
+
+	-h, --help
+		Show this help message and exit
+
+```
+
+So we need to provide:
+
+to provide the output ...
+
+Let's create this rule:
+
+```{r, engine = 'bash', eval = FALSE}
+rule gen_regression_vars:
+    input:
+        script = "src/data-management/gen_reg_vars.R",
+        data   = "out/data/mrw_renamed.csv",
+        params = "src/data-specs/param_solow.json",
+    output:
+        data = "out/data/mrw_complete.csv"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --param {input.params} \
+            --out {output.data}"
+```
+
+What will Snakemake want to do next? Let's use the summary option to see ...
+
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake --summary
+```
+
+```{r, engine = 'out', eval = FALSE}
+Building DAG of jobs...
+output_file	                   date	                    rule	              version	log-file(s)	status	   plan
+out/data/mrw_complete.csv	-	                        gen_regression_vars	    -		            missing	update pending
+out/data/mrw_renamed.csv	Fri Jan 11 13:40:07 2019	rename_vars	            -		            ok	        no update
+```
+
+Explain what this means
+
+Let's run snakemake to build our new file:
+
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake
+```
+
+When we look at our output directory:
+
+```{r, engine = 'bash', eval = FALSE}
+$ ls out/data/
+```
+
+```{r, engine = 'out', eval = FALSE}
+mrw_complete.csv  mrw_renamed.csv
+```
+
+So we see that our data set has been built.
+
+### Exercise: Creating Rules {- .exercise}
+The MRW paper estimates the Solow model for three subsets of data.
+You need to create rules to do estimate the Solow model for each of these data sets.
+The R script `src/analysis/estimate_ols.R` will estimate a OLS model for a given dataset when you provide the necessary inputs.
+
+1. What inputs do you need to provide?
+2. What outputs will be produced?
+3. Write Snakemake rules to estimate the solow model for each subset of data.
