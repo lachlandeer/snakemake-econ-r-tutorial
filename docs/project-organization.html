@@ -33,7 +33,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="intro.html">
+<link rel="prev" href="part-i.html">
 <link rel="next" href="initial-steps-with-snakemake.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -104,52 +104,54 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="./">Reproducible Research Workflows with Snakemake and `R`</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Prerequisites</a></li>
-<li class="chapter" data-level="2" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>2</b> Motivating &amp; Rationale</a><ul>
-<li class="chapter" data-level="2.1" data-path="intro.html"><a href="intro.html#a-case-for-reproducibility"><i class="fa fa-check"></i><b>2.1</b> A Case for Reproducibility</a><ul>
-<li class="chapter" data-level="2.1.1" data-path="intro.html"><a href="intro.html#how-far-to-go-in-the-quest-for-reproducibility"><i class="fa fa-check"></i><b>2.1.1</b> How far to go in the quest for reproducibility?</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Prerequisites</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Motivating &amp; Rationale</a><ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#a-case-for-reproducibility"><i class="fa fa-check"></i><b>1.1</b> A Case for Reproducibility</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#how-far-to-go-in-the-quest-for-reproducibility"><i class="fa fa-check"></i><b>1.1.1</b> How far to go in the quest for reproducibility?</a></li>
 </ul></li>
-<li class="chapter" data-level="2.2" data-path="intro.html"><a href="intro.html#what-is-snakemake-why-should-you-use-it"><i class="fa fa-check"></i><b>2.2</b> What is <code>Snakemake</code> &amp; Why Should you use it?</a></li>
-<li class="chapter" data-level="2.3" data-path="intro.html"><a href="intro.html#why-r"><i class="fa fa-check"></i><b>2.3</b> Why <code>R</code>?</a></li>
-<li class="chapter" data-level="2.4" data-path="intro.html"><a href="intro.html#working-example-replicating-mankiw-romer-and-weils-1992-qje"><i class="fa fa-check"></i><b>2.4</b> Working Example: Replicating Mankiw, Romer and Weil’s 1992 QJE</a></li>
-<li class="chapter" data-level="2.5" data-path="intro.html"><a href="intro.html#the-way-forward"><i class="fa fa-check"></i><b>2.5</b> The way forward</a><ul>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#what-is-snakemake-why-should-you-use-it"><i class="fa fa-check"></i><b>1.2</b> What is <code>Snakemake</code> &amp; Why Should you use it?</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#why-r"><i class="fa fa-check"></i><b>1.3</b> Why <code>R</code>?</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#working-example-replicating-mankiw-romer-and-weils-1992-qje"><i class="fa fa-check"></i><b>1.4</b> Working Example: Replicating Mankiw, Romer and Weil’s 1992 QJE</a></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#the-way-forward"><i class="fa fa-check"></i><b>1.5</b> The way forward</a><ul>
 <li class="chapter" data-level="" data-path="intro.html"><a href="intro.html#exercise-your-own-projects-steps"><i class="fa fa-check"></i>Exercise: Your own project’s steps</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="project-organization.html"><a href="project-organization.html"><i class="fa fa-check"></i><b>3</b> Project Organization</a><ul>
-<li class="chapter" data-level="3.1" data-path="project-organization.html"><a href="project-organization.html#project-structure-i-separating-inputs-and-outputs"><i class="fa fa-check"></i><b>3.1</b> Project Structure I: Separating Inputs and Outputs</a><ul>
-<li class="chapter" data-level="3.1.1" data-path="project-organization.html"><a href="project-organization.html#the-root-folder"><i class="fa fa-check"></i><b>3.1.1</b> The Root Folder</a></li>
-<li class="chapter" data-level="3.1.2" data-path="project-organization.html"><a href="project-organization.html#the-src-folder"><i class="fa fa-check"></i><b>3.1.2</b> The <code>src</code> folder</a></li>
-<li class="chapter" data-level="3.1.3" data-path="project-organization.html"><a href="project-organization.html#the-out-folder"><i class="fa fa-check"></i><b>3.1.3</b> The <code>out</code> folder</a></li>
-<li class="chapter" data-level="3.1.4" data-path="project-organization.html"><a href="project-organization.html#the-log-folder"><i class="fa fa-check"></i><b>3.1.4</b> The <code>log</code> folder</a></li>
-<li class="chapter" data-level="3.1.5" data-path="project-organization.html"><a href="project-organization.html#exploring-the-full-structure-of-the-mrw-replication-project"><i class="fa fa-check"></i><b>3.1.5</b> Exploring the Full Structure of the MRW Replication Project</a></li>
+<li class="chapter" data-level="" data-path="part-i.html"><a href="part-i.html"><i class="fa fa-check"></i>PART I</a></li>
+<li class="chapter" data-level="2" data-path="project-organization.html"><a href="project-organization.html"><i class="fa fa-check"></i><b>2</b> Project Organization</a><ul>
+<li class="chapter" data-level="2.1" data-path="project-organization.html"><a href="project-organization.html#project-structure-i-separating-inputs-and-outputs"><i class="fa fa-check"></i><b>2.1</b> Project Structure I: Separating Inputs and Outputs</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="project-organization.html"><a href="project-organization.html#the-root-folder"><i class="fa fa-check"></i><b>2.1.1</b> The Root Folder</a></li>
+<li class="chapter" data-level="2.1.2" data-path="project-organization.html"><a href="project-organization.html#the-src-folder"><i class="fa fa-check"></i><b>2.1.2</b> The <code>src</code> folder</a></li>
+<li class="chapter" data-level="2.1.3" data-path="project-organization.html"><a href="project-organization.html#the-out-folder"><i class="fa fa-check"></i><b>2.1.3</b> The <code>out</code> folder</a></li>
+<li class="chapter" data-level="2.1.4" data-path="project-organization.html"><a href="project-organization.html#the-log-folder"><i class="fa fa-check"></i><b>2.1.4</b> The <code>log</code> folder</a></li>
+<li class="chapter" data-level="2.1.5" data-path="project-organization.html"><a href="project-organization.html#exploring-the-full-structure-of-the-mrw-replication-project"><i class="fa fa-check"></i><b>2.1.5</b> Exploring the Full Structure of the MRW Replication Project</a></li>
 </ul></li>
-<li class="chapter" data-level="3.2" data-path="project-organization.html"><a href="project-organization.html#project-structure-ii-separating-logical-chunks-of-the-project"><i class="fa fa-check"></i><b>3.2</b> Project Structure II: Separating Logical Chunks of the Project</a><ul>
-<li class="chapter" data-level="3.2.1" data-path="project-organization.html"><a href="project-organization.html#exploring-the-structure-of-the-mrw-replication-subdirectories"><i class="fa fa-check"></i><b>3.2.1</b> Exploring the Structure of the MRW Replication Subdirectories</a></li>
+<li class="chapter" data-level="2.2" data-path="project-organization.html"><a href="project-organization.html#project-structure-ii-separating-logical-chunks-of-the-project"><i class="fa fa-check"></i><b>2.2</b> Project Structure II: Separating Logical Chunks of the Project</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="project-organization.html"><a href="project-organization.html#exploring-the-structure-of-the-mrw-replication-subdirectories"><i class="fa fa-check"></i><b>2.2.1</b> Exploring the Structure of the MRW Replication Subdirectories</a></li>
 <li class="chapter" data-level="" data-path="project-organization.html"><a href="project-organization.html#exercise-exploring-the-remaining-subdirectories"><i class="fa fa-check"></i>Exercise: Exploring the Remaining Subdirectories</a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="project-organization.html"><a href="project-organization.html#project-structure-iii-separating-input-parameters-from-code"><i class="fa fa-check"></i><b>3.3</b> Project Structure III: Separating Input Parameters from Code</a><ul>
-<li class="chapter" data-level="3.3.1" data-path="project-organization.html"><a href="project-organization.html#exploring-parameter-separation-in-the-mrw-replication-project"><i class="fa fa-check"></i><b>3.3.1</b> Exploring Parameter Separation in the MRW Replication Project</a></li>
+<li class="chapter" data-level="2.3" data-path="project-organization.html"><a href="project-organization.html#project-structure-iii-separating-input-parameters-from-code"><i class="fa fa-check"></i><b>2.3</b> Project Structure III: Separating Input Parameters from Code</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="project-organization.html"><a href="project-organization.html#exploring-parameter-separation-in-the-mrw-replication-project"><i class="fa fa-check"></i><b>2.3.1</b> Exploring Parameter Separation in the MRW Replication Project</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html"><i class="fa fa-check"></i><b>4</b> Initial Steps with Snakemake</a><ul>
-<li class="chapter" data-level="4.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#starting-a-research-project"><i class="fa fa-check"></i><b>4.1</b> Starting a Research Project</a></li>
-<li class="chapter" data-level="4.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-beginning-of-a-snakefile"><i class="fa fa-check"></i><b>4.2</b> The Beginning of a Snakefile</a></li>
-<li class="chapter" data-level="4.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#rule-structure"><i class="fa fa-check"></i><b>4.3</b> Rule Structure</a></li>
-<li class="chapter" data-level="4.4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#our-first-rule"><i class="fa fa-check"></i><b>4.4</b> Our First Rule</a></li>
+<li class="chapter" data-level="3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html"><i class="fa fa-check"></i><b>3</b> Initial Steps with Snakemake</a><ul>
+<li class="chapter" data-level="3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#starting-a-research-project"><i class="fa fa-check"></i><b>3.1</b> Starting a Research Project</a></li>
+<li class="chapter" data-level="3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-beginning-of-a-snakefile"><i class="fa fa-check"></i><b>3.2</b> The Beginning of a Snakefile</a></li>
+<li class="chapter" data-level="3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#rule-structure"><i class="fa fa-check"></i><b>3.3</b> Rule Structure</a></li>
+<li class="chapter" data-level="3.4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#our-first-rule"><i class="fa fa-check"></i><b>3.4</b> Our First Rule</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="pattern-rules.html"><a href="pattern-rules.html"><i class="fa fa-check"></i><b>5</b> Pattern Rules</a></li>
-<li class="chapter" data-level="6" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>6</b> Wildcards</a></li>
-<li class="chapter" data-level="7" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>7</b> Adding Parameters</a></li>
-<li class="chapter" data-level="8" data-path="an-all-rule.html"><a href="an-all-rule.html"><i class="fa fa-check"></i><b>8</b> An <code>all</code> Rule</a></li>
-<li class="chapter" data-level="9" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>9</b> Logging Output and Errors</a></li>
-<li class="chapter" data-level="10" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>10</b> Self Documenting Help</a></li>
-<li class="chapter" data-level="11" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>11</b> Config Files</a></li>
-<li class="chapter" data-level="12" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>12</b> Subworkflows: Divide and Conquer</a></li>
-<li class="chapter" data-level="13" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>13</b> Reproducible Articles with Rmd</a></li>
-<li class="chapter" data-level="14" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>14</b> Reproducible Slides with Rmd</a></li>
-<li class="chapter" data-level="15" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>15</b> Package Dependencies with Packrat</a></li>
-<li class="chapter" data-level="16" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>16</b> Containers</a></li>
+<li class="chapter" data-level="4" data-path="pattern-rules.html"><a href="pattern-rules.html"><i class="fa fa-check"></i><b>4</b> Pattern Rules</a></li>
+<li class="chapter" data-level="5" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>5</b> Wildcards</a></li>
+<li class="chapter" data-level="6" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>6</b> Adding Parameters</a></li>
+<li class="chapter" data-level="7" data-path="an-all-rule.html"><a href="an-all-rule.html"><i class="fa fa-check"></i><b>7</b> An <code>all</code> Rule</a></li>
+<li class="chapter" data-level="8" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>8</b> Logging Output and Errors</a></li>
+<li class="chapter" data-level="9" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>9</b> Self Documenting Help</a></li>
+<li class="chapter" data-level="10" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>10</b> Config Files</a></li>
+<li class="chapter" data-level="11" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>11</b> Subworkflows: Divide and Conquer</a></li>
+<li class="chapter" data-level="" data-path="part-ii.html"><a href="part-ii.html"><i class="fa fa-check"></i>PART II</a></li>
+<li class="chapter" data-level="12" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>12</b> Reproducible Articles with Rmd</a></li>
+<li class="chapter" data-level="13" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>13</b> Reproducible Slides with Rmd</a></li>
+<li class="chapter" data-level="14" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>14</b> Package Dependencies with Packrat</a></li>
+<li class="chapter" data-level="15" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>15</b> Containers</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -171,9 +173,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="project-organization" class="section level1">
-<h1><span class="header-section-number">Chapter 3</span> Project Organization</h1>
+<h1><span class="header-section-number">Chapter 2</span> Project Organization</h1>
 <div id="project-structure-i-separating-inputs-and-outputs" class="section level2">
-<h2><span class="header-section-number">3.1</span> Project Structure I: Separating Inputs and Outputs</h2>
+<h2><span class="header-section-number">2.1</span> Project Structure I: Separating Inputs and Outputs</h2>
 <p>Structuring our project and the locations of files is an important concept.</p>
 <p>Let’s look at the structure of our project’s folder. Open a terminal and change into this directory</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cd</span> YOUR/PATH/TO/snakemake-econ-r-student</code></pre></div>
@@ -195,22 +197,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <p>We discuss each of these in turn.</p>
 <div id="the-root-folder" class="section level3">
-<h3><span class="header-section-number">3.1.1</span> The Root Folder</h3>
+<h3><span class="header-section-number">2.1.1</span> The Root Folder</h3>
 <p>TBD</p>
 </div>
 <div id="the-src-folder" class="section level3">
-<h3><span class="header-section-number">3.1.2</span> The <code>src</code> folder</h3>
+<h3><span class="header-section-number">2.1.2</span> The <code>src</code> folder</h3>
 <p>TBD</p>
 </div>
 <div id="the-out-folder" class="section level3">
-<h3><span class="header-section-number">3.1.3</span> The <code>out</code> folder</h3>
+<h3><span class="header-section-number">2.1.3</span> The <code>out</code> folder</h3>
 <p>TBD</p>
 </div>
 <div id="the-log-folder" class="section level3">
-<h3><span class="header-section-number">3.1.4</span> The <code>log</code> folder</h3>
+<h3><span class="header-section-number">2.1.4</span> The <code>log</code> folder</h3>
 </div>
 <div id="exploring-the-full-structure-of-the-mrw-replication-project" class="section level3">
-<h3><span class="header-section-number">3.1.5</span> Exploring the Full Structure of the MRW Replication Project</h3>
+<h3><span class="header-section-number">2.1.5</span> Exploring the Full Structure of the MRW Replication Project</h3>
 <p>Now, let’s look at all contents of this main projects directory:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">ls</span> -F .</code></pre></div>
 <p>We see the following folder structure</p>
@@ -226,7 +228,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 </div>
 <div id="project-structure-ii-separating-logical-chunks-of-the-project" class="section level2">
-<h2><span class="header-section-number">3.2</span> Project Structure II: Separating Logical Chunks of the Project</h2>
+<h2><span class="header-section-number">2.2</span> Project Structure II: Separating Logical Chunks of the Project</h2>
 <p>As we have mentioned above, to keep our project’s structure clean, we want to keep all the computer code inside the <code>src</code> directory. Let’s have a look at the content of <code>src</code>.</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">ls</span> -F src/</code></pre></div>
 <p>We see the following output:</p>
@@ -243,7 +245,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The type of content we expect in each file is:</p>
 <p>TBD</p>
 <div id="exploring-the-structure-of-the-mrw-replication-subdirectories" class="section level3">
-<h3><span class="header-section-number">3.2.1</span> Exploring the Structure of the MRW Replication Subdirectories</h3>
+<h3><span class="header-section-number">2.2.1</span> Exploring the Structure of the MRW Replication Subdirectories</h3>
 <p>We begin our exploration of the project by looking at the folders that appear to be related to the data. If we look inside the <code>data</code> directory</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">ls</span> -F src/data/</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">mrw.dta</span></code></pre></div>
@@ -279,7 +281,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 </div>
 <div id="project-structure-iii-separating-input-parameters-from-code" class="section level2">
-<h2><span class="header-section-number">3.3</span> Project Structure III: Separating Input Parameters from Code</h2>
+<h2><span class="header-section-number">2.3</span> Project Structure III: Separating Input Parameters from Code</h2>
 <p>Next we look at the somewhat mysteriously named <code>data-specs</code> folder.</p>
 <p>And if we explore the folder’s contents:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">ls</span> -F src/data-specs/</code></pre></div>
@@ -294,7 +296,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>We see an a variable <code>KEEP_CONDITION</code> which is storing a string <code>&quot;oecd == 1&quot;</code>.</p>
 <p>TBD: Why have we done this? See below.</p>
 <div id="exploring-parameter-separation-in-the-mrw-replication-project" class="section level3">
-<h3><span class="header-section-number">3.3.1</span> Exploring Parameter Separation in the MRW Replication Project</h3>
+<h3><span class="header-section-number">2.3.1</span> Exploring Parameter Separation in the MRW Replication Project</h3>
 
 </div>
 </div>
@@ -304,7 +306,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           </div>
         </div>
       </div>
-<a href="intro.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="part-i.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="initial-steps-with-snakemake.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>

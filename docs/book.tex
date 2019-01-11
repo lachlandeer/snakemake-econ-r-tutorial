@@ -158,7 +158,8 @@
 \setcounter{tocdepth}{1}
 \tableofcontents
 }
-\chapter{Prerequisites}\label{prerequisites}
+\chapter*{Prerequisites}\label{prerequisites}
+\addcontentsline{toc}{chapter}{Prerequisites}
 
 This is a \emph{sample} book written in \textbf{Markdown}. You can use
 anything that Pandoc's Markdown supports, e.g., a math equation
@@ -254,6 +255,9 @@ project). Does your project fit into the 5 steps we described above? If
 not, what would you modify or add to our 5 steps? (Do you think this
 would destroy the general principles we will encourage over the next
 chapters?)
+
+\chapter*{PART I}\label{part-i}
+\addcontentsline{toc}{chapter}{PART I}
 
 \chapter{Project Organization}\label{project-organization}
 
@@ -755,6 +759,9 @@ Content is TBD
 Conquer}\label{subworkflows-divide-and-conquer}
 
 Content is TBD
+
+\chapter*{PART II}\label{part-ii}
+\addcontentsline{toc}{chapter}{PART II}
 
 \chapter{Reproducible Articles with
 Rmd}\label{reproducible-articles-with-rmd}
