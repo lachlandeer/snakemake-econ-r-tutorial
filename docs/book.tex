@@ -590,13 +590,8 @@ When you open it it should look as follows:
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# Main Workflow - SOME PROJECT}
+\CommentTok{#}
 \CommentTok{# Contributors: YOUR NAME(S)}
-\ImportTok{import} \NormalTok{glob, os}
-\CommentTok{# --- Variable Declarations ---- #}
-\NormalTok{runR }\OperatorTok{=} \StringTok{"Rscript --no-save --no-restore --verbose"}
-\NormalTok{logAll }\OperatorTok{=} \StringTok{"2>&1"}
-\CommentTok{# --- Main Build Rules --- #}
-\CommentTok{## To be constructed}
 \end{Highlighting}
 \end{Shaded}
 
@@ -612,42 +607,11 @@ list of contributors. For us, the top 2 lines becomes:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Main Workflow - Replicating MRW}
+\CommentTok{# Main Workflow - MRW Replication}
+\CommentTok{#}
 \CommentTok{# Contributors: @lachlandeer, @julianlanger}
 \end{Highlighting}
 \end{Shaded}
-
-Next, we see the line:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\ImportTok{import} \NormalTok{glob, os}
-\end{Highlighting}
-\end{Shaded}
-
-What we are doing here is loading two additional libraries that will
-help us later on with some functionality. Essentially, we want some
-``helper'' functions to make the rest of our Snakemake process easier to
-build. When we get to the point we need them, we will be more explicit.
-
-The lines:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# --- Variable Declarations ---- #}
-\NormalTok{runR }\OperatorTok{=} \StringTok{"Rscript --no-save --no-restore --verbose"}
-\NormalTok{logAll }\OperatorTok{=} \StringTok{"2>&1"}
-\end{Highlighting}
-\end{Shaded}
-
-are creating some shorthand notation for us. \texttt{runR} will be what
-we want to use when we need to execute an \texttt{R} script. We declare
-the shorthand so will not need to always write out the rather long
-statement we have assigned to the value \texttt{runR.} \texttt{logAll}
-is a code snippet that will log all the output from code execution and
-all error messages to one file. This is useful when debugging errors in
-our code - which we hope won't happen too often. The exact value here
-(\texttt{"2\textgreater{}\&1"}) is specific to the R language.
 
 The next few lines are:
 
@@ -658,18 +622,10 @@ The next few lines are:
 \end{Highlighting}
 \end{Shaded}
 
-These are comments. We are using the
+These are more comments. We are using the
 \texttt{\#\ -\/-\/-\ Something\ -\/-\/-\ \#} notation to break up the
 code into logical blocks. It is in this block that we will assemble the
 rules on which our project will be built.
-
-Looking generally at the code, if you have some familarity with the
-Python programming language you might recognise that this looks quite
-some form of Python code. You are correct - Snakemake is written using
-Python, so lots of what we do here will look like Python code. If you
-are unfamiliar with Python, do not worry - there is nothing here that
-will prohibit you from going further, and we will explain what is
-happening as we go.
 
 \section{Rule Structure}\label{rule-structure}
 
@@ -692,8 +648,6 @@ to use to construct a rule are:
 \item
   the list of outputs produced
 \item
-  a log file, that captures any output that is printed out of \texttt{R}
-\item
   a shell command that tells snakemake how to combine the inputs to
   produce a outputs.
 \end{enumerate}
@@ -711,8 +665,6 @@ provided. We are going to specify rules in the following format:
     \KeywordTok{output}\NormalTok{:}
         \KeywordTok{output_name1} \NormalTok{= }\StringTok{"PATH/TO/SAVE/output_one"}\NormalTok{,}
         \KeywordTok{output_name2} \NormalTok{= }\StringTok{"PATH/TO/SAVE/output_two"}
-    \KeywordTok{log}\NormalTok{:}
-        \KeywordTok{txt_file} \NormalTok{= }\StringTok{"PATH/TO/SAVE/LOGFILE/log_file"}
     \KeywordTok{shell}\NormalTok{:}
         \StringTok{"HOW TO MIX IT ALL TOGETHER"}
 \end{Highlighting}

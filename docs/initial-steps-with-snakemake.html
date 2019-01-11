@@ -193,30 +193,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="the-beginning-of-a-snakefile" class="section level2">
 <h2><span class="header-section-number">3.2</span> The Beginning of a Snakefile</h2>
 <p>We are going to put the collection of rules that build our project into a file. We can then use the <code>Snakemake</code> to execute these rules and build our project. The set of rules we want to construct are going to go into the file called <code>Snakefile</code> - which is the name of a file that Snakemake will look into by default to execite a project. Lets open the file called <code>Snakefile</code> in the project’s main directory. When you open it it should look as follows:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Main Workflow - SOME PROJECT</span>
-<span class="co"># Contributors: YOUR NAME(S)</span>
-<span class="im">import</span> glob, os
-<span class="co"># --- Variable Declarations ---- #</span>
-runR <span class="op">=</span> <span class="st">&quot;Rscript --no-save --no-restore --verbose&quot;</span>
-logAll <span class="op">=</span> <span class="st">&quot;2&gt;&amp;1&quot;</span>
-<span class="co"># --- Main Build Rules --- #</span>
-<span class="co">## To be constructed</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Main Workflow - SOME PROJECT</span>
+<span class="co">#</span>
+<span class="co"># Contributors: YOUR NAME(S)</span></code></pre></div>
 <p>Note that the amount of structure we have here is not totally necessary. However, good structure will make understanding easier later. Let’s go through what we see. The first lines of code are comments, to help us navigate a little and understand what we are looking at. The very first line tells us that this is a project workflow, and then tells us what the particular project is. The second line tells us who contributed to this file. This can be useful so we know who to contact with questions. You should do update the name of the project, and add your name to the list of contributors. For us, the top 2 lines becomes:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Main Workflow - Replicating MRW</span>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Main Workflow - MRW Replication</span>
+<span class="co">#</span>
 <span class="co"># Contributors: @lachlandeer, @julianlanger</span></code></pre></div>
-<p>Next, we see the line:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> glob, os</code></pre></div>
-<p>What we are doing here is loading two additional libraries that will help us later on with some functionality. Essentially, we want some “helper” functions to make the rest of our Snakemake process easier to build. When we get to the point we need them, we will be more explicit.</p>
-<p>The lines:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># --- Variable Declarations ---- #</span>
-runR <span class="op">=</span> <span class="st">&quot;Rscript --no-save --no-restore --verbose&quot;</span>
-logAll <span class="op">=</span> <span class="st">&quot;2&gt;&amp;1&quot;</span></code></pre></div>
-<p>are creating some shorthand notation for us. <code>runR</code> will be what we want to use when we need to execute an <code>R</code> script. We declare the shorthand so will not need to always write out the rather long statement we have assigned to the value <code>runR.</code> <code>logAll</code> is a code snippet that will log all the output from code execution and all error messages to one file. This is useful when debugging errors in our code - which we hope won’t happen too often. The exact value here (<code>&quot;2&gt;&amp;1&quot;</code>) is specific to the R language.</p>
 <p>The next few lines are:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># --- Main Build Rules --- #</span>
 <span class="co">## To be constructed</span></code></pre></div>
-<p>These are comments. We are using the <code># --- Something --- #</code> notation to break up the code into logical blocks. It is in this block that we will assemble the rules on which our project will be built.</p>
-<p>Looking generally at the code, if you have some familarity with the Python programming language you might recognise that this looks quite some form of Python code. You are correct - Snakemake is written using Python, so lots of what we do here will look like Python code. If you are unfamiliar with Python, do not worry - there is nothing here that will prohibit you from going further, and we will explain what is happening as we go.</p>
+<p>These are more comments. We are using the <code># --- Something --- #</code> notation to break up the code into logical blocks. It is in this block that we will assemble the rules on which our project will be built.</p>
 </div>
 <div id="rule-structure" class="section level2">
 <h2><span class="header-section-number">3.3</span> Rule Structure</h2>
@@ -225,7 +212,6 @@ logAll <span class="op">=</span> <span class="st">&quot;2&gt;&amp;1&quot;</span>
 <li>a name for the rule,</li>
 <li>the list of inputs</li>
 <li>the list of outputs produced</li>
-<li>a log file, that captures any output that is printed out of <code>R</code></li>
 <li>a shell command that tells snakemake how to combine the inputs to produce a outputs.</li>
 </ol>
 <p><code>Snakemake</code> expects these components to be provided in a particular way so that it knows what to do with the information you provided. We are going to specify rules in the following format:</p>
@@ -236,8 +222,6 @@ logAll <span class="op">=</span> <span class="st">&quot;2&gt;&amp;1&quot;</span>
     <span class="kw">output</span>:
         <span class="kw">output_name1</span> = <span class="st">&quot;PATH/TO/SAVE/output_one&quot;</span>,
         <span class="kw">output_name2</span> = <span class="st">&quot;PATH/TO/SAVE/output_two&quot;</span>
-    <span class="kw">log</span>:
-        <span class="kw">txt_file</span> = <span class="st">&quot;PATH/TO/SAVE/LOGFILE/log_file&quot;</span>
     <span class="kw">shell</span>:
         <span class="st">&quot;HOW TO MIX IT ALL TOGETHER&quot;</span></code></pre></div>
 <p>We can have as many inputs and outputs as we need to have per rule. Each input and each output are given names, for example <code>input_name1</code> which take the value to the file path and name of the file. It is important to wrap each of these paths into quotations, and to separate each of the multiple inputs and outputs with a comma.</p>

@@ -33,18 +33,10 @@ The set of rules we want to construct are going to go into the file called `Snak
 Lets open the file called `Snakefile` in the project's main directory.
 When you open it it should look as follows:
 
-```{r snakefile-start, engine = 'python', eval = FALSE}
+```{r snakefile-start, engine = 'bash', eval = FALSE}
 # Main Workflow - SOME PROJECT
+#
 # Contributors: YOUR NAME(S)
-
-import glob, os
-
-# --- Variable Declarations ---- #
-runR = "Rscript --no-save --no-restore --verbose"
-logAll = "2>&1"
-
-# --- Main Build Rules --- #
-## To be constructed
 ```
 
 Note that the amount of structure we have here is not totally necessary.
@@ -58,49 +50,21 @@ You should do update the name of the project, and add your name to the list of c
 For us, the top 2 lines becomes:
 
 ```{r snakefile-start-2, engine = 'bash', eval = FALSE}
-# Main Workflow - Replicating MRW
+# Main Workflow - MRW Replication
+#
 # Contributors: @lachlandeer, @julianlanger
 ```
 
-Next, we see the line:
-
-```{r snakefile-start-3, engine = 'python', eval = FALSE}
-import glob, os
-```
-
-What we are doing here is loading two additional libraries that will help us later on with some functionality.
-Essentially, we want some "helper" functions to make the rest of our Snakemake process easier to build.
-When we get to the point we need them, we will be more explicit.
-
-The lines:
-
-```{r snakefile-start-4, engine = 'python', eval = FALSE}
-# --- Variable Declarations ---- #
-runR = "Rscript --no-save --no-restore --verbose"
-logAll = "2>&1"
-```
-
-are creating some shorthand notation for us.
-`runR` will be what we want to use when we need to execute an `R` script.
-We declare the shorthand so will not need to always write out the rather long statement we have assigned to the value `runR.`
-`logAll` is a code snippet that will log all the output from code execution and all error messages to one file.
-This is useful when debugging errors in our code - which we hope won't happen too often.
-The exact value here (`"2>&1"`) is specific to the R language.
-
 The next few lines are:
 
-```{r snakefile-start-5, engine = 'bash', eval = FALSE}
+```{r snakefile-start-3, engine = 'bash', eval = FALSE}
 # --- Main Build Rules --- #
 ## To be constructed
 ```
 
-These are comments.
+These are more comments.
 We are using the `# --- Something --- #` notation to break up the code into logical blocks.
 It is in this block that we will assemble the rules on which our project will be built.
-
-Looking generally at the code, if you have some familarity with the Python programming language you might recognise that this looks quite some form of Python code.
-You are correct - Snakemake is written using Python, so lots of what we do here will look like Python code.
-If you are unfamiliar with Python, do not worry - there is nothing here that will prohibit you from going further, and we will explain what is happening as we go.
 
 ## Rule Structure
 
@@ -112,7 +76,6 @@ The key components we are going to use to construct a rule are:
 (i) a name for the rule,
 (ii) the list of inputs
 (iii) the list of outputs produced
-(iv) a log file, that captures any output that is printed out of `R`
 (iv) a shell command that tells snakemake how to combine the inputs to produce a outputs.
 
 `Snakemake` expects these components to be provided in a particular way so that it knows what to do with the information you provided.
@@ -126,8 +89,6 @@ rule rule_name:
     output:
         output_name1 = "PATH/TO/SAVE/output_one",
         output_name2 = "PATH/TO/SAVE/output_two"
-    log:
-        txt_file = "PATH/TO/SAVE/LOGFILE/log_file"
     shell:
         "HOW TO MIX IT ALL TOGETHER"
 ```
