@@ -297,3 +297,22 @@ Hence, we re-run snakemake to produce all output:
 ```{r, engine = 'bash', eval = FALSE}
 $ snakemake
 ```
+
+### Exercise: Exploring the expand() function I {- .exercise}
+So far we have estimated the basic Solow model.
+MRW also estimate an augmented version of the Solow model, adding human capital.
+The formula required to estimate the augmented model is written up in `src/model-specs/model_aug_solow.json`.
+Use the `expand()` function together with the `estimate_ols.R` script to estimate the augmented solow model on each of the three data subsets.
+The rule structures should look very similar to what we have done so far.
+
+### Exercise: Exploring the expand function II {- .exercise}
+The MRW paper contains three plots.
+Each of these plots use the subset of 'intermediate' countries.
+In the `src/figures/` subdirectory, there are three scripts that reproduce each of the figures.^[
+This is not entirely true, we are yet to figure out how to get the y-axis range from the original paper.
+]
+The scripts are written in such a way that they accept exactly the same options.
+Using wildcards and the expand function extend the Snakefile to construct each figure.
+Each figure should be saved with the following name 'out/figures/SCRIPTNAME.pdf'
+
+## Expanding Multiple Wildcards
