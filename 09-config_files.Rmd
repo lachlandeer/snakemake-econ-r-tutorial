@@ -1,3 +1,0 @@
-# Configuration Files for Tidy Paths
-
-Content is TBD

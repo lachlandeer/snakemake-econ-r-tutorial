@@ -1,0 +1,3 @@
+# An `all` Rule
+
+Content is TBD
