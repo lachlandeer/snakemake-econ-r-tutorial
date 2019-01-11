@@ -1040,17 +1040,15 @@ snakemake, we see the following output:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{Building} \NormalTok{DAG of jobs...}
-\KeywordTok{output_file}                                        \NormalTok{date   rule  version log-file(s)     }\KeywordTok{status}  \NormalTok{plan}
-\KeywordTok{out/analysis/model_solow_subset_intermediate.rds}    \NormalTok{-     inter        -                missing update pending}
-\KeywordTok{out/analysis/model_solow_subset_nonoil.rds}          \NormalTok{-     nonoil       -                missing update pending}
-\KeywordTok{out/analysis/model_solow_subset_oecd.rds}            \NormalTok{-     oecd         -                missing update pending}
-\KeywordTok{out/data/mrw_complete.csv}                           \NormalTok{-     gen_regression_vars           missing update pending}
-\KeywordTok{out/data/mrw_renamed.csv}                            \NormalTok{-     rename_vars                   missing update pending}
-\end{Highlighting}
-\end{Shaded}
+\begin{verbatim}
+Building DAG of jobs...
+output_file                                        date   rule  version log-file(s)     status  plan
+out/analysis/model_solow_subset_intermediate.rds    -     inter        -                missing update pending
+out/analysis/model_solow_subset_nonoil.rds          -     nonoil       -                missing update pending
+out/analysis/model_solow_subset_oecd.rds            -     oecd         -                missing update pending
+out/data/mrw_complete.csv                           -     gen_regression_vars           missing update pending
+out/data/mrw_renamed.csv                            -     rename_vars                   missing update pending
+\end{verbatim}
 
 Which reveals snakemake's plan the next time its run will be to build
 all outputs.
@@ -1155,7 +1153,344 @@ Your Snakefile should look something like this:
 \end{Highlighting}
 \end{Shaded}
 
-\chapter{Wildcards}\label{wildcards}
+This is good progress, but if we look at the \emph{solow\_} rules we see
+that there is quite a lot of duplication:
+
+\begin{itemize}
+\tightlist
+\item
+  Detail the duplication here
+\end{itemize}
+
+\section{Wildcards}\label{wildcards}
+
+Ideally, we want our Snakefiles to feature the miniumum amount of
+duplication possible (Why?). The three \emph{solow\_} rules can be
+collapsed into one rule if can create a variable, for example
+\texttt{iSubset}, that can iterate through the three .json files that
+contain the subset filters. That is, we want to create a rule
+\texttt{solow\_model} that can do the work that \texttt{solow\_nonoil},
+\texttt{solow\_oecd} and \texttt{solow\_intermediate} currently do. In
+Snakemake, these variables are called \emph{wildcards}.
+
+The format of this rule will be:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{solow_model:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/analysis/estimate_ols_model.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"out/data/mrw_complete.csv"}\NormalTok{,}
+        \KeywordTok{model}  \NormalTok{= }\StringTok{"src/model-specs/model_solow.json"}\NormalTok{,}
+        \KeywordTok{subset} \NormalTok{= }\StringTok{"src/data-specs/subset_\{iSubset\}.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{model_est} \NormalTok{= }\StringTok{"out/analysis/model_solow_\{iSubset\}.rds"}\NormalTok{,}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --model \{input.model\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.model_est\}"}
+\end{Highlighting}
+\end{Shaded}
+
+We wrapped our wildcard \texttt{iSubset} in curly parentheses so that
+Snakemake knows that we will want to substitute the name of one of the
+subsets into this value. This is conceptually similar to what we have
+done in our shell commands.
+
+We can now try and run our updated Snakefile:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Building DAG of jobs...
+WorkflowError:
+Target rules may not contain wildcards. Please specify concrete files or a rule without wildcards.
+\end{verbatim}
+
+What has happened? Snakemake will not execute a rule that contains
+wildcards.\footnote{Technically there is another problem here too.
+  Snakemake doesn't know what values to substitute into
+  \texttt{iSubset.} We focus on the Wildcard error because this is what
+  the Snakemake error message mentions. By fixing this error, it turns
+  out we also spell out what values to substitute into \texttt{iSubset}.}
+What we will do is create another rule, \texttt{run\_solow} that will
+not contain wildcards \ldots{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\KeywordTok{rule} \NormalTok{run_solow:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{nonoil} \NormalTok{= }\StringTok{"out/analysis/model_solow_nonoil.rds"}\NormalTok{,}
+        \KeywordTok{oecd}   \NormalTok{= }\StringTok{"out/analysis/model_solow_oecd.rds"}\NormalTok{,}
+        \KeywordTok{intermediate} \NormalTok{= }\StringTok{"out/analysis/model_solow_intermediate.rds"}
+
+\KeywordTok{rule} \NormalTok{solow_model:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/analysis/estimate_ols_model.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"out/data/mrw_complete.csv"}\NormalTok{,}
+        \KeywordTok{model}  \NormalTok{= }\StringTok{"src/model-specs/model_solow.json"}\NormalTok{,}
+        \KeywordTok{subset} \NormalTok{= }\StringTok{"src/data-specs/subset_\{iSubset\}.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{model_est} \NormalTok{= }\StringTok{"out/analysis/model_solow_\{iSubset\}.rds"}\NormalTok{,}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --model \{input.model\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.model_est\}"}
+\end{Highlighting}
+\end{Shaded}
+
+Explain what happens here\ldots{}
+
+There's more work we can do to reduce duplication. Look at the rule
+\texttt{run\_solow}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{run_solow:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{nonoil} \NormalTok{= }\StringTok{"out/analysis/model_solow_nonoil.rds"}\NormalTok{,}
+        \KeywordTok{oecd}   \NormalTok{= }\StringTok{"out/analysis/model_solow_oecd.rds"}\NormalTok{,}
+        \KeywordTok{intermediate} \NormalTok{= }\StringTok{"out/analysis/model_solow_intermediate.rds"}
+\end{Highlighting}
+\end{Shaded}
+
+\section{\texorpdfstring{The \texttt{expand()}
+function}{The expand() function}}\label{the-expand-function}
+
+Each of these inputs listed above have similar structure, with only the
+name of the subset of data we are using changing. We can use another
+feature of Snakemake to simplify this rule. Snakemake has an
+\texttt{expand()} function that can accept a wildcard and replace it
+with a set of specified values in an iterative manner. In our case, we
+want to use the expand function to accept the \texttt{\{iSubset\}}
+wildcard, and replace it with the values `nonoil', `oecd' and
+`intermediate' one at a time. To proceed we need to do two things:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Create a list, DATA\_SUBSETS, that contains the values we want to
+  iterate through - `nonoil', `oecd' and `intermediate'.
+\item
+  Use Snakemake's \texttt{expand()} function to iteratively replace
+  \texttt{\{iSubset\}} with each value contained in the list
+  \texttt{DATA\_SUBSET}
+\end{enumerate}
+
+Let's start with (1). We will use an area above our Snakemake rules to
+store the \texttt{DATA\_SUBSET} variable:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{DATA_SUBSET} \NormalTok{= [}
+                \StringTok{"oecd"}\NormalTok{,}
+                \StringTok{"intermediate"}\NormalTok{,}
+                \StringTok{"nonoil"}
+                \NormalTok{]}
+
+\CommentTok{# --- Build Rules --- #}
+\KeywordTok{...}
+\end{Highlighting}
+\end{Shaded}
+
+The capitalization of the list DATA\_SUBSET is not essential. We do it
+to separate lists that we will iterate through from other parts of our
+Snakefile. This means whenever we see a capitalized name, we know it is
+a list that we want to iterate through.
+
+Next, we update the rule \texttt{run\_solow} as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{run_solow:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{expand}\NormalTok{(}\StringTok{"out/analysis/model_solow_\{iSubset\}.rds"}\NormalTok{,}
+                    \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+\end{Highlighting}
+\end{Shaded}
+
+Now, we can clean our output folder with \texttt{\$\ snakemake\ clean}.
+If we re-run snakemake we would expect everything to run. To see if this
+is the case we can do a \emph{dry run}. A dry run will try go through
+the Snakefile and print all the rules Snakemake wants to execute in
+order.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake} \NormalTok{--dryrun}
+\end{Highlighting}
+\end{Shaded}
+
+which yields the following plan:
+
+\begin{verbatim}
+Building DAG of jobs...
+Job counts:
+    count   jobs
+    1   gen_regression_vars
+    1   rename_vars
+    1   run_solow
+    3   solow_model
+    6
+
+[Fri Jan 11 17:00:32 2019]
+rule rename_vars:
+    input: src/data/mrw.dta, src/data-management/rename_variables.R
+    output: out/data/mrw_renamed.csv
+    jobid: 5
+
+
+[Fri Jan 11 17:00:32 2019]
+rule gen_regression_vars:
+    input: out/data/mrw_renamed.csv, src/data-management/gen_reg_vars.R, src/data-specs/param_solow.json
+    output: out/data/mrw_complete.csv
+    jobid: 4
+
+
+[Fri Jan 11 17:00:32 2019]
+rule solow_model:
+    input: src/data-specs/subset_nonoil.json, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/analysis/estimate_ols_model.R
+    output: out/analysis/model_solow_nonoil.rds
+    jobid: 1
+    wildcards: iSubset=nonoil
+
+
+[Fri Jan 11 17:00:32 2019]
+rule solow_model:
+    input: src/data-specs/subset_oecd.json, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/analysis/estimate_ols_model.R
+    output: out/analysis/model_solow_oecd.rds
+    jobid: 2
+    wildcards: iSubset=oecd
+
+
+[Fri Jan 11 17:00:32 2019]
+rule solow_model:
+    input: src/data-specs/subset_intermediate.json, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/analysis/estimate_ols_model.R
+    output: out/analysis/model_solow_intermediate.rds
+    jobid: 3
+    wildcards: iSubset=intermediate
+
+
+[Fri Jan 11 17:00:32 2019]
+localrule run_solow:
+    input: out/analysis/model_solow_nonoil.rds, out/analysis/model_solow_oecd.rds, out/analysis/model_solow_intermediate.rds
+    jobid: 0
+
+Job counts:
+    count   jobs
+    1   gen_regression_vars
+    1   rename_vars
+    1   run_solow
+    3   solow_model
+    6
+\end{verbatim}
+
+This looks like what we want to happen. Hence, we re-run snakemake to
+produce all output:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection*{Exercise: Exploring the expand() function
+I}\label{exercise-exploring-the-expand-function-i}
+\addcontentsline{toc}{subsection}{Exercise: Exploring the expand()
+function I}
+
+So far we have estimated the basic Solow model. MRW also estimate an
+augmented version of the Solow model, adding human capital. The formula
+required to estimate the augmented model is written up in
+\texttt{src/model-specs/model\_aug\_solow.json}. Use the
+\texttt{expand()} function together with the \texttt{estimate\_ols.R}
+script to estimate the augmented solow model on each of the three data
+subsets. The rule structures should look very similar to what we have
+done so far.
+
+\subsection*{Exercise: Exploring the expand function
+II}\label{exercise-exploring-the-expand-function-ii}
+\addcontentsline{toc}{subsection}{Exercise: Exploring the expand
+function II}
+
+The MRW paper contains three plots. Each of these plots use the subset
+of `intermediate' countries. In the \texttt{src/figures/} subdirectory,
+there are three scripts that reproduce each of the figures.\footnote{This
+  is not entirely true, we are yet to figure out how to get the y-axis
+  range from the original paper.} The scripts are written in such a way
+that they accept exactly the same options. Using wildcards and the
+expand function extend the Snakefile to construct each figure. Each
+figure should be saved with the following name
+`out/figures/SCRIPTNAME.pdf'
+
+\section{Expanding Multiple
+Wildcards}\label{expanding-multiple-wildcards}
+
+The rules used to estimate the standard Solow model, and the augmented
+Solow model have very similar structure:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{DATA_SUBSET} \NormalTok{= [}
+                \StringTok{"oecd"}\NormalTok{,}
+                \StringTok{"intermediate"}\NormalTok{,}
+                \StringTok{"nonoil"}
+                \NormalTok{]}
+
+\CommentTok{# --- Build Rules --- #}
+\KeywordTok{rule} \NormalTok{run_aug_solow:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{expand}\NormalTok{(}\StringTok{"out/analysis/model_aug_solow_\{iSubset\}.rds"}\NormalTok{,}
+                    \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+
+\KeywordTok{rule} \NormalTok{aug_solow_model:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/analysis/estimate_ols_model.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"out/data/mrw_complete.csv"}\NormalTok{,}
+        \KeywordTok{model}  \NormalTok{= }\StringTok{"src/model-specs/model_aug_solow.json"}\NormalTok{,}
+        \KeywordTok{subset} \NormalTok{= }\StringTok{"src/data-specs/subset_\{iSubset\}.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{model_est} \NormalTok{= }\StringTok{"out/analysis/model_aug_solow_\{iSubset\}.rds"}\NormalTok{,}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --model \{input.model\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.model_est\}"}
+
+\KeywordTok{rule} \NormalTok{run_solow:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{expand}\NormalTok{(}\StringTok{"out/analysis/model_solow_\{iSubset\}.rds"}\NormalTok{,}
+                    \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+
+\KeywordTok{rule} \NormalTok{solow_model:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/analysis/estimate_ols_model.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"out/data/mrw_complete.csv"}\NormalTok{,}
+        \KeywordTok{model}  \NormalTok{= }\StringTok{"src/model-specs/model_solow.json"}\NormalTok{,}
+        \KeywordTok{subset} \NormalTok{= }\StringTok{"src/data-specs/subset_\{iSubset\}.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{model_est} \NormalTok{= }\StringTok{"out/analysis/model_solow_\{iSubset\}.rds"}\NormalTok{,}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --model \{input.model\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.model_est\}"}
+\end{Highlighting}
+\end{Shaded}
+
+\chapter{Wildcards}\label{wildcards-1}
 
 Content is TBD
 

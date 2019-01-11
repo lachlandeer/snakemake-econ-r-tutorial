@@ -316,3 +316,54 @@ Using wildcards and the expand function extend the Snakefile to construct each f
 Each figure should be saved with the following name 'out/figures/SCRIPTNAME.pdf'
 
 ## Expanding Multiple Wildcards
+
+The rules used to estimate the standard Solow model, and the augmented Solow model have very similar structure:
+
+```{r, engine = 'bash', eval = FALSE}
+DATA_SUBSET = [
+                "oecd",
+                "intermediate",
+                "nonoil"
+                ]
+
+# --- Build Rules --- #
+rule run_aug_solow:
+    input:
+        expand("out/analysis/model_aug_solow_{iSubset}.rds",
+                    iSubset = DATA_SUBSET)
+
+rule aug_solow_model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/model_aug_solow.json",
+        subset = "src/data-specs/subset_{iSubset}.json"
+    output:
+        model_est = "out/analysis/model_aug_solow_{iSubset}.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.model_est}"
+
+rule run_solow:
+    input:
+        expand("out/analysis/model_solow_{iSubset}.rds",
+                    iSubset = DATA_SUBSET)
+
+rule solow_model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/model_solow.json",
+        subset = "src/data-specs/subset_{iSubset}.json"
+    output:
+        model_est = "out/analysis/model_solow_{iSubset}.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.model_est}"
+```

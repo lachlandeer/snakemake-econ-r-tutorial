@@ -151,8 +151,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="4" data-path="pattern-rules.html"><a href="pattern-rules.html"><i class="fa fa-check"></i><b>4</b> Pattern Rules</a><ul>
 <li class="chapter" data-level="4.1" data-path="pattern-rules.html"><a href="pattern-rules.html#where-we-are-now"><i class="fa fa-check"></i><b>4.1</b> Where we are now?</a></li>
+<li class="chapter" data-level="4.2" data-path="pattern-rules.html"><a href="pattern-rules.html#wildcards"><i class="fa fa-check"></i><b>4.2</b> Wildcards</a></li>
+<li class="chapter" data-level="4.3" data-path="pattern-rules.html"><a href="pattern-rules.html#the-expand-function"><i class="fa fa-check"></i><b>4.3</b> The <code>expand()</code> function</a><ul>
+<li class="chapter" data-level="" data-path="pattern-rules.html"><a href="pattern-rules.html#exercise-exploring-the-expand-function-i"><i class="fa fa-check"></i>Exercise: Exploring the expand() function I</a></li>
+<li class="chapter" data-level="" data-path="pattern-rules.html"><a href="pattern-rules.html#exercise-exploring-the-expand-function-ii"><i class="fa fa-check"></i>Exercise: Exploring the expand function II</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>5</b> Wildcards</a></li>
+<li class="chapter" data-level="4.4" data-path="pattern-rules.html"><a href="pattern-rules.html#expanding-multiple-wildcards"><i class="fa fa-check"></i><b>4.4</b> Expanding Multiple Wildcards</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="wildcards-1.html"><a href="wildcards-1.html"><i class="fa fa-check"></i><b>5</b> Wildcards</a></li>
 <li class="chapter" data-level="6" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>6</b> Adding Parameters</a></li>
 <li class="chapter" data-level="7" data-path="an-all-rule.html"><a href="an-all-rule.html"><i class="fa fa-check"></i><b>7</b> An <code>all</code> Rule</a></li>
 <li class="chapter" data-level="8" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>8</b> Logging Output and Errors</a></li>
@@ -408,13 +414,13 @@ out/data/mrw_renamed.csv    Fri Jan 11 13:40:07 2019    rename_vars             
 <p>Notice that to use the clean rule we had to call the rule name, clean, explicitly.</p>
 <p>Now if we look out the output of running the summary call with snakemake, we see the following output:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">snakemake</span> --summary</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">Building</span> DAG of jobs...
-<span class="kw">output_file</span>                                        date   rule  version log-file(s)     <span class="kw">status</span>  plan
-<span class="kw">out/analysis/model_solow_subset_intermediate.rds</span>    -     inter        -                missing update pending
-<span class="kw">out/analysis/model_solow_subset_nonoil.rds</span>          -     nonoil       -                missing update pending
-<span class="kw">out/analysis/model_solow_subset_oecd.rds</span>            -     oecd         -                missing update pending
-<span class="kw">out/data/mrw_complete.csv</span>                           -     gen_regression_vars           missing update pending
-<span class="kw">out/data/mrw_renamed.csv</span>                            -     rename_vars                   missing update pending</code></pre></div>
+<pre class="out"><code>Building DAG of jobs...
+output_file                                        date   rule  version log-file(s)     status  plan
+out/analysis/model_solow_subset_intermediate.rds    -     inter        -                missing update pending
+out/analysis/model_solow_subset_nonoil.rds          -     nonoil       -                missing update pending
+out/analysis/model_solow_subset_oecd.rds            -     oecd         -                missing update pending
+out/data/mrw_complete.csv                           -     gen_regression_vars           missing update pending
+out/data/mrw_renamed.csv                            -     rename_vars                   missing update pending</code></pre>
 <p>Which reveals snakemake’s plan the next time its run will be to build all outputs.</p>
 <div id="exercise-creating-cleaning-rules" class="section level3 unnumbered exercise">
 <h3>Exercise: Creating Cleaning Rules</h3>
