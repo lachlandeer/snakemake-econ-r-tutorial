@@ -367,3 +367,43 @@ rule solow_model:
             --subset {input.subset} \
             --out {output.model_est}"
 ```
+
+Add text ...
+
+Ultimately the Snakfile becomes:
+
+```{r, engine = 'bash', eval = FALSE}
+MODELS = [
+          "solow",
+          "aug_solow"
+          ]
+
+DATA_SUBSET = [
+                "oecd",
+                "intermediate",
+                "nonoil"
+                ]
+
+# --- Build Rules --- #
+
+rule estimate_models:
+    input:
+        expand("out/analysis/{iModel}_{iSubset}.rds",
+                    iModel = MODELS,
+                    iSubset = DATA_SUBSET)
+
+rule ols_model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/model_{iModel}.json",
+        subset = "src/data-specs/subset_{iSubset}.json"
+    output:
+        model_est = "out/analysis/model_{iModel}_{iSubset}.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.model_est}"
+```
