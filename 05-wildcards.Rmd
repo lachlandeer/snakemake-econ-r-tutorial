@@ -24,6 +24,83 @@ FIGURES = [
 
 This is not too problematic when we only have a few values that we want the wildcard to take,
     but manually specifying long lists can get tedious and is prone to error.
-Snakemake has a built in function, `glob_wildcard` that will help us to remove the manual listing of values that we have above.
+Snakemake has a built in function, `glob_wildcards` that will help us to remove the manual listing of values that we have above.
 
-## The `glob_wildcard` Function
+## The `glob_wildcards` Function
+
+Let's start by trying to replace the `MODELS` list that we manually specified with a more automated approach.
+The `glob_wildcards` function takes one input - the path of the files that we want to search combined with the part of the file name we want to extract wrapped in parentheses and then finds all files within that path.
+Thus, we will replace our original `MODELS` list with:
+
+```{r, engine = 'bash', eval = FALSE}
+MODELS = glob_wildcards("src/model-specs/{fname}")
+```
+
+To see what happens, let's add a print statement, and then execute a dry-run:
+```{r, engine = 'bash', eval = FALSE}
+MODELS = glob_wildcards("src/model-specs/{fname}")
+print(MODELS)
+```
+then:
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake --dryrun
+```
+
+What we are interested in is the first printed lines (in white text):
+```{r, engine = 'out', eval = FALSE}
+Wildcards(fname=['.gitkeep', 'model_solow.json', 'model_aug_cc_restr.json',
+                'model_solow_restr.json', 'model_cc.json', 'model_ucc.json',
+                'model_aug_solow_restr.json', 'model_aug_cc.json', 'model_aug_solow.json'])
+```
+
+Here we see that all filed are returned.
+Compared to our original `MODELS` list we see three differences
+
+1. There are more .json files
+2. There is a .gitkeep file
+3. Each 'fname' ends with .json, which we did't have earlier.
+
+(1) is not a problem, it reflects that there is more potential analysis files that we havent manually specified.
+But (2) and (3) are problematic.
+We can remove the .gitkeep file *and* the .json file endings with one step:
+telling the `glob_wildcards` function to only return the part of the filename that comes before the .json.
+This will also mean that the .gitkeep is not returned, because this file does not have a .json ending:
+
+```{r, engine = 'bash', eval = FALSE}
+MODELS = glob_wildcards("src/model-specs/{fname}.json")
+print(MODELS)
+```
+then:
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake --dryrun
+```
+Now the first line is:
+```{r, engine = 'out', eval = FALSE}
+Wildcards(fname=['model_solow', 'model_aug_cc_restr',
+                'model_solow_restr', 'model_cc', 'model_ucc',
+                'model_aug_solow_restr', 'model_aug_cc', 'model_aug_solow'])
+```
+
+That's definitely an improvement.
+Our final step is to extract the list called `fname` so that we can use it like our old `MODELS` list.
+We do this as follows:
+```{r, engine = 'bash', eval = FALSE}
+MODELS = glob_wildcards("src/model-specs/{fname}.json").fname
+```
+
+Now if we do a dry-run we are returned the following:
+
+```{r, engine = 'out', eval = FALSE}
+['model_solow', 'model_aug_cc_restr', 'model_solow_restr',
+ 'model_cc', 'model_ucc', 'model_aug_solow_restr',
+ 'model_aug_cc', 'model_aug_solow']
+```
+which has the same structure as before.
+
+Now if we run snakemake:
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake
+```
+We see that it builds the OLS estimates of the models that we have not yet previously run^[
+    Running `snakemake estimate_models --force` will run all of the models including those that we have constructed in previous chapters. 
+]
