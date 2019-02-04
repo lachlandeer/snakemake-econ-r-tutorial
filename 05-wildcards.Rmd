@@ -102,5 +102,10 @@ Now if we run snakemake:
 $ snakemake
 ```
 We see that it builds the OLS estimates of the models that we have not yet previously run^[
-    Running `snakemake estimate_models --force` will run all of the models including those that we have constructed in previous chapters. 
+    Running `snakemake estimate_models --force` will run all of the models including those that we have constructed in previous chapters.
 ]
+
+### Exercise: Exploring glob_wildcards() {- .exercise}
+
+Use the `glob_wildcards` function to automate the construction of the `FIGURES` list.
+Rememeber that depending on the order of your Snakemake rules, you may need to explicitly call the rule that generates figures to run the code, i.e. `snakemake make_figs`.
