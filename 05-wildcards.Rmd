@@ -1,3 +1,29 @@
-# Wildcards
+# Automatic Wildcard Specifications
 
-Content is TBD
+So far when we have wanted to expand wildcards we have manually specified the values we want them to take.
+By doing so, the beginning of our Snakefile looks like this:
+
+```{r, engine = 'bash', eval = FALSE}
+MODELS = [
+          "solow",
+          "aug_solow"
+          ]
+
+DATA_SUBSET = [
+                "oecd",
+                "intermediate",
+                "nonoil"
+                ]
+
+FIGURES = [
+            "aug_conditional_convergence",
+            "conditional_convergence",
+            "unconditional_convergence"
+            ]
+```
+
+This is not too problematic when we only have a few values that we want the wildcard to take,
+    but manually specifying long lists can get tedious and is prone to error.
+Snakemake has a built in function, `glob_wildcard` that will help us to remove the manual listing of values that we have above.
+
+## The `glob_wildcard` Function

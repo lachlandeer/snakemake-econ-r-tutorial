@@ -158,7 +158,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="4.4" data-path="pattern-rules.html"><a href="pattern-rules.html#expanding-multiple-wildcards"><i class="fa fa-check"></i><b>4.4</b> Expanding Multiple Wildcards</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="wildcards-1.html"><a href="wildcards-1.html"><i class="fa fa-check"></i><b>5</b> Wildcards</a></li>
+<li class="chapter" data-level="5" data-path="wildcards-1.html"><a href="wildcards-1.html"><i class="fa fa-check"></i><b>5</b> Wildcards</a><ul>
+<li class="chapter" data-level="5.1" data-path="wildcards-1.html"><a href="wildcards-1.html#the-glob_wildcard-function"><i class="fa fa-check"></i><b>5.1</b> The <code>glob_wildcard</code> Function</a></li>
+</ul></li>
 <li class="chapter" data-level="6" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>6</b> Adding Parameters</a></li>
 <li class="chapter" data-level="7" data-path="an-all-rule.html"><a href="an-all-rule.html"><i class="fa fa-check"></i><b>7</b> An <code>all</code> Rule</a></li>
 <li class="chapter" data-level="8" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>8</b> Logging Output and Errors</a></li>
@@ -192,8 +194,28 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="wildcards-1" class="section level1">
 <h1><span class="header-section-number">Chapter 5</span> Wildcards</h1>
-<p>Content is TBD</p>
+<p>So far when we have wanted to expand wildcards we have manually specified the values we want them to take. By doing so, the beginning of our Snakefile looks like this:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">MODELS</span> = [
+          <span class="st">&quot;solow&quot;</span>,
+          <span class="st">&quot;aug_solow&quot;</span>
+          ]
 
+<span class="kw">DATA_SUBSET</span> = [
+                <span class="st">&quot;oecd&quot;</span>,
+                <span class="st">&quot;intermediate&quot;</span>,
+                <span class="st">&quot;nonoil&quot;</span>
+                ]
+
+<span class="kw">FIGURES</span> = [
+            <span class="st">&quot;aug_conditional_convergence&quot;</span>,
+            <span class="st">&quot;conditional_convergence&quot;</span>,
+            <span class="st">&quot;unconditional_convergence&quot;</span>
+            ]</code></pre></div>
+<p>This is not too problematic when we only have a few values that we want the wildcard to take, but manually specifying long lists can get tedious and is prone to error. Snakemake has a built in function, <code>glob_wildcard</code> that will help us to remove the manual listing of values that we have above.</p>
+<div id="the-glob_wildcard-function" class="section level2">
+<h2><span class="header-section-number">5.1</span> The <code>glob_wildcard</code> Function</h2>
+
+</div>
 </div>
             </section>
 

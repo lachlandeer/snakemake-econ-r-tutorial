@@ -1530,13 +1530,45 @@ Ultimately the Snakfile becomes:
 \StringTok{            --subset \{input.subset\} \textbackslash{}}
 \StringTok{            --out \{output.model_est\}"}
 
-\KeywordTok{<...>} \CommentTok{## Data cleaning rules}
+\KeywordTok{<...>} \CommentTok{## Other Rules below}
 \end{Highlighting}
 \end{Shaded}
 
 \chapter{Wildcards}\label{wildcards-1}
 
-Content is TBD
+So far when we have wanted to expand wildcards we have manually
+specified the values we want them to take. By doing so, the beginning of
+our Snakefile looks like this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{MODELS} \NormalTok{= [}
+          \StringTok{"solow"}\NormalTok{,}
+          \StringTok{"aug_solow"}
+          \NormalTok{]}
+
+\KeywordTok{DATA_SUBSET} \NormalTok{= [}
+                \StringTok{"oecd"}\NormalTok{,}
+                \StringTok{"intermediate"}\NormalTok{,}
+                \StringTok{"nonoil"}
+                \NormalTok{]}
+
+\KeywordTok{FIGURES} \NormalTok{= [}
+            \StringTok{"aug_conditional_convergence"}\NormalTok{,}
+            \StringTok{"conditional_convergence"}\NormalTok{,}
+            \StringTok{"unconditional_convergence"}
+            \NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+This is not too problematic when we only have a few values that we want
+the wildcard to take, but manually specifying long lists can get tedious
+and is prone to error. Snakemake has a built in function,
+\texttt{glob\_wildcard} that will help us to remove the manual listing
+of values that we have above.
+
+\section{\texorpdfstring{The \texttt{glob\_wildcard}
+Function}{The glob\_wildcard Function}}\label{the-glob_wildcard-function}
 
 \chapter{Adding Parameters}\label{adding-parameters}
 
