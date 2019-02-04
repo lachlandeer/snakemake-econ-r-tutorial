@@ -1534,7 +1534,8 @@ Ultimately the Snakfile becomes:
 \end{Highlighting}
 \end{Shaded}
 
-\chapter{Wildcards}\label{wildcards-1}
+\chapter{Automatic Wildcard
+Specifications}\label{automatic-wildcard-specifications}
 
 So far when we have wanted to expand wildcards we have manually
 specified the values we want them to take. By doing so, the beginning of
@@ -1564,11 +1565,266 @@ our Snakefile looks like this:
 This is not too problematic when we only have a few values that we want
 the wildcard to take, but manually specifying long lists can get tedious
 and is prone to error. Snakemake has a built in function,
-\texttt{glob\_wildcard} that will help us to remove the manual listing
+\texttt{glob\_wildcards} that will help us to remove the manual listing
 of values that we have above.
 
-\section{\texorpdfstring{The \texttt{glob\_wildcard}
-Function}{The glob\_wildcard Function}}\label{the-glob_wildcard-function}
+\section{\texorpdfstring{The \texttt{glob\_wildcards}
+Function}{The glob\_wildcards Function}}\label{the-glob_wildcards-function}
+
+Let's start by trying to replace the \texttt{MODELS} list that we
+manually specified with a more automated approach. The
+\texttt{glob\_wildcards} function takes one input - the path of the
+files that we want to search combined with the part of the file name we
+want to extract wrapped in parentheses and then finds all files within
+that path. Thus, we will replace our original \texttt{MODELS} list with:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{MODELS} \NormalTok{= glob_wildcards(}\StringTok{"src/model-specs/\{fname\}"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+To see what happens, let's add a print statement, and then execute a
+dry-run:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{MODELS} \NormalTok{= glob_wildcards(}\StringTok{"src/model-specs/\{fname\}"}\NormalTok{)}
+\KeywordTok{print}\NormalTok{(MODELS)}
+\end{Highlighting}
+\end{Shaded}
+
+then:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake} \NormalTok{--dryrun}
+\end{Highlighting}
+\end{Shaded}
+
+What we are interested in is the first printed lines (in white text):
+
+\begin{verbatim}
+Wildcards(fname=['.gitkeep', 'model_solow.json', 'model_aug_cc_restr.json',
+                'model_solow_restr.json', 'model_cc.json', 'model_ucc.json',
+                'model_aug_solow_restr.json', 'model_aug_cc.json', 'model_aug_solow.json'])
+\end{verbatim}
+
+Here we see that all filed are returned. Compared to our original
+\texttt{MODELS} list we see three differences
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  There are more .json files
+\item
+  There is a .gitkeep file
+\item
+  Each `fname' ends with .json, which we did't have earlier.
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{(\arabic{enumi})}
+\tightlist
+\item
+  is not a problem, it reflects that there is more potential analysis
+  files that we havent manually specified. But (2) and (3) are
+  problematic. We can remove the .gitkeep file \emph{and} the .json file
+  endings with one step: telling the \texttt{glob\_wildcards} function
+  to only return the part of the filename that comes before the .json.
+  This will also mean that the .gitkeep is not returned, because this
+  file does not have a .json ending:
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{MODELS} \NormalTok{= glob_wildcards(}\StringTok{"src/model-specs/\{fname\}.json"}\NormalTok{)}
+\KeywordTok{print}\NormalTok{(MODELS)}
+\end{Highlighting}
+\end{Shaded}
+
+then:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake} \NormalTok{--dryrun}
+\end{Highlighting}
+\end{Shaded}
+
+Now the first line is:
+
+\begin{verbatim}
+Wildcards(fname=['model_solow', 'model_aug_cc_restr',
+                'model_solow_restr', 'model_cc', 'model_ucc',
+                'model_aug_solow_restr', 'model_aug_cc', 'model_aug_solow'])
+\end{verbatim}
+
+That's definitely an improvement. Our final step is to extract the list
+called \texttt{fname} so that we can use it like our old \texttt{MODELS}
+list. We do this as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{MODELS} \NormalTok{= glob_wildcards(}\StringTok{"src/model-specs/\{fname\}.json"}\NormalTok{)}\KeywordTok{.fname}
+\end{Highlighting}
+\end{Shaded}
+
+Now if we do a dry-run we are returned the following:
+
+\begin{verbatim}
+['model_solow', 'model_aug_cc_restr', 'model_solow_restr',
+ 'model_cc', 'model_ucc', 'model_aug_solow_restr',
+ 'model_aug_cc', 'model_aug_solow']
+\end{verbatim}
+
+which has the same structure as before.
+
+Now if we run snakemake:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake}
+\end{Highlighting}
+\end{Shaded}
+
+We see that it builds the OLS estimates of the models that we have not
+yet previously run\footnote{Running
+  \texttt{snakemake\ estimate\_models\ -\/-force} will run all of the
+  models including those that we have constructed in previous chapters.}
+
+\subsection*{Exercise: Exploring
+glob\_wildcards()}\label{exercise-exploring-glob_wildcards}
+\addcontentsline{toc}{subsection}{Exercise: Exploring glob\_wildcards()}
+
+Use the \texttt{glob\_wildcards} function to automate the construction
+of the \texttt{FIGURES} list. Rememeber that depending on the order of
+your Snakemake rules, you may need to explicitly call the rule that
+generates figures to run the code, i.e. \texttt{snakemake\ make\_figs}.
+
+\section{\texorpdfstring{Further Restricting the
+\texttt{glob\_wildcards}
+output}{Further Restricting the glob\_wildcards output}}\label{further-restricting-the-glob_wildcards-output}
+
+So far, we have used \texttt{glob\_wildcards} output unchanged.
+Sometimes the lists that it returns might have found more files than we
+desire, or some of the files might be used in different ways than
+others. We are now going to show a simple way to filter out unwanted
+elements of the list that \texttt{glob\_wildcards} returns.
+
+So far, we still have one list of wildcards that we have manually
+specified, \texttt{DATA\_SUBSET}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{MODELS} \NormalTok{= glob_wildcards(}\StringTok{"src/model-specs/\{fname\}.json"}\NormalTok{)}\KeywordTok{.fname}
+
+\KeywordTok{DATA_SUBSET} \NormalTok{= [}
+                \StringTok{"oecd"}\NormalTok{,}
+                \StringTok{"intermediate"}\NormalTok{,}
+                \StringTok{"nonoil"}
+                \NormalTok{]}
+
+\KeywordTok{FIGURES} \NormalTok{= glob_wildcards(}\StringTok{"src/figures/\{fname\}.json"}\NormalTok{)}\KeywordTok{.fname}
+\end{Highlighting}
+\end{Shaded}
+
+Let's start by looking at the output if we run \texttt{glob\_wildcards}
+as we have before:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{MODELS} \NormalTok{= glob_wildcards(}\StringTok{"src/model-specs/\{fname\}.json"}\NormalTok{)}\KeywordTok{.fname}
+
+\KeywordTok{DATA_SUBSET} \NormalTok{= glob_wildcards(}\StringTok{"src/data-specs/\{fname\}.json"}\NormalTok{)}\KeywordTok{.fname}
+\KeywordTok{print}\NormalTok{(DATA_SUBSET)}
+
+\KeywordTok{FIGURES} \NormalTok{= glob_wildcards(}\StringTok{"src/figures/\{fname\}.json"}\NormalTok{)}\KeywordTok{.fname}
+\end{Highlighting}
+\end{Shaded}
+
+and doing a dry run to examine the output of the print statement:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake} \NormalTok{--dryrun}
+\end{Highlighting}
+\end{Shaded}
+
+which yields:
+
+\begin{verbatim}
+['param_solow', 'subset_oecd', 'subset_nonoil', 'subset_intermediate']
+\end{verbatim}
+
+In this list, the \texttt{param\_solow} element is the odd one out. It
+is used in the data cleaning part, and does not contain a filter that
+can be applied to a data frame. The question is then how do we remove
+it? What we need to is complete the following steps:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  identify a pattern that we can use to filter out \texttt{param\_solow}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Files we want to keep all start with `subset'
+  \end{itemize}
+\item
+  write a function that would remove it from the list
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{lambda\ x:\ x.startswith("subset")}
+  \end{itemize}
+\item
+  use this function to filter the out param\_solow from DATA\_SUBSET
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{filter(lambda\ x:\ x.startswith("subset"),\ DATA\_SUBSET))}
+  \end{itemize}
+\item
+  Take the new output as a list
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{list(filter(lambda\ x:\ x.startswith("subset"),\ DATA\_SUBSET)))}
+  \end{itemize}
+\end{enumerate}
+
+We can do this all by adding one additional line:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{DATA_SUBSET} \NormalTok{= glob_wildcards(}\StringTok{"src/data-specs/\{fname\}.json"}\NormalTok{)}\KeywordTok{.fname}
+\KeywordTok{DATA_SUBSET} \NormalTok{= list(filter(lambda x: x.startswith(}\StringTok{"subset"}\NormalTok{), }\KeywordTok{DATA_SUBSET}\NormalTok{)))}
+\KeywordTok{print}\NormalTok{(DATA_SUBSET)}
+\end{Highlighting}
+\end{Shaded}
+
+Now again doing a dry-run with \texttt{snakemake\ -\/-dryrun} we see the
+first line prints out the new DATA\_SUBSET list as:
+
+\begin{verbatim}
+['subset_oecd', 'subset_nonoil', 'subset_intermediate']
+\end{verbatim}
+
+Which is the desired output.
+
+We can now run snakemake and see if it wants to execute any of our rules
+
+\begin{verbatim}
+snakemake --summary
+\end{verbatim}
+
+and we see that it does not. Can you explain why?
 
 \chapter{Adding Parameters}\label{adding-parameters}
 
