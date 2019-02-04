@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{2019-01-11}
+    \date{2019-02-04}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -1487,6 +1487,50 @@ Solow model have very similar structure:
 \StringTok{            --model \{input.model\} \textbackslash{}}
 \StringTok{            --subset \{input.subset\} \textbackslash{}}
 \StringTok{            --out \{output.model_est\}"}
+\end{Highlighting}
+\end{Shaded}
+
+Add text \ldots{}
+
+Ultimately the Snakfile becomes:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{MODELS} \NormalTok{= [}
+          \StringTok{"solow"}\NormalTok{,}
+          \StringTok{"aug_solow"}
+          \NormalTok{]}
+
+\KeywordTok{DATA_SUBSET} \NormalTok{= [}
+                \StringTok{"oecd"}\NormalTok{,}
+                \StringTok{"intermediate"}\NormalTok{,}
+                \StringTok{"nonoil"}
+                \NormalTok{]}
+
+\CommentTok{# --- Build Rules --- #}
+
+\KeywordTok{rule} \NormalTok{estimate_models:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{expand}\NormalTok{(}\StringTok{"out/analysis/\{iModel\}_\{iSubset\}.rds"}\NormalTok{,}
+                    \KeywordTok{iModel} \NormalTok{= MODELS,}
+                    \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+
+\KeywordTok{rule} \NormalTok{ols_model:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/analysis/estimate_ols_model.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= }\StringTok{"out/data/mrw_complete.csv"}\NormalTok{,}
+        \KeywordTok{model}  \NormalTok{= }\StringTok{"src/model-specs/model_\{iModel\}.json"}\NormalTok{,}
+        \KeywordTok{subset} \NormalTok{= }\StringTok{"src/data-specs/subset_\{iSubset\}.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{model_est} \NormalTok{= }\StringTok{"out/analysis/model_\{iModel\}_\{iSubset\}.rds"}\NormalTok{,}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --model \{input.model\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.model_est\}"}
+
+\KeywordTok{<...>} \CommentTok{## Data cleaning rules}
 \end{Highlighting}
 \end{Shaded}
 
