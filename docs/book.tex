@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{2019-02-04}
+    \date{2019-02-05}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -1826,12 +1826,414 @@ snakemake --summary
 
 and we see that it does not. Can you explain why?
 
+\chapter{Building all outputs at
+once}\label{building-all-outputs-at-once}
+
+In our analysis pipeline that we have constructed so far, we need to
+make two calls to snakemake to run all of our analysis:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \texttt{snakemake\ estimate\_models} - to estimate OLS regressions
+\item
+  \texttt{snakemake\ make\_figs} - to construct the figures
+\end{enumerate}
+
+Whilst this is not too time consuming, it would be desirable to only
+have to run Snakemake once and have all our analysis in (1) and (2) be
+executed. That is our next goal.
+
+So that we are all starting from the same directory structure, let's
+clean our output directory, removing all estimated models and figures:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake} \NormalTok{clean}
+\end{Highlighting}
+\end{Shaded}
+
+Now if we list the contents of the \texttt{out} directory and any
+potential subdirectories:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{ls} \NormalTok{-R out/}
+\end{Highlighting}
+\end{Shaded}
+
+we see that there are no contents remaining:
+
+\begin{verbatim}
+out/:
+\end{verbatim}
+
+\section{\texorpdfstring{Creating an \texttt{all}
+rule}{Creating an all rule}}\label{creating-an-all-rule}
+
+Out goal is to combine all the outputs from the
+\texttt{estimate\_models} and \texttt{make\_figs} rules. Let's take a
+look at the structure of each of these rules so that we get a sense of
+what we might need to do., Here is the \texttt{estimate\_models} rule:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{estimate_models:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{expand}\NormalTok{(}\StringTok{"out/analysis/\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                    \KeywordTok{iModel} \NormalTok{= MODELS,}
+                    \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+\end{Highlighting}
+\end{Shaded}
+
+And the \texttt{make\_figs} rule:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{make_figs:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{expand}\NormalTok{(}\StringTok{"out/figures/\{iFigure\}.pdf"}\NormalTok{,}
+                \KeywordTok{iFigure} \NormalTok{= FIGURES)}
+\end{Highlighting}
+\end{Shaded}
+
+These rules have a common structure: both having only an \texttt{input}.
+From other rules that we have written, we know that a rule can have
+multiple inputs if we name them. This suggests a way forward. We are
+going to create a new rule called \texttt{all} that contains two inputs,
+combining the inputs from the separate rules:\footnote{The name
+  \texttt{all} is a convention, we could name it anything we please}:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \texttt{figs}, which contains the inputs from our \texttt{make\_figs}
+  rule
+\item
+  \texttt{models}, which contains the inputs from our
+  \texttt{estimate\_models} rule
+\end{enumerate}
+
+As ever, we will have to be mindful that if we have multiple inputs,
+have the trailing commas located wherever one input is followed by
+another. Let's put this rule as the first in our Snakefile:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# --- Build Rules --- #}
+
+\KeywordTok{rule} \NormalTok{all:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{figs}   \NormalTok{= expand(}\StringTok{"out/figures/\{iFigure\}.pdf"}\NormalTok{,}
+                            \KeywordTok{iFigure} \NormalTok{= FIGURES),}
+        \KeywordTok{models} \NormalTok{= expand(}\StringTok{"out/analysis/\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                            \KeywordTok{iModel} \NormalTok{= MODELS,}
+                            \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+\end{Highlighting}
+\end{Shaded}
+
+Let's check if this \texttt{all} rule does as desired - building all
+outputs. If we run \texttt{snakemake\ -\/-dryrun\ all}, we get the
+following output:
+
+\begin{verbatim}
+Building DAG of jobs...
+Job counts:
+    count   jobs
+    1   all
+    3   figures
+    1   gen_regression_vars
+    24  ols_model
+    1   rename_vars
+    30
+
+[Tue Feb  5 16:23:01 2019]
+rule rename_vars:
+    input: src/data-management/rename_variables.R, src/data/mrw.dta
+    output: out/data/mrw_renamed.csv
+    jobid: 29
+
+
+[Tue Feb  5 16:23:01 2019]
+rule gen_regression_vars:
+    input: src/data-management/gen_reg_vars.R, out/data/mrw_renamed.csv, src/data-specs/param_solow.json
+    output: out/data/mrw_complete.csv
+    jobid: 28
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_aug_cc_ols_subset_oecd.rds
+    jobid: 1
+    wildcards: iModel=model_aug_cc, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_solow_ols_subset_oecd.rds
+    jobid: 2
+    wildcards: iModel=model_solow, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow_restr.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_solow_restr_ols_subset_oecd.rds
+    jobid: 4
+    wildcards: iModel=model_solow_restr, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_cc.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_cc_ols_subset_oecd.rds
+    jobid: 5
+    wildcards: iModel=model_cc, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc_restr.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_aug_cc_restr_ols_subset_intermediate.rds
+    jobid: 27
+    wildcards: iModel=model_aug_cc_restr, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_aug_solow_ols_subset_intermediate.rds
+    jobid: 9
+    wildcards: iModel=model_aug_solow, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_aug_solow_ols_subset_nonoil.rds
+    jobid: 13
+    wildcards: iModel=model_aug_solow, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc_restr.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_aug_cc_restr_ols_subset_nonoil.rds
+    jobid: 15
+    wildcards: iModel=model_aug_cc_restr, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule figures:
+    input: src/figures/aug_conditional_convergence.R, out/data/mrw_complete.csv, src/data-specs/subset_intermediate.json
+    output: out/figures/aug_conditional_convergence.pdf
+    jobid: 18
+    wildcards: iFigure=aug_conditional_convergence
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_ucc.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_ucc_ols_subset_oecd.rds
+    jobid: 25
+    wildcards: iModel=model_ucc, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow_restr.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_aug_solow_restr_ols_subset_oecd.rds
+    jobid: 26
+    wildcards: iModel=model_aug_solow_restr, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc_restr.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_aug_cc_restr_ols_subset_oecd.rds
+    jobid: 14
+    wildcards: iModel=model_aug_cc_restr, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_aug_solow_ols_subset_oecd.rds
+    jobid: 3
+    wildcards: iModel=model_aug_solow, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_solow_ols_subset_intermediate.rds
+    jobid: 7
+    wildcards: iModel=model_solow, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_cc.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_cc_ols_subset_nonoil.rds
+    jobid: 23
+    wildcards: iModel=model_cc, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow_restr.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_solow_restr_ols_subset_intermediate.rds
+    jobid: 10
+    wildcards: iModel=model_solow_restr, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_aug_cc_ols_subset_intermediate.rds
+    jobid: 11
+    wildcards: iModel=model_aug_cc, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule figures:
+    input: src/figures/unconditional_convergence.R, out/data/mrw_complete.csv, src/data-specs/subset_intermediate.json
+    output: out/figures/unconditional_convergence.pdf
+    jobid: 24
+    wildcards: iFigure=unconditional_convergence
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_cc.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_cc_ols_subset_intermediate.rds
+    jobid: 8
+    wildcards: iModel=model_cc, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow_restr.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_solow_restr_ols_subset_nonoil.rds
+    jobid: 12
+    wildcards: iModel=model_solow_restr, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_solow_ols_subset_nonoil.rds
+    jobid: 16
+    wildcards: iModel=model_solow, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_aug_cc_ols_subset_nonoil.rds
+    jobid: 17
+    wildcards: iModel=model_aug_cc, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule figures:
+    input: src/figures/conditional_convergence.R, out/data/mrw_complete.csv, src/data-specs/subset_intermediate.json
+    output: out/figures/conditional_convergence.pdf
+    jobid: 19
+    wildcards: iFigure=conditional_convergence
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_ucc.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_ucc_ols_subset_intermediate.rds
+    jobid: 20
+    wildcards: iModel=model_ucc, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow_restr.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_aug_solow_restr_ols_subset_nonoil.rds
+    jobid: 21
+    wildcards: iModel=model_aug_solow_restr, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_ucc.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_ucc_ols_subset_nonoil.rds
+    jobid: 22
+    wildcards: iModel=model_ucc, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow_restr.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_aug_solow_restr_ols_subset_intermediate.rds
+    jobid: 6
+    wildcards: iModel=model_aug_solow_restr, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+localrule all:
+    input: out/figures/conditional_convergence.pdf, out/figures/unconditional_convergence.pdf, out/figures/aug_conditional_convergence.pdf, out/analysis/model_solow_ols_subset_oecd.rds, out/analysis/model_aug_cc_restr_ols_subset_oecd.rds, out/analysis/model_solow_restr_ols_subset_oecd.rds, out/analysis/model_cc_ols_subset_oecd.rds, out/analysis/model_ucc_ols_subset_oecd.rds, out/analysis/model_aug_solow_restr_ols_subset_oecd.rds, out/analysis/model_aug_cc_ols_subset_oecd.rds, out/analysis/model_aug_solow_ols_subset_oecd.rds, out/analysis/model_solow_ols_subset_nonoil.rds, out/analysis/model_aug_cc_restr_ols_subset_nonoil.rds, out/analysis/model_solow_restr_ols_subset_nonoil.rds, out/analysis/model_cc_ols_subset_nonoil.rds, out/analysis/model_ucc_ols_subset_nonoil.rds, out/analysis/model_aug_solow_restr_ols_subset_nonoil.rds, out/analysis/model_aug_cc_ols_subset_nonoil.rds, out/analysis/model_aug_solow_ols_subset_nonoil.rds, out/analysis/model_solow_ols_subset_intermediate.rds, out/analysis/model_aug_cc_restr_ols_subset_intermediate.rds, out/analysis/model_solow_restr_ols_subset_intermediate.rds, out/analysis/model_cc_ols_subset_intermediate.rds, out/analysis/model_ucc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_restr_ols_subset_intermediate.rds, out/analysis/model_aug_cc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_ols_subset_intermediate.rds
+    jobid: 0
+
+Job counts:
+    count   jobs
+    1   all
+    3   figures
+    1   gen_regression_vars
+    24  ols_model
+    1   rename_vars
+    30
+\end{verbatim}
+
+The output shows that we have achieved our desired goal. The
+\texttt{all} rule builds all outputs. Notice that if you examine the
+order that Snakemake plans to execute the jobs that:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  First the data management steps are executed to prepare data
+
+  \begin{itemize}
+  \tightlist
+  \item
+    This is what we would expect, as we cannot do any analysis without
+    cleaned data
+  \end{itemize}
+\item
+  The order in which the figures and regressions are executed are mixed
+  together
+
+  \begin{itemize}
+  \tightlist
+  \item
+    This is because the figures and regression outputs do not depend on
+    each other
+  \end{itemize}
+\end{enumerate}
+
+Now we build our entire project\footnote{Notice that we placed the
+  \texttt{all} rule as the first rule in our Snakefile. Snakemake's
+  default behaviour is to build the first rule in the file, so we could
+  instead type only \texttt{snakemake} and get the same result.}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake} \NormalTok{all}
+\end{Highlighting}
+\end{Shaded}
+
 \chapter{Adding Parameters}\label{adding-parameters}
-
-Content is TBD
-
-\chapter{\texorpdfstring{An \texttt{all}
-Rule}{An all Rule}}\label{an-all-rule}
 
 Content is TBD
 

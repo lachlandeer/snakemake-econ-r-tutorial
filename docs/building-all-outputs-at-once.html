@@ -164,7 +164,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="5.2" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#further-restricting-the-glob_wildcards-output"><i class="fa fa-check"></i><b>5.2</b> Further Restricting the <code>glob_wildcards</code> output</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="an-all-rule.html"><a href="an-all-rule.html"><i class="fa fa-check"></i><b>6</b> An <code>all</code> Rule</a></li>
+<li class="chapter" data-level="6" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html"><i class="fa fa-check"></i><b>6</b> Building all outputs at once</a><ul>
+<li class="chapter" data-level="6.1" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html#creating-an-all-rule"><i class="fa fa-check"></i><b>6.1</b> Creating an <code>all</code> rule</a></li>
+</ul></li>
 <li class="chapter" data-level="7" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>7</b> Adding Parameters</a></li>
 <li class="chapter" data-level="8" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>8</b> Logging Output and Errors</a></li>
 <li class="chapter" data-level="9" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>9</b> Self Documenting Help</a></li>
@@ -195,8 +197,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="an-all-rule" class="section level1">
-<h1><span class="header-section-number">Chapter 6</span> An <code>all</code> Rule</h1>
+<div id="building-all-outputs-at-once" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> Building all outputs at once</h1>
 <p>In our analysis pipeline that we have constructed so far, we need to make two calls to snakemake to run all of our analysis:</p>
 <ol style="list-style-type: decimal">
 <li><code>snakemake estimate_models</code> - to estimate OLS regressions</li>
@@ -204,12 +206,316 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ol>
 <p>Whilst this is not too time consuming, it would be desirable to only have to run Snakemake once and have all our analysis in (1) and (2) be executed. That is our next goal.</p>
 <p>So that we are all starting from the same directory structure, let’s clean our output directory, removing all estimated models and figures:</p>
-<pre><code>$ snakemake clean</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span> clean</code></pre></div>
 <p>Now if we list the contents of the <code>out</code> directory and any potential subdirectories:</p>
-<pre><code>$ ls -R out/</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">ls</span> -R out/</code></pre></div>
 <p>we see that there are no contents remaining:</p>
-<pre><code>out/:</code></pre>
+<pre class="out"><code>out/:</code></pre>
+<div id="creating-an-all-rule" class="section level2">
+<h2><span class="header-section-number">6.1</span> Creating an <code>all</code> rule</h2>
+<p>Out goal is to combine all the outputs from the <code>estimate_models</code> and <code>make_figs</code> rules. Let’s take a look at the structure of each of these rules so that we get a sense of what we might need to do., Here is the <code>estimate_models</code> rule:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rule</span> estimate_models:
+    <span class="kw">input</span>:
+        <span class="kw">expand</span>(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,
+                    <span class="kw">iModel</span> = MODELS,
+                    <span class="kw">iSubset</span> = DATA_SUBSET)</code></pre></div>
+<p>And the <code>make_figs</code> rule:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rule</span> make_figs:
+    <span class="kw">input</span>:
+        <span class="kw">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,
+                <span class="kw">iFigure</span> = FIGURES)</code></pre></div>
+<p>These rules have a common structure: both having only an <code>input</code>. From other rules that we have written, we know that a rule can have multiple inputs if we name them. This suggests a way forward. We are going to create a new rule called <code>all</code> that contains two inputs, combining the inputs from the separate rules:<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a>:</p>
+<ol style="list-style-type: decimal">
+<li><code>figs</code>, which contains the inputs from our <code>make_figs</code> rule</li>
+<li><code>models</code>, which contains the inputs from our <code>estimate_models</code> rule</li>
+</ol>
+<p>As ever, we will have to be mindful that if we have multiple inputs, have the trailing commas located wherever one input is followed by another. Let’s put this rule as the first in our Snakefile:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># --- Build Rules --- #</span>
 
+<span class="kw">rule</span> all:
+    <span class="kw">input</span>:
+        <span class="kw">figs</span>   = expand(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,
+                            <span class="kw">iFigure</span> = FIGURES),
+        <span class="kw">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,
+                            <span class="kw">iModel</span> = MODELS,
+                            <span class="kw">iSubset</span> = DATA_SUBSET)</code></pre></div>
+<p>Let’s check if this <code>all</code> rule does as desired - building all outputs. If we run <code>snakemake --dryrun all</code>, we get the following output:</p>
+<pre class="out"><code>Building DAG of jobs...
+Job counts:
+    count   jobs
+    1   all
+    3   figures
+    1   gen_regression_vars
+    24  ols_model
+    1   rename_vars
+    30
+
+[Tue Feb  5 16:23:01 2019]
+rule rename_vars:
+    input: src/data-management/rename_variables.R, src/data/mrw.dta
+    output: out/data/mrw_renamed.csv
+    jobid: 29
+
+
+[Tue Feb  5 16:23:01 2019]
+rule gen_regression_vars:
+    input: src/data-management/gen_reg_vars.R, out/data/mrw_renamed.csv, src/data-specs/param_solow.json
+    output: out/data/mrw_complete.csv
+    jobid: 28
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_aug_cc_ols_subset_oecd.rds
+    jobid: 1
+    wildcards: iModel=model_aug_cc, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_solow_ols_subset_oecd.rds
+    jobid: 2
+    wildcards: iModel=model_solow, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow_restr.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_solow_restr_ols_subset_oecd.rds
+    jobid: 4
+    wildcards: iModel=model_solow_restr, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_cc.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_cc_ols_subset_oecd.rds
+    jobid: 5
+    wildcards: iModel=model_cc, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc_restr.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_aug_cc_restr_ols_subset_intermediate.rds
+    jobid: 27
+    wildcards: iModel=model_aug_cc_restr, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_aug_solow_ols_subset_intermediate.rds
+    jobid: 9
+    wildcards: iModel=model_aug_solow, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_aug_solow_ols_subset_nonoil.rds
+    jobid: 13
+    wildcards: iModel=model_aug_solow, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc_restr.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_aug_cc_restr_ols_subset_nonoil.rds
+    jobid: 15
+    wildcards: iModel=model_aug_cc_restr, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule figures:
+    input: src/figures/aug_conditional_convergence.R, out/data/mrw_complete.csv, src/data-specs/subset_intermediate.json
+    output: out/figures/aug_conditional_convergence.pdf
+    jobid: 18
+    wildcards: iFigure=aug_conditional_convergence
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_ucc.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_ucc_ols_subset_oecd.rds
+    jobid: 25
+    wildcards: iModel=model_ucc, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow_restr.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_aug_solow_restr_ols_subset_oecd.rds
+    jobid: 26
+    wildcards: iModel=model_aug_solow_restr, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc_restr.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_aug_cc_restr_ols_subset_oecd.rds
+    jobid: 14
+    wildcards: iModel=model_aug_cc_restr, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow.json, src/data-specs/subset_oecd.json
+    output: out/analysis/model_aug_solow_ols_subset_oecd.rds
+    jobid: 3
+    wildcards: iModel=model_aug_solow, iSubset=subset_oecd
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_solow_ols_subset_intermediate.rds
+    jobid: 7
+    wildcards: iModel=model_solow, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_cc.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_cc_ols_subset_nonoil.rds
+    jobid: 23
+    wildcards: iModel=model_cc, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow_restr.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_solow_restr_ols_subset_intermediate.rds
+    jobid: 10
+    wildcards: iModel=model_solow_restr, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_aug_cc_ols_subset_intermediate.rds
+    jobid: 11
+    wildcards: iModel=model_aug_cc, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule figures:
+    input: src/figures/unconditional_convergence.R, out/data/mrw_complete.csv, src/data-specs/subset_intermediate.json
+    output: out/figures/unconditional_convergence.pdf
+    jobid: 24
+    wildcards: iFigure=unconditional_convergence
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_cc.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_cc_ols_subset_intermediate.rds
+    jobid: 8
+    wildcards: iModel=model_cc, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow_restr.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_solow_restr_ols_subset_nonoil.rds
+    jobid: 12
+    wildcards: iModel=model_solow_restr, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_solow_ols_subset_nonoil.rds
+    jobid: 16
+    wildcards: iModel=model_solow, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_aug_cc_ols_subset_nonoil.rds
+    jobid: 17
+    wildcards: iModel=model_aug_cc, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule figures:
+    input: src/figures/conditional_convergence.R, out/data/mrw_complete.csv, src/data-specs/subset_intermediate.json
+    output: out/figures/conditional_convergence.pdf
+    jobid: 19
+    wildcards: iFigure=conditional_convergence
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_ucc.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_ucc_ols_subset_intermediate.rds
+    jobid: 20
+    wildcards: iModel=model_ucc, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow_restr.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_aug_solow_restr_ols_subset_nonoil.rds
+    jobid: 21
+    wildcards: iModel=model_aug_solow_restr, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_ucc.json, src/data-specs/subset_nonoil.json
+    output: out/analysis/model_ucc_ols_subset_nonoil.rds
+    jobid: 22
+    wildcards: iModel=model_ucc, iSubset=subset_nonoil
+
+
+[Tue Feb  5 16:23:01 2019]
+rule ols_model:
+    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow_restr.json, src/data-specs/subset_intermediate.json
+    output: out/analysis/model_aug_solow_restr_ols_subset_intermediate.rds
+    jobid: 6
+    wildcards: iModel=model_aug_solow_restr, iSubset=subset_intermediate
+
+
+[Tue Feb  5 16:23:01 2019]
+localrule all:
+    input: out/figures/conditional_convergence.pdf, out/figures/unconditional_convergence.pdf, out/figures/aug_conditional_convergence.pdf, out/analysis/model_solow_ols_subset_oecd.rds, out/analysis/model_aug_cc_restr_ols_subset_oecd.rds, out/analysis/model_solow_restr_ols_subset_oecd.rds, out/analysis/model_cc_ols_subset_oecd.rds, out/analysis/model_ucc_ols_subset_oecd.rds, out/analysis/model_aug_solow_restr_ols_subset_oecd.rds, out/analysis/model_aug_cc_ols_subset_oecd.rds, out/analysis/model_aug_solow_ols_subset_oecd.rds, out/analysis/model_solow_ols_subset_nonoil.rds, out/analysis/model_aug_cc_restr_ols_subset_nonoil.rds, out/analysis/model_solow_restr_ols_subset_nonoil.rds, out/analysis/model_cc_ols_subset_nonoil.rds, out/analysis/model_ucc_ols_subset_nonoil.rds, out/analysis/model_aug_solow_restr_ols_subset_nonoil.rds, out/analysis/model_aug_cc_ols_subset_nonoil.rds, out/analysis/model_aug_solow_ols_subset_nonoil.rds, out/analysis/model_solow_ols_subset_intermediate.rds, out/analysis/model_aug_cc_restr_ols_subset_intermediate.rds, out/analysis/model_solow_restr_ols_subset_intermediate.rds, out/analysis/model_cc_ols_subset_intermediate.rds, out/analysis/model_ucc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_restr_ols_subset_intermediate.rds, out/analysis/model_aug_cc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_ols_subset_intermediate.rds
+    jobid: 0
+
+Job counts:
+    count   jobs
+    1   all
+    3   figures
+    1   gen_regression_vars
+    24  ols_model
+    1   rename_vars
+    30
+</code></pre>
+<p>The output shows that we have achieved our desired goal. The <code>all</code> rule builds all outputs. Notice that if you examine the order that Snakemake plans to execute the jobs that:</p>
+<ol style="list-style-type: decimal">
+<li>First the data management steps are executed to prepare data
+<ul>
+<li>This is what we would expect, as we cannot do any analysis without cleaned data</li>
+</ul></li>
+<li>The order in which the figures and regressions are executed are mixed together
+<ul>
+<li>This is because the figures and regression outputs do not depend on each other</li>
+</ul></li>
+</ol>
+<p>Now we build our entire project<a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></a>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span> all</code></pre></div>
+
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="5">
+<li id="fn5"><p>The name <code>all</code> is a convention, we could name it anything we please<a href="building-all-outputs-at-once.html#fnref5">↩</a></p></li>
+<li id="fn6"><p>Notice that we placed the <code>all</code> rule as the first rule in our Snakefile. Snakemake’s default behaviour is to build the first rule in the file, so we could instead type only <code>snakemake</code> and get the same result.<a href="building-all-outputs-at-once.html#fnref6">↩</a></p></li>
+</ol>
 </div>
             </section>
 
