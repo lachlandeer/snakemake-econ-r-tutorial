@@ -4,7 +4,7 @@ Some discussion before moving to the next chapter?
 
 # Logging Output and Errors
 
-## Adding a Log File
+## Logging Output
 
 BLAH BLAH
 
@@ -82,6 +82,8 @@ Adjusted R$^{2}$ & 0.59 & 0.59 & 0.01 & 0.59 & 0.59 & 0.06 \\
 \end{table}
 ```
 
+## Logging Output and Errors in One File
+
 Although this content has been redirected, there was still some information from the R session printed to screen.
 This was information about package loading.
 Why the separation?
@@ -123,7 +125,7 @@ Update each of the Snakemake rules to log all output to file.
 When finished, force the execution of the all rule, to build your entire project.
 
 HINT: Log files also accept wildcards `{something}`.
-Integrating wildcards into your log file names ensures each iteration of a rule gets a log file. 
+Integrating wildcards into your log file names ensures each iteration of a rule gets a log file.
 
 We recommend the following conventions:
 
