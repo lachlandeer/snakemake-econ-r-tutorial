@@ -169,3 +169,7 @@ $ ls out/tables/
 ```{r, engine = 'out', eval = FALSE}
 tab01_textbook_solow.tex
 ```
+
+### Exercise: Building Table 2 {- .exercise}
+
+Using the same rule format as above, incorporate `params` into a new rule called `augment_solow` that constructs Table 2.
