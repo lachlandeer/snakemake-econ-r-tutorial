@@ -1,3 +1,25 @@
 # An `all` Rule
 
-Content is TBD
+In our analysis pipeline that we have constructed so far,
+    we need to make two calls to snakemake to run all of our analysis:
+
+1. `snakemake estimate_models` - to estimate OLS regressions
+2. `snakemake make_figs` - to construct the figures
+
+Whilst this is not too time consuming, it would be desirable to only have to run Snakemake once
+    and have all our analysis in (1) and (2) be executed.
+That is our next goal.
+
+So that we are all starting from the same directory structure, let's clean our output directory,
+    removing all estimated models and figures:
+```
+$ snakemake clean
+```
+Now if we list the contents of the `out` directory and any potential subdirectories:
+```
+$ ls -R out/
+```
+we see that there are no contents remaining:
+```
+out/:
+```
