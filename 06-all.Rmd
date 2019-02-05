@@ -1,4 +1,4 @@
-# An `all` Rule
+# Building all outputs at once
 
 In our analysis pipeline that we have constructed so far,
     we need to make two calls to snakemake to run all of our analysis:
@@ -12,14 +12,34 @@ That is our next goal.
 
 So that we are all starting from the same directory structure, let's clean our output directory,
     removing all estimated models and figures:
-```
+```{r, engine = 'bash', eval = FALSE}
 $ snakemake clean
 ```
 Now if we list the contents of the `out` directory and any potential subdirectories:
-```
+```{r, engine = 'bash', eval = FALSE}
 $ ls -R out/
 ```
 we see that there are no contents remaining:
-```
+```{r, engine = 'out', eval = FALSE}
 out/:
+```
+
+## Creating an `all` rule
+
+Out goal is to combine all the outputs from the `estimate_models` and `make_figs` rules.
+Let's take a look at the structure of each of these rules so that we get a sense of what we might need to do.,
+Here is the `estimate_models` rule:
+```{r, engine = 'bash', eval = FALSE}
+rule estimate_models:
+    input:
+        expand("out/analysis/{iModel}_{iSubset}.rds",
+                    iModel = MODELS,
+                    iSubset = DATA_SUBSET)
+```
+And the `make_figs` rule:
+```{r, engine = 'bash', eval = FALSE}
+rule make_figs:
+    input:
+        expand("out/figures/{iFigure}.pdf",
+                iFigure = FIGURES)
 ```
