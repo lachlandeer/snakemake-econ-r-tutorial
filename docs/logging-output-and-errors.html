@@ -174,7 +174,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="part-ii.html"><a href="part-ii.html"><i class="fa fa-check"></i>PART II</a></li>
-<li class="chapter" data-level="8" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>8</b> Logging Output and Errors</a></li>
+<li class="chapter" data-level="8" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>8</b> Logging Output and Errors</a><ul>
+<li class="chapter" data-level="8.1" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#adding-a-log-file"><i class="fa fa-check"></i><b>8.1</b> Adding a Log File</a><ul>
+<li class="chapter" data-level="" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#exercise-logging-all-r-scripts"><i class="fa fa-check"></i>Exercise: Logging all R Scripts</a></li>
+</ul></li>
+</ul></li>
 <li class="chapter" data-level="9" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>9</b> Self Documenting Help</a></li>
 <li class="chapter" data-level="10" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>10</b> Config Files</a></li>
 <li class="chapter" data-level="11" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>11</b> Subworkflows: Divide and Conquer</a></li>
@@ -205,8 +209,105 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="logging-output-and-errors" class="section level1">
 <h1><span class="header-section-number">Chapter 8</span> Logging Output and Errors</h1>
-<p>Content is TBD</p>
+<div id="adding-a-log-file" class="section level2">
+<h2><span class="header-section-number">8.1</span> Adding a Log File</h2>
+<p>BLAH BLAH</p>
+<p>Let’s add a log file the <code>textbook_solow</code> rule.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rule</span> textbook_solow:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,
+        <span class="kw">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,
+                            <span class="kw">iModel</span> = MODELS,
+                            <span class="kw">iSubset</span> = DATA_SUBSET),
+    <span class="kw">params</span>:
+        <span class="kw">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,
+        <span class="kw">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span>
+    <span class="kw">log</span>:
+        <span class="st">&quot;logs/tables/tab01_textbook_solow.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --filepath {params.filepath} \</span>
+<span class="st">            --models {params.model_expr} \</span>
+<span class="st">            --out {output.table} \</span>
+<span class="st">            &gt; {log}&quot;</span></code></pre></div>
+<p>Notice <code>.Rout</code> is a convention …, can use anything we like.</p>
+<p>If we run Snakemake on the <code>textbook_solow</code> rule, it will tell us there is nothing to be done. We can force Snakemake to execute a rule by adding the <code>--force</code> flag:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span> --force textbook_solow</code></pre></div>
+<p>We see that as the R script is run the printout of the LaTeX table no longer goes to the screen, it has been redirected to the log file. This can be verified by viewing the contents of the log file:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cat</span> logs/tables/tab01_textbook_solow.Rout</code></pre></div>
+<pre class="out"><code>% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Tue, Feb 05, 2019 - 06:34:51 PM
+\begin{table}[!htbp] \centering
+  \caption{Estimation of the Textbook Solow Model}
+  \label{}
+\scriptsize
+\begin{tabular}{@{\extracolsep{5pt}}lcccccc}
+\\[-1.8ex]\hline \\[-1.8ex]
+\\[-1.8ex] &amp; \multicolumn{6}{c}{log(GDP per capita in 1965)} \\
+ &amp; Non-Oil &amp; Intermediate &amp; OECD &amp; Non-Oil &amp; Intermediate &amp; OECD \\
+\\[-1.8ex] &amp; (1) &amp; (2) &amp; (3) &amp; (4) &amp; (5) &amp; (6)\\
+\hline \\[-1.8ex]
+ log(I / GDP) &amp; 1.42$^{***}$ &amp; 1.32$^{***}$ &amp; 0.50 &amp;  &amp;  &amp;  \\
+  &amp; (0.14) &amp; (0.17) &amp; (0.43) &amp;  &amp;  &amp;  \\
+  log(n + g + $\delta$) &amp; $-$1.99$^{***}$ &amp; $-$2.02$^{***}$ &amp; $-$0.74 &amp;  &amp;  &amp;  \\
+  &amp; (0.56) &amp; (0.53) &amp; (0.85) &amp;  &amp;  &amp;  \\
+  log(I / GDP) - log(n + g + $\delta$) &amp;  &amp;  &amp;  &amp; 1.49$^{***}$ &amp; 1.43$^{***}$ &amp; 0.55 \\
+  &amp;  &amp;  &amp;  &amp; (0.12) &amp; (0.14) &amp; (0.37) \\
+  Constant &amp; 5.43$^{***}$ &amp; 5.35$^{***}$ &amp; 8.02$^{***}$ &amp; 6.87$^{***}$ &amp; 7.09$^{***}$ &amp; 8.62$^{***}$ \\
+  &amp; (1.58) &amp; (1.54) &amp; (2.52) &amp; (0.12) &amp; (0.15) &amp; (0.53) \\
+ \hline \\[-1.8ex]
+Restricted Model &amp; No &amp; No &amp; No &amp; Yes &amp; Yes &amp; Yes \\
+\hline \\[-1.8ex]
+\textit{N} &amp; 98 &amp; 75 &amp; 22 &amp; 98 &amp; 75 &amp; 22 \\
+Adjusted R$^{2}$ &amp; 0.59 &amp; 0.59 &amp; 0.01 &amp; 0.59 &amp; 0.59 &amp; 0.06 \\
+\hline
+\hline \\[-1.8ex]
+\textit{Notes:} &amp; \multicolumn{6}{r}{$^{***}$Significant at the 1 percent level.} \\
+ &amp; \multicolumn{6}{r}{$^{**}$Significant at the 5 percent level.} \\
+ &amp; \multicolumn{6}{r}{$^{*}$Significant at the 10 percent level.} \\
+\end{tabular}
+\end{table}</code></pre>
+<p>Although this content has been redirected, there was still some information from the R session printed to screen. This was information about package loading. Why the separation? When we redirect using the <code>&gt;</code> what the bash shell is sending what’s called ‘stdout’ to the log file. stdout in this case is the table contents. The remaining information is called stderr, also known as standard error, is where BLAH.<a href="#fn8" class="footnoteRef" id="fnref8"><sup>8</sup></a> To integrate stderr into the same log file as the stdout we use <code>&gt;&amp;</code> instead of <code>&gt;</code>. Then our rule becomes:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rule</span> textbook_solow:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,
+        <span class="kw">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,
+                            <span class="kw">iModel</span> = MODELS,
+                            <span class="kw">iSubset</span> = DATA_SUBSET),
+    <span class="kw">params</span>:
+        <span class="kw">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,
+        <span class="kw">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span>
+    <span class="kw">log</span>:
+        <span class="st">&quot;logs/tables/tab01_textbook_solow.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --filepath {params.filepath} \</span>
+<span class="st">            --models {params.model_expr} \</span>
+<span class="st">            --out {output.table} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span></code></pre></div>
+<p>Now when we again run <code>snakemake --force textbook_solow</code> we see that no information from our R session is printed to the screen.</p>
+<div id="exercise-logging-all-r-scripts" class="section level3 unnumbered exercise">
+<h3>Exercise: Logging all R Scripts</h3>
+<p>Update each of the Snakemake rules to log all output to file. When finished, force the execution of the all rule, to build your entire project.</p>
+<p>HINT: Log files also accept wildcards <code>{something}</code>. Integrating wildcards into your log file names ensures each iteration of a rule gets a log file.</p>
+<p>We recommend the following conventions:</p>
+<ol style="list-style-type: decimal">
+<li>Name the log file using the same name as the R script from which it stores the information. This makes it easier to find the log file later when debugging errors.</li>
+<li>For each subdirectory of the <code>src</code> folder, have a the same subdirectory in the <code>log</code> folder. Again this will facilitate finding the log file you want to inspect.</li>
+</ol>
 
+</div>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="8">
+<li id="fn8"><p>In addition to the package loading information, if your code contains an error this is where that info will be printed.<a href="logging-output-and-errors.html#fnref8">↩</a></p></li>
+</ol>
 </div>
             </section>
 
