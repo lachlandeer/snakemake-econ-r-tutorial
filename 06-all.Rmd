@@ -338,3 +338,12 @@ Notice that if you examine the order that Snakemake plans to execute the jobs th
     * This is what we would expect, as we cannot do any analysis without cleaned data
 2. The order in which the figures and regressions are executed are mixed together
     * This is because the figures and regression outputs do not depend on each other
+
+Now we build our entire project^[
+    Notice that we placed the `all` rule as the first rule in our Snakefile.
+    Snakemake's default behaviour is to build the first rule in the file,
+        so we could instead type only `snakemake` and get the same result.
+]:
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake all
+```
