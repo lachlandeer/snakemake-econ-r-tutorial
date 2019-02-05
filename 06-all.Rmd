@@ -32,7 +32,7 @@ Here is the `estimate_models` rule:
 ```{r, engine = 'bash', eval = FALSE}
 rule estimate_models:
     input:
-        expand("out/analysis/{iModel}_{iSubset}.rds",
+        expand("out/analysis/{iModel}_ols_{iSubset}.rds",
                     iModel = MODELS,
                     iSubset = DATA_SUBSET)
 ```
@@ -42,4 +42,29 @@ rule make_figs:
     input:
         expand("out/figures/{iFigure}.pdf",
                 iFigure = FIGURES)
+```
+
+These rules have a common structure: both having only an `input`.
+From other rules that we have written, we know that a rule can have multiple inputs if we name them.
+This suggests a way forward.
+We are going to create a new rule called `all` that contains two inputs^[#
+    The name `all` is a convention, we could name it anything we please
+]:
+
+1. `figs`, which contains the inputs from our `make_figs` rule
+2. `models`, which contains the inputs from our `estimate_models` rule
+
+As ever, we will have to be mindful that if we have multiple inputs,
+    have the trailing commas located wherever one input is followed by another.
+Let's put this rule as the first in our Snakefile:
+```{r, engine = 'bash', eval = FALSE}
+# --- Build Rules --- #
+
+rule all:
+    input:
+        figs   = expand("out/figures/{iFigure}.pdf",
+                            iFigure = FIGURES),
+        models = expand("out/analysis/{iModel}_ols_{iSubset}.rds",
+                            iModel = MODELS,
+                            iSubset = DATA_SUBSET)
 ```
