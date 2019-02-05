@@ -2235,7 +2235,252 @@ Now we build our entire project\footnote{Notice that we placed the
 
 \chapter{Adding Parameters}\label{adding-parameters}
 
-Content is TBD
+In our analysis pipeline so far we have always passed files to our R
+scripts. While we promote this practice, and wrapping important
+information into .json files, sometimes it seems like overkill to write
+a new json file to contain one line of configuration. An alternative to
+passing these json files is to use Snakemake's built in \texttt{params}
+arguments, which are rule specific, to store information that we want to
+pass to our R Script. This goal of this chapter is to show how to use
+\texttt{params} to pass across a piece of information.
+
+\section{Motivating Example: Constructing a Regression Table from OLS
+Results}\label{motivating-example-constructing-a-regression-table-from-ols-results}
+
+So far, we have estimated a series of OLS regressions and stored there
+output inside the \texttt{out/analysis} directory. Typically once we
+have estimated one or more models, we want to format the output into a
+regression table that we can insert into a written document like a paper
+or set of presentation slides. In the folder \texttt{src/tables/} we can
+see that there are a series of R scripts:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{ls} \NormalTok{src/tables/}
+\end{Highlighting}
+\end{Shaded}
+
+which prints to the screen:
+
+\begin{verbatim}
+tab01_textbook_solow.R  tab03_ucc_solow.R  tab05_cc_aug_solow.R
+tab02_augment_solow.R   tab04_cc_solow.R   tab06_cc_aug_solow_restr.R
+\end{verbatim}
+
+This shows that the example is designed to build 6 tables. Each table
+has it's own script that constructs it. We will start by constructing
+Table 1, from \texttt{tab01\_textbook\_solow.R} Let's have a look at
+what information this script expects us to pass using the help flag:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{Rscript} \NormalTok{src/tables/tab01_textbook_solow.R --help}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Usage: src/tables/tab01_textbook_solow.R [options]
+
+
+Options:
+    -fp CHARACTER, --filepath=CHARACTER
+        A directory path where models are saved
+
+    -m CHARACTER, --models=CHARACTER
+        A regex of the models to load
+
+    -o CHARACTER, --out=CHARACTER
+        output file name [default = out.tex]
+
+    -h, --help
+        Show this help message and exit
+\end{verbatim}
+
+From this we learn that we need to pass:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \texttt{-\/-filepath}, which is the directory where our OLS models are
+  stored
+\item
+  \texttt{-\/-models}, a regular expression to tell R which models
+  within the filepath to workwith
+\item
+  \texttt{-\/-out}, a .tex file where we want to direct the output
+\end{enumerate}
+
+Now we will work on constructing this rule.
+
+\section{\texorpdfstring{Creating a Rule with
+\texttt{params}}{Creating a Rule with params}}\label{creating-a-rule-with-params}
+
+We are going to use the \texttt{params} option to pass across the
+filepath and the models regular expression into R. A sketch of the rule
+we want to create is:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{textbook_solow:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= ,}
+        \KeywordTok{models} \NormalTok{=}
+    \KeywordTok{params}\NormalTok{:}
+        \KeywordTok{filepath}   \NormalTok{= ,}
+        \KeywordTok{model_expr} \NormalTok{=}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{table} \NormalTok{= ,}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --filepath \{params.filepath\} \textbackslash{}}
+\StringTok{            --models \{params.model_expr\} \textbackslash{}}
+\StringTok{            --out \{output.table\}"}
+\end{Highlighting}
+\end{Shaded}
+
+There are two important points to notice about how we added params to
+our rules:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \texttt{params} are added to the rule in a similar way to inputs and
+  lists
+\item
+  \texttt{params} are referenced identically to inputs and outputs in
+  the shell command
+\end{enumerate}
+
+Now we need to decide what information needs to be entered into each
+line of our rule. EXPLAIN
+
+Our rule then becomes:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{textbook_solow:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= }\StringTok{"src/tables/tab01_textbook_solow.R"}\NormalTok{,}
+        \KeywordTok{models} \NormalTok{= expand(}\StringTok{"out/analysis/\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                            \KeywordTok{iModel} \NormalTok{= MODELS,}
+                            \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)),}
+    \KeywordTok{params}\NormalTok{:}
+        \KeywordTok{filepath}   \NormalTok{= }\StringTok{"out/analysis/"}\NormalTok{,}
+        \KeywordTok{model_expr} \NormalTok{= }\StringTok{"model_solow*.rds"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{table} \NormalTok{= }\StringTok{"out/tables/tab01_textbook_solow.tex"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --filepath \{params.filepath\} \textbackslash{}}
+\StringTok{            --models \{params.model_expr\} \textbackslash{}}
+\StringTok{            --out \{output.table\}"}
+\end{Highlighting}
+\end{Shaded}
+
+There are two ways to run this rule:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Tell snakemake to run this rule explicitly,
+  \texttt{snakemake\ textbook\_solow}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Because it is not the first rule of the Snakefile it isnt run by
+    default
+  \end{itemize}
+\item
+  Add the output of this rule to the \texttt{all} rule.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Adds creating this table to our complete analysis pipeline
+  \end{itemize}
+\end{enumerate}
+
+We prefer (2). Hence we also update the \texttt{all} rule as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rule} \NormalTok{all:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{figs}   \NormalTok{= expand(}\StringTok{"out/figures/\{iFigure\}.pdf"}\NormalTok{,}
+                            \KeywordTok{iFigure} \NormalTok{= FIGURES),}
+        \KeywordTok{models} \NormalTok{= expand(}\StringTok{"out/analysis/\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                            \KeywordTok{iModel} \NormalTok{= MODELS,}
+                            \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET),}
+        \KeywordTok{tab01}  \NormalTok{= }\StringTok{"out/tables/tab01_textbook_solow.tex"}
+\end{Highlighting}
+\end{Shaded}
+
+If we then do a dry run to see what Snakemake plans to do\footnote{An
+  alternative would be to run \texttt{snakemake\ -\/-summary} and
+  examine the output.}:
+
+\begin{verbatim}
+Building DAG of jobs...
+Job counts:
+    count   jobs
+    1   all
+    1   textbook_solow
+    2
+
+[Tue Feb  5 17:42:59 2019]
+rule textbook_solow:
+    input: src/tables/tab01_textbook_solow.R, out/analysis/model_solow_ols_subset_oecd.rds, out/analysis/model_solow_ols_subset_nonoil.rds, out/analysis/model_solow_ols_subset_intermediate.rds, out/analysis/model_aug_cc_restr_ols_subset_oecd.rds, out/analysis/model_aug_cc_restr_ols_subset_nonoil.rds, out/analysis/model_aug_cc_restr_ols_subset_intermediate.rds, out/analysis/model_solow_restr_ols_subset_oecd.rds, out/analysis/model_solow_restr_ols_subset_nonoil.rds, out/analysis/model_solow_restr_ols_subset_intermediate.rds, out/analysis/model_cc_ols_subset_oecd.rds, out/analysis/model_cc_ols_subset_nonoil.rds, out/analysis/model_cc_ols_subset_intermediate.rds, out/analysis/model_ucc_ols_subset_oecd.rds, out/analysis/model_ucc_ols_subset_nonoil.rds, out/analysis/model_ucc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_restr_ols_subset_oecd.rds, out/analysis/model_aug_solow_restr_ols_subset_nonoil.rds, out/analysis/model_aug_solow_restr_ols_subset_intermediate.rds, out/analysis/model_aug_cc_ols_subset_oecd.rds, out/analysis/model_aug_cc_ols_subset_nonoil.rds, out/analysis/model_aug_cc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_ols_subset_oecd.rds, out/analysis/model_aug_solow_ols_subset_nonoil.rds, out/analysis/model_aug_solow_ols_subset_intermediate.rds
+    output: out/tables/tab01_textbook_solow.tex
+    jobid: 27
+
+
+[Tue Feb  5 17:42:59 2019]
+localrule all:
+    input: out/figures/conditional_convergence.pdf, out/figures/unconditional_convergence.pdf, out/figures/aug_conditional_convergence.pdf, out/analysis/model_solow_ols_subset_oecd.rds, out/analysis/model_solow_ols_subset_nonoil.rds, out/analysis/model_solow_ols_subset_intermediate.rds, out/analysis/model_aug_cc_restr_ols_subset_oecd.rds, out/analysis/model_aug_cc_restr_ols_subset_nonoil.rds, out/analysis/model_aug_cc_restr_ols_subset_intermediate.rds, out/analysis/model_solow_restr_ols_subset_oecd.rds, out/analysis/model_solow_restr_ols_subset_nonoil.rds, out/analysis/model_solow_restr_ols_subset_intermediate.rds, out/analysis/model_cc_ols_subset_oecd.rds, out/analysis/model_cc_ols_subset_nonoil.rds, out/analysis/model_cc_ols_subset_intermediate.rds, out/analysis/model_ucc_ols_subset_oecd.rds, out/analysis/model_ucc_ols_subset_nonoil.rds, out/analysis/model_ucc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_restr_ols_subset_oecd.rds, out/analysis/model_aug_solow_restr_ols_subset_nonoil.rds, out/analysis/model_aug_solow_restr_ols_subset_intermediate.rds, out/analysis/model_aug_cc_ols_subset_oecd.rds, out/analysis/model_aug_cc_ols_subset_nonoil.rds, out/analysis/model_aug_cc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_ols_subset_oecd.rds, out/analysis/model_aug_solow_ols_subset_nonoil.rds, out/analysis/model_aug_solow_ols_subset_intermediate.rds, out/tables/tab01_textbook_solow.tex
+    jobid: 0
+
+Job counts:
+    count   jobs
+    1   all
+    1   textbook_solow
+    2
+\end{verbatim}
+
+We see that snakemake only needs to create the table from our newly
+created rule. Now run snakemake to build the table:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake} \NormalTok{all}
+\end{Highlighting}
+\end{Shaded}
+
+and when finished if we list the contents of \texttt{out/tables} we see
+our new regression table has been created:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{ls} \NormalTok{out/tables/}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+tab01_textbook_solow.tex
+\end{verbatim}
+
+\subsection*{Exercise: Building Table
+2}\label{exercise-building-table-2}
+\addcontentsline{toc}{subsection}{Exercise: Building Table 2}
+
+Using the same rule format as above, incorporate \texttt{params} into a
+new rule called \texttt{augment\_solow} that constructs Table 2.
+
+\chapter*{PART II}\label{part-ii}
+\addcontentsline{toc}{chapter}{PART II}
 
 \chapter{Logging Output and Errors}\label{logging-output-and-errors}
 
@@ -2254,8 +2499,8 @@ Conquer}\label{subworkflows-divide-and-conquer}
 
 Content is TBD
 
-\chapter*{PART II}\label{part-ii}
-\addcontentsline{toc}{chapter}{PART II}
+\chapter*{PART III}\label{part-iii}
+\addcontentsline{toc}{chapter}{PART III}
 
 \chapter{Reproducible Articles with
 Rmd}\label{reproducible-articles-with-rmd}

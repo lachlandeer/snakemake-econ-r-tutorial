@@ -34,7 +34,7 @@
   
   
 <link rel="prev" href="building-all-outputs-at-once.html">
-<link rel="next" href="logging-output-and-errors.html">
+<link rel="next" href="part-ii.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -167,12 +167,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="6" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html"><i class="fa fa-check"></i><b>6</b> Building all outputs at once</a><ul>
 <li class="chapter" data-level="6.1" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html#creating-an-all-rule"><i class="fa fa-check"></i><b>6.1</b> Creating an <code>all</code> rule</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>7</b> Adding Parameters</a></li>
+<li class="chapter" data-level="7" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>7</b> Adding Parameters</a><ul>
+<li class="chapter" data-level="7.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>7.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
+<li class="chapter" data-level="7.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>7.2</b> Creating a Rule with <code>params</code></a><ul>
+<li class="chapter" data-level="" data-path="adding-parameters.html"><a href="adding-parameters.html#exercise-building-table-2"><i class="fa fa-check"></i>Exercise: Building Table 2</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="part-ii.html"><a href="part-ii.html"><i class="fa fa-check"></i>PART II</a></li>
 <li class="chapter" data-level="8" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>8</b> Logging Output and Errors</a></li>
 <li class="chapter" data-level="9" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>9</b> Self Documenting Help</a></li>
 <li class="chapter" data-level="10" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>10</b> Config Files</a></li>
 <li class="chapter" data-level="11" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>11</b> Subworkflows: Divide and Conquer</a></li>
-<li class="chapter" data-level="" data-path="part-ii.html"><a href="part-ii.html"><i class="fa fa-check"></i>PART II</a></li>
+<li class="chapter" data-level="" data-path="part-iii.html"><a href="part-iii.html"><i class="fa fa-check"></i>PART III</a></li>
 <li class="chapter" data-level="12" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>12</b> Reproducible Articles with Rmd</a></li>
 <li class="chapter" data-level="13" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>13</b> Reproducible Slides with Rmd</a></li>
 <li class="chapter" data-level="14" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>14</b> Package Dependencies with Packrat</a></li>
@@ -199,8 +205,141 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="adding-parameters" class="section level1">
 <h1><span class="header-section-number">Chapter 7</span> Adding Parameters</h1>
-<p>Content is TBD</p>
+<p>In our analysis pipeline so far we have always passed files to our R scripts. While we promote this practice, and wrapping important information into .json files, sometimes it seems like overkill to write a new json file to contain one line of configuration. An alternative to passing these json files is to use Snakemake’s built in <code>params</code> arguments, which are rule specific, to store information that we want to pass to our R Script. This goal of this chapter is to show how to use <code>params</code> to pass across a piece of information.</p>
+<div id="motivating-example-constructing-a-regression-table-from-ols-results" class="section level2">
+<h2><span class="header-section-number">7.1</span> Motivating Example: Constructing a Regression Table from OLS Results</h2>
+<p>So far, we have estimated a series of OLS regressions and stored there output inside the <code>out/analysis</code> directory. Typically once we have estimated one or more models, we want to format the output into a regression table that we can insert into a written document like a paper or set of presentation slides. In the folder <code>src/tables/</code> we can see that there are a series of R scripts:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">ls</span> src/tables/</code></pre></div>
+<p>which prints to the screen:</p>
+<pre class="out"><code>tab01_textbook_solow.R  tab03_ucc_solow.R  tab05_cc_aug_solow.R
+tab02_augment_solow.R   tab04_cc_solow.R   tab06_cc_aug_solow_restr.R</code></pre>
+<p>This shows that the example is designed to build 6 tables. Each table has it’s own script that constructs it. We will start by constructing Table 1, from <code>tab01_textbook_solow.R</code> Let’s have a look at what information this script expects us to pass using the help flag:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">Rscript</span> src/tables/tab01_textbook_solow.R --help</code></pre></div>
+<pre class="out"><code>Usage: src/tables/tab01_textbook_solow.R [options]
 
+
+Options:
+    -fp CHARACTER, --filepath=CHARACTER
+        A directory path where models are saved
+
+    -m CHARACTER, --models=CHARACTER
+        A regex of the models to load
+
+    -o CHARACTER, --out=CHARACTER
+        output file name [default = out.tex]
+
+    -h, --help
+        Show this help message and exit</code></pre>
+<p>From this we learn that we need to pass:</p>
+<ol style="list-style-type: decimal">
+<li><code>--filepath</code>, which is the directory where our OLS models are stored</li>
+<li><code>--models</code>, a regular expression to tell R which models within the filepath to workwith</li>
+<li><code>--out</code>, a .tex file where we want to direct the output</li>
+</ol>
+<p>Now we will work on constructing this rule.</p>
+</div>
+<div id="creating-a-rule-with-params" class="section level2">
+<h2><span class="header-section-number">7.2</span> Creating a Rule with <code>params</code></h2>
+<p>We are going to use the <code>params</code> option to pass across the filepath and the models regular expression into R. A sketch of the rule we want to create is:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rule</span> textbook_solow:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = ,
+        <span class="kw">models</span> =
+    <span class="kw">params</span>:
+        <span class="kw">filepath</span>   = ,
+        <span class="kw">model_expr</span> =
+    <span class="kw">output</span>:
+        <span class="kw">table</span> = ,
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --filepath {params.filepath} \</span>
+<span class="st">            --models {params.model_expr} \</span>
+<span class="st">            --out {output.table}&quot;</span></code></pre></div>
+<p>There are two important points to notice about how we added params to our rules:</p>
+<ol style="list-style-type: decimal">
+<li><code>params</code> are added to the rule in a similar way to inputs and lists</li>
+<li><code>params</code> are referenced identically to inputs and outputs in the shell command</li>
+</ol>
+<p>Now we need to decide what information needs to be entered into each line of our rule. EXPLAIN</p>
+<p>Our rule then becomes:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rule</span> textbook_solow:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,
+        <span class="kw">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,
+                            <span class="kw">iModel</span> = MODELS,
+                            <span class="kw">iSubset</span> = DATA_SUBSET)),
+    <span class="kw">params</span>:
+        <span class="kw">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,
+        <span class="kw">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --filepath {params.filepath} \</span>
+<span class="st">            --models {params.model_expr} \</span>
+<span class="st">            --out {output.table}&quot;</span></code></pre></div>
+<p>There are two ways to run this rule:</p>
+<ol style="list-style-type: decimal">
+<li>Tell snakemake to run this rule explicitly, <code>snakemake textbook_solow</code>
+<ul>
+<li>Because it is not the first rule of the Snakefile it isnt run by default</li>
+</ul></li>
+<li>Add the output of this rule to the <code>all</code> rule.
+<ul>
+<li>Adds creating this table to our complete analysis pipeline</li>
+</ul></li>
+</ol>
+<p>We prefer (2). Hence we also update the <code>all</code> rule as follows:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">rule</span> all:
+    <span class="kw">input</span>:
+        <span class="kw">figs</span>   = expand(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,
+                            <span class="kw">iFigure</span> = FIGURES),
+        <span class="kw">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,
+                            <span class="kw">iModel</span> = MODELS,
+                            <span class="kw">iSubset</span> = DATA_SUBSET),
+        <span class="kw">tab01</span>  = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></code></pre></div>
+<p>If we then do a dry run to see what Snakemake plans to do<a href="#fn7" class="footnoteRef" id="fnref7"><sup>7</sup></a>:</p>
+<pre class="out"><code>Building DAG of jobs...
+Job counts:
+    count   jobs
+    1   all
+    1   textbook_solow
+    2
+
+[Tue Feb  5 17:42:59 2019]
+rule textbook_solow:
+    input: src/tables/tab01_textbook_solow.R, out/analysis/model_solow_ols_subset_oecd.rds, out/analysis/model_solow_ols_subset_nonoil.rds, out/analysis/model_solow_ols_subset_intermediate.rds, out/analysis/model_aug_cc_restr_ols_subset_oecd.rds, out/analysis/model_aug_cc_restr_ols_subset_nonoil.rds, out/analysis/model_aug_cc_restr_ols_subset_intermediate.rds, out/analysis/model_solow_restr_ols_subset_oecd.rds, out/analysis/model_solow_restr_ols_subset_nonoil.rds, out/analysis/model_solow_restr_ols_subset_intermediate.rds, out/analysis/model_cc_ols_subset_oecd.rds, out/analysis/model_cc_ols_subset_nonoil.rds, out/analysis/model_cc_ols_subset_intermediate.rds, out/analysis/model_ucc_ols_subset_oecd.rds, out/analysis/model_ucc_ols_subset_nonoil.rds, out/analysis/model_ucc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_restr_ols_subset_oecd.rds, out/analysis/model_aug_solow_restr_ols_subset_nonoil.rds, out/analysis/model_aug_solow_restr_ols_subset_intermediate.rds, out/analysis/model_aug_cc_ols_subset_oecd.rds, out/analysis/model_aug_cc_ols_subset_nonoil.rds, out/analysis/model_aug_cc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_ols_subset_oecd.rds, out/analysis/model_aug_solow_ols_subset_nonoil.rds, out/analysis/model_aug_solow_ols_subset_intermediate.rds
+    output: out/tables/tab01_textbook_solow.tex
+    jobid: 27
+
+
+[Tue Feb  5 17:42:59 2019]
+localrule all:
+    input: out/figures/conditional_convergence.pdf, out/figures/unconditional_convergence.pdf, out/figures/aug_conditional_convergence.pdf, out/analysis/model_solow_ols_subset_oecd.rds, out/analysis/model_solow_ols_subset_nonoil.rds, out/analysis/model_solow_ols_subset_intermediate.rds, out/analysis/model_aug_cc_restr_ols_subset_oecd.rds, out/analysis/model_aug_cc_restr_ols_subset_nonoil.rds, out/analysis/model_aug_cc_restr_ols_subset_intermediate.rds, out/analysis/model_solow_restr_ols_subset_oecd.rds, out/analysis/model_solow_restr_ols_subset_nonoil.rds, out/analysis/model_solow_restr_ols_subset_intermediate.rds, out/analysis/model_cc_ols_subset_oecd.rds, out/analysis/model_cc_ols_subset_nonoil.rds, out/analysis/model_cc_ols_subset_intermediate.rds, out/analysis/model_ucc_ols_subset_oecd.rds, out/analysis/model_ucc_ols_subset_nonoil.rds, out/analysis/model_ucc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_restr_ols_subset_oecd.rds, out/analysis/model_aug_solow_restr_ols_subset_nonoil.rds, out/analysis/model_aug_solow_restr_ols_subset_intermediate.rds, out/analysis/model_aug_cc_ols_subset_oecd.rds, out/analysis/model_aug_cc_ols_subset_nonoil.rds, out/analysis/model_aug_cc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_ols_subset_oecd.rds, out/analysis/model_aug_solow_ols_subset_nonoil.rds, out/analysis/model_aug_solow_ols_subset_intermediate.rds, out/tables/tab01_textbook_solow.tex
+    jobid: 0
+
+Job counts:
+    count   jobs
+    1   all
+    1   textbook_solow
+    2</code></pre>
+<p>We see that snakemake only needs to create the table from our newly created rule. Now run snakemake to build the table:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span> all</code></pre></div>
+<p>and when finished if we list the contents of <code>out/tables</code> we see our new regression table has been created:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">ls</span> out/tables/</code></pre></div>
+<pre class="out"><code>tab01_textbook_solow.tex</code></pre>
+<div id="exercise-building-table-2" class="section level3 unnumbered exercise">
+<h3>Exercise: Building Table 2</h3>
+<p>Using the same rule format as above, incorporate <code>params</code> into a new rule called <code>augment_solow</code> that constructs Table 2.</p>
+
+</div>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="7">
+<li id="fn7"><p>An alternative would be to run <code>snakemake --summary</code> and examine the output.<a href="adding-parameters.html#fnref7">↩</a></p></li>
+</ol>
 </div>
             </section>
 
@@ -208,7 +347,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
         </div>
       </div>
 <a href="building-all-outputs-at-once.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="logging-output-and-errors.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="part-ii.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
