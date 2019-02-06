@@ -129,6 +129,8 @@ Finished job 0.
 
 ```
 
+We see that after the usual Snakemake output telling us what it is doing, our comments are printed to screen.
+
 ### Exercise: Saving `help` output to file {- .exercise}
 
 Modify the `help` rule so that the printed content is saved in a file called `HELP.txt`
