@@ -64,3 +64,71 @@ rule textbook_solow:
 Add some comments using our suggested style to each of the Snakemake rules we have constructed so far.
 
 ## A `help` Rule
+
+The Snakefile is now much easier to understand when reading through it.
+Future you will be grateful for the effort.
+We can go one step further: construct a rule that prints the output of these comments to the screen.
+Let's call this rule `help`, so that if we run `snakemake help` all our useful comments will be printed to screen.
+We usually put this help rule at the bottom of our Snakefile, so that we don't keep bumping into it as we work.
+The rule has the following structure:
+```{r, engine = 'bash', eval = FALSE}
+# --- Help Rules --- #
+## help               : prints help comments for Snakefile
+rule help:
+    input: "Snakefile"
+    shell:
+        "sed -n 's/^##//p' {input}"
+```
+
+The rule depends on the `Snakefile` itself - because if the file changes, the might too.
+The shell comand that we use is a little confusing when we look at it the first time.
+Intuitively heres what it is doing:
+
+* The comments we want to print are those that have the double hash notation, `##`.
+* `sed` is a progam that can perform text manipulations to some input
+    - We want it to find all lines starting with `##` in our input file ...
+    - ... and print out the remainder of those lines
+
+Let's see it in action:
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake help
+```
+```{r, engine = 'out', eval = FALSE}
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	help
+	1
+
+[Wed Feb  6 19:13:51 2019]
+rule help:
+    input: Snakefile
+    jobid: 0
+
+ Snakemake - MRW Replication
+
+ @yourname
+
+ all                : builds all final outputs
+ augment_solow      : construct a table of estimates for augmented solow model
+ textbook_solow     : construct a table of regression estimates for textbook solow model
+ make_figs          : builds all figures
+ figures            : recipe for constructing a figure (cannot be called)
+ estimate_models    : estimates all regressions
+ ols_models         : recipe for estimating a single regression (cannot be called)
+ gen_regression_vars: creates variables needed to estimate a regression
+ rename_vars        : creates meaningful variable names
+ clean              : removes all content from out/ directory
+ help               : prints help comments for Snakefile
+[Wed Feb  6 19:13:51 2019]
+Finished job 0.
+1 of 1 steps (100%) done
+
+```
+
+### Exercise: Saving `help` output to file {- .exercise}
+
+Modify the `help` rule so that the printed content is saved in a file called `HELP.txt`
