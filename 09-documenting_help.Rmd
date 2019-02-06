@@ -1,3 +1,66 @@
 # Self Documenting Help
 
-Content is TBD
+As we build up our Snakemake workflow the Snakefile becomes increasingly complex.
+It is easy to imagine that a future version of you,
+    or a co-author,
+    might have difficulty understanding what each rule is doing.
+This chapter introduces an approach to add some comments to the Snakefile to make it easier to navigate.
+We also add a new `help` rule so that we can get a summary of the comments printed to screen.
+
+## Our Commenting Syle
+
+If we look at the Snakefile in it's current state, we see that there are a bare minimum amount of comments already integrated.
+Because Snakemake is a Python library all comments must begin with one `#`.
+We then added some additional formatting of comments to create two types.^[
+    Do notice that the exact formatting of all this help is totally arbitrary.
+    Noone tells you that two `#`'s or a mix of `#`'s and `-`'s are meaningful, correct or standard ways of
+    putting comments in a file.
+    Our choice reflects path dependence in the way we started writing Snakefiles, and we have found them useful
+        and persisted with our initial choice.
+    Feel free to create your own.
+    The only important thing is the line starts with one `#` so that Snakemake doesnt try and execute that line as code.
+]
+Our first type of comment is a 'double hash' - `##`.
+We use this to represent information that someone who reads our code might find helpful to build understanding of the file.
+For example, the head of the Snakefile contains information on the name of the workflow and the authors:
+```{r, engine = 'bash', eval = FALSE}
+## Snakemake - MRW Replication
+##
+## @yourname
+##
+```
+Second, we have broken up the Snakefile somewhat into sections such as Dictionaries, Build Rules and Clean Rules using the `# --- Something --- #` notation.
+
+## Adding Further Comments
+
+The information we have added in comments so far is not really enough to help us remember much.
+What we want is a simple one or two line summary of what each of our rules do so that we can look back at them in the future.
+We are going to make comments above each rule using the `##` notation.
+The structure will follow a common pattern: `rule_name : some description`
+For example, for the `textbook_solow` rule:
+
+```{r, engine = 'bash', eval = FALSE}
+## textbook_solow: construct a table of regression estimates for textbook solow model
+rule textbook_solow:
+    input:
+        script = "src/tables/tab01_textbook_solow.R",
+        models = expand("out/analysis/{iModel}_ols_{iSubset}.rds",
+                            iModel = MODELS,
+                            iSubset = DATA_SUBSET)),
+    params:
+        filepath   = "out/analysis/",
+        model_expr = "model_solow*.rds"
+    output:
+        table = "out/tables/tab01_textbook_solow.tex"
+    shell:
+        "Rscript {input.script} \
+            --filepath {params.filepath} \
+            --models {params.model_expr} \
+            --out {output.table}"
+```
+
+### Exercise: Adding Comments {- .exercise}
+
+Add some comments using our suggested style to each of the Snakemake rules we have constructed so far.
+
+## A `help` Rule
