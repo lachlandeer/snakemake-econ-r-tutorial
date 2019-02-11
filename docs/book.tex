@@ -2945,7 +2945,694 @@ with references from the config file.
 \chapter{Subworkflows: Divide and
 Conquer}\label{subworkflows-divide-and-conquer}
 
-Content is TBD
+motivation
+
+\section{Subworkflow Basics}\label{subworkflow-basics}
+
+Create a Subworkflow in \texttt{data-management} directory.
+
+Start with empty file:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{touch} \NormalTok{src/data-management/Snakefile}
+\end{Highlighting}
+\end{Shaded}
+
+Add the following info to \texttt{src/data-management/Snakefile}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# subworkflow - data-management}
+\CommentTok{#}
+\CommentTok{# @yourname}
+\CommentTok{#}
+
+\CommentTok{# --- Importing Configuration Files --- #}
+
+\KeywordTok{configfile}\NormalTok{: }\StringTok{"config.yaml"}
+
+\CommentTok{# --- Build Rules --- #}
+
+\CommentTok{## gen_regression_vars: creates variables needed to estimate a regression}
+\KeywordTok{rule} \NormalTok{gen_regression_vars:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_data_mgt"}\NormalTok{] + }\StringTok{"gen_reg_vars.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= config[}\StringTok{"out_data"}\NormalTok{] + }\StringTok{"out/data/mrw_renamed.csv"}\NormalTok{,}
+        \KeywordTok{params} \NormalTok{= config[}\StringTok{"src_data_specs"}\NormalTok{] + }\StringTok{"param_solow.json"}\NormalTok{,}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{data} \NormalTok{= config[}\StringTok{"out_data"}\NormalTok{] + }\StringTok{"mrw_complete.csv"}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"log"}\NormalTok{] + }\StringTok{"data-mgt/gen_reg_vars.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --param \{input.params\} \textbackslash{}}
+\StringTok{            --out \{output.data\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+
+\CommentTok{## rename_vars        : creates meaningful variable names}
+\KeywordTok{rule} \NormalTok{rename_vars:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_data_mgt"}\NormalTok{] + }\StringTok{"rename_variables.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= config[}\StringTok{"src_data"}\NormalTok{] + }\StringTok{"mrw.dta"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{data} \NormalTok{= config[}\StringTok{"out_data"}\NormalTok{] + }\StringTok{"mrw_renamed.csv"}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"log"}\NormalTok{] + }\StringTok{"data-mgt/rename_variables.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --out \{output.data\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+\end{Highlighting}
+\end{Shaded}
+
+Can remove these rules from Snakefile in root directory.
+
+Snakefile in root needs to know there's another Snakefile that creates
+outputs that rules in it depend on:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# --- Dictionaries --- #}
+
+\KeywordTok{<...>}
+
+\CommentTok{# --- Sub Workflows --- #}
+\CommentTok{# only need the final outputs here}
+\KeywordTok{subworkflow} \NormalTok{data_mgt:}
+   \KeywordTok{workdir}\NormalTok{: config[}\StringTok{"ROOT"}\NormalTok{]}
+   \KeywordTok{snakefile}\NormalTok{:  config[}\StringTok{"src_data_mgt"}\NormalTok{] + }\StringTok{"Snakefile"}
+
+\CommentTok{# --- Build Rules --- #}
+\KeywordTok{<...>}
+\end{Highlighting}
+\end{Shaded}
+
+And we need to tell it when an input in one of our rules is created from
+a subworkflow. Do this by, in this case, wrapping the output with
+\texttt{data\_mgt(output\_name)} Then the build rules section of our
+root directory Snakefile becomes:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{<...>}
+
+\CommentTok{# --- Build Rules --- #}
+
+\CommentTok{## all                : builds all final outputs}
+\KeywordTok{rule} \NormalTok{all:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{figs}   \NormalTok{= expand(config[}\StringTok{"out_figures"}\NormalTok{] + }\StringTok{"\{iFigure\}.pdf"}\NormalTok{,}
+                            \KeywordTok{iFigure} \NormalTok{= FIGURES),}
+        \KeywordTok{models} \NormalTok{= expand(config[}\StringTok{"out_analysis"}\NormalTok{] + }\StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                            \KeywordTok{iModel} \NormalTok{= MODELS,}
+                            \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET),}
+        \KeywordTok{tables}  \NormalTok{= expand(config[}\StringTok{"out_tables"}\NormalTok{] + }\StringTok{"\{iTable\}.tex"}\NormalTok{,}
+                            \KeywordTok{iTable} \NormalTok{= TABLES)}
+
+\CommentTok{## augment_solow      : construct a table of estimates for augmented solow model}
+\KeywordTok{rule} \NormalTok{augment_solow:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_tables"}\NormalTok{] + }\StringTok{"tab02_augment_solow.R"}\NormalTok{,}
+        \KeywordTok{models} \NormalTok{= expand(config[}\StringTok{"out_analysis"}\NormalTok{] + }\StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                            \KeywordTok{iModel} \NormalTok{= MODELS,}
+                            \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET),}
+    \KeywordTok{params}\NormalTok{:}
+        \KeywordTok{filepath}   \NormalTok{= config[}\StringTok{"out_analysis"}\NormalTok{],}
+        \KeywordTok{model_expr} \NormalTok{= }\StringTok{"model_aug_solow*.rds"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{table} \NormalTok{= config[}\StringTok{"out_tables"}\NormalTok{] + }\StringTok{"tab02_augment_solow.tex"}\NormalTok{,}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"log"}\NormalTok{] + }\StringTok{"tables/tab02_augment_solow.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --filepath \{params.filepath\} \textbackslash{}}
+\StringTok{            --models \{params.model_expr\} \textbackslash{}}
+\StringTok{            --out \{output.table\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+
+\CommentTok{## textbook_solow     : construct a table of regression estimates for textbook solow model}
+\KeywordTok{rule} \NormalTok{textbook_solow:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_tables"}\NormalTok{] + }\StringTok{"tab01_textbook_solow.R"}\NormalTok{,}
+        \KeywordTok{models} \NormalTok{= expand(config[}\StringTok{"out_analysis"}\NormalTok{] + }\StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                            \KeywordTok{iModel} \NormalTok{= MODELS,}
+                            \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET),}
+    \KeywordTok{params}\NormalTok{:}
+        \KeywordTok{filepath}   \NormalTok{= config[}\StringTok{"out_analysis"}\NormalTok{],}
+        \KeywordTok{model_expr} \NormalTok{= }\StringTok{"model_solow*.rds"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{table} \NormalTok{= config[}\StringTok{"out_tables"}\NormalTok{] + }\StringTok{"tab01_textbook_solow.tex"}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"log"}\NormalTok{] + }\StringTok{"tables/tab01_textbook_solow.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --filepath \{params.filepath\} \textbackslash{}}
+\StringTok{            --models \{params.model_expr\} \textbackslash{}}
+\StringTok{            --out \{output.table\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+
+\CommentTok{## make_figs          : builds all figures}
+\KeywordTok{rule} \NormalTok{make_figs:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{expand}\NormalTok{(config[}\StringTok{"out_figures"}\NormalTok{] + }\StringTok{"\{iFigure\}.pdf"}\NormalTok{,}
+                \KeywordTok{iFigure} \NormalTok{= FIGURES)}
+
+\CommentTok{## figures            : recipe for constructing a figure (cannot be called)}
+\KeywordTok{rule} \NormalTok{figures:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_figures"}\NormalTok{] + }\StringTok{"\{iFigure\}.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= data_mgt(config[}\StringTok{"out_data"}\NormalTok{] + }\StringTok{"mrw_complete.csv"}\NormalTok{),}
+        \KeywordTok{subset} \NormalTok{= config[}\StringTok{"src_data_specs"}\NormalTok{] + }\StringTok{"subset_intermediate.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{fig} \NormalTok{= config[}\StringTok{"out_figures"}\NormalTok{] + }\StringTok{"\{iFigure\}.pdf"}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"log"}\NormalTok{]+ }\StringTok{"figures/\{iFigure\}.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.fig\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+
+\CommentTok{## estimate_models    : estimates all regressions}
+\KeywordTok{rule} \NormalTok{estimate_models:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{expand}\NormalTok{(config[}\StringTok{"out_analysis"}\NormalTok{] + }\StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                    \KeywordTok{iModel} \NormalTok{= MODELS,}
+                    \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+
+\CommentTok{## ols_models         : recipe for estimating a single regression (cannot be called)}
+\KeywordTok{rule} \NormalTok{ols_model:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_analysis"}\NormalTok{] + }\StringTok{"estimate_ols_model.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= data_mgt(config[}\StringTok{"out_data"}\NormalTok{] + }\StringTok{"mrw_complete.csv"}\NormalTok{),}
+        \KeywordTok{model}  \NormalTok{= config[}\StringTok{"src_model_specs"}\NormalTok{] + }\StringTok{"\{iModel\}.json"}\NormalTok{,}
+        \KeywordTok{subset} \NormalTok{= config[}\StringTok{"src_data_specs"}\NormalTok{]  + }\StringTok{"\{iSubset\}.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{model_est} \NormalTok{= config[}\StringTok{"out_analysis"}\NormalTok{] + }\StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"log"}\NormalTok{] + }\StringTok{"analysis/\{iModel\}_ols_\{iSubset\}.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --model \{input.model\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.model_est\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+
+\KeywordTok{<...>}
+\end{Highlighting}
+\end{Shaded}
+
+Let's examine what happens with this new Workflow. Start with a clean
+output directory:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake} \NormalTok{clean}
+\end{Highlighting}
+\end{Shaded}
+
+Now do a dry run.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake} \NormalTok{--dryrun}
+\end{Highlighting}
+\end{Shaded}
+
+The beginning of the output looks like:
+
+\begin{verbatim}
+Building DAG of jobs...
+Executing subworkflow data_mgt.
+Building DAG of jobs...
+Job counts:
+    count   jobs
+    1   gen_regression_vars
+    1   rename_vars
+    2
+
+[Mon Feb 11 22:41:42 2019]
+rule rename_vars:
+    input: src/data-management/rename_variables.R, src/data/mrw.dta
+    output: out/data/mrw_renamed.csv
+    log: logs/data-mgt/rename_variables.Rout
+    jobid: 1
+
+
+[Mon Feb 11 22:41:42 2019]
+rule gen_regression_vars:
+    input: src/data-management/gen_reg_vars.R, out/data/mrw_renamed.csv, src/data-specs/param_solow.json
+    output: out/data/mrw_complete.csv
+    log: logs/data-mgt/gen_reg_vars.Rout
+    jobid: 0
+
+Job counts:
+    count   jobs
+    1   gen_regression_vars
+    1   rename_vars
+    2
+Executing main workflow.
+Job counts:
+    count   jobs
+    1   all
+    1   augment_solow
+    3   figures
+    24  ols_model
+    1   textbook_solow
+    30
+\end{verbatim}
+
+Explain what has happened here.
+
+\section{Subworkflow dependencies}\label{subworkflow-dependencies}
+
+We want to go further\ldots{}.
+
+So create a subworkflow for analysis too, containing all rules that
+estimate models. Create an empty Snakefile:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{touch} \NormalTok{src/analysis/Snakefile}
+\end{Highlighting}
+\end{Shaded}
+
+Move analysis rules across to \texttt{src/analysis/Snakefile}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# subworkflow - analysis}
+\CommentTok{#}
+\CommentTok{# @yourname}
+\CommentTok{#}
+
+\CommentTok{# --- Importing Configuration Files --- #}
+
+\KeywordTok{configfile}\NormalTok{: }\StringTok{"config.yaml"}
+
+\CommentTok{# --- Build Rules --- #}
+\CommentTok{## estimate_models    : estimates all regressions}
+\KeywordTok{rule} \NormalTok{estimate_models:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{expand}\NormalTok{(config[}\StringTok{"out_analysis"}\NormalTok{] + }\StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                    \KeywordTok{iModel} \NormalTok{= MODELS,}
+                    \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+
+\CommentTok{## ols_models         : recipe for estimating a single regression (cannot be called)}
+\KeywordTok{rule} \NormalTok{ols_model:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_analysis"}\NormalTok{] + }\StringTok{"estimate_ols_model.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= data_mgt(config[}\StringTok{"out_data"}\NormalTok{] + }\StringTok{"mrw_complete.csv"}\NormalTok{),}
+        \KeywordTok{model}  \NormalTok{= config[}\StringTok{"src_model_specs"}\NormalTok{] + }\StringTok{"\{iModel\}.json"}\NormalTok{,}
+        \KeywordTok{subset} \NormalTok{= config[}\StringTok{"src_data_specs"}\NormalTok{]  + }\StringTok{"\{iSubset\}.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{model_est} \NormalTok{= config[}\StringTok{"out_analysis"}\NormalTok{] + }\StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"log"}\NormalTok{] + }\StringTok{"analysis/\{iModel\}_ols_\{iSubset\}.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --model \{input.model\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.model_est\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+\end{Highlighting}
+\end{Shaded}
+
+Following the logic in 11.1, we then update the snakefile in root by:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  removing the rules we copied over
+\item
+  adding a subworkflow called \texttt{analysis}
+\item
+  ensuring if we use outputs created in \texttt{analysis} subworkflow
+  anywhere else, we wrap them in \texttt{analysis(output)}
+\end{enumerate}
+
+Doing (1)-(3) in our main Snakefile, suggests we update the following:
+
+(list)
+
+Let's do it:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{<...>}
+\CommentTok{# --- Sub Workflows --- #}
+\KeywordTok{subworkflow} \NormalTok{data_mgt:}
+   \KeywordTok{workdir}\NormalTok{: config[}\StringTok{"ROOT"}\NormalTok{]}
+   \KeywordTok{snakefile}\NormalTok{:  config[}\StringTok{"src_data_mgt"}\NormalTok{] + }\StringTok{"Snakefile"}
+
+\KeywordTok{subworkflow} \NormalTok{analysis:}
+   \KeywordTok{workdir}\NormalTok{: config[}\StringTok{"ROOT"}\NormalTok{]}
+   \KeywordTok{snakefile}\NormalTok{:  config[}\StringTok{"src_analysis"}\NormalTok{] + }\StringTok{"Snakefile"}
+
+\CommentTok{# --- Build Rules --- #}
+
+\CommentTok{## all                : builds all final outputs}
+\KeywordTok{rule} \NormalTok{all:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{figs}   \NormalTok{= expand(config[}\StringTok{"out_figures"}\NormalTok{] + }\StringTok{"\{iFigure\}.pdf"}\NormalTok{,}
+                            \KeywordTok{iFigure} \NormalTok{= FIGURES),}
+        \KeywordTok{models} \NormalTok{= analysis(expand(config[}\StringTok{"out_analysis"}\NormalTok{] +}
+                            \StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                            \KeywordTok{iModel} \NormalTok{= MODELS,}
+                            \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+                            \NormalTok{),}
+        \KeywordTok{tables}  \NormalTok{= expand(config[}\StringTok{"out_tables"}\NormalTok{] + }\StringTok{"\{iTable\}.tex"}\NormalTok{,}
+                            \KeywordTok{iTable} \NormalTok{= TABLES)}
+
+\CommentTok{## augment_solow      : construct a table of estimates for augmented solow model}
+\KeywordTok{rule} \NormalTok{augment_solow:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_tables"}\NormalTok{] + }\StringTok{"tab02_augment_solow.R"}\NormalTok{,}
+        \KeywordTok{models} \NormalTok{= analysis(expand(config[}\StringTok{"out_analysis"}\NormalTok{] +}
+                            \StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                            \KeywordTok{iModel} \NormalTok{= MODELS,}
+                            \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+                            \NormalTok{),}
+    \KeywordTok{params}\NormalTok{:}
+        \KeywordTok{filepath}   \NormalTok{= config[}\StringTok{"out_analysis"}\NormalTok{],}
+        \KeywordTok{model_expr} \NormalTok{= }\StringTok{"model_aug_solow*.rds"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{table} \NormalTok{= config[}\StringTok{"out_tables"}\NormalTok{] + }\StringTok{"tab02_augment_solow.tex"}\NormalTok{,}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"log"}\NormalTok{] + }\StringTok{"tables/tab02_augment_solow.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --filepath \{params.filepath\} \textbackslash{}}
+\StringTok{            --models \{params.model_expr\} \textbackslash{}}
+\StringTok{            --out \{output.table\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+
+\CommentTok{## textbook_solow     : construct a table of regression estimates for textbook solow model}
+\KeywordTok{rule} \NormalTok{textbook_solow:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_tables"}\NormalTok{] + }\StringTok{"tab01_textbook_solow.R"}\NormalTok{,}
+        \KeywordTok{models} \NormalTok{= analysis(expand(config[}\StringTok{"out_analysis"}\NormalTok{] +}
+                            \StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                            \KeywordTok{iModel} \NormalTok{= MODELS,}
+                            \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+                            \NormalTok{),}
+    \KeywordTok{params}\NormalTok{:}
+        \KeywordTok{filepath}   \NormalTok{= config[}\StringTok{"out_analysis"}\NormalTok{],}
+        \KeywordTok{model_expr} \NormalTok{= }\StringTok{"model_solow*.rds"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{table} \NormalTok{= config[}\StringTok{"out_tables"}\NormalTok{] + }\StringTok{"tab01_textbook_solow.tex"}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"log"}\NormalTok{] + }\StringTok{"tables/tab01_textbook_solow.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --filepath \{params.filepath\} \textbackslash{}}
+\StringTok{            --models \{params.model_expr\} \textbackslash{}}
+\StringTok{            --out \{output.table\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+
+\CommentTok{## make_figs          : builds all figures}
+\KeywordTok{rule} \NormalTok{make_figs:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{expand}\NormalTok{(config[}\StringTok{"out_figures"}\NormalTok{] + }\StringTok{"\{iFigure\}.pdf"}\NormalTok{,}
+                \KeywordTok{iFigure} \NormalTok{= FIGURES)}
+
+\CommentTok{## figures            : recipe for constructing a figure (cannot be called)}
+\KeywordTok{rule} \NormalTok{figures:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_figures"}\NormalTok{] + }\StringTok{"\{iFigure\}.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= data_mgt(config[}\StringTok{"out_data"}\NormalTok{] + }\StringTok{"mrw_complete.csv"}\NormalTok{),}
+        \KeywordTok{subset} \NormalTok{= config[}\StringTok{"src_data_specs"}\NormalTok{] + }\StringTok{"subset_intermediate.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{fig} \NormalTok{= config[}\StringTok{"out_figures"}\NormalTok{] + }\StringTok{"\{iFigure\}.pdf"}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"log"}\NormalTok{]+ }\StringTok{"figures/\{iFigure\}.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.fig\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+\KeywordTok{<...>}
+\end{Highlighting}
+\end{Shaded}
+
+Remark about dictionaries not having to be moved\ldots{}
+
+Now if we again do a dry run with Snakemake let's see what happens:
+
+\begin{verbatim}
+Executing subworkflow analysis.
+Building DAG of jobs...
+Job counts:
+    count   jobs
+    24  ols_model
+    24
+
+<LIST OF ANALYSIS JOBS>
+Executing subworkflow data_mgt.
+Building DAG of jobs...
+Job counts:
+    count   jobs
+    1   gen_regression_vars
+    1   rename_vars
+    2
+<LIST OF DATA-MGT JOBS>
+Executing main workflow.
+Job counts:
+    count   jobs
+    1   all
+    1   augment_solow
+    3   figures
+    1   textbook_solow
+    6
+<LIST OF MAIN WORKFLOW JOBS>
+\end{verbatim}
+
+Snakemake tells us nothing is wrong. However, if we look at the order of
+execution:
+
+(list)
+
+it wants to run \texttt{analysis} workflow before \texttt{data-mgt}.
+This should be a problem. If we try and run snakemake and execute the
+workflow:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake}
+\end{Highlighting}
+\end{Shaded}
+
+We do get the expected error:
+
+\begin{verbatim}
+Building DAG of jobs...
+Executing subworkflow analysis.
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+    count   jobs
+    24  ols_model
+    24
+Traceback (most recent call last):
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/__init__.py", line 537, in snakemake
+    report=report)
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/workflow.py", line 653, in execute
+    success = scheduler.schedule()
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/scheduler.py", line 275, in schedule
+    run = self.job_selector(needrun)
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/scheduler.py", line 399, in job_selector
+    c = list(map(self.job_reward, jobs))  # job rewards
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/scheduler.py", line 469, in job_reward
+    input_size = job.inputsize
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/jobs.py", line 288, in inputsize
+    self._inputsize = sum(f.size for f in self.input)
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/jobs.py", line 288, in <genexpr>
+    self._inputsize = sum(f.size for f in self.input)
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/io.py", line 123, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/io.py", line 138, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/io.py", line 286, in size
+    return self.size_local
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/io.py", line 291, in size_local
+    self.check_broken_symlink()
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/io.py", line 296, in check_broken_symlink
+    if not self.exists_local and lstat(self.file):
+  File "/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/io.py", line 29, in lstat
+    follow_symlinks=os.stat not in os.supports_follow_symlinks)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/lachlan/teaching/snakemake-econ-r-learner/out/data/mrw_complete.csv'
+\end{verbatim}
+
+This says that \texttt{out/data/mrw\_complete.csv} doesn't exist,
+therefore the models cannot be estimated.
+
+What's the solution? We need to specify that the \texttt{analysis}
+subworkflow itself has a subworkflow, \texttt{data\_mgt}, that needs to
+run before \texttt{analysis}. So we add the subworkflow
+\texttt{data\_mgt} to the Snakefile in \texttt{src/analysis}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# subworkflow - analysis}
+\CommentTok{#}
+\CommentTok{# @yourname}
+\CommentTok{#}
+
+\CommentTok{# --- Importing Configuration Files --- #}
+
+\KeywordTok{configfile}\NormalTok{: }\StringTok{"config.yaml"}
+
+\CommentTok{# --- Sub Workflows --- #}
+\KeywordTok{subworkflow} \NormalTok{data_mgt:}
+   \KeywordTok{workdir}\NormalTok{: config[}\StringTok{"ROOT"}\NormalTok{]}
+   \KeywordTok{snakefile}\NormalTok{:  config[}\StringTok{"src_data_mgt"}\NormalTok{] + }\StringTok{"Snakefile"}
+
+\CommentTok{# --- Build Rules --- #}
+\CommentTok{## estimate_models    : estimates all regressions}
+\KeywordTok{rule} \NormalTok{estimate_models:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{expand}\NormalTok{(config[}\StringTok{"out_analysis"}\NormalTok{] + }\StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                    \KeywordTok{iModel} \NormalTok{= MODELS,}
+                    \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+
+\CommentTok{## ols_models         : recipe for estimating a single regression (cannot be called)}
+\KeywordTok{rule} \NormalTok{ols_model:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_analysis"}\NormalTok{] + }\StringTok{"estimate_ols_model.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= data_mgt(config[}\StringTok{"out_data"}\NormalTok{] + }\StringTok{"mrw_complete.csv"}\NormalTok{),}
+        \KeywordTok{model}  \NormalTok{= config[}\StringTok{"src_model_specs"}\NormalTok{] + }\StringTok{"\{iModel\}.json"}\NormalTok{,}
+        \KeywordTok{subset} \NormalTok{= config[}\StringTok{"src_data_specs"}\NormalTok{]  + }\StringTok{"\{iSubset\}.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{model_est} \NormalTok{= config[}\StringTok{"out_analysis"}\NormalTok{] + }\StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"log"}\NormalTok{] + }\StringTok{"analysis/\{iModel\}_ols_\{iSubset\}.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --model \{input.model\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.model_est\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+\end{Highlighting}
+\end{Shaded}
+
+And we try again:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Building DAG of jobs...
+Executing subworkflow data_mgt.
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+    count   jobs
+    1   gen_regression_vars
+    1   rename_vars
+    2
+
+[Mon Feb 11 23:12:42 2019]
+rule rename_vars:
+    input: src/data-management/rename_variables.R, src/data/mrw.dta
+    output: out/data/mrw_renamed.csv
+    log: logs/data-mgt/rename_variables.Rout
+    jobid: 1
+
+[Mon Feb 11 23:12:42 2019]
+Finished job 1.
+1 of 2 steps (50%) done
+
+[Mon Feb 11 23:12:42 2019]
+rule gen_regression_vars:
+    input: src/data-management/gen_reg_vars.R, src/data-specs/param_solow.json, out/data/mrw_renamed.csv
+    output: out/data/mrw_complete.csv
+    log: logs/data-mgt/gen_reg_vars.Rout
+    jobid: 0
+
+[Mon Feb 11 23:12:43 2019]
+Finished job 0.
+2 of 2 steps (100%) done
+Complete log: /home/lachlan/teaching/snakemake-econ-r-learner/.snakemake/log/2019-02-11T231242.348577.snakemake.log
+Executing subworkflow analysis.
+Building DAG of jobs...
+Executing subworkflow data_mgt.
+Error: Snakefile "/home/lachlan/teaching/snakemake-econ-r-learner/src/analysis/src/data-management/Snakefile" not present.
+\end{verbatim}
+
+What has happened this time? its about the path
+
+explain why this fix works:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# subworkflow - analysis}
+\CommentTok{#}
+\CommentTok{# @yourname}
+\CommentTok{#}
+
+\CommentTok{# --- Importing Configuration Files --- #}
+
+\KeywordTok{configfile}\NormalTok{: }\StringTok{"config.yaml"}
+
+\CommentTok{# --- Sub Workflows --- #}
+\KeywordTok{subworkflow} \NormalTok{data_mgt:}
+   \KeywordTok{workdir}\NormalTok{: config[}\StringTok{"sub2root"}\NormalTok{] + config[}\StringTok{"ROOT"}\NormalTok{]}
+   \KeywordTok{snakefile}\NormalTok{:  config[}\StringTok{"sub2root"}\NormalTok{]+ config[}\StringTok{"src_data_mgt"}\NormalTok{] + }\StringTok{"Snakefile"}
+
+\CommentTok{# --- Build Rules --- #}
+\CommentTok{## estimate_models    : estimates all regressions}
+\KeywordTok{rule} \NormalTok{estimate_models:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{expand}\NormalTok{(config[}\StringTok{"out_analysis"}\NormalTok{] + }\StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+                    \KeywordTok{iModel} \NormalTok{= MODELS,}
+                    \KeywordTok{iSubset} \NormalTok{= DATA_SUBSET)}
+
+\CommentTok{## ols_models         : recipe for estimating a single regression (cannot be called)}
+\KeywordTok{rule} \NormalTok{ols_model:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_analysis"}\NormalTok{] + }\StringTok{"estimate_ols_model.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= data_mgt(config[}\StringTok{"out_data"}\NormalTok{] + }\StringTok{"mrw_complete.csv"}\NormalTok{),}
+        \KeywordTok{model}  \NormalTok{= config[}\StringTok{"src_model_specs"}\NormalTok{] + }\StringTok{"\{iModel\}.json"}\NormalTok{,}
+        \KeywordTok{subset} \NormalTok{= config[}\StringTok{"src_data_specs"}\NormalTok{]  + }\StringTok{"\{iSubset\}.json"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{model_est} \NormalTok{= config[}\StringTok{"out_analysis"}\NormalTok{] + }\StringTok{"\{iModel\}_ols_\{iSubset\}.rds"}\NormalTok{,}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"log"}\NormalTok{] + }\StringTok{"analysis/\{iModel\}_ols_\{iSubset\}.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --model \{input.model\} \textbackslash{}}
+\StringTok{            --subset \{input.subset\} \textbackslash{}}
+\StringTok{            --out \{output.model_est\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+\end{Highlighting}
+\end{Shaded}
+
+Now if we run snakemake again:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{snakemake}
+\end{Highlighting}
+\end{Shaded}
+
+Our build runs from start to finish.
 
 \chapter*{PART III}\label{part-iii}
 \addcontentsline{toc}{chapter}{PART III}

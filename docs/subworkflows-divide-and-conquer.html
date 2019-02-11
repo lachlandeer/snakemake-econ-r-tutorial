@@ -195,7 +195,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="config-files.html"><a href="config-files.html#exercise-using-config-files"><i class="fa fa-check"></i>Exercise: Using Config Files</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>11</b> Subworkflows: Divide and Conquer</a></li>
+<li class="chapter" data-level="11" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>11</b> Subworkflows: Divide and Conquer</a><ul>
+<li class="chapter" data-level="11.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>11.1</b> Subworkflow Basics</a></li>
+<li class="chapter" data-level="11.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>11.2</b> Subworkflow dependencies</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="part-iii.html"><a href="part-iii.html"><i class="fa fa-check"></i>PART III</a></li>
 <li class="chapter" data-level="12" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>12</b> Reproducible Articles with Rmd</a></li>
 <li class="chapter" data-level="13" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>13</b> Reproducible Slides with Rmd</a></li>
@@ -223,8 +226,565 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="subworkflows-divide-and-conquer" class="section level1">
 <h1><span class="header-section-number">Chapter 11</span> Subworkflows: Divide and Conquer</h1>
-<p>Content is TBD</p>
+<p>motivation</p>
+<div id="subworkflow-basics" class="section level2">
+<h2><span class="header-section-number">11.1</span> Subworkflow Basics</h2>
+<p>Create a Subworkflow in <code>data-management</code> directory.</p>
+<p>Start with empty file:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">touch</span> src/data-management/Snakefile</code></pre></div>
+<p>Add the following info to <code>src/data-management/Snakefile</code>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># subworkflow - data-management</span>
+<span class="co">#</span>
+<span class="co"># @yourname</span>
+<span class="co">#</span>
 
+<span class="co"># --- Importing Configuration Files --- #</span>
+
+<span class="kw">configfile</span>: <span class="st">&quot;config.yaml&quot;</span>
+
+<span class="co"># --- Build Rules --- #</span>
+
+<span class="co">## gen_regression_vars: creates variables needed to estimate a regression</span>
+<span class="kw">rule</span> gen_regression_vars:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;gen_reg_vars.R&quot;</span>,
+        <span class="kw">data</span>   = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,
+        <span class="kw">params</span> = config[<span class="st">&quot;src_data_specs&quot;</span>] + <span class="st">&quot;param_solow.json&quot;</span>,
+    <span class="kw">output</span>:
+        <span class="kw">data</span> = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;data-mgt/gen_reg_vars.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --param {input.params} \</span>
+<span class="st">            --out {output.data} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span>
+
+<span class="co">## rename_vars        : creates meaningful variable names</span>
+<span class="kw">rule</span> rename_vars:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;rename_variables.R&quot;</span>,
+        <span class="kw">data</span>   = config[<span class="st">&quot;src_data&quot;</span>] + <span class="st">&quot;mrw.dta&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">data</span> = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_renamed.csv&quot;</span>
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;data-mgt/rename_variables.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --out {output.data} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span></code></pre></div>
+<p>Can remove these rules from Snakefile in root directory.</p>
+<p>Snakefile in root needs to know there’s another Snakefile that creates outputs that rules in it depend on:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># --- Dictionaries --- #</span>
+
+<span class="kw">&lt;...&gt;</span>
+
+<span class="co"># --- Sub Workflows --- #</span>
+<span class="co"># only need the final outputs here</span>
+<span class="kw">subworkflow</span> data_mgt:
+   <span class="kw">workdir</span>: config[<span class="st">&quot;ROOT&quot;</span>]
+   <span class="kw">snakefile</span>:  config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span>
+
+<span class="co"># --- Build Rules --- #</span>
+<span class="kw">&lt;...&gt;</span></code></pre></div>
+<p>And we need to tell it when an input in one of our rules is created from a subworkflow. Do this by, in this case, wrapping the output with <code>data_mgt(output_name)</code> Then the build rules section of our root directory Snakefile becomes:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">&lt;...&gt;</span>
+
+<span class="co"># --- Build Rules --- #</span>
+
+<span class="co">## all                : builds all final outputs</span>
+<span class="kw">rule</span> all:
+    <span class="kw">input</span>:
+        <span class="kw">figs</span>   = expand(config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>,
+                            <span class="kw">iFigure</span> = FIGURES),
+        <span class="kw">models</span> = expand(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+                            <span class="kw">iModel</span> = MODELS,
+                            <span class="kw">iSubset</span> = DATA_SUBSET),
+        <span class="kw">tables</span>  = expand(config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;{iTable}.tex&quot;</span>,
+                            <span class="kw">iTable</span> = TABLES)
+
+<span class="co">## augment_solow      : construct a table of estimates for augmented solow model</span>
+<span class="kw">rule</span> augment_solow:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_tables&quot;</span>] + <span class="st">&quot;tab02_augment_solow.R&quot;</span>,
+        <span class="kw">models</span> = expand(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+                            <span class="kw">iModel</span> = MODELS,
+                            <span class="kw">iSubset</span> = DATA_SUBSET),
+    <span class="kw">params</span>:
+        <span class="kw">filepath</span>   = config[<span class="st">&quot;out_analysis&quot;</span>],
+        <span class="kw">model_expr</span> = <span class="st">&quot;model_aug_solow*.rds&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">table</span> = config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;tab02_augment_solow.tex&quot;</span>,
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;tables/tab02_augment_solow.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --filepath {params.filepath} \</span>
+<span class="st">            --models {params.model_expr} \</span>
+<span class="st">            --out {output.table} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span>
+
+<span class="co">## textbook_solow     : construct a table of regression estimates for textbook solow model</span>
+<span class="kw">rule</span> textbook_solow:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_tables&quot;</span>] + <span class="st">&quot;tab01_textbook_solow.R&quot;</span>,
+        <span class="kw">models</span> = expand(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+                            <span class="kw">iModel</span> = MODELS,
+                            <span class="kw">iSubset</span> = DATA_SUBSET),
+    <span class="kw">params</span>:
+        <span class="kw">filepath</span>   = config[<span class="st">&quot;out_analysis&quot;</span>],
+        <span class="kw">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">table</span> = config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;tab01_textbook_solow.tex&quot;</span>
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;tables/tab01_textbook_solow.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --filepath {params.filepath} \</span>
+<span class="st">            --models {params.model_expr} \</span>
+<span class="st">            --out {output.table} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span>
+
+<span class="co">## make_figs          : builds all figures</span>
+<span class="kw">rule</span> make_figs:
+    <span class="kw">input</span>:
+        <span class="kw">expand</span>(config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>,
+                <span class="kw">iFigure</span> = FIGURES)
+
+<span class="co">## figures            : recipe for constructing a figure (cannot be called)</span>
+<span class="kw">rule</span> figures:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_figures&quot;</span>] + <span class="st">&quot;{iFigure}.R&quot;</span>,
+        <span class="kw">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),
+        <span class="kw">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>] + <span class="st">&quot;subset_intermediate.json&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">fig</span> = config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;log&quot;</span>]+ <span class="st">&quot;figures/{iFigure}.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --subset {input.subset} \</span>
+<span class="st">            --out {output.fig} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span>
+
+<span class="co">## estimate_models    : estimates all regressions</span>
+<span class="kw">rule</span> estimate_models:
+    <span class="kw">input</span>:
+        <span class="kw">expand</span>(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+                    <span class="kw">iModel</span> = MODELS,
+                    <span class="kw">iSubset</span> = DATA_SUBSET)
+
+<span class="co">## ols_models         : recipe for estimating a single regression (cannot be called)</span>
+<span class="kw">rule</span> ols_model:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;estimate_ols_model.R&quot;</span>,
+        <span class="kw">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),
+        <span class="kw">model</span>  = config[<span class="st">&quot;src_model_specs&quot;</span>] + <span class="st">&quot;{iModel}.json&quot;</span>,
+        <span class="kw">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>]  + <span class="st">&quot;{iSubset}.json&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">model_est</span> = config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;analysis/{iModel}_ols_{iSubset}.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --model {input.model} \</span>
+<span class="st">            --subset {input.subset} \</span>
+<span class="st">            --out {output.model_est} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span>
+
+<span class="kw">&lt;...&gt;</span></code></pre></div>
+<p>Let’s examine what happens with this new Workflow. Start with a clean output directory:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span> clean</code></pre></div>
+<p>Now do a dry run.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span> --dryrun</code></pre></div>
+<p>The beginning of the output looks like:</p>
+<pre class="out"><code>Building DAG of jobs...
+Executing subworkflow data_mgt.
+Building DAG of jobs...
+Job counts:
+    count   jobs
+    1   gen_regression_vars
+    1   rename_vars
+    2
+
+[Mon Feb 11 22:41:42 2019]
+rule rename_vars:
+    input: src/data-management/rename_variables.R, src/data/mrw.dta
+    output: out/data/mrw_renamed.csv
+    log: logs/data-mgt/rename_variables.Rout
+    jobid: 1
+
+
+[Mon Feb 11 22:41:42 2019]
+rule gen_regression_vars:
+    input: src/data-management/gen_reg_vars.R, out/data/mrw_renamed.csv, src/data-specs/param_solow.json
+    output: out/data/mrw_complete.csv
+    log: logs/data-mgt/gen_reg_vars.Rout
+    jobid: 0
+
+Job counts:
+    count   jobs
+    1   gen_regression_vars
+    1   rename_vars
+    2
+Executing main workflow.
+Job counts:
+    count   jobs
+    1   all
+    1   augment_solow
+    3   figures
+    24  ols_model
+    1   textbook_solow
+    30</code></pre>
+<p>Explain what has happened here.</p>
+</div>
+<div id="subworkflow-dependencies" class="section level2">
+<h2><span class="header-section-number">11.2</span> Subworkflow dependencies</h2>
+<p>We want to go further….</p>
+<p>So create a subworkflow for analysis too, containing all rules that estimate models. Create an empty Snakefile:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">touch</span> src/analysis/Snakefile</code></pre></div>
+<p>Move analysis rules across to <code>src/analysis/Snakefile</code>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># subworkflow - analysis</span>
+<span class="co">#</span>
+<span class="co"># @yourname</span>
+<span class="co">#</span>
+
+<span class="co"># --- Importing Configuration Files --- #</span>
+
+<span class="kw">configfile</span>: <span class="st">&quot;config.yaml&quot;</span>
+
+<span class="co"># --- Build Rules --- #</span>
+<span class="co">## estimate_models    : estimates all regressions</span>
+<span class="kw">rule</span> estimate_models:
+    <span class="kw">input</span>:
+        <span class="kw">expand</span>(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+                    <span class="kw">iModel</span> = MODELS,
+                    <span class="kw">iSubset</span> = DATA_SUBSET)
+
+<span class="co">## ols_models         : recipe for estimating a single regression (cannot be called)</span>
+<span class="kw">rule</span> ols_model:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;estimate_ols_model.R&quot;</span>,
+        <span class="kw">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),
+        <span class="kw">model</span>  = config[<span class="st">&quot;src_model_specs&quot;</span>] + <span class="st">&quot;{iModel}.json&quot;</span>,
+        <span class="kw">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>]  + <span class="st">&quot;{iSubset}.json&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">model_est</span> = config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;analysis/{iModel}_ols_{iSubset}.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --model {input.model} \</span>
+<span class="st">            --subset {input.subset} \</span>
+<span class="st">            --out {output.model_est} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span></code></pre></div>
+<p>Following the logic in 11.1, we then update the snakefile in root by:</p>
+<ol style="list-style-type: decimal">
+<li>removing the rules we copied over</li>
+<li>adding a subworkflow called <code>analysis</code></li>
+<li>ensuring if we use outputs created in <code>analysis</code> subworkflow anywhere else, we wrap them in <code>analysis(output)</code></li>
+</ol>
+<p>Doing (1)-(3) in our main Snakefile, suggests we update the following:</p>
+<p>(list)</p>
+<p>Let’s do it:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">&lt;...&gt;</span>
+<span class="co"># --- Sub Workflows --- #</span>
+<span class="kw">subworkflow</span> data_mgt:
+   <span class="kw">workdir</span>: config[<span class="st">&quot;ROOT&quot;</span>]
+   <span class="kw">snakefile</span>:  config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span>
+
+<span class="kw">subworkflow</span> analysis:
+   <span class="kw">workdir</span>: config[<span class="st">&quot;ROOT&quot;</span>]
+   <span class="kw">snakefile</span>:  config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span>
+
+<span class="co"># --- Build Rules --- #</span>
+
+<span class="co">## all                : builds all final outputs</span>
+<span class="kw">rule</span> all:
+    <span class="kw">input</span>:
+        <span class="kw">figs</span>   = expand(config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>,
+                            <span class="kw">iFigure</span> = FIGURES),
+        <span class="kw">models</span> = analysis(expand(config[<span class="st">&quot;out_analysis&quot;</span>] +
+                            <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+                            <span class="kw">iModel</span> = MODELS,
+                            <span class="kw">iSubset</span> = DATA_SUBSET)
+                            ),
+        <span class="kw">tables</span>  = expand(config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;{iTable}.tex&quot;</span>,
+                            <span class="kw">iTable</span> = TABLES)
+
+<span class="co">## augment_solow      : construct a table of estimates for augmented solow model</span>
+<span class="kw">rule</span> augment_solow:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_tables&quot;</span>] + <span class="st">&quot;tab02_augment_solow.R&quot;</span>,
+        <span class="kw">models</span> = analysis(expand(config[<span class="st">&quot;out_analysis&quot;</span>] +
+                            <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+                            <span class="kw">iModel</span> = MODELS,
+                            <span class="kw">iSubset</span> = DATA_SUBSET)
+                            ),
+    <span class="kw">params</span>:
+        <span class="kw">filepath</span>   = config[<span class="st">&quot;out_analysis&quot;</span>],
+        <span class="kw">model_expr</span> = <span class="st">&quot;model_aug_solow*.rds&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">table</span> = config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;tab02_augment_solow.tex&quot;</span>,
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;tables/tab02_augment_solow.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --filepath {params.filepath} \</span>
+<span class="st">            --models {params.model_expr} \</span>
+<span class="st">            --out {output.table} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span>
+
+<span class="co">## textbook_solow     : construct a table of regression estimates for textbook solow model</span>
+<span class="kw">rule</span> textbook_solow:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_tables&quot;</span>] + <span class="st">&quot;tab01_textbook_solow.R&quot;</span>,
+        <span class="kw">models</span> = analysis(expand(config[<span class="st">&quot;out_analysis&quot;</span>] +
+                            <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+                            <span class="kw">iModel</span> = MODELS,
+                            <span class="kw">iSubset</span> = DATA_SUBSET)
+                            ),
+    <span class="kw">params</span>:
+        <span class="kw">filepath</span>   = config[<span class="st">&quot;out_analysis&quot;</span>],
+        <span class="kw">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">table</span> = config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;tab01_textbook_solow.tex&quot;</span>
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;tables/tab01_textbook_solow.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --filepath {params.filepath} \</span>
+<span class="st">            --models {params.model_expr} \</span>
+<span class="st">            --out {output.table} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span>
+
+<span class="co">## make_figs          : builds all figures</span>
+<span class="kw">rule</span> make_figs:
+    <span class="kw">input</span>:
+        <span class="kw">expand</span>(config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>,
+                <span class="kw">iFigure</span> = FIGURES)
+
+<span class="co">## figures            : recipe for constructing a figure (cannot be called)</span>
+<span class="kw">rule</span> figures:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_figures&quot;</span>] + <span class="st">&quot;{iFigure}.R&quot;</span>,
+        <span class="kw">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),
+        <span class="kw">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>] + <span class="st">&quot;subset_intermediate.json&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">fig</span> = config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;log&quot;</span>]+ <span class="st">&quot;figures/{iFigure}.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --subset {input.subset} \</span>
+<span class="st">            --out {output.fig} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span>
+<span class="kw">&lt;...&gt;</span></code></pre></div>
+<p>Remark about dictionaries not having to be moved…</p>
+<p>Now if we again do a dry run with Snakemake let’s see what happens:</p>
+<pre class="out"><code>Executing subworkflow analysis.
+Building DAG of jobs...
+Job counts:
+    count   jobs
+    24  ols_model
+    24
+
+&lt;LIST OF ANALYSIS JOBS&gt;
+Executing subworkflow data_mgt.
+Building DAG of jobs...
+Job counts:
+    count   jobs
+    1   gen_regression_vars
+    1   rename_vars
+    2
+&lt;LIST OF DATA-MGT JOBS&gt;
+Executing main workflow.
+Job counts:
+    count   jobs
+    1   all
+    1   augment_solow
+    3   figures
+    1   textbook_solow
+    6
+&lt;LIST OF MAIN WORKFLOW JOBS&gt;</code></pre>
+<p>Snakemake tells us nothing is wrong. However, if we look at the order of execution:</p>
+<p>(list)</p>
+<p>it wants to run <code>analysis</code> workflow before <code>data-mgt</code>. This should be a problem. If we try and run snakemake and execute the workflow:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span></code></pre></div>
+<p>We do get the expected error:</p>
+<pre class="out"><code>Building DAG of jobs...
+Executing subworkflow analysis.
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+    count   jobs
+    24  ols_model
+    24
+Traceback (most recent call last):
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/__init__.py&quot;, line 537, in snakemake
+    report=report)
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/workflow.py&quot;, line 653, in execute
+    success = scheduler.schedule()
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/scheduler.py&quot;, line 275, in schedule
+    run = self.job_selector(needrun)
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/scheduler.py&quot;, line 399, in job_selector
+    c = list(map(self.job_reward, jobs))  # job rewards
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/scheduler.py&quot;, line 469, in job_reward
+    input_size = job.inputsize
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/jobs.py&quot;, line 288, in inputsize
+    self._inputsize = sum(f.size for f in self.input)
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/jobs.py&quot;, line 288, in &lt;genexpr&gt;
+    self._inputsize = sum(f.size for f in self.input)
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/io.py&quot;, line 123, in wrapper
+    return func(self, *args, **kwargs)
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/io.py&quot;, line 138, in wrapper
+    return func(self, *args, **kwargs)
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/io.py&quot;, line 286, in size
+    return self.size_local
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/io.py&quot;, line 291, in size_local
+    self.check_broken_symlink()
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/io.py&quot;, line 296, in check_broken_symlink
+    if not self.exists_local and lstat(self.file):
+  File &quot;/home/lachlan/anaconda3/lib/python3.5/site-packages/snakemake/io.py&quot;, line 29, in lstat
+    follow_symlinks=os.stat not in os.supports_follow_symlinks)
+FileNotFoundError: [Errno 2] No such file or directory: &#39;/home/lachlan/teaching/snakemake-econ-r-learner/out/data/mrw_complete.csv&#39;</code></pre>
+<p>This says that <code>out/data/mrw_complete.csv</code> doesn’t exist, therefore the models cannot be estimated.</p>
+<p>What’s the solution? We need to specify that the <code>analysis</code> subworkflow itself has a subworkflow, <code>data_mgt</code>, that needs to run before <code>analysis</code>. So we add the subworkflow <code>data_mgt</code> to the Snakefile in <code>src/analysis</code>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># subworkflow - analysis</span>
+<span class="co">#</span>
+<span class="co"># @yourname</span>
+<span class="co">#</span>
+
+<span class="co"># --- Importing Configuration Files --- #</span>
+
+<span class="kw">configfile</span>: <span class="st">&quot;config.yaml&quot;</span>
+
+<span class="co"># --- Sub Workflows --- #</span>
+<span class="kw">subworkflow</span> data_mgt:
+   <span class="kw">workdir</span>: config[<span class="st">&quot;ROOT&quot;</span>]
+   <span class="kw">snakefile</span>:  config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span>
+
+<span class="co"># --- Build Rules --- #</span>
+<span class="co">## estimate_models    : estimates all regressions</span>
+<span class="kw">rule</span> estimate_models:
+    <span class="kw">input</span>:
+        <span class="kw">expand</span>(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+                    <span class="kw">iModel</span> = MODELS,
+                    <span class="kw">iSubset</span> = DATA_SUBSET)
+
+<span class="co">## ols_models         : recipe for estimating a single regression (cannot be called)</span>
+<span class="kw">rule</span> ols_model:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;estimate_ols_model.R&quot;</span>,
+        <span class="kw">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),
+        <span class="kw">model</span>  = config[<span class="st">&quot;src_model_specs&quot;</span>] + <span class="st">&quot;{iModel}.json&quot;</span>,
+        <span class="kw">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>]  + <span class="st">&quot;{iSubset}.json&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">model_est</span> = config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;analysis/{iModel}_ols_{iSubset}.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --model {input.model} \</span>
+<span class="st">            --subset {input.subset} \</span>
+<span class="st">            --out {output.model_est} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span></code></pre></div>
+<p>And we try again:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span></code></pre></div>
+<pre class="out"><code>Building DAG of jobs...
+Executing subworkflow data_mgt.
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+    count   jobs
+    1   gen_regression_vars
+    1   rename_vars
+    2
+
+[Mon Feb 11 23:12:42 2019]
+rule rename_vars:
+    input: src/data-management/rename_variables.R, src/data/mrw.dta
+    output: out/data/mrw_renamed.csv
+    log: logs/data-mgt/rename_variables.Rout
+    jobid: 1
+
+[Mon Feb 11 23:12:42 2019]
+Finished job 1.
+1 of 2 steps (50%) done
+
+[Mon Feb 11 23:12:42 2019]
+rule gen_regression_vars:
+    input: src/data-management/gen_reg_vars.R, src/data-specs/param_solow.json, out/data/mrw_renamed.csv
+    output: out/data/mrw_complete.csv
+    log: logs/data-mgt/gen_reg_vars.Rout
+    jobid: 0
+
+[Mon Feb 11 23:12:43 2019]
+Finished job 0.
+2 of 2 steps (100%) done
+Complete log: /home/lachlan/teaching/snakemake-econ-r-learner/.snakemake/log/2019-02-11T231242.348577.snakemake.log
+Executing subworkflow analysis.
+Building DAG of jobs...
+Executing subworkflow data_mgt.
+Error: Snakefile &quot;/home/lachlan/teaching/snakemake-econ-r-learner/src/analysis/src/data-management/Snakefile&quot; not present.</code></pre>
+<p>What has happened this time? its about the path</p>
+<p>explain why this fix works:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># subworkflow - analysis</span>
+<span class="co">#</span>
+<span class="co"># @yourname</span>
+<span class="co">#</span>
+
+<span class="co"># --- Importing Configuration Files --- #</span>
+
+<span class="kw">configfile</span>: <span class="st">&quot;config.yaml&quot;</span>
+
+<span class="co"># --- Sub Workflows --- #</span>
+<span class="kw">subworkflow</span> data_mgt:
+   <span class="kw">workdir</span>: config[<span class="st">&quot;sub2root&quot;</span>] + config[<span class="st">&quot;ROOT&quot;</span>]
+   <span class="kw">snakefile</span>:  config[<span class="st">&quot;sub2root&quot;</span>]+ config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span>
+
+<span class="co"># --- Build Rules --- #</span>
+<span class="co">## estimate_models    : estimates all regressions</span>
+<span class="kw">rule</span> estimate_models:
+    <span class="kw">input</span>:
+        <span class="kw">expand</span>(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+                    <span class="kw">iModel</span> = MODELS,
+                    <span class="kw">iSubset</span> = DATA_SUBSET)
+
+<span class="co">## ols_models         : recipe for estimating a single regression (cannot be called)</span>
+<span class="kw">rule</span> ols_model:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;estimate_ols_model.R&quot;</span>,
+        <span class="kw">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),
+        <span class="kw">model</span>  = config[<span class="st">&quot;src_model_specs&quot;</span>] + <span class="st">&quot;{iModel}.json&quot;</span>,
+        <span class="kw">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>]  + <span class="st">&quot;{iSubset}.json&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">model_est</span> = config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;analysis/{iModel}_ols_{iSubset}.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --model {input.model} \</span>
+<span class="st">            --subset {input.subset} \</span>
+<span class="st">            --out {output.model_est} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span></code></pre></div>
+<p>Now if we run snakemake again:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">snakemake</span></code></pre></div>
+<p>Our build runs from start to finish.</p>
+
+</div>
 </div>
             </section>
 
