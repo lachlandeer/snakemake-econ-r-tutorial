@@ -795,8 +795,8 @@ Error: Snakefile &quot;/home/lachlan/teaching/snakemake-econ-r-learner/src/analy
 <h3>Guided Exercise: <code>help</code> rules with subworkflows</h3>
 <p>With the new subworkflow system in place, examine how the output from <code>snakemake help</code> looks like.</p>
 <p>To bring our <code>help</code> rule back into shape, replace the shell command in the <code>help</code> rule with:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">`find</span> . -type f -name <span class="st">&#39;Snakefile&#39;</span> <span class="kw">|</span> <span class="kw">tac</span> <span class="kw">|</span> <span class="kw">xargs</span> sed -n <span class="st">&#39;s/^##//p&#39;</span> \
-            <span class="kw">&gt;</span> <span class="dt">{output}</span><span class="kw">`</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">find</span> . -type f -name <span class="st">&#39;Snakefile&#39;</span> <span class="kw">|</span> <span class="kw">tac</span> <span class="kw">|</span> <span class="kw">xargs</span> sed -n <span class="st">&#39;s/^##//p&#39;</span> \
+            <span class="kw">&gt;</span> <span class="dt">{output}</span></code></pre></div>
 <p>Explain exactly what this command is doing. (Look for help in ‘usual’ places).</p>
 <p>Next, update the inputs of the <code>help</code> rule so that the dependencies are correct.</p>
 

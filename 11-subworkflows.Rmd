@@ -671,8 +671,8 @@ With the new subworkflow system in place, examine how the output from
 To bring our `help` rule back into shape,  replace the shell command
     in the `help` rule with:
 ```{r, engine = 'bash', eval = FALSE}
-`find . -type f -name 'Snakefile' | tac | xargs sed -n 's/^##//p' \
-            > {output}`
+find . -type f -name 'Snakefile' | tac | xargs sed -n 's/^##//p' \
+            > {output}
 ```
 Explain exactly what this command is doing.
 (Look for help in 'usual' places).
