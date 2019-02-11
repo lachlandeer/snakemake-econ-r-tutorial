@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{2019-02-11}
+    \date{2019-02-12}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -3633,6 +3633,45 @@ Now if we run snakemake again:
 \end{Shaded}
 
 Our build runs from start to finish.
+
+\subsection*{Exercise: More
+Subworkflows}\label{exercise-more-subworkflows}
+\addcontentsline{toc}{subsection}{Exercise: More Subworkflows}
+
+Make two new subworkflows \texttt{figs} and \texttt{tables} to contain
+the rules to construct all figures and tables respectively. The end
+result should be only the \texttt{all} rule in the ``Main Build Rules''
+section of the \texttt{Snakefile} of the root directory. Be sure to
+carefully think about properly adding subworkflows, and subworkflow
+dependencies.
+
+To check your new subworkflow system builds, clean the output directory
+and be sure after entering \texttt{snakemake} into the terminal that all
+outputs are successfully created.
+
+\subsection*{\texorpdfstring{Guided Exercise: \texttt{help} rules with
+subworkflows}{Guided Exercise: help rules with subworkflows}}\label{guided-exercise-help-rules-with-subworkflows}
+\addcontentsline{toc}{subsection}{Guided Exercise: \texttt{help} rules
+with subworkflows}
+
+With the new subworkflow system in place, examine how the output from
+\texttt{snakemake\ help} looks like.
+
+To bring our \texttt{help} rule back into shape, replace the shell
+command in the \texttt{help} rule with:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{`find} \NormalTok{. -type f -name }\StringTok{'Snakefile'} \KeywordTok{|} \KeywordTok{tac} \KeywordTok{|} \KeywordTok{xargs} \NormalTok{sed -n }\StringTok{'s/^##//p'} \NormalTok{\textbackslash{}}
+            \KeywordTok{>} \DataTypeTok{\{output\}}\KeywordTok{`}
+\end{Highlighting}
+\end{Shaded}
+
+Explain exactly what this command is doing. (Look for help in `usual'
+places).
+
+Next, update the inputs of the \texttt{help} rule so that the
+dependencies are correct.
 
 \chapter*{PART III}\label{part-iii}
 \addcontentsline{toc}{chapter}{PART III}
