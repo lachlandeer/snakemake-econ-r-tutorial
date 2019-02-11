@@ -92,3 +92,8 @@ rule rename_vars:
             --out {output.data} \
             >& {log}"
 ```
+
+### Exercise: Using Config Files {- .exercise}
+
+Go through the remainder of the Snakefile and replace all explicit paths with references
+    from the config file.
