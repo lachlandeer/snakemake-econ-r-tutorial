@@ -1,3 +1,94 @@
 # Config Files
 
-Content is TBD
+Motivation...
+
+## The `config.yaml` filepath
+
+In our project's root directory we have the file `config.yaml`:
+
+```{r, engine = 'bash', eval = FALSE}
+$ ls -F
+```
+```{r, engine = 'out', eval = FALSE}
+config.yaml  find_r_packages.sh  HELP.txt
+install_r_packages.R  logs/  out/
+README.md  REQUIREMENTS.txt  sandbox/
+Snakefile  src/
+```
+
+If we look at the contents of `config.yaml` we see a collection of paths that
+    match up to the paths in our project:
+```{r, engine = 'bash', eval = FALSE}
+$ cat config.yaml
+```
+```{r, engine = 'out', eval = FALSE}
+ROOT: "."
+sub2root: "../../"
+src: "src/"
+log: "logs/"
+out: "out/"
+src_data: "src/data/"
+src_data_mgt: "src/data-management/"
+src_analysis: "src/analysis/"
+src_lib: "src/lib/"
+src_model_specs: "src/model-specs/"
+src_data_specs: "src/data-specs/"
+src_tables: "src/tables/"
+src_figures: "src/figures/"
+src_paper: "src/paper/"
+src_slides: "src/slides/"
+
+out_analysis: "out/analysis/"
+out_data: "out/data/"
+out_figures: "out/figures/"
+out_tables: "out/tables/"
+out_paper: "out/paper/"
+out_slides: "out/slides/"
+```
+
+We can use this collection of paths to simplify the content of the Snakefile.
+First we must import the `config.yaml` file into the Snakefile.
+We import it using the `configfile:` notation, and so it's easy for us to find,
+    we place it at the very top of our Snakefile.
+
+```{r, engine = 'bash', eval = FALSE}
+## Snakemake - MRW Replication
+##
+## @yourname
+##
+
+# --- Importing Configuration Files --- #
+
+configfile: "config.yaml"
+
+# --- Dictionaries --- #
+<...>
+```
+
+## Using paths from the config file
+
+We can now use the paths in `config.yaml` throughout the Snakefile.
+The text to the left of the colon in each line of the file is our reference to a
+    particular path, so `src_data` will serve as our reference to the folder `src/data/`.
+Snakemake does not knows this path reference comes from the config file unless we instruct it to,
+    so we reference it as `config["src_data"]`.
+The path is then connected to the filename with a `+`.
+Hence we can reference the original MRW data located in `src/data` as `config["src_data"] + "mrw.dta"`
+Here is the new version of the rule `rename_vars` using the config file to simplify the paths:
+
+```{r, engine = 'bash', eval = FALSE}
+## rename_vars        : creates meaningful variable names
+rule rename_vars:
+    input:
+        script = config["src_data_mgt"] + "rename_variables.R",
+        data   = config["src_data"] + "mrw.dta"
+    output:
+        data = config["out_data"] + "mrw_renamed.csv"
+    log:
+        config["out_log"] + "data_mgt/rename_variables.Rout"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --out {output.data} \
+            >& {log}"
+```
