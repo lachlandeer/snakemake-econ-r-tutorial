@@ -26,7 +26,7 @@
 <meta name="author" content="Julian Langer">
 
 
-<meta name="date" content="2019-02-06">
+<meta name="date" content="2019-02-11">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -189,7 +189,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="self-documenting-help.html#exercise-saving-help-output-to-file">Exercise: Saving <code>help</code> output to file</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>10</b> Config Files</a></li>
+<li class="chapter" data-level="10" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>10</b> Config Files</a><ul>
+<li class="chapter" data-level="10.1" data-path="config-files.html"><a href="config-files.html#the-config.yaml-filepath"><i class="fa fa-check"></i><b>10.1</b> The <code>config.yaml</code> filepath</a></li>
+<li class="chapter" data-level="10.2" data-path="config-files.html"><a href="config-files.html#using-paths-from-the-config-file"><i class="fa fa-check"></i><b>10.2</b> Using paths from the config file</a><ul>
+<li class="chapter" data-level="" data-path="config-files.html"><a href="config-files.html#exercise-using-config-files"><i class="fa fa-check"></i>Exercise: Using Config Files</a></li>
+</ul></li>
+</ul></li>
 <li class="chapter" data-level="11" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>11</b> Subworkflows: Divide and Conquer</a></li>
 <li class="chapter" data-level="" data-path="part-iii.html"><a href="part-iii.html"><i class="fa fa-check"></i>PART III</a></li>
 <li class="chapter" data-level="12" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>12</b> Reproducible Articles with Rmd</a></li>
@@ -218,8 +223,75 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="config-files" class="section level1">
 <h1><span class="header-section-number">Chapter 10</span> Config Files</h1>
-<p>Content is TBD</p>
+<p>Motivation…</p>
+<div id="the-config.yaml-filepath" class="section level2">
+<h2><span class="header-section-number">10.1</span> The <code>config.yaml</code> filepath</h2>
+<p>In our project’s root directory we have the file <code>config.yaml</code>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">ls</span> -F</code></pre></div>
+<pre class="out"><code>config.yaml  find_r_packages.sh  HELP.txt
+install_r_packages.R  logs/  out/
+README.md  REQUIREMENTS.txt  sandbox/
+Snakefile  src/</code></pre>
+<p>If we look at the contents of <code>config.yaml</code> we see a collection of paths that match up to the paths in our project:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cat</span> config.yaml</code></pre></div>
+<pre class="out"><code>ROOT: &quot;.&quot;
+sub2root: &quot;../../&quot;
+src: &quot;src/&quot;
+log: &quot;logs/&quot;
+out: &quot;out/&quot;
+src_data: &quot;src/data/&quot;
+src_data_mgt: &quot;src/data-management/&quot;
+src_analysis: &quot;src/analysis/&quot;
+src_lib: &quot;src/lib/&quot;
+src_model_specs: &quot;src/model-specs/&quot;
+src_data_specs: &quot;src/data-specs/&quot;
+src_tables: &quot;src/tables/&quot;
+src_figures: &quot;src/figures/&quot;
+src_paper: &quot;src/paper/&quot;
+src_slides: &quot;src/slides/&quot;
 
+out_analysis: &quot;out/analysis/&quot;
+out_data: &quot;out/data/&quot;
+out_figures: &quot;out/figures/&quot;
+out_tables: &quot;out/tables/&quot;
+out_paper: &quot;out/paper/&quot;
+out_slides: &quot;out/slides/&quot;</code></pre>
+<p>We can use this collection of paths to simplify the content of the Snakefile. First we must import the <code>config.yaml</code> file into the Snakefile. We import it using the <code>configfile:</code> notation, and so it’s easy for us to find, we place it at the very top of our Snakefile.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">## Snakemake - MRW Replication</span>
+<span class="co">##</span>
+<span class="co">## @yourname</span>
+<span class="co">##</span>
+
+<span class="co"># --- Importing Configuration Files --- #</span>
+
+<span class="kw">configfile</span>: <span class="st">&quot;config.yaml&quot;</span>
+
+<span class="co"># --- Dictionaries --- #</span>
+<span class="kw">&lt;...&gt;</span></code></pre></div>
+</div>
+<div id="using-paths-from-the-config-file" class="section level2">
+<h2><span class="header-section-number">10.2</span> Using paths from the config file</h2>
+<p>We can now use the paths in <code>config.yaml</code> throughout the Snakefile. The text to the left of the colon in each line of the file is our reference to a particular path, so <code>src_data</code> will serve as our reference to the folder <code>src/data/</code>. Snakemake does not knows this path reference comes from the config file unless we instruct it to, so we reference it as <code>config[&quot;src_data&quot;]</code>. The path is then connected to the filename with a <code>+</code>. Hence we can reference the original MRW data located in <code>src/data</code> as <code>config[&quot;src_data&quot;] + &quot;mrw.dta&quot;</code> Here is the new version of the rule <code>rename_vars</code> using the config file to simplify the paths:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">## rename_vars        : creates meaningful variable names</span>
+<span class="kw">rule</span> rename_vars:
+    <span class="kw">input</span>:
+        <span class="kw">script</span> = config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;rename_variables.R&quot;</span>,
+        <span class="kw">data</span>   = config[<span class="st">&quot;src_data&quot;</span>] + <span class="st">&quot;mrw.dta&quot;</span>
+    <span class="kw">output</span>:
+        <span class="kw">data</span> = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_renamed.csv&quot;</span>
+    <span class="kw">log</span>:
+        <span class="kw">config</span>[<span class="st">&quot;out_log&quot;</span>] + <span class="st">&quot;data_mgt/rename_variables.Rout&quot;</span>
+    <span class="kw">shell</span>:
+        <span class="st">&quot;Rscript {input.script} \</span>
+<span class="st">            --data {input.data} \</span>
+<span class="st">            --out {output.data} \</span>
+<span class="st">            &gt;&amp; {log}&quot;</span></code></pre></div>
+<div id="exercise-using-config-files" class="section level3 unnumbered exercise">
+<h3>Exercise: Using Config Files</h3>
+<p>Go through the remainder of the Snakefile and replace all explicit paths with references from the config file.</p>
+
+</div>
+</div>
 </div>
             </section>
 

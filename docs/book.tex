@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{2019-02-06}
+    \date{2019-02-11}
 
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -2813,6 +2813,9 @@ Finished job 0.
 1 of 1 steps (100%) done
 \end{verbatim}
 
+We see that after the usual Snakemake output telling us what it is
+doing, our comments are printed to screen.
+
 \subsection*{\texorpdfstring{Exercise: Saving \texttt{help} output to
 file}{Exercise: Saving help output to file}}\label{exercise-saving-help-output-to-file}
 \addcontentsline{toc}{subsection}{Exercise: Saving \texttt{help} output
@@ -2823,7 +2826,121 @@ file called \texttt{HELP.txt}
 
 \chapter{Config Files}\label{config-files}
 
-Content is TBD
+Motivation\ldots{}
+
+\section{\texorpdfstring{The \texttt{config.yaml}
+filepath}{The config.yaml filepath}}\label{the-config.yaml-filepath}
+
+In our project's root directory we have the file \texttt{config.yaml}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{ls} \NormalTok{-F}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+config.yaml  find_r_packages.sh  HELP.txt
+install_r_packages.R  logs/  out/
+README.md  REQUIREMENTS.txt  sandbox/
+Snakefile  src/
+\end{verbatim}
+
+If we look at the contents of \texttt{config.yaml} we see a collection
+of paths that match up to the paths in our project:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ }\KeywordTok{cat} \NormalTok{config.yaml}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ROOT: "."
+sub2root: "../../"
+src: "src/"
+log: "logs/"
+out: "out/"
+src_data: "src/data/"
+src_data_mgt: "src/data-management/"
+src_analysis: "src/analysis/"
+src_lib: "src/lib/"
+src_model_specs: "src/model-specs/"
+src_data_specs: "src/data-specs/"
+src_tables: "src/tables/"
+src_figures: "src/figures/"
+src_paper: "src/paper/"
+src_slides: "src/slides/"
+
+out_analysis: "out/analysis/"
+out_data: "out/data/"
+out_figures: "out/figures/"
+out_tables: "out/tables/"
+out_paper: "out/paper/"
+out_slides: "out/slides/"
+\end{verbatim}
+
+We can use this collection of paths to simplify the content of the
+Snakefile. First we must import the \texttt{config.yaml} file into the
+Snakefile. We import it using the \texttt{configfile:} notation, and so
+it's easy for us to find, we place it at the very top of our Snakefile.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Snakemake - MRW Replication}
+\CommentTok{##}
+\CommentTok{## @yourname}
+\CommentTok{##}
+
+\CommentTok{# --- Importing Configuration Files --- #}
+
+\KeywordTok{configfile}\NormalTok{: }\StringTok{"config.yaml"}
+
+\CommentTok{# --- Dictionaries --- #}
+\KeywordTok{<...>}
+\end{Highlighting}
+\end{Shaded}
+
+\section{Using paths from the config
+file}\label{using-paths-from-the-config-file}
+
+We can now use the paths in \texttt{config.yaml} throughout the
+Snakefile. The text to the left of the colon in each line of the file is
+our reference to a particular path, so \texttt{src\_data} will serve as
+our reference to the folder \texttt{src/data/}. Snakemake does not knows
+this path reference comes from the config file unless we instruct it to,
+so we reference it as \texttt{config{[}"src\_data"{]}}. The path is then
+connected to the filename with a \texttt{+}. Hence we can reference the
+original MRW data located in \texttt{src/data} as
+\texttt{config{[}"src\_data"{]}\ +\ "mrw.dta"} Here is the new version
+of the rule \texttt{rename\_vars} using the config file to simplify the
+paths:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## rename_vars        : creates meaningful variable names}
+\KeywordTok{rule} \NormalTok{rename_vars:}
+    \KeywordTok{input}\NormalTok{:}
+        \KeywordTok{script} \NormalTok{= config[}\StringTok{"src_data_mgt"}\NormalTok{] + }\StringTok{"rename_variables.R"}\NormalTok{,}
+        \KeywordTok{data}   \NormalTok{= config[}\StringTok{"src_data"}\NormalTok{] + }\StringTok{"mrw.dta"}
+    \KeywordTok{output}\NormalTok{:}
+        \KeywordTok{data} \NormalTok{= config[}\StringTok{"out_data"}\NormalTok{] + }\StringTok{"mrw_renamed.csv"}
+    \KeywordTok{log}\NormalTok{:}
+        \KeywordTok{config}\NormalTok{[}\StringTok{"out_log"}\NormalTok{] + }\StringTok{"data_mgt/rename_variables.Rout"}
+    \KeywordTok{shell}\NormalTok{:}
+        \StringTok{"Rscript \{input.script\} \textbackslash{}}
+\StringTok{            --data \{input.data\} \textbackslash{}}
+\StringTok{            --out \{output.data\} \textbackslash{}}
+\StringTok{            >& \{log\}"}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection*{Exercise: Using Config
+Files}\label{exercise-using-config-files}
+\addcontentsline{toc}{subsection}{Exercise: Using Config Files}
+
+Go through the remainder of the Snakefile and replace all explicit paths
+with references from the config file.
 
 \chapter{Subworkflows: Divide and
 Conquer}\label{subworkflows-divide-and-conquer}
