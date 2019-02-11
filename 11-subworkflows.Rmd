@@ -649,3 +649,32 @@ $ snakemake
 ```
 
 Our build runs from start to finish.
+
+### Exercise: More Subworkflows {- .exercise}
+
+Make two new subworkflows `figs` and `tables` to contain the rules to construct
+    all figures and tables respectively.
+The end result should be only the `all` rule in the "Main Build Rules" section
+    of the `Snakefile` of the root directory.
+Be sure to carefully think about properly adding subworkflows,
+    and subworkflow dependencies.
+
+To check your new subworkflow system builds, clean the output directory
+    and be sure after entering `snakemake` into the terminal that all outputs
+    are successfully created.
+
+### Guided Exercise: `help` rules with subworkflows {- .exercise}
+
+With the new subworkflow system in place, examine how the output from
+    `snakemake help` looks like.
+
+To bring our `help` rule back into shape,  replace the shell command
+    in the `help` rule with:
+```{r, engine = 'bash', eval = FALSE}
+`find . -type f -name 'Snakefile' | tac | xargs sed -n 's/^##//p' \
+            > {output}`
+```
+Explain exactly what this command is doing.
+(Look for help in 'usual' places).
+
+Next, update the inputs of the `help` rule so that the dependencies are correct.
