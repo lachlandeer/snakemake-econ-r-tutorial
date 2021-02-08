@@ -2,6 +2,7 @@
 title: "Reproducible Research Workflows with Snakemake and `R`"
 subtitle: "An Extended Tutorial for Economists and Social Scientists"
 author:
+    - "Ulrich Bergmann"
     - "Lachlan Deer"
     - "Julian Langer"
 date: "`r Sys.Date()`"
