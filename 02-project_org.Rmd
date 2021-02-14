@@ -152,14 +152,20 @@ This is beneficial not only to others trying to understand your code,
 
 ## Project Structure II: Separating Logical Chunks of the Project
 
-As we have mentioned above, to keep our project's structure clean, we want to keep all the computer code inside the `src` directory.
+Now that we are looking to keep our project's structure clean, we want to keep all the computer code inside the `src` directory.
+However if we were to simply put all our computer code and data into `src` although we solve part of our project disorganization, 
+  we still potentially have many original datasets and many `R` scripts all located in one directory.
+This half-organized - half-disorganized approach is definitely an improvement of having all our files located in one place,
+  but one can (and should) do better.
+To keep our project even more organized, we create a set of subdirectories inside `src` to separate logical chunks of the project.
+ 
 Let's have a look at the content of `src`.
 
 ```{r ls-bash-src, engine = 'bash', eval = FALSE}
-ls -F src/
+$ ls src/
 ```
-
 We see the following output:
+
 ```{r ls-bash-src-res, engine = 'bash', eval = FALSE}
 ./
     |src/
@@ -171,29 +177,87 @@ We see the following output:
         |- lib/
         |- figures/
         |- tables/
+        |- table-specs/
+        |- paper/
+        |- slides/
+```
+Here we see 9 sub-folders inside `src`.
+These are designed to logically separate various aspects of the project:
+
+* `data/` contains all of the project's original/raw data.
+* `data-management/` contains all `R` scripts to clean and merge datasets together
+* `data-specs/` contains any special parameterizations used in cleaning or analysis.
+* `analysis/` contains all `R` scripts that are our main analysis. For example, our regression scripts
+* `model-specs/` conatins
+* `lib/` contains `R` scripts that contain functions that can be used more generally. 
+  For example helper functions that can be used in both data cleaning and analysis could be put here. 
+  So can scripts that contain functions that can be portable across multiple projects. 
+* `figures/` contains `R` scripts that produce figures. One script per figure.
+* `tables/` contains `R` scripts that produce summary tables and regression tables. One script per table.
+* `table-specs` - contains the 
+* `paper` contains the `Rmarkdown` files to write up project results in a paper, i.e. the paper's text.
+* `slides` contains the `Rmarkdown` files to write up project results as a slide deck, i.e. the text of the slides.
+
+
+This separation begins to make clear the logical steps to produce a project which is useful in itself.
+There's some orginal data set in `data` that needs to be tidied in some way.
+The scripts in `data-management` do that cleaning.
+Once the data is cleaned, scripts in `analysis` perform the statistical analysis on clean data.
+Summary figures and tables, and processed results from the analysis come from the scripts inside `tables` and `figures`.
+Finally, `paper` and `slides` contain source files for the writeup and presentation of results.
+Although we are yet to tell anyone how to use these scripts in the sub-folders, the organization of the `src` folder is already extremely suggestive about the steps in our project.
+
+!!IN A WARNING BOX!!
+The presence of the folders `data-specs`, `model-specs` and `table-specs` might still seems a little confusing.
+We use these folders and the files within them to separate out data and model parameterizations - 
+  which can be thought of as a further level of project organization.  
+We will return to this idea in section XX.
+
+In the same way that we have sub-folders in `src`, we also want any of the outputs we produce to organized inside the `out` directory.
+Using a similar structure between `src` and `out` is a good way to do this.
+Let's look at the structure of `out`:
+
+```{r ls-bash-out, engine = 'bash', eval = FALSE}
+$ ls out/
 ```
 
-The type of content we expect in each file is:
+```{r ls-bash-out-res, engine = 'bash', eval = FALSE}
+./
+    |out/
+        |- data/
+        |- analysis/
+        |- figures/
+        |- tables/
+        |- paper/
+        |- slides/
+```
 
-TBD
+We have a sub-folder inside `out` for each sub-folder in `src` that has a step in our project:
 
+* `out/data` can store any datasets that are produced as a result of cleaning and merging
+* `out/analysis` can store any output from statistical analysis, for example saved regression results 
+* `out/figures` holds all figures produced 
+* `out/tables` holds all tables produced
+* `out/paper` has the `pdf` of the paper 
+* `out/slides` has the `pdf` of the slides
 
-### Exploring the Structure of the MRW Replication Subdirectories
+### Aside: Even Deeper Sub-folders
 
-We begin our exploration of the project by looking at the folders that appear to be related to the data.
-If we look inside the `data` directory
+If we look inside the `src/data` directory
 
 ```{r ls-bash-data, engine = 'bash', eval = FALSE}
-ls -F src/data/
+$ ls -F src/data/
 ```
+
+We see one data file:
 
 ```{r ls-bash-data-res, engine = 'bash', eval = FALSE}
 mrw.dta
 ```
 
 That is, our `data/` directory contains the project's original data set.
-
-Note that in more extensive projects, the `data/` subfolder would typically have more than one data set.
+There is only one data set because the project is relatively simple - and only relies on one source of data
+In more extensive projects, the `data/` subfolder would typically have more than one data set.
 For example:
 
 ```{r ls-bash-data-2, engine = 'bash', eval = FALSE}
@@ -202,9 +266,8 @@ dataset2.dta
 dataset3.csv
 ```
 
-TBD - aside on file endings.
-
-Further, your data folder may even contain further subdirectories that organize data further
+If your project uses many data sets, 
+  potentially from many different data providers one could easily add sub-folders for each data provider:
 
 ```{r ls-bash-data-3, engine = 'bash', eval = FALSE}
 ./
@@ -218,25 +281,13 @@ Further, your data folder may even contain further subdirectories that organize 
                 |- dataset4.txt
 ```
 
-If we now turn to the `data-management` directory, we can explore it's contents too:
-
-```{r ls-bash-datamgt, engine = 'bash', eval = FALSE}
-ls -F src/data-management/
-```
-
-```{r ls-bash-datamgt-res, engine = 'bash', eval = FALSE}
-rename_variables.R
-gen_reg_vars.R
-```
-
-TODO:
-
-* meaningful filenames
-* Note two different ways to name files
+i.e. add a further layer of sub-folders.
+This might add extra clarity.
 
 
-### Exercise: Exploring the Remaining Subdirectories {- .exercise}
-TBD
+!! EXERCISE !!
+Think about whether you could might want additional sub-folders in any of the other `src` directories. 
+Provide some examples you could use, and explain the pros and cons of using them.
 
 ## Project Structure III: Separating Input Parameters from Code
 
@@ -271,4 +322,9 @@ We see an a variable `KEEP_CONDITION` which is storing a string `"oecd == 1"`.
 
 TBD: Why have we done this? See below.
 
-### Exploring Parameter Separation in the MRW Replication Project
+!! EXERCISE !!
+
+Inspect the each of the JSON files in `src/model-specs`.
+Explain what you have found, and how you could use these files as part of the project.
+(HINT:) what does `src/analyis/estimate_ols_model.R` do?
+
