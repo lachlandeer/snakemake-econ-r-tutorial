@@ -1,3 +1,5 @@
+# PART I - Preliminaries {-}
+
 # Motivating & Rationale {#intro}
 
 ## A Case for Reproducibility
