@@ -59,81 +59,96 @@ If this is where your thoughts start to go,
 
 ## Project Organization I: Separating Inputs and Outputs
 
-Structuring our project and the locations of files is an important concept.
+The first step in our 'logical separation journey' is the organization of files and folders.
+Starting a project with the right folder structure, even before a line of code is written, 
+  is an easy starting point and will help us stay on track as the project develops.
+Let's take a look at the main folder structures present in our MRW project.
 
-Let's look at the structure of our project's folder.
-Open a terminal and change into this directory
+To get started, we need to "open up" the folder to inspect what is there.
+As with the remainder of this tutorial - we will use the terminal to interact with our computer, 
+so "opening" a folder means we will change into that directory.
+Thus, open a terminal^[
+ LINK BACK TO HOW TO DO THIS ACROSS OSes.
+] 
+and change directory to the MRW project directory as follows:
 
 ```{r cd-bash, engine = 'bash', eval = FALSE}
-cd YOUR/PATH/TO/snakemake-econ-r-student
+$ cd YOUR/PATH/TO/snakemake-econ-r-learner
 ```
 
-And list the subdirectories of the main directory
+You can verify you have done this correctly by entering the `pwd` command into the terminal and hitting the `RETURN` key.
+The expected output will be:
+
+```{r pwd-bash, engine = 'bash', eval = FALSE}
+YOUR/PATH/TO/snakemake-econ-r-learner
+```
+
+Now we want to look at the files and folders present in that directory:
 
 ```{r ls-bash, engine = 'bash', eval = FALSE}
-ls -d */
+$ ls 
 ```
 
-We see the following folder structure
+We see the following:
+
 ```{r ls-bash-res, engine = 'bash', eval = FALSE}
 ./
     |- src/
     |- out/
     |- log/
     |- sandbox/
+    README.md
+    Snakefile
 ```
+The main idea here is that there is a top level directory `./` which contains four sub-folders: 
+  `src`, `out`, `log` and `sandbox`.
+In addition to these subfolders, there is two files, `README.md` and `Snakefile`.
+Importantly there is no `R` scripts or data files in this top level directory.
+We briefly discuss each of these in turn.
 
+**Root Folder (`./`).**
+This is the main folder of the project. 
+Everything that is used or produced for the project should be located in a this folder, or better yet a sub-folder.
+Think of it as a 'one-stop shop' for what you are working on for this project. 
+If it's important - you must be able to find it here.
 
-We recommend the following structure for any project:
+**`src` folder**. 
+This is the 'source' folder. 
+It contains all of your code files you develop during your analysis and the original datasets you begin your analysis with.
 
-* Root Folder
-* `src` folder for input files
-* `out` folder for output files
-* a `log` folder to store computer logs
-* a `sandbox` folder that gives us a 'safe place' to develop new code
+**`out` folder**.
+This is the output directory.
+We will put anything that we create by running a `R` script.
+For example, it can contain new datasets we create by cleaning and merging our original data, 
+  saved regression results and saved figures or summary tables.
+The main point is that anything we can recreate by running `R` scripts will get saved here - 
+  whether they be 'temporary' or 'intermediate' outputs that will get used by another `R` script later in our project,
+  or 'final' outputs that we will want to insert into a paper, report or slide deck.
 
-We discuss each of these in turn.
+**`log` folder**.
+When we run and `R` script it produces output and messages, typically printing them to the screen.
+If we want to save those messages to a file, so we can refer to them in the future, we will save them here.
 
-### The Root Folder
+**`sandbox` folder**.
+As we work through our project, we will want to explore new ideas and test out how to code them.
+While we play with these bits and pieces of code, we save them in the `sandbox`.
+Separating them from `src` means we know that `R` scripts in here are 'under development'.
+When they are finalized, we can move them into `src`.
 
-TBD
+**`README.md` file**.
+A `README` is a text file that introduces and explains the project.
+We should write information that explains what the project is about and how someone can run the scripts developed for the project in this file.
+We also recommend providing installation instructions to clarify exactly what needs to be installed to run the project.
 
-### The `src` folder
+**`Snakefile`**.
+We will use the `Snakefile` to write the steps needed that run all the scripts in the project.
+Further discussion of `Snakefiles` are deferred to the next chapter when introduce `Snakemake`.
 
-TBD
-
-### The `out` folder
-
-TBD
-
-### The `log` folder
-
-### Exploring the Full Structure of the MRW Replication Project
-
-Now, let's look at all contents of this main projects directory:
-
-```{r ls-bash-2, engine = 'bash', eval = FALSE}
-ls -F .
-```
-
-We see the following folder structure
-```{r ls-bash-res-2, engine = 'bash', eval = FALSE}
-./
-    |- src/
-    |- out/
-    |- log/
-    |- sandbox/
-    | README.md
-    | Snakefile
-```
-
-Notice that there are no instances of:
-    (i) scripts,
-    (ii) files containing content of the paper or slides
-    (iii) something else we haven't thought of yet
-Instead, there are only two files, a `README.md` and a file called `Snakefile.`
-
-TODO: explain these two files
+The advantage of following this folder structure means that anyone who looks through the your code 
+  can easily figure out what the original/raw data sets are and what files need to be executed versus
+  what files have been created by `R` scripts.
+This is beneficial not only to others trying to understand your code, 
+  but also future versions of yourself when you come back to your project's code after not working on it for a while.
 
 ## Project Structure II: Separating Logical Chunks of the Project
 
