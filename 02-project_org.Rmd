@@ -1,7 +1,63 @@
 # Project Organization
 
+## Learning Objectives {-}
 
-## Project Structure I: Separating Inputs and Outputs
+TODO: Turn these into actual goals
+
+* Separate inputs and outputs 
+* Separate directories by function
+* Minimize hard-coded information inside scripts 
+
+## Subtitle TBD
+
+As researchers and students we are famililar with the notion a paper or report needs to be written in a 
+  clean and organized way that can be understood by ourselves and others.
+Papers and reports have a logical structure, and are broken into logical chunks.
+When the conclusions are driven by assumptions or ... we try to make this explicit by
+  highlighting where they are or having a separate section to introduce them.
+When logic is unclear and assumptions are not clearly laid out, 
+  we are encouraged to organize written our arguments in a better way.
+
+The idea of maintaining a clean and organized structure often does not extend to our thinking about the code and data
+  that are used to construct the paper's main results.
+Despite our best intentions to keep our code and data organized and coherent as researcher, 
+  it too often becomes one of the first principles we throw out - 
+  either when the complexity grows too large,
+  or when looming deadlines favour the production of results rather than how clean the scripts that produce them look.^[
+    This propensity to pre-maturely throw out code and data organization is something the authors of this tutorial
+     can relate to, as it has often tempted us in our own research - and even when writing this tutorial.
+     ]
+
+Until recently, our paper's "backend" of code and data is typically only visible to the authors of a project, 
+  meaning any frustration and difficulties brought about by bad code and data organization fell only on us, 
+  the authors.
+The rise of open science and reproducibility requirements by publishers have started to open up these backends, 
+  increasing the need for our code and data to be structured in a way that that is amenable to others to look at and understand.
+As a result, the pressure to adopt a coherent way to organize our research project's files has risen 
+  beyond keeping the frustations of our coauthors and our future-selves in check, demanding a solution.
+
+This aim of this chapter is to provide an example structure for a research project and 
+  explain the logic behind the structure we propose.
+There are two core principles behind the way we organize the files for a project:
+  (1) the separation of logical chunks of a project's code and data, and 
+  (2) the separation of parameters, specifications and paths from code.
+A side benefit of both of these principles is that our project's structure becomes portable across multiple research projects.
+This means that once we make a decision to adopt a structure, we can continue to use the same structure repeatedly into the future.^[
+    Our own personal experience suggests that this side benefit reaps just as many rewards.
+    Knowing immediately where to look for pieces of code and parameterizations because all our projects look identical in their organization is definitely a frustration reducing benefit of structure.
+]
+
+We are going to use the files and structure of the folder you have downloaded that replicates Mankiw, Romer and Weil's analysis (hereafter MRW) to look explore one way to organize a research project.^[
+ We discussed downloading these files HERE along with any software you need to install to work through subsequant chapters.
+ ]
+The organization of code and data that you will see emphasizes the notions of separating logical chunks of 
+  code, data, file paths & specifications, along with the files that the statistical analysis that R produces.
+As you work through what follows you may begin to question the extent of logical separation, and whether it is a step too far. 
+If this is where your thoughts start to go, 
+  also reflect on how this structure could be extended if this project were to develop further and
+  on how readily it could be adopted for use in a new project.
+
+## Project Organization I: Separating Inputs and Outputs
 
 Structuring our project and the locations of files is an important concept.
 
