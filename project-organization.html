@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Project Organization | Reproducible Data Analytic Workflows with Snakemake and R</title>
+  <meta name="description" content="In progress" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Project Organization | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="In progress" />
+  <meta name="github-repo" content="lachlandeer/snakemake-econ-r-tutorial" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Project Organization | Reproducible Data Analytic Workflows with Snakemake and R" />
+  
+  <meta name="twitter:description" content="In progress" />
+  
+
+<meta name="author" content="Ulrich Bergmann" />
+<meta name="author" content="Lachlan Deer" />
+<meta name="author" content="Julian Langer" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="intro.html"/>
+<link rel="next" href="initial-steps-with-snakemake.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./index.html">Reproducible Data Analytic Workflows with Snakemake and `R`</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-we-wrote-this-tutorial"><i class="fa fa-check"></i>Why we wrote this tutorial</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#pre-requisite-knowledge"><i class="fa fa-check"></i>Pre-requisite Knowledge</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-needs-to-be-downloaded-installed-for-this-tutorial"><i class="fa fa-check"></i>What Needs to be Downloaded &amp; Installed for this Tutorial</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#template-scripts-and-documents"><i class="fa fa-check"></i>Template Scripts and Documents</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#software-installation"><i class="fa fa-check"></i>Software Installation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-we-cant-cover"><i class="fa fa-check"></i>What We Can’t Cover</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i>Acknowledgements</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-the-authors"><i class="fa fa-check"></i>About the Authors</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#license"><i class="fa fa-check"></i>License</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#instructional-material"><i class="fa fa-check"></i>Instructional material</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#software"><i class="fa fa-check"></i>Software</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#citation"><i class="fa fa-check"></i>Citation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="part-i-preliminaries.html"><a href="part-i-preliminaries.html"><i class="fa fa-check"></i>PART I - Preliminaries</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Motivating &amp; Rationale</a><ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#a-case-for-reproducibility"><i class="fa fa-check"></i><b>1.1</b> A Case for Reproducibility</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#how-far-to-go-in-the-quest-for-reproducibility"><i class="fa fa-check"></i><b>1.1.1</b> How far to go in the quest for reproducibility?</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#what-is-snakemake-why-should-you-use-it"><i class="fa fa-check"></i><b>1.2</b> What is <code>Snakemake</code> &amp; Why Should you use it?</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#why-r"><i class="fa fa-check"></i><b>1.3</b> Why <code>R</code>?</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#working-example-replicating-mankiw-romer-and-weils-1992-qje"><i class="fa fa-check"></i><b>1.4</b> Working Example: Replicating Mankiw, Romer and Weil’s 1992 QJE</a></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#the-way-forward"><i class="fa fa-check"></i><b>1.5</b> The way forward</a><ul>
+<li class="chapter" data-level="" data-path="intro.html"><a href="intro.html#exercise-your-own-projects-steps"><i class="fa fa-check"></i>Exercise: Your own project’s steps</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="project-organization.html"><a href="project-organization.html"><i class="fa fa-check"></i><b>2</b> Project Organization</a><ul>
+<li class="chapter" data-level="" data-path="project-organization.html"><a href="project-organization.html#learning-objectives"><i class="fa fa-check"></i>Learning Objectives</a></li>
+<li class="chapter" data-level="2.1" data-path="project-organization.html"><a href="project-organization.html#subtitle-tbd"><i class="fa fa-check"></i><b>2.1</b> Subtitle TBD</a></li>
+<li class="chapter" data-level="2.2" data-path="project-organization.html"><a href="project-organization.html#project-organization-i-separating-inputs-and-outputs"><i class="fa fa-check"></i><b>2.2</b> Project Organization I: Separating Inputs and Outputs</a></li>
+<li class="chapter" data-level="2.3" data-path="project-organization.html"><a href="project-organization.html#project-structure-ii-separating-logical-chunks-of-the-project"><i class="fa fa-check"></i><b>2.3</b> Project Structure II: Separating Logical Chunks of the Project</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="project-organization.html"><a href="project-organization.html#aside-even-deeper-sub-folders"><i class="fa fa-check"></i><b>2.3.1</b> Aside: Even Deeper Sub-folders</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="project-organization.html"><a href="project-organization.html#project-structure-iii-separating-input-parameters-from-code"><i class="fa fa-check"></i><b>2.4</b> Project Structure III: Separating Input Parameters from Code</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html"><i class="fa fa-check"></i><b>3</b> Initial Steps with Snakemake</a><ul>
+<li class="chapter" data-level="3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#snakefile-writing-our-first-rule"><i class="fa fa-check"></i><b>3.1</b> Snakefile – Writing Our First Rule</a></li>
+<li class="chapter" data-level="3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-snakemake-command-executing-a-rule"><i class="fa fa-check"></i><b>3.2</b> The Snakemake Command – Executing a Rule</a></li>
+<li class="chapter" data-level="3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#reading-and-writing-files-first-steps-in-a-data-science-pipeline"><i class="fa fa-check"></i><b>3.3</b> Reading and Writing Files – First Steps in a Data Science Pipeline</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#using-the-rscript-command-to-execute-r-scripts"><i class="fa fa-check"></i><b>3.3.1</b> Using the Rscript command to execute R scripts</a></li>
+<li class="chapter" data-level="3.3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-input-and-output-arguments"><i class="fa fa-check"></i><b>3.3.2</b> The input and output arguments</a></li>
+<li class="chapter" data-level="3.3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#a-rule-to-rename-variables."><i class="fa fa-check"></i><b>3.3.3</b> A rule to rename variables.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#redundant-executions-dont-run-a-rule-repeatedly"><i class="fa fa-check"></i><b>3.4</b> Redundant Executions – (Don’t) Run a Rule Repeatedly</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html"><i class="fa fa-check"></i><b>4</b> Working With Multiple Rules</a><ul>
+<li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a second rule</a><ul>
+<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-rules"><i class="fa fa-check"></i>Exercise: Creating Rules</a></li>
+<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution"><i class="fa fa-check"></i>Solution</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#clean-rules"><i class="fa fa-check"></i><b>4.2</b> Clean Rules</a><ul>
+<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-cleaning-rules"><i class="fa fa-check"></i>Exercise: Creating Cleaning Rules</a></li>
+<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution-1"><i class="fa fa-check"></i>Solution</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="pattern-rules.html"><a href="pattern-rules.html"><i class="fa fa-check"></i><b>5</b> Pattern Rules</a><ul>
+<li class="chapter" data-level="5.1" data-path="pattern-rules.html"><a href="pattern-rules.html#how-snakemake-determines-the-build-order-when-multiple-rules-are-present"><i class="fa fa-check"></i><b>5.1</b> How Snakemake determines the build order when multiple rules are present</a></li>
+<li class="chapter" data-level="5.2" data-path="pattern-rules.html"><a href="pattern-rules.html#where-we-are-now"><i class="fa fa-check"></i><b>5.2</b> Where we are now?</a></li>
+<li class="chapter" data-level="5.3" data-path="pattern-rules.html"><a href="pattern-rules.html#the-expand-function"><i class="fa fa-check"></i><b>5.3</b> The <code>expand()</code> function</a><ul>
+<li class="chapter" data-level="" data-path="pattern-rules.html"><a href="pattern-rules.html#exercise-exploring-the-expand-function-i"><i class="fa fa-check"></i>Exercise: Exploring the expand() function I</a></li>
+<li class="chapter" data-level="" data-path="pattern-rules.html"><a href="pattern-rules.html#exercise-exploring-the-expand-function-ii"><i class="fa fa-check"></i>Exercise: Exploring the expand function II</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="pattern-rules.html"><a href="pattern-rules.html#expanding-multiple-wildcards"><i class="fa fa-check"></i><b>5.4</b> Expanding Multiple Wildcards</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html"><i class="fa fa-check"></i><b>6</b> Automatic Wildcard Specifications</a><ul>
+<li class="chapter" data-level="6.1" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#the-glob_wildcards-function"><i class="fa fa-check"></i><b>6.1</b> The <code>glob_wildcards</code> Function</a><ul>
+<li class="chapter" data-level="" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#exercise-exploring-glob_wildcards"><i class="fa fa-check"></i>Exercise: Exploring glob_wildcards()</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#further-restricting-the-glob_wildcards-output"><i class="fa fa-check"></i><b>6.2</b> Further Restricting the <code>glob_wildcards</code> output</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html"><i class="fa fa-check"></i><b>7</b> Building all outputs at once</a><ul>
+<li class="chapter" data-level="7.1" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html#creating-an-all-rule"><i class="fa fa-check"></i><b>7.1</b> Creating an <code>all</code> rule</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>8</b> Adding Parameters</a><ul>
+<li class="chapter" data-level="8.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>8.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
+<li class="chapter" data-level="8.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>8.2</b> Creating a Rule with <code>params</code></a><ul>
+<li class="chapter" data-level="" data-path="adding-parameters.html"><a href="adding-parameters.html#exercise-building-table-2"><i class="fa fa-check"></i>Exercise: Building Table 2</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="part-ii.html"><a href="part-ii.html"><i class="fa fa-check"></i>PART II</a></li>
+<li class="chapter" data-level="9" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>9</b> Logging Output and Errors</a><ul>
+<li class="chapter" data-level="9.1" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output"><i class="fa fa-check"></i><b>9.1</b> Logging Output</a></li>
+<li class="chapter" data-level="9.2" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output-and-errors-in-one-file"><i class="fa fa-check"></i><b>9.2</b> Logging Output and Errors in One File</a><ul>
+<li class="chapter" data-level="" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#exercise-logging-all-r-scripts"><i class="fa fa-check"></i>Exercise: Logging all R Scripts</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>10</b> Self Documenting Help</a><ul>
+<li class="chapter" data-level="10.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>10.1</b> Our Commenting Syle</a></li>
+<li class="chapter" data-level="10.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>10.2</b> Adding Further Comments</a><ul>
+<li class="chapter" data-level="" data-path="self-documenting-help.html"><a href="self-documenting-help.html#exercise-adding-comments"><i class="fa fa-check"></i>Exercise: Adding Comments</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>10.3</b> A <code>help</code> Rule</a><ul>
+<li><a href="self-documenting-help.html#exercise-saving-help-output-to-file">Exercise: Saving <code>help</code> output to file</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>11</b> Config Files</a><ul>
+<li class="chapter" data-level="11.1" data-path="config-files.html"><a href="config-files.html#the-config.yaml-filepath"><i class="fa fa-check"></i><b>11.1</b> The <code>config.yaml</code> filepath</a></li>
+<li class="chapter" data-level="11.2" data-path="config-files.html"><a href="config-files.html#using-paths-from-the-config-file"><i class="fa fa-check"></i><b>11.2</b> Using paths from the config file</a><ul>
+<li class="chapter" data-level="" data-path="config-files.html"><a href="config-files.html#exercise-using-config-files"><i class="fa fa-check"></i>Exercise: Using Config Files</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>12</b> Subworkflows: Divide and Conquer</a><ul>
+<li class="chapter" data-level="12.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>12.1</b> Subworkflow Basics</a></li>
+<li class="chapter" data-level="12.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>12.2</b> Subworkflow dependencies</a><ul>
+<li class="chapter" data-level="" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#exercise-more-subworkflows"><i class="fa fa-check"></i>Exercise: More Subworkflows</a></li>
+<li><a href="subworkflows-divide-and-conquer.html#guided-exercise-help-rules-with-subworkflows">Guided Exercise: <code>help</code> rules with subworkflows</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="part-iii.html"><a href="part-iii.html"><i class="fa fa-check"></i>PART III</a></li>
+<li class="chapter" data-level="13" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>13</b> Reproducible Articles with Rmd</a></li>
+<li class="chapter" data-level="14" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>14</b> Reproducible Slides with Rmd</a></li>
+<li class="chapter" data-level="15" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>15</b> Package Dependencies with Packrat</a></li>
+<li class="chapter" data-level="16" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>16</b> Containers</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Reproducible Data Analytic Workflows with Snakemake and <code>R</code></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="project-organization" class="section level1">
+<h1><span class="header-section-number">Chapter 2</span> Project Organization</h1>
+<div id="learning-objectives" class="section level2 unnumbered">
+<h2>Learning Objectives</h2>
+<p>TODO: Turn these into actual goals</p>
+<ul>
+<li>Separate inputs and outputs</li>
+<li>Separate directories by function</li>
+<li>Minimize hard-coded information inside scripts</li>
+</ul>
+</div>
+<div id="subtitle-tbd" class="section level2">
+<h2><span class="header-section-number">2.1</span> Subtitle TBD</h2>
+<p>As researchers and students we are famililar with the notion a paper or report needs to be written in a
+clean and organized way that can be understood by ourselves and others.
+Papers and reports have a logical structure, and are broken into logical chunks.
+When the conclusions are driven by assumptions or … we try to make this explicit by
+highlighting where they are or having a separate section to introduce them.
+When logic is unclear and assumptions are not clearly laid out,
+we are encouraged to organize written our arguments in a better way.</p>
+<p>The idea of maintaining a clean and organized structure often does not extend to our thinking about the code and data
+that are used to construct the paper’s main results.
+Despite our best intentions to keep our code and data organized and coherent as researcher,
+it too often becomes one of the first principles we throw out -
+either when the complexity grows too large,
+or when looming deadlines favour the production of results rather than how clean the scripts that produce them look.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>Until recently, our paper’s “backend” of code and data is typically only visible to the authors of a project,
+meaning any frustration and difficulties brought about by bad code and data organization fell only on us,
+the authors.
+The rise of open science and reproducibility requirements by publishers have started to open up these backends,
+increasing the need for our code and data to be structured in a way that that is amenable to others to look at and understand.
+As a result, the pressure to adopt a coherent way to organize our research project’s files has risen
+beyond keeping the frustations of our coauthors and our future-selves in check, demanding a solution.</p>
+<p>This aim of this chapter is to provide an example structure for a research project and
+explain the logic behind the structure we propose.
+There are two core principles behind the way we organize the files for a project:
+(1) the separation of logical chunks of a project’s code and data, and
+(2) the separation of parameters, specifications and paths from code.
+A side benefit of both of these principles is that our project’s structure becomes portable across multiple research projects.
+This means that once we make a decision to adopt a structure, we can continue to use the same structure repeatedly into the future.<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p>We are going to use the files and structure of the folder you have downloaded that replicates Mankiw, Romer and Weil’s analysis (hereafter MRW) to look explore one way to organize a research project.<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>
+The organization of code and data that you will see emphasizes the notions of separating logical chunks of
+code, data, file paths &amp; specifications, along with the files that the statistical analysis that R produces.
+As you work through what follows you may begin to question the extent of logical separation, and whether it is a step too far.
+If this is where your thoughts start to go,
+also reflect on how this structure could be extended if this project were to develop further and
+on how readily it could be adopted for use in a new project.</p>
+</div>
+<div id="project-organization-i-separating-inputs-and-outputs" class="section level2">
+<h2><span class="header-section-number">2.2</span> Project Organization I: Separating Inputs and Outputs</h2>
+<p>The first step in our ‘logical separation journey’ is the organization of files and folders.
+Starting a project with the right folder structure, even before a line of code is written,
+is an easy starting point and will help us stay on track as the project develops.
+Let’s take a look at the main folder structures present in our MRW project.</p>
+<p>To get started, we need to “open up” the folder to inspect what is there.
+As with the remainder of this tutorial - we will use the terminal to interact with our computer,
+so “opening” a folder means we will change into that directory.
+Thus, open a terminal<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>
+and change directory to the MRW project directory as follows:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="project-organization.html#cb9-1"></a>$ <span class="bu">cd</span> YOUR/PATH/TO/snakemake-econ-r-learner</span></code></pre></div>
+<p>You can verify you have done this correctly by entering the <code>pwd</code> command into the terminal and hitting the <code>RETURN</code> key.
+The expected output will be:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="project-organization.html#cb10-1"></a><span class="ex">YOUR/PATH/TO/snakemake-econ-r-learner</span></span></code></pre></div>
+<p>Now we want to look at the files and folders present in that directory:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="project-organization.html#cb11-1"></a>$ <span class="fu">ls</span> </span></code></pre></div>
+<p>We see the following:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="project-organization.html#cb12-1"></a><span class="ex">./</span></span>
+<span id="cb12-2"><a href="project-organization.html#cb12-2"></a>    <span class="kw">|</span><span class="ex">-</span> src/</span>
+<span id="cb12-3"><a href="project-organization.html#cb12-3"></a>    <span class="kw">|</span><span class="ex">-</span> out/</span>
+<span id="cb12-4"><a href="project-organization.html#cb12-4"></a>    <span class="kw">|</span><span class="ex">-</span> log/</span>
+<span id="cb12-5"><a href="project-organization.html#cb12-5"></a>    <span class="kw">|</span><span class="ex">-</span> sandbox/</span>
+<span id="cb12-6"><a href="project-organization.html#cb12-6"></a>    <span class="ex">README.md</span></span>
+<span id="cb12-7"><a href="project-organization.html#cb12-7"></a>    <span class="ex">Snakefile</span></span></code></pre></div>
+<p>The main idea here is that there is a top level directory <code>./</code> which contains four sub-folders:
+<code>src</code>, <code>out</code>, <code>log</code> and <code>sandbox</code>.
+In addition to these subfolders, there is two files, <code>README.md</code> and <code>Snakefile</code>.
+Importantly there is no <code>R</code> scripts or data files in this top level directory.
+We briefly discuss each of these in turn.</p>
+<p><strong>Root Folder (<code>./</code>).</strong>
+This is the main folder of the project.
+Everything that is used or produced for the project should be located in a this folder, or better yet a sub-folder.
+Think of it as a ‘one-stop shop’ for what you are working on for this project.
+If it’s important - you must be able to find it here.</p>
+<p><strong><code>src</code> folder</strong>.
+This is the ‘source’ folder.
+It contains all of your code files you develop during your analysis and the original datasets you begin your analysis with.</p>
+<p><strong><code>out</code> folder</strong>.
+This is the output directory.
+We will put anything that we create by running a <code>R</code> script.
+For example, it can contain new datasets we create by cleaning and merging our original data,
+saved regression results and saved figures or summary tables.
+The main point is that anything we can recreate by running <code>R</code> scripts will get saved here -
+whether they be ‘temporary’ or ‘intermediate’ outputs that will get used by another <code>R</code> script later in our project,
+or ‘final’ outputs that we will want to insert into a paper, report or slide deck.</p>
+<p><strong><code>log</code> folder</strong>.
+When we run and <code>R</code> script it produces output and messages, typically printing them to the screen.
+If we want to save those messages to a file, so we can refer to them in the future, we will save them here.</p>
+<p><strong><code>sandbox</code> folder</strong>.
+As we work through our project, we will want to explore new ideas and test out how to code them.
+While we play with these bits and pieces of code, we save them in the <code>sandbox</code>.
+Separating them from <code>src</code> means we know that <code>R</code> scripts in here are ‘under development’.
+When they are finalized, we can move them into <code>src</code>.</p>
+<p><strong><code>README.md</code> file</strong>.
+A <code>README</code> is a text file that introduces and explains the project.
+We should write information that explains what the project is about and how someone can run the scripts developed for the project in this file.
+We also recommend providing installation instructions to clarify exactly what needs to be installed to run the project.</p>
+<p><strong><code>Snakefile</code></strong>.
+We will use the <code>Snakefile</code> to write the steps needed that run all the scripts in the project.
+Further discussion of <code>Snakefiles</code> are deferred to the next chapter when introduce <code>Snakemake</code>.</p>
+<p>The advantage of following this folder structure means that anyone who looks through the your code
+can easily figure out what the original/raw data sets are and what files need to be executed versus
+what files have been created by <code>R</code> scripts.
+This is beneficial not only to others trying to understand your code,
+but also future versions of yourself when you come back to your project’s code after not working on it for a while.</p>
+</div>
+<div id="project-structure-ii-separating-logical-chunks-of-the-project" class="section level2">
+<h2><span class="header-section-number">2.3</span> Project Structure II: Separating Logical Chunks of the Project</h2>
+<p>Now that we are looking to keep our project’s structure clean, we want to keep all the computer code inside the <code>src</code> directory.
+However if we were to simply put all our computer code and data into <code>src</code> although we solve part of our project disorganization,
+we still potentially have many original datasets and many <code>R</code> scripts all located in one directory.
+This half-organized - half-disorganized approach is definitely an improvement of having all our files located in one place,
+but one can (and should) do better.
+To keep our project even more organized, we create a set of subdirectories inside <code>src</code> to separate logical chunks of the project.</p>
+<p>Let’s have a look at the content of <code>src</code>.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="project-organization.html#cb13-1"></a>$ <span class="fu">ls</span> src/</span></code></pre></div>
+<p>We see the following output:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="project-organization.html#cb14-1"></a><span class="ex">./</span></span>
+<span id="cb14-2"><a href="project-organization.html#cb14-2"></a>    <span class="kw">|</span><span class="ex">src/</span></span>
+<span id="cb14-3"><a href="project-organization.html#cb14-3"></a>        <span class="kw">|</span><span class="ex">-</span> data/</span>
+<span id="cb14-4"><a href="project-organization.html#cb14-4"></a>        <span class="kw">|</span><span class="ex">-</span> data-management/</span>
+<span id="cb14-5"><a href="project-organization.html#cb14-5"></a>        <span class="kw">|</span><span class="ex">-</span> data-specs/</span>
+<span id="cb14-6"><a href="project-organization.html#cb14-6"></a>        <span class="kw">|</span><span class="ex">-</span> analysis/</span>
+<span id="cb14-7"><a href="project-organization.html#cb14-7"></a>        <span class="kw">|</span><span class="ex">-</span> model-specs/</span>
+<span id="cb14-8"><a href="project-organization.html#cb14-8"></a>        <span class="kw">|</span><span class="ex">-</span> lib/</span>
+<span id="cb14-9"><a href="project-organization.html#cb14-9"></a>        <span class="kw">|</span><span class="ex">-</span> figures/</span>
+<span id="cb14-10"><a href="project-organization.html#cb14-10"></a>        <span class="kw">|</span><span class="ex">-</span> tables/</span>
+<span id="cb14-11"><a href="project-organization.html#cb14-11"></a>        <span class="kw">|</span><span class="ex">-</span> table-specs/</span>
+<span id="cb14-12"><a href="project-organization.html#cb14-12"></a>        <span class="kw">|</span><span class="ex">-</span> paper/</span>
+<span id="cb14-13"><a href="project-organization.html#cb14-13"></a>        <span class="kw">|</span><span class="ex">-</span> slides/</span></code></pre></div>
+<p>Here we see 9 sub-folders inside <code>src</code>.
+These are designed to logically separate various aspects of the project:</p>
+<ul>
+<li><code>data/</code> contains all of the project’s original/raw data.</li>
+<li><code>data-management/</code> contains all <code>R</code> scripts to clean and merge datasets together</li>
+<li><code>data-specs/</code> contains any special parameterizations used in cleaning or analysis.</li>
+<li><code>analysis/</code> contains all <code>R</code> scripts that are our main analysis. For example, our regression scripts</li>
+<li><code>model-specs/</code> conatins</li>
+<li><code>lib/</code> contains <code>R</code> scripts that contain functions that can be used more generally.
+For example helper functions that can be used in both data cleaning and analysis could be put here.
+So can scripts that contain functions that can be portable across multiple projects.</li>
+<li><code>figures/</code> contains <code>R</code> scripts that produce figures. One script per figure.</li>
+<li><code>tables/</code> contains <code>R</code> scripts that produce summary tables and regression tables. One script per table.</li>
+<li><code>table-specs</code> - contains the</li>
+<li><code>paper</code> contains the <code>Rmarkdown</code> files to write up project results in a paper, i.e. the paper’s text.</li>
+<li><code>slides</code> contains the <code>Rmarkdown</code> files to write up project results as a slide deck, i.e. the text of the slides.</li>
+</ul>
+<p>This separation begins to make clear the logical steps to produce a project which is useful in itself.
+There’s some orginal data set in <code>data</code> that needs to be tidied in some way.
+The scripts in <code>data-management</code> do that cleaning.
+Once the data is cleaned, scripts in <code>analysis</code> perform the statistical analysis on clean data.
+Summary figures and tables, and processed results from the analysis come from the scripts inside <code>tables</code> and <code>figures</code>.
+Finally, <code>paper</code> and <code>slides</code> contain source files for the writeup and presentation of results.
+Although we are yet to tell anyone how to use these scripts in the sub-folders, the organization of the <code>src</code> folder is already extremely suggestive about the steps in our project.</p>
+<p>!!IN A WARNING BOX!!
+The presence of the folders <code>data-specs</code>, <code>model-specs</code> and <code>table-specs</code> might still seems a little confusing.
+We use these folders and the files within them to separate out data and model parameterizations -
+which can be thought of as a further level of project organization.<br />
+We will return to this idea in section XX.</p>
+<p>In the same way that we have sub-folders in <code>src</code>, we also want any of the outputs we produce to organized inside the <code>out</code> directory.
+Using a similar structure between <code>src</code> and <code>out</code> is a good way to do this.
+Let’s look at the structure of <code>out</code>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="project-organization.html#cb15-1"></a>$ <span class="fu">ls</span> out/</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="project-organization.html#cb16-1"></a><span class="ex">./</span></span>
+<span id="cb16-2"><a href="project-organization.html#cb16-2"></a>    <span class="kw">|</span><span class="ex">out/</span></span>
+<span id="cb16-3"><a href="project-organization.html#cb16-3"></a>        <span class="kw">|</span><span class="ex">-</span> data/</span>
+<span id="cb16-4"><a href="project-organization.html#cb16-4"></a>        <span class="kw">|</span><span class="ex">-</span> analysis/</span>
+<span id="cb16-5"><a href="project-organization.html#cb16-5"></a>        <span class="kw">|</span><span class="ex">-</span> figures/</span>
+<span id="cb16-6"><a href="project-organization.html#cb16-6"></a>        <span class="kw">|</span><span class="ex">-</span> tables/</span>
+<span id="cb16-7"><a href="project-organization.html#cb16-7"></a>        <span class="kw">|</span><span class="ex">-</span> paper/</span>
+<span id="cb16-8"><a href="project-organization.html#cb16-8"></a>        <span class="kw">|</span><span class="ex">-</span> slides/</span></code></pre></div>
+<p>We have a sub-folder inside <code>out</code> for each sub-folder in <code>src</code> that has a step in our project:</p>
+<ul>
+<li><code>out/data</code> can store any datasets that are produced as a result of cleaning and merging</li>
+<li><code>out/analysis</code> can store any output from statistical analysis, for example saved regression results</li>
+<li><code>out/figures</code> holds all figures produced</li>
+<li><code>out/tables</code> holds all tables produced</li>
+<li><code>out/paper</code> has the <code>pdf</code> of the paper</li>
+<li><code>out/slides</code> has the <code>pdf</code> of the slides</li>
+</ul>
+<div id="aside-even-deeper-sub-folders" class="section level3">
+<h3><span class="header-section-number">2.3.1</span> Aside: Even Deeper Sub-folders</h3>
+<p>If we look inside the <code>src/data</code> directory</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="project-organization.html#cb17-1"></a>$ <span class="fu">ls</span> -F src/data/</span></code></pre></div>
+<p>We see one data file:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="project-organization.html#cb18-1"></a><span class="ex">mrw.dta</span></span></code></pre></div>
+<p>That is, our <code>data/</code> directory contains the project’s original data set.
+There is only one data set because the project is relatively simple - and only relies on one source of data
+In more extensive projects, the <code>data/</code> subfolder would typically have more than one data set.
+For example:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="project-organization.html#cb19-1"></a><span class="ex">dataset1.dta</span></span>
+<span id="cb19-2"><a href="project-organization.html#cb19-2"></a><span class="ex">dataset2.dta</span></span>
+<span id="cb19-3"><a href="project-organization.html#cb19-3"></a><span class="ex">dataset3.csv</span></span></code></pre></div>
+<p>If your project uses many data sets,
+potentially from many different data providers one could easily add sub-folders for each data provider:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="project-organization.html#cb20-1"></a><span class="ex">./</span></span>
+<span id="cb20-2"><a href="project-organization.html#cb20-2"></a>    <span class="kw">|</span><span class="ex">src/</span></span>
+<span id="cb20-3"><a href="project-organization.html#cb20-3"></a>        <span class="kw">|</span><span class="ex">-</span> data/</span>
+<span id="cb20-4"><a href="project-organization.html#cb20-4"></a>            <span class="kw">|</span><span class="ex">-</span> data-provider-a/</span>
+<span id="cb20-5"><a href="project-organization.html#cb20-5"></a>                <span class="kw">|</span><span class="ex">-</span> dataset1.csv</span>
+<span id="cb20-6"><a href="project-organization.html#cb20-6"></a>                <span class="kw">|</span><span class="ex">-</span> dataset2.csv</span>
+<span id="cb20-7"><a href="project-organization.html#cb20-7"></a>            <span class="kw">|</span><span class="ex">-</span> data-provider-b/</span>
+<span id="cb20-8"><a href="project-organization.html#cb20-8"></a>                <span class="kw">|</span><span class="ex">-</span> dataset3.txt</span>
+<span id="cb20-9"><a href="project-organization.html#cb20-9"></a>                <span class="kw">|</span><span class="ex">-</span> dataset4.txt</span></code></pre></div>
+<p>i.e. add a further layer of sub-folders.
+This might add extra clarity.</p>
+<p>!! EXERCISE !!
+Think about whether you could might want additional sub-folders in any of the other <code>src</code> directories.
+Provide some examples you could use, and explain the pros and cons of using them.</p>
+<!--- 
+
+## Project Structure III: No Hardcoded Paths or Specifications in `R` scripts
+
+So far we have been discussing project organization through structuring our project's folders.
+This is not the only way we can improve the structure & organization of our project.
+We can also work to improve the `R` scripts that we write to make the analysis clearer.
+
+One way to improve `R` scripts is to move away from the notion of 'one project, one script' where each project
+  simply containts one *very* long `R` script that does all the cleaning, analysis, and figure/table generation.
+In this project, we work with the idea of 'one idea, one script'.
+With 'one idea, one script' we have many smaller `R` scripts that each perform one task.
+These smaller scripts are much easier to read and debug when errors come along.
+We organize these smaller scripts within sub-folders of `src` so that we know what each does.^[
+  We also give each `R` script a meaningful filename, which is suggestive of what it does *and* 
+  be liberal with code comments to explain what each part of the script does and where necessary why we are doing that.
+]
+
+A second way to improve the quality of the `R` scripts we write, and in doing so improve our project's organization is 
+  by removing hard-coded file paths as well as data and model specifications from them.
+Instead, we pass across these pieces of information through command line arguments when we run the `R` scripts.
+
+What are hard-coded file paths and why do we remove them from our scripts?
+Hard coded file paths are things like the following inside an `R` script:
+
+
+```r
+mrw_data <- read_csv('/users/lachlan/snakemake-econ-r/src/data/mrw.dta')
+```
+
+which is an absolute file path, or 
+
+
+```r
+mrw_data <- read_csv('src/data/mrw.dta')
+```
+
+which is a relative file path.
+
+Absolute file paths are problematic because they mean that scripts that work on one computer will break and give and error message on another.
+For example, if Ulrich wants to run a script on his computer, that uses the absolute file path above, the dataset `mrw.dta` that he is trying to load 
+  doesn't exist on the path `/users/lachlan` on his computer.
+Thus removing absolute file paths means we increase the useabilty of scripts across different computers.
+
+The relative filepath `src/data/mrw.dta` has a better chance of working across multiple computers.
+Lachlan and Ulrich both have the file `mrw.dta` inside the `src/data` sub-folder of the `snakemake-econ-r` project folder.
+So if we both use the `R` script with this line from the project's root folder, it will run for both of us.
+
+
+We also remove hardcoded data and model specifications.
+For example, suppose we need to 
+
+-->
+</div>
+</div>
+<div id="project-structure-iii-separating-input-parameters-from-code" class="section level2">
+<h2><span class="header-section-number">2.4</span> Project Structure III: Separating Input Parameters from Code</h2>
+<p>When we explored the sub-folders of <code>src</code> we found three folders that ended with <code>-specs</code>:
+<code>data-specs</code>, <code>model-specs</code>, and <code>table-specs</code>.
+These folders are used to store alternate specifications that we want to use as part of our data analysis, or table construction.
+To get a better understanding of why these folders exist in our project structure, we are going to take a look at their contents.
+Let’s look at what files are located inside the <code>data-specs</code> folder:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="project-organization.html#cb21-1"></a>$ <span class="fu">ls</span> src/data-specs/</span></code></pre></div>
+<p>We see:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="project-organization.html#cb22-1"></a><span class="ex">subset_intermediate.json</span></span>
+<span id="cb22-2"><a href="project-organization.html#cb22-2"></a><span class="ex">subset_nonoil.json</span></span>
+<span id="cb22-3"><a href="project-organization.html#cb22-3"></a><span class="ex">subset_oecd.json</span></span></code></pre></div>
+<p>The file names are somewhat meaningful on their own - they appear to be some way of subsetting data (selecting some rows).
+If we look inside one of these files:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="project-organization.html#cb23-1"></a><span class="fu">cat</span> src/data-specs/subset_oecd.json</span></code></pre></div>
+<p>Which returns:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="project-organization.html#cb24-1"></a><span class="kw">{</span></span>
+<span id="cb24-2"><a href="project-organization.html#cb24-2"></a>    <span class="st">&quot;KEEP_CONDITION&quot;</span>: <span class="st">&quot;oecd == 1&quot;</span></span>
+<span id="cb24-3"><a href="project-organization.html#cb24-3"></a><span class="kw">}</span></span></code></pre></div>
+<p>We see what could be interpreted as a variable <code>KEEP_CONDITION</code> which stores a string <code>"oecd == 1"</code>.</p>
+<p>!! EXERCISE !!</p>
+<p>Inspect the each of the JSON files in <code>src/model-specs</code>.
+Explain what you have found, and how you could use these files as part of the project.
+(HINT:) what does <code>src/analyis/estimate_ols_model.R</code> do?</p>
+
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="4">
+<li id="fn4"><p>
+This propensity to pre-maturely throw out code and data organization is something the authors of this tutorial
+can relate to, as it has often tempted us in our own research - and even when writing this tutorial.
+<a href="project-organization.html#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>
+Our own personal experience suggests that this side benefit reaps just as many rewards.
+Knowing immediately where to look for pieces of code and parameterizations because all our projects look identical in their organization is definitely a frustration reducing benefit of structure.<a href="project-organization.html#fnref5" class="footnote-back">↩︎</a></p></li>
+<li id="fn6"><p>
+We discussed downloading these files HERE along with any software you need to install to work through subsequant chapters.
+<a href="project-organization.html#fnref6" class="footnote-back">↩︎</a></p></li>
+<li id="fn7"><p>
+LINK BACK TO HOW TO DO THIS ACROSS OSes.<a href="project-organization.html#fnref7" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="intro.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="initial-steps-with-snakemake.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/02-project_org.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["book.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

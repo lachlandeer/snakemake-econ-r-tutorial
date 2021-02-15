@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Reproducible Data Analytic Workflows with Snakemake and R</title>
+  <meta name="description" content="In progress" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="In progress" />
+  <meta name="github-repo" content="lachlandeer/snakemake-econ-r-tutorial" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Reproducible Data Analytic Workflows with Snakemake and R" />
+  
+  <meta name="twitter:description" content="In progress" />
+  
+
+<meta name="author" content="Ulrich Bergmann" />
+<meta name="author" content="Lachlan Deer" />
+<meta name="author" content="Julian Langer" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+<link rel="next" href="part-i-preliminaries.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./index.html">Reproducible Data Analytic Workflows with Snakemake and `R`</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-we-wrote-this-tutorial"><i class="fa fa-check"></i>Why we wrote this tutorial</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#pre-requisite-knowledge"><i class="fa fa-check"></i>Pre-requisite Knowledge</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-needs-to-be-downloaded-installed-for-this-tutorial"><i class="fa fa-check"></i>What Needs to be Downloaded &amp; Installed for this Tutorial</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#template-scripts-and-documents"><i class="fa fa-check"></i>Template Scripts and Documents</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#software-installation"><i class="fa fa-check"></i>Software Installation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-we-cant-cover"><i class="fa fa-check"></i>What We Can’t Cover</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i>Acknowledgements</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-the-authors"><i class="fa fa-check"></i>About the Authors</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#license"><i class="fa fa-check"></i>License</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#instructional-material"><i class="fa fa-check"></i>Instructional material</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#software"><i class="fa fa-check"></i>Software</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#citation"><i class="fa fa-check"></i>Citation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="part-i-preliminaries.html"><a href="part-i-preliminaries.html"><i class="fa fa-check"></i>PART I - Preliminaries</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Motivating &amp; Rationale</a><ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#a-case-for-reproducibility"><i class="fa fa-check"></i><b>1.1</b> A Case for Reproducibility</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#how-far-to-go-in-the-quest-for-reproducibility"><i class="fa fa-check"></i><b>1.1.1</b> How far to go in the quest for reproducibility?</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#what-is-snakemake-why-should-you-use-it"><i class="fa fa-check"></i><b>1.2</b> What is <code>Snakemake</code> &amp; Why Should you use it?</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#why-r"><i class="fa fa-check"></i><b>1.3</b> Why <code>R</code>?</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#working-example-replicating-mankiw-romer-and-weils-1992-qje"><i class="fa fa-check"></i><b>1.4</b> Working Example: Replicating Mankiw, Romer and Weil’s 1992 QJE</a></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#the-way-forward"><i class="fa fa-check"></i><b>1.5</b> The way forward</a><ul>
+<li class="chapter" data-level="" data-path="intro.html"><a href="intro.html#exercise-your-own-projects-steps"><i class="fa fa-check"></i>Exercise: Your own project’s steps</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="project-organization.html"><a href="project-organization.html"><i class="fa fa-check"></i><b>2</b> Project Organization</a><ul>
+<li class="chapter" data-level="" data-path="project-organization.html"><a href="project-organization.html#learning-objectives"><i class="fa fa-check"></i>Learning Objectives</a></li>
+<li class="chapter" data-level="2.1" data-path="project-organization.html"><a href="project-organization.html#subtitle-tbd"><i class="fa fa-check"></i><b>2.1</b> Subtitle TBD</a></li>
+<li class="chapter" data-level="2.2" data-path="project-organization.html"><a href="project-organization.html#project-organization-i-separating-inputs-and-outputs"><i class="fa fa-check"></i><b>2.2</b> Project Organization I: Separating Inputs and Outputs</a></li>
+<li class="chapter" data-level="2.3" data-path="project-organization.html"><a href="project-organization.html#project-structure-ii-separating-logical-chunks-of-the-project"><i class="fa fa-check"></i><b>2.3</b> Project Structure II: Separating Logical Chunks of the Project</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="project-organization.html"><a href="project-organization.html#aside-even-deeper-sub-folders"><i class="fa fa-check"></i><b>2.3.1</b> Aside: Even Deeper Sub-folders</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="project-organization.html"><a href="project-organization.html#project-structure-iii-separating-input-parameters-from-code"><i class="fa fa-check"></i><b>2.4</b> Project Structure III: Separating Input Parameters from Code</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html"><i class="fa fa-check"></i><b>3</b> Initial Steps with Snakemake</a><ul>
+<li class="chapter" data-level="3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#snakefile-writing-our-first-rule"><i class="fa fa-check"></i><b>3.1</b> Snakefile – Writing Our First Rule</a></li>
+<li class="chapter" data-level="3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-snakemake-command-executing-a-rule"><i class="fa fa-check"></i><b>3.2</b> The Snakemake Command – Executing a Rule</a></li>
+<li class="chapter" data-level="3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#reading-and-writing-files-first-steps-in-a-data-science-pipeline"><i class="fa fa-check"></i><b>3.3</b> Reading and Writing Files – First Steps in a Data Science Pipeline</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#using-the-rscript-command-to-execute-r-scripts"><i class="fa fa-check"></i><b>3.3.1</b> Using the Rscript command to execute R scripts</a></li>
+<li class="chapter" data-level="3.3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-input-and-output-arguments"><i class="fa fa-check"></i><b>3.3.2</b> The input and output arguments</a></li>
+<li class="chapter" data-level="3.3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#a-rule-to-rename-variables."><i class="fa fa-check"></i><b>3.3.3</b> A rule to rename variables.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#redundant-executions-dont-run-a-rule-repeatedly"><i class="fa fa-check"></i><b>3.4</b> Redundant Executions – (Don’t) Run a Rule Repeatedly</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html"><i class="fa fa-check"></i><b>4</b> Working With Multiple Rules</a><ul>
+<li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a second rule</a><ul>
+<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-rules"><i class="fa fa-check"></i>Exercise: Creating Rules</a></li>
+<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution"><i class="fa fa-check"></i>Solution</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#clean-rules"><i class="fa fa-check"></i><b>4.2</b> Clean Rules</a><ul>
+<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-cleaning-rules"><i class="fa fa-check"></i>Exercise: Creating Cleaning Rules</a></li>
+<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution-1"><i class="fa fa-check"></i>Solution</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="pattern-rules.html"><a href="pattern-rules.html"><i class="fa fa-check"></i><b>5</b> Pattern Rules</a><ul>
+<li class="chapter" data-level="5.1" data-path="pattern-rules.html"><a href="pattern-rules.html#how-snakemake-determines-the-build-order-when-multiple-rules-are-present"><i class="fa fa-check"></i><b>5.1</b> How Snakemake determines the build order when multiple rules are present</a></li>
+<li class="chapter" data-level="5.2" data-path="pattern-rules.html"><a href="pattern-rules.html#where-we-are-now"><i class="fa fa-check"></i><b>5.2</b> Where we are now?</a></li>
+<li class="chapter" data-level="5.3" data-path="pattern-rules.html"><a href="pattern-rules.html#the-expand-function"><i class="fa fa-check"></i><b>5.3</b> The <code>expand()</code> function</a><ul>
+<li class="chapter" data-level="" data-path="pattern-rules.html"><a href="pattern-rules.html#exercise-exploring-the-expand-function-i"><i class="fa fa-check"></i>Exercise: Exploring the expand() function I</a></li>
+<li class="chapter" data-level="" data-path="pattern-rules.html"><a href="pattern-rules.html#exercise-exploring-the-expand-function-ii"><i class="fa fa-check"></i>Exercise: Exploring the expand function II</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="pattern-rules.html"><a href="pattern-rules.html#expanding-multiple-wildcards"><i class="fa fa-check"></i><b>5.4</b> Expanding Multiple Wildcards</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html"><i class="fa fa-check"></i><b>6</b> Automatic Wildcard Specifications</a><ul>
+<li class="chapter" data-level="6.1" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#the-glob_wildcards-function"><i class="fa fa-check"></i><b>6.1</b> The <code>glob_wildcards</code> Function</a><ul>
+<li class="chapter" data-level="" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#exercise-exploring-glob_wildcards"><i class="fa fa-check"></i>Exercise: Exploring glob_wildcards()</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#further-restricting-the-glob_wildcards-output"><i class="fa fa-check"></i><b>6.2</b> Further Restricting the <code>glob_wildcards</code> output</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html"><i class="fa fa-check"></i><b>7</b> Building all outputs at once</a><ul>
+<li class="chapter" data-level="7.1" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html#creating-an-all-rule"><i class="fa fa-check"></i><b>7.1</b> Creating an <code>all</code> rule</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>8</b> Adding Parameters</a><ul>
+<li class="chapter" data-level="8.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>8.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
+<li class="chapter" data-level="8.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>8.2</b> Creating a Rule with <code>params</code></a><ul>
+<li class="chapter" data-level="" data-path="adding-parameters.html"><a href="adding-parameters.html#exercise-building-table-2"><i class="fa fa-check"></i>Exercise: Building Table 2</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="part-ii.html"><a href="part-ii.html"><i class="fa fa-check"></i>PART II</a></li>
+<li class="chapter" data-level="9" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>9</b> Logging Output and Errors</a><ul>
+<li class="chapter" data-level="9.1" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output"><i class="fa fa-check"></i><b>9.1</b> Logging Output</a></li>
+<li class="chapter" data-level="9.2" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output-and-errors-in-one-file"><i class="fa fa-check"></i><b>9.2</b> Logging Output and Errors in One File</a><ul>
+<li class="chapter" data-level="" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#exercise-logging-all-r-scripts"><i class="fa fa-check"></i>Exercise: Logging all R Scripts</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>10</b> Self Documenting Help</a><ul>
+<li class="chapter" data-level="10.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>10.1</b> Our Commenting Syle</a></li>
+<li class="chapter" data-level="10.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>10.2</b> Adding Further Comments</a><ul>
+<li class="chapter" data-level="" data-path="self-documenting-help.html"><a href="self-documenting-help.html#exercise-adding-comments"><i class="fa fa-check"></i>Exercise: Adding Comments</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>10.3</b> A <code>help</code> Rule</a><ul>
+<li><a href="self-documenting-help.html#exercise-saving-help-output-to-file">Exercise: Saving <code>help</code> output to file</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>11</b> Config Files</a><ul>
+<li class="chapter" data-level="11.1" data-path="config-files.html"><a href="config-files.html#the-config.yaml-filepath"><i class="fa fa-check"></i><b>11.1</b> The <code>config.yaml</code> filepath</a></li>
+<li class="chapter" data-level="11.2" data-path="config-files.html"><a href="config-files.html#using-paths-from-the-config-file"><i class="fa fa-check"></i><b>11.2</b> Using paths from the config file</a><ul>
+<li class="chapter" data-level="" data-path="config-files.html"><a href="config-files.html#exercise-using-config-files"><i class="fa fa-check"></i>Exercise: Using Config Files</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>12</b> Subworkflows: Divide and Conquer</a><ul>
+<li class="chapter" data-level="12.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>12.1</b> Subworkflow Basics</a></li>
+<li class="chapter" data-level="12.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>12.2</b> Subworkflow dependencies</a><ul>
+<li class="chapter" data-level="" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#exercise-more-subworkflows"><i class="fa fa-check"></i>Exercise: More Subworkflows</a></li>
+<li><a href="subworkflows-divide-and-conquer.html#guided-exercise-help-rules-with-subworkflows">Guided Exercise: <code>help</code> rules with subworkflows</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="part-iii.html"><a href="part-iii.html"><i class="fa fa-check"></i>PART III</a></li>
+<li class="chapter" data-level="13" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>13</b> Reproducible Articles with Rmd</a></li>
+<li class="chapter" data-level="14" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>14</b> Reproducible Slides with Rmd</a></li>
+<li class="chapter" data-level="15" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>15</b> Package Dependencies with Packrat</a></li>
+<li class="chapter" data-level="16" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>16</b> Containers</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Reproducible Data Analytic Workflows with Snakemake and <code>R</code></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Reproducible Data Analytic Workflows with Snakemake and <code>R</code></h1>
+<h2 class="subtitle"><em>An Extended Tutorial for Researchers in Business, Economics and the Social Sciences</em></h2>
+<p class="author"><em>Ulrich Bergmann</em></p>
+<p class="author"><em>Lachlan Deer</em></p>
+<p class="author"><em>Julian Langer</em></p>
+<p class="date"><em>This Version: 2021-02-15 – Draft Under Active Development</em></p>
+</div>
+<div id="preface" class="section level1 unnumbered">
+<h1>Preface</h1>
+<div id="why-we-wrote-this-tutorial" class="section level2 unnumbered">
+<h2>Why we wrote this tutorial</h2>
+<p>Empirical research workflows in economics and other social sciences typically take the form of a
+set of steps that need to be performed in a given order.
+For example, one may need to run a set of data cleaning and merging scripts one after the other
+before creating a set of summary statistics and figures,
+and then running some empirical modelling such as a series of linear regressions.
+These linear regression results need to be compiled into tables,
+and these tables need to be included in a research paper and a slide deck.
+The number of steps involved in completing an entire project from initial data preparation,
+through to analysis and compiling the final results in a document quickly becomes large,
+and the inter-relationships between steps complex.
+Our own experience, and discussions with colleagues suggest that such a workflow quickly becomes unwieldy,
+being both difficult to remember the relationships between steps and
+hard to write down in a way that co-authors and our future selves can access
+without blood pressures &amp; stress levels rising.
+(the latter, at least from our personal experience stems from a degree of laziness
+to document our steps <em>after</em> we have completed them).
+We found ourselves frustrated with the headaches manual management of our workflow created
+and searched for better ways of managing our research workflow.</p>
+<p>This tutorial introduces the Snakemake workflow management system as a way to execute research workflows
+and manage the dependencies between the succesive steps that make up our workflow.
+We have found the Snakemake system to be the best solution to our various workflow needs across our own research in
+business, economics and social science due to a combination of its’ readabilty
+and the ease of scaling up as the project becomes increasingly complex.
+Intuitively you can think of Snakemake workflows as a set of of human readable steps
+designed to create a replicable analyses:
+We the researcher will need to write down each step in the form of a ‘recipe’ -
+what goes in,
+what comes out, and
+how do we combine the inputs to produce an output.
+Once we have written these steps, Snakemake will execute them for us and track the dependencies between steps.
+This means if we update step <span class="math inline">\(x\)</span>, for example by changing how we merge data, the .
+Snakemake will then look for other steps in our workflow that would use this updated data, and re-execute them,
+<em>and</em> any steps further down our analysis that may use this next set of updated outputs.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>Our hope is that the pages that follow provide a gentle introduction to Snakemake and replicable, automated workflow management.
+The tutorial assumes no knowledge of Snakemake or other workflow management software.
+Each chapter aims to build up one’s knowledge through the means of a guided example
+combined with some exercises and solutions.
+Our aim is to build up a working understanding of how to use the software
+so that at the end of the tutorial the reader could get a new or existing project up and running
+using the Snakemake paradigm with minimal additional overheads.</p>
+<p>While this tutorial is targeted at researchers who are considering adopting Snakemake for the first time,
+we hope it can also serve as a useful reference for people are have some working knowledge of Snakemake.
+We often come back to the material ourselves to find snippets of code to include and adapt
+into our own research workflows and anticipate others may do the same.</p>
+</div>
+<div id="pre-requisite-knowledge" class="section level2 unnumbered">
+<h2>Pre-requisite Knowledge</h2>
+<p>To successfully work through this tutorial you will need some programming background with R, python and the command line.
+We have found that familiarity with the following concepts puts you in good stead to understand what follows:</p>
+<ul>
+<li>Working Knowledge of <code>R</code>
+<ul>
+<li>Including writing command line programs, and Dynamic Reports with <code>knitr</code> and <code>rmarkdown</code></li>
+<li>For a quick review see Software Carpentry’s <a href="https://swcarpentry.github.io/python-novice-inflammation/">‘Programming with R’</a> Lesson</li>
+</ul></li>
+<li>Basic Knowledge of <code>Python</code> (Snakemake is written in Python)
+<ul>
+<li>Data Types, variable creation, lists and dictionaries</li>
+<li>For a quick review see sections 1, 5 and 12 of of Software Carpentry’s <a href="https://swcarpentry.github.io/python-novice-inflammation/">‘Programming with Python’</a> Lesson</li>
+</ul></li>
+<li>Basic Working Knowledge of a <code>bash</code> terminal
+<ul>
+<li>File system structure, Changing directories, Making directories, Removing Files and Directories, Running a script from command line</li>
+<li>For a quick review see sections 1, 2, 3 and 6 of Software Carpentry’s <a href="http://swcarpentry.github.io/shell-novice/">‘Unix Shell’</a> Lesson</li>
+</ul></li>
+</ul>
+</div>
+<div id="what-needs-to-be-downloaded-installed-for-this-tutorial" class="section level2 unnumbered">
+<h2>What Needs to be Downloaded &amp; Installed for this Tutorial</h2>
+<div id="template-scripts-and-documents" class="section level3 unnumbered">
+<h3>Template Scripts and Documents</h3>
+<p>The backbone of our tutorial is a dataset and a set of <code>R</code> scripts that need to be executed
+in a particular order, and two <code>Rmarkdown</code> documents which have template versions of a paper and slides.
+To approximate a larger research workflow,
+some scripts will need to be run multiple times across different configurations.</p>
+<p>To work through the tutorial - building up your own Snakemake workflow and running the commands yourself on your own computer,
+you will need to download these scripts and markdown documents.
+We provide two ways to download these files:</p>
+<ol style="list-style-type: decimal">
+<li><p>Download a zip archive <a href="https://github.com/lachlandeer/snakemake-econ-r-learner/archive/master.zip">here</a>.
+After downloading, proceed to unzip the folder and move it to a location in your computer that you feel comfortable to work with.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p></li>
+<li><p>Download the template scripts using Git:</p></li>
+</ol>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="index.html#cb1-1"></a><span class="fu">git</span> clone https://github.com/lachlandeer/snakemake-econ-r-learner.git</span></code></pre></div>
+<p>!! TIP !!</p>
+<p>When we have taught this tutorial live in person in the past,
+we have created a folder on each learner’s computer which we tell them to think of as a “safe space” -
+where we can’t accidently move, delete or otherwise modify any files on their computer they deem important by accident.
+For example, if learners have a ‘coursework’ folder,
+we ask them to create a new sub-folder called “20YY-MM-programming class”,
+where YY and MM are the year and month we are giving the class.<br />
+We then ask them to download this folder / clone the repository inside this space.</p>
+</div>
+<div id="software-installation" class="section level3 unnumbered">
+<h3>Software Installation</h3>
+<p>In addition to the <code>R</code> scripts and data, you will need to have some software installed on your computer.
+You need to have the following installed:</p>
+<ol style="list-style-type: decimal">
+<li>Access to a <code>bash</code> style terminal</li>
+<li>Python 3 (Python 3.6 or higher)</li>
+<li>Snakemake</li>
+<li>R (version 4.0.x)</li>
+<li>Some R packages for additional functionality</li>
+</ol>
+<p>We provide instructions below.</p>
+<div id="access-to-a-bash-style-terminal" class="section level4 unnumbered">
+<h4>Access to a <code>bash</code> style terminal</h4>
+<p><strong>Windows Users</strong></p>
+<p>Windows does <em>not</em> have a bash terminal installed by default.
+Follow instructions <a href="https://itsfoss.com/install-bash-on-windows/">here</a> to install one.</p>
+<p><strong>Mac Users</strong></p>
+<p>You have a bash style terminal installed by default.
+To open a terminal session:</p>
+<ul>
+<li>Open spotlight with cmd + space</li>
+<li>Type in ‘terminal’</li>
+<li>When the terminal appears, open it.</li>
+</ul>
+<p><strong>Linux Users</strong></p>
+<p>You have a bash style terminal installed by default.
+Instructions to open a terminal vary across Linux flavours.
+On Ubuntu style flavours, <code>Ctrl</code> + <code>Alt</code> + <code>T</code> will work.</p>
+</div>
+<div id="installing-python" class="section level4 unnumbered">
+<h4>Installing Python</h4>
+<p>Either:</p>
+<ol style="list-style-type: decimal">
+<li>Install Anaconda Python (all OS):
+<ul>
+<li>We provide instructions on how to install anaconda python <a href="https://pp4rs.github.io/2020-uzh-installation-guide/python/">here</a></li>
+</ul></li>
+<li>Install Python using the deadsnakes ppa (Ubuntu Specific):
+<ul>
+<li>Here’s how to add the deadsnakes ppa and install Python 3.8</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="index.html#cb2-1"></a>$ <span class="fu">sudo</span> apt-get install software-properties-common</span>
+<span id="cb2-2"><a href="index.html#cb2-2"></a>$ <span class="fu">sudo</span> add-apt-repository ppa:deadsnakes/ppa</span>
+<span id="cb2-3"><a href="index.html#cb2-3"></a>$ <span class="fu">sudo</span> apt-get update</span>
+<span id="cb2-4"><a href="index.html#cb2-4"></a>$ <span class="fu">sudo</span> apt-get install python3.8</span></code></pre></div></li>
+</ol>
+</div>
+<div id="installing-snakemake" class="section level4 unnumbered">
+<h4>Installing Snakemake</h4>
+<p>Inside your terminal window enter the following command and press <code>Return</code></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="index.html#cb3-1"></a><span class="ex">pip3</span> install snakemake</span></code></pre></div>
+<p>you may need to replace <code>pip3</code> with <code>pip</code></p>
+<p><strong>Windows Users</strong>: If you get an installation error here, the the following commands sequentially:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="index.html#cb4-1"></a><span class="ex">pip</span> install datrie</span>
+<span id="cb4-2"><a href="index.html#cb4-2"></a><span class="ex">pip</span> install snakemake</span></code></pre></div>
+<p>If you are still having issues:</p>
+<ul>
+<li>If you are completing this tutorial as part of a live workshop, raise your hand</li>
+<li>Else, create an issue here, and tell us what the error message is + what operating system you are running on.
+We will try and resolve it.</li>
+</ul>
+</div>
+<div id="installing-r" class="section level4 unnumbered">
+<h4>Installing <code>R</code></h4>
+<p>We provide instructions on how to install R <a href="https://pp4rs.github.io/2020-uzh-installation-guide/r">here</a></p>
+</div>
+<div id="installing-the-required-r-libraries" class="section level4 unnumbered">
+<h4>Installing the Required <code>R</code> libraries</h4>
+<p>We utilize some additional R packages inside the scripts that build our project.
+To install either:</p>
+<ol style="list-style-type: decimal">
+<li>If you have RStudio and are comfortable installing packages there.
+<ul>
+<li>Open Rstudio</li>
+<li>Copy and paste the following lines into the R console:</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1"></a>to_install &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;dplyr&quot;</span>,</span>
+<span id="cb5-2"><a href="index.html#cb5-2"></a>                <span class="st">&quot;ggplot2&quot;</span>,</span>
+<span id="cb5-3"><a href="index.html#cb5-3"></a>                <span class="st">&quot;haven&quot;</span>,</span>
+<span id="cb5-4"><a href="index.html#cb5-4"></a>                <span class="st">&quot;magrittr&quot;</span>,</span>
+<span id="cb5-5"><a href="index.html#cb5-5"></a>                <span class="st">&quot;optparse&quot;</span>,</span>
+<span id="cb5-6"><a href="index.html#cb5-6"></a>                <span class="st">&quot;purrr&quot;</span>,</span>
+<span id="cb5-7"><a href="index.html#cb5-7"></a>                <span class="st">&quot;readr&quot;</span>,</span>
+<span id="cb5-8"><a href="index.html#cb5-8"></a>                <span class="st">&quot;rjson&quot;</span>,</span>
+<span id="cb5-9"><a href="index.html#cb5-9"></a>                <span class="st">&quot;rlist&quot;</span>,</span>
+<span id="cb5-10"><a href="index.html#cb5-10"></a>                <span class="st">&quot;stargazer&quot;</span>,</span>
+<span id="cb5-11"><a href="index.html#cb5-11"></a>                <span class="st">&quot;tibble&quot;</span>,</span>
+<span id="cb5-12"><a href="index.html#cb5-12"></a>                )</span>
+<span id="cb5-13"><a href="index.html#cb5-13"></a></span>
+<span id="cb5-14"><a href="index.html#cb5-14"></a><span class="kw">install.packages</span>(to_install, <span class="dt">repos =</span> <span class="st">&quot;https://cloud.r-project.org/&quot;</span>)</span></code></pre></div></li>
+<li>A command line alternative:
+<ul>
+<li>Open your terminal and change directory to the folder called <code>snakemake-econ-r-learner</code> you downloaded in a previous step</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="index.html#cb6-1"></a>cd PATH<span class="op">/</span>TO<span class="op">/</span>snakemake<span class="op">-</span>econ<span class="op">-</span>r<span class="op">-</span>learner</span></code></pre></div>
+<ul>
+<li>Run type the following command into the terminal and press <code>Return</code>:</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="index.html#cb7-1"></a><span class="ex">Rscript</span> install_r_packages.R</span></code></pre></div></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="what-we-cant-cover" class="section level2 unnumbered">
+<h2>What We Can’t Cover</h2>
+<p>Our goal of providing a gentle introduction to workflow management via Snakemake means that we have deliberately
+sacrificed details and .
+In particular, we do not cover:</p>
+<ul>
+<li>A detailed discussion about the inner workings of Snakemake</li>
+<li>A wide-ranging introduction to all of Snakemake’s features (which continue to grow)</li>
+</ul>
+<p>If you are interested in either of these, we recommend you look at the Snakemake documentation (LINK)
+and the supporting technical publication (LINK).
+We have found each of these references are extremely useful - but quite dense and difficult to process for new-comers.</p>
+</div>
+<div id="acknowledgements" class="section level2 unnumbered">
+<h2>Acknowledgements</h2>
+<p>First and foremost, we would like to thank the Department of Economics at the University of Zurich for giving us
+the opportunity to
+The idea of</p>
+<p>This tutorial is a extension of the idea and implementation of reproducible workflow management
+that we taught during these classes.</p>
+<p>We are indebted to the 2016 - 2020 cohorts of the PhD and research assistants who</p>
+<p>Their questions, confused looks and XX have all improved</p>
+<p>We would like to thank our colleagues and friends who co-taught the Programming Practices classes at</p>
+<p>Lachlan and Julian were introduced to the concept of workflow management software by Hans-Martin von Gaudecker
+during a short course on Effective Programming Practices in 20XX.
+The introduction to Hans-Martin’s Templates for “Reproducible Research Projects in Economics” using Waf
+and (now) pytask provided much inspiration for the structure of our own template and this tutorial.</p>
+</div>
+<div id="about-the-authors" class="section level2 unnumbered">
+<h2>About the Authors</h2>
+<p>Ulrich Bergmann is …</p>
+<p><a href="https://lachlandeer.github.io/">Lachlan Deer</a> (Twitter handle: <a href="https://twitter.com/lachlandeer?lang=en">lachlandeer</a>) is an Assistant Professor of Marketing at Tilburg University,
+a Fellow at the University of Zurich’s Centre for Reproducible Science and an instructor and lesson maintainer for the Carpentries Project.
+Prior to joining Tilburg University he was a Postdoctoral Fellow at the University of Chicago Booth School of Business,
+and completed his PhD in Economics at the University of Zurich in 2019.
+His substantive research interests lie in social media and it’s impact on media and entertainment industries, and the role of social media networks in political revolutions.
+From 2016 he is co-lead at of the “Programming Practices for Research in Economics” inititative teaching coding skills and reproducible research principles to early career researchers in economics and business.
+In his spare time he enjoys strumming his ukelele, improving his caffe latte making skills and building lego models.</p>
+<p><a href="https://www.julianlanger.org/">Julian Langer</a> (Twitter handle: <a href="https://twitter.com/jlnlanger?lang=en">jlnlanger</a>) is a Fellow at the Access to Justice Lab at Harvard Law School
+and a visiting researcher at the Berlin Social Science Center (WZB).
+He completed his PhD in Economics at the University of Zurich in July 2020.
+His substantive research interests lie in economic history, political economy, the economics of crime, and text-as-data.
+Since 2016 he co-leads the “Programming Practices for Research in Economics” initiative, teaching coding skills and reproducible research principles.
+When not at work he enjoys…</p>
+</div>
+<div id="license" class="section level2 unnumbered">
+<h2>License</h2>
+<div id="instructional-material" class="section level3 unnumbered">
+<h3>Instructional material</h3>
+<p>All instructional material made available under the tutorial titled “Reproducible Data Analytic Workflows with Snakemake and <code>R</code>”
+and authored by Ulrich Bergmann, Lachlan Deer and Julian Langer is
+made available under the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution
+license</a>. The following is a human-readable summary of
+(and not a substitute for) the <a href="https://creativecommons.org/licenses/by/4.0/legalcode">full legal text of the CC BY 4.0
+license</a>.</p>
+<p>You are free:</p>
+<ul>
+<li>to <strong>Share</strong>—copy and redistribute the material in any medium or format</li>
+<li>to <strong>Adapt</strong>—remix, transform, and build upon the material</li>
+</ul>
+<p>for any purpose, even commercially.</p>
+<p>The licensor cannot revoke these freedoms as long as you follow the
+license terms.</p>
+<p>Under the following terms:</p>
+<ul>
+<li><strong>Attribution</strong>—You must give appropriate credit (mentioning that
+your work is derived from this tutorial and, where practical, linking to the material
+<a href="http://lachlandeer.github.io/snakemake-econ-r-tutorial" class="uri">http://lachlandeer.github.io/snakemake-econ-r-tutorial</a>), provide a <a href="https://creativecommons.org/licenses/by/4.0/">link to the
+license</a>, and indicate if changes were made. You may do
+so in any reasonable manner, but not in any way that suggests the
+licensor endorses you or your use.</li>
+</ul>
+<p><strong>No additional restrictions</strong>—You may not apply legal terms or
+technological measures that legally restrict others from doing
+anything the license permits. With the understanding that:</p>
+<p>Notices:</p>
+<ul>
+<li>You do not have to comply with the license for elements of the
+material in the public domain or where your use is permitted by an
+applicable exception or limitation.</li>
+<li>No warranties are given. The license may not give you all of the
+permissions necessary for your intended use. For example, other
+rights such as publicity, privacy, or moral rights may limit how you
+use the material.</li>
+</ul>
+</div>
+<div id="software" class="section level3 unnumbered">
+<h3>Software</h3>
+<p>Except where otherwise noted, the example programs and other software provided by Ulrich Bergmann, Lachlan Deer and Julian Langer are made available under the <a href="https://opensource.org">OSI</a>-approved
+<a href="https://opensource.org/licenses/mit-license.html">MIT license</a>.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+</div>
+</div>
+<div id="citation" class="section level2 unnumbered">
+<h2>Citation</h2>
+<p>Please cite as:</p>
+<p>Bergmann, U, Deer, L and Langer, J. (2021, February).
+“Reproducible Data Analytic Workflows with Snakemake and <code>R</code>: An Extended Tutorial for Researchers in Business, Economics and the Social Sciences”.
+February 2021 (Version v2021.1.0)
+<a href="https://lachlandeer.github.io/snakemake-econ-r-tutorial" class="uri">https://lachlandeer.github.io/snakemake-econ-r-tutorial</a></p>
+<pre class="eval"><code>@misc{bdl2020snakemakeecon,
+      title={Reproducible Data Analytic Workflows with Snakemake and `R`: An Extended Tutorial for Researchers in Business, Economics and the Social Sciences},
+      author={Ulrich Bergmann and Lachlan Deer and Julian Langer},
+      year={2021},
+      url = &quot;https://lachlandeer.github.io/snakemake-econ-r-tutorial&quot;
+}</code></pre>
+
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>
+If this idea of inter-related steps feels unfamilar at this stage,<br />
+we will formalize this idea in the pages that follow.
+<a href="index.html#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>
+For example, you could move it your , or your Desktop.<a href="index.html#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="part-i-preliminaries.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/index.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["book.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
