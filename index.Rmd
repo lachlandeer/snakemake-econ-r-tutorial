@@ -35,7 +35,7 @@ Our own experience, and discussions with colleagues suggest that such a workflow
   hard to write down in a way that co-authors and our future selves can access 
   without blood pressures & stress levels rising. 
   (the latter, at least from our personal experience stems from a degree of laziness 
-   to document our steps after we have completed them).
+   to document our steps *after* we have completed them).
 We found ourselves frustrated with the headaches manual management of our workflow created
   and searched for better ways of managing our research workflow.
 
@@ -58,6 +58,7 @@ Snakemake will then look for other steps in our workflow that would use this upd
   we will formalize this idea in the pages that follow.
   ]
 
+Our hope is that the pages that follow provide a gentle introduction to Snakemake and replicable, automated workflow management.
 The tutorial assumes no knowledge of Snakemake or other workflow management software.
 Each chapter aims to build up one's knowledge through the means of a guided example 
   combined with some exercises and solutions.
