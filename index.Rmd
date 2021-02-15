@@ -106,7 +106,7 @@ We provide two ways to download these files:
 
 2. Download the template scripts using Git:
 
-```{bash}
+```{bash, eval = FALSE}
 git clone https://github.com/lachlandeer/snakemake-econ-r-learner.git
 ```
 
