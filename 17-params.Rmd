@@ -1,0 +1,175 @@
+# Adding Parameters
+
+In our analysis pipeline so far we have always passed files to our R scripts.
+While we promote this practice, and wrapping important information into .json files,
+    sometimes it seems like overkill to write a new json file to contain one line of configuration.
+An alternative to passing these json files is to use Snakemake's built in
+    `params` arguments, which are rule specific,
+    to store information that we want to pass to our R Script.
+This goal of this chapter is to show how to use `params` to pass across a piece of information.
+
+## Motivating Example: Constructing a Regression Table from OLS Results
+
+So far, we have estimated a series of OLS regressions and stored there output inside the `out/analysis` directory.
+Typically once we have estimated one or more models, we want to format the output into a regression table that we can insert into a written document like a paper or set of presentation slides.
+In the folder `src/tables/` we can see that there are a series of R scripts:
+```{r, engine = 'bash', eval = FALSE}
+$ ls src/tables/
+```
+which prints to the screen:
+```{r, engine = 'out', eval = FALSE}
+tab01_textbook_solow.R  tab03_ucc_solow.R  tab05_cc_aug_solow.R
+tab02_augment_solow.R   tab04_cc_solow.R   tab06_cc_aug_solow_restr.R
+```
+This shows that the example is designed to build 6 tables.
+Each table has it's own script that constructs it.
+We will start by constructing Table 1, from `tab01_textbook_solow.R`
+Let's have a look at what information this script expects us to pass using the help flag:
+
+```{r, engine = 'bash', eval = FALSE}
+Rscript src/tables/tab01_textbook_solow.R --help
+```
+```{r, engine = 'out', eval = FALSE}
+Usage: src/tables/tab01_textbook_solow.R [options]
+
+
+Options:
+	-fp CHARACTER, --filepath=CHARACTER
+		A directory path where models are saved
+
+	-m CHARACTER, --models=CHARACTER
+		A regex of the models to load
+
+	-o CHARACTER, --out=CHARACTER
+		output file name [default = out.tex]
+
+	-h, --help
+		Show this help message and exit
+```
+
+From this we learn that we need to pass:
+
+1. `--filepath`, which is the directory where our OLS models are stored
+2. `--models`, a regular expression to tell R which models within the filepath to workwith
+3. `--out`, a .tex file where we want to direct the output
+
+Now we will work on constructing this rule.
+
+## Creating a Rule with `params`
+
+We are going to use the `params` option to pass across the filepath and the models regular expression into R.
+A sketch of the rule we want to create is:
+
+```{r, engine = 'bash', eval = FALSE}
+rule textbook_solow:
+    input:
+        script = ,
+        models =
+    params:
+        filepath   = ,
+        model_expr =
+    output:
+        table = ,
+    shell:
+        "Rscript {input.script} \
+            --filepath {params.filepath} \
+            --models {params.model_expr} \
+            --out {output.table}"
+```
+
+There are two important points to notice about how we added params to our rules:
+
+1. `params` are added to the rule in a similar way to inputs and lists
+2. `params` are referenced identically to inputs and outputs in the shell command
+
+Now we need to decide what information needs to be entered into each line of our rule.
+EXPLAIN
+
+Our rule then becomes:
+
+```{r, engine = 'bash', eval = FALSE}
+rule textbook_solow:
+    input:
+        script = "src/tables/tab01_textbook_solow.R",
+        models = expand("out/analysis/{iModel}_ols_{iSubset}.rds",
+                            iModel = MODELS,
+                            iSubset = DATA_SUBSET)),
+    params:
+        filepath   = "out/analysis/",
+        model_expr = "model_solow*.rds"
+    output:
+        table = "out/tables/tab01_textbook_solow.tex"
+    shell:
+        "Rscript {input.script} \
+            --filepath {params.filepath} \
+            --models {params.model_expr} \
+            --out {output.table}"
+```
+
+There are two ways to run this rule:
+
+1. Tell snakemake to run this rule explicitly, `snakemake textbook_solow`
+    * Because it is not the first rule of the Snakefile it isnt run by default
+2. Add the output of this rule to the `all` rule.
+    * Adds creating this table to our complete analysis pipeline
+
+We prefer (2).
+Hence we also update the `all` rule as follows:
+
+```{r, engine = 'bash', eval = FALSE}
+rule all:
+    input:
+        figs   = expand("out/figures/{iFigure}.pdf",
+                            iFigure = FIGURES),
+        models = expand("out/analysis/{iModel}_ols_{iSubset}.rds",
+                            iModel = MODELS,
+                            iSubset = DATA_SUBSET),
+        tab01  = "out/tables/tab01_textbook_solow.tex"
+```
+
+If we then do a dry run to see what Snakemake plans to do^[
+    An alternative would be to run `snakemake --summary` and examine the output.
+]:
+
+```{r, engine = 'out', eval = FALSE}
+Building DAG of jobs...
+Job counts:
+	count	jobs
+	1	all
+	1	textbook_solow
+	2
+
+[Tue Feb  5 17:42:59 2019]
+rule textbook_solow:
+    input: src/tables/tab01_textbook_solow.R, out/analysis/model_solow_ols_subset_oecd.rds, out/analysis/model_solow_ols_subset_nonoil.rds, out/analysis/model_solow_ols_subset_intermediate.rds, out/analysis/model_aug_cc_restr_ols_subset_oecd.rds, out/analysis/model_aug_cc_restr_ols_subset_nonoil.rds, out/analysis/model_aug_cc_restr_ols_subset_intermediate.rds, out/analysis/model_solow_restr_ols_subset_oecd.rds, out/analysis/model_solow_restr_ols_subset_nonoil.rds, out/analysis/model_solow_restr_ols_subset_intermediate.rds, out/analysis/model_cc_ols_subset_oecd.rds, out/analysis/model_cc_ols_subset_nonoil.rds, out/analysis/model_cc_ols_subset_intermediate.rds, out/analysis/model_ucc_ols_subset_oecd.rds, out/analysis/model_ucc_ols_subset_nonoil.rds, out/analysis/model_ucc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_restr_ols_subset_oecd.rds, out/analysis/model_aug_solow_restr_ols_subset_nonoil.rds, out/analysis/model_aug_solow_restr_ols_subset_intermediate.rds, out/analysis/model_aug_cc_ols_subset_oecd.rds, out/analysis/model_aug_cc_ols_subset_nonoil.rds, out/analysis/model_aug_cc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_ols_subset_oecd.rds, out/analysis/model_aug_solow_ols_subset_nonoil.rds, out/analysis/model_aug_solow_ols_subset_intermediate.rds
+    output: out/tables/tab01_textbook_solow.tex
+    jobid: 27
+
+
+[Tue Feb  5 17:42:59 2019]
+localrule all:
+    input: out/figures/conditional_convergence.pdf, out/figures/unconditional_convergence.pdf, out/figures/aug_conditional_convergence.pdf, out/analysis/model_solow_ols_subset_oecd.rds, out/analysis/model_solow_ols_subset_nonoil.rds, out/analysis/model_solow_ols_subset_intermediate.rds, out/analysis/model_aug_cc_restr_ols_subset_oecd.rds, out/analysis/model_aug_cc_restr_ols_subset_nonoil.rds, out/analysis/model_aug_cc_restr_ols_subset_intermediate.rds, out/analysis/model_solow_restr_ols_subset_oecd.rds, out/analysis/model_solow_restr_ols_subset_nonoil.rds, out/analysis/model_solow_restr_ols_subset_intermediate.rds, out/analysis/model_cc_ols_subset_oecd.rds, out/analysis/model_cc_ols_subset_nonoil.rds, out/analysis/model_cc_ols_subset_intermediate.rds, out/analysis/model_ucc_ols_subset_oecd.rds, out/analysis/model_ucc_ols_subset_nonoil.rds, out/analysis/model_ucc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_restr_ols_subset_oecd.rds, out/analysis/model_aug_solow_restr_ols_subset_nonoil.rds, out/analysis/model_aug_solow_restr_ols_subset_intermediate.rds, out/analysis/model_aug_cc_ols_subset_oecd.rds, out/analysis/model_aug_cc_ols_subset_nonoil.rds, out/analysis/model_aug_cc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_ols_subset_oecd.rds, out/analysis/model_aug_solow_ols_subset_nonoil.rds, out/analysis/model_aug_solow_ols_subset_intermediate.rds, out/tables/tab01_textbook_solow.tex
+    jobid: 0
+
+Job counts:
+	count	jobs
+	1	all
+	1	textbook_solow
+	2
+```
+We see that snakemake only needs to create the table from our newly created rule.
+Now run snakemake to build the table:
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake all
+```
+and when finished if we list the contents of `out/tables` we see our new regression table has been created:
+```{r, engine = 'bash', eval = FALSE}
+$ ls out/tables/
+```
+```{r, engine = 'out', eval = FALSE}
+tab01_textbook_solow.tex
+```
+
+### Exercise: Building Table 2 {- .exercise}
+
+Using the same rule format as above, incorporate `params` into a new rule called `augment_solow` that constructs Table 2.

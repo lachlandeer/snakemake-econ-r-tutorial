@@ -1,0 +1,135 @@
+# PART II {-}
+
+Some discussion before moving to the next chapter?
+
+# Logging Output and Errors
+
+## Logging Output
+
+BLAH BLAH
+
+Let's add a log file the `textbook_solow` rule.
+
+```{r, engine = 'bash', eval = FALSE}
+rule textbook_solow:
+    input:
+        script = "src/tables/tab01_textbook_solow.R",
+        models = expand("out/analysis/{iModel}_ols_{iSubset}.rds",
+                            iModel = MODELS,
+                            iSubset = DATA_SUBSET),
+    params:
+        filepath   = "out/analysis/",
+        model_expr = "model_solow*.rds"
+    output:
+        table = "out/tables/tab01_textbook_solow.tex"
+    log:
+        "logs/tables/tab01_textbook_solow.Rout"
+    shell:
+        "Rscript {input.script} \
+            --filepath {params.filepath} \
+            --models {params.model_expr} \
+            --out {output.table} \
+            > {log}"
+```
+
+Notice `.Rout` is a convention ..., can use anything we like.
+
+If we run Snakemake on the `textbook_solow` rule, it will tell us there is nothing to be done.
+We can force Snakemake to execute a rule by adding the `--force` flag:
+
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake --force textbook_solow
+```
+
+We see that as the R script is run the printout of the LaTeX table no longer goes to the screen,
+    it has been redirected to the log file.
+This can be verified by viewing the contents of the log file:
+```{r, engine = 'bash', eval = FALSE}
+cat logs/tables/tab01_textbook_solow.Rout
+```
+```{r, engine = 'out', eval = FALSE}
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Tue, Feb 05, 2019 - 06:34:51 PM
+\begin{table}[!htbp] \centering
+  \caption{Estimation of the Textbook Solow Model}
+  \label{}
+\scriptsize
+\begin{tabular}{@{\extracolsep{5pt}}lcccccc}
+\\[-1.8ex]\hline \\[-1.8ex]
+\\[-1.8ex] & \multicolumn{6}{c}{log(GDP per capita in 1965)} \\
+ & Non-Oil & Intermediate & OECD & Non-Oil & Intermediate & OECD \\
+\\[-1.8ex] & (1) & (2) & (3) & (4) & (5) & (6)\\
+\hline \\[-1.8ex]
+ log(I / GDP) & 1.42$^{***}$ & 1.32$^{***}$ & 0.50 &  &  &  \\
+  & (0.14) & (0.17) & (0.43) &  &  &  \\
+  log(n + g + $\delta$) & $-$1.99$^{***}$ & $-$2.02$^{***}$ & $-$0.74 &  &  &  \\
+  & (0.56) & (0.53) & (0.85) &  &  &  \\
+  log(I / GDP) - log(n + g + $\delta$) &  &  &  & 1.49$^{***}$ & 1.43$^{***}$ & 0.55 \\
+  &  &  &  & (0.12) & (0.14) & (0.37) \\
+  Constant & 5.43$^{***}$ & 5.35$^{***}$ & 8.02$^{***}$ & 6.87$^{***}$ & 7.09$^{***}$ & 8.62$^{***}$ \\
+  & (1.58) & (1.54) & (2.52) & (0.12) & (0.15) & (0.53) \\
+ \hline \\[-1.8ex]
+Restricted Model & No & No & No & Yes & Yes & Yes \\
+\hline \\[-1.8ex]
+\textit{N} & 98 & 75 & 22 & 98 & 75 & 22 \\
+Adjusted R$^{2}$ & 0.59 & 0.59 & 0.01 & 0.59 & 0.59 & 0.06 \\
+\hline
+\hline \\[-1.8ex]
+\textit{Notes:} & \multicolumn{6}{r}{$^{***}$Significant at the 1 percent level.} \\
+ & \multicolumn{6}{r}{$^{**}$Significant at the 5 percent level.} \\
+ & \multicolumn{6}{r}{$^{*}$Significant at the 10 percent level.} \\
+\end{tabular}
+\end{table}
+```
+
+## Logging Output and Errors in One File
+
+Although this content has been redirected, there was still some information from the R session printed to screen.
+This was information about package loading.
+Why the separation?
+When we redirect using the `>` what the bash shell is sending what's called 'stdout' to the log file.
+stdout in this case is the table contents.
+The remaining information is called stderr, also known as standard error, is where BLAH.^[
+    In addition to the package loading information, if your code contains an error this is where that info will be printed.
+]
+To integrate stderr into the same log file as the stdout we use `>&` instead of `>`.
+Then our rule becomes:
+
+```{r, engine = 'bash', eval = FALSE}
+rule textbook_solow:
+    input:
+        script = "src/tables/tab01_textbook_solow.R",
+        models = expand("out/analysis/{iModel}_ols_{iSubset}.rds",
+                            iModel = MODELS,
+                            iSubset = DATA_SUBSET),
+    params:
+        filepath   = "out/analysis/",
+        model_expr = "model_solow*.rds"
+    output:
+        table = "out/tables/tab01_textbook_solow.tex"
+    log:
+        "logs/tables/tab01_textbook_solow.Rout"
+    shell:
+        "Rscript {input.script} \
+            --filepath {params.filepath} \
+            --models {params.model_expr} \
+            --out {output.table} \
+            >& {log}"
+```
+
+Now when we again run `snakemake --force textbook_solow` we see that no information from our R session is printed to the screen.
+
+### Exercise: Logging all R Scripts {- .exercise}
+
+Update each of the Snakemake rules to log all output to file.
+When finished, force the execution of the all rule, to build your entire project.
+
+HINT: Log files also accept wildcards `{something}`.
+Integrating wildcards into your log file names ensures each iteration of a rule gets a log file.
+
+We recommend the following conventions:
+
+1. Name the log file using the same name as the R script from which it stores the information.
+   This makes it easier to find the log file later when debugging errors.
+2. For each subdirectory of the `src` folder, have a the same subdirectory in the `log` folder.
+   Again this will facilitate finding the log file you want to inspect.
