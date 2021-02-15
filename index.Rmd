@@ -271,3 +271,21 @@ The introduction to Hans-Martin's Templates for "Reproducible Research Projects 
   and (now) pytask provided much inspiration for the structure of our own template and this tutorial.
 
 ## About the Authors {-}
+
+Ulrich Bergmann is ...
+
+[Lachlan Deer](https://lachlandeer.github.io/) (Twitter handle: [lachlandeer](https://twitter.com/lachlandeer?lang=en) is an Assistant Professor of Marketing at Tilburg University,
+   a Fellow at the University of Zurich's Centre for Reproducible Science and an instructor and lesson maintainer for the Carpentries Project.
+Prior to joining Tilburg University he was a Postdoctoral Fellow at the University of Chicago Booth School of Business, 
+  and completed his PhD in Economics at the University of Zurich in 2019.
+His substantive research interests lie in social media and it's impact on media and entertainment industries, and the role of social media networks in political revolutions.
+From 2016 he is co-lead at of the "Programming Practices for Research in Economics" inititative teaching coding skills and reproducible research principles to early career researchers in economics and business.
+In his spare time he enjoys strumming his ukelele, improving his caffe latte making skills and building lego models.
+
+
+[Julian Langer](https://www.julianlanger.org/) (Twitter handle: [jlnlanger](https://twitter.com/jlnlanger?lang=en) ) is a Fellow at the Access to Justice Lab at Harvard Law School 
+  and a visiting researcher at the Berlin Social Science Center (WZB). 
+He completed his PhD in Economics at the University of Zurich in July 2020.
+His substantive research interests lie in economic history, political economy, the economics of crime, and text-as-data.
+Since 2016 he co-leads the "Programming Practices for Research in Economics" initiative, teaching coding skills and reproducible research principles.
+When not at work he enjoys... 
