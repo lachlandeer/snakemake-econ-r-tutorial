@@ -1,3 +1,0 @@
-# Reproducible Slides with Rmd
-
-Content TBD
