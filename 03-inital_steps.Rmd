@@ -1,138 +1,92 @@
 # Initial Steps with Snakemake
 
-## Starting a Research Project
+Learning goals
 
-We are now ready to get started working with the code and data to build a fully reproducible pipeline.
-In Chapter XX we described a simplified research workflow to be:
+- Where and how do we write Snakemake rules?
+- How do we execute a rule?
+- How can rules interact with input and output files?
+- How does Snakemake deal with redundant executions?
 
-1. Perform some data management
-2. Do some analysis
-3. Turn the output of the analysis into a tabular format
-4. Construct a set of graphs
-5. Integrate the tables and graphs into a paper and a set of slides (optional)
 
-We are going to start at the beginning with data management.
+Now that we know the structure of our project, we are ready to start building a fully reproducible pipeline.
+Snakemake expects instructions in a file called `Snakefile` in the current folder.
+A `Snakefile` is a collection of rules that together define the order in which a project will be executed.
 
-Recall that we have the following files in our data management subdirectory, `src/data-management`:
+We have added an empty `Snakefile` in the main project folder.
+You can edit this file in a text editor of your choice.
+In the remainder of this tutorial we will fill the file together with a pipeline which reproduces the results from @mrw.
 
-```{r datamgt-scripts, engine = 'out', eval = FALSE}
+## Snakefile -- Writing Our First Rule
+
+By law any software tutorial is required to start with a hello world example, so we'll follow court and do the same.
+To do so, we open `Snakefile` in a text editor of our choice and write the following text into the file:
+
+```{r, engine = 'bash', eval = FALSE}
+rule hello_world:
+  shell:
+    'echo "Hello World!"'
+```
+
+Snakemake instructions are written in Python 3 with a few extra objects and methods provided by Snakemake.
+The structure of our rule will look very familiar to anybody who has written Python functions before.
+This implies that indentation is interpreted by the language and that divinations from correct indentation will result in errors.
+The first line in our example defines the name of a rule, in this case `hello_world`.
+The part following `shell`: tells Snakemake that this rule executes a shell command, which in our case prints `Hello World!` to the console.
+
+## The Snakemake Command -- Executing a Rule 
+
+After saving our changes to `Snakefile`, we can execute the newly created rule by navigating to the project's main folder and by typing `Snakemake --cores 1`.
+By default Snakemake will execute the first rule it encounters in a `Snakefile`.
+As our file only contains a single rule, it will execute the `hello_world` rule and print `Hello World!` to the console together with some additional information about the execution of the work flow.
+When a file contains more than a single rule, we often want to be more explicit and tell `Snakemake` to execute a particular rule like so:
+
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake --cores 1 name_of_rule
+```
+
+In our case `snakemake --cores 1 hello_world` will give the same output as the last execution.
+
+At this point you are probably correctly guessing that the long option `--cores #n` tell Snakemake how many CPU cores to use when executing a workflow. 
+Running workflows in parallel can speed up complex workflows substantially.
+In this guide we will execute all workflows with a single core to make the code compatible with all computers but you are encouraged to choose a core count appropriate to your system instead.
+
+## Reading and Writing Files -- First Steps in a Data Science Pipeline  
+
+Like most research, our project starts with data management (also see Chapter XX).
+The data management subdirectory, `src/data-management` contains two scripts
+
+```{r, engine = 'out', eval = FALSE}
 rename_variables.R
 gen_reg_vars.R
 ```
 
-We will need to run each of these scripts sequentially.
-First we want to run the script `rename_variables.R` to tidy up the variable names in our data set.
-Second, `gen_reg_vars.R` will create the some additional variables in our data that will be needed to run some regressions in later steps.
-Over the next few sections we are going to build up 2 **rules**, one for each file, that will execute these scripts and deliver output.
+which need to be executed sequentially.
+In this chapter, we want to run the script `rename_variables.R` to tidy up the variable names in our data set.
+In the next chapter, we will then add `gen_reg_vars.R`, which creates additional variables that will be needed to run some regressions in later steps, and learn how to execute both rules sequentially to in a first, minimum pipeline. 
 
-## The Beginning of a Snakefile
+### Using the Rscript command to execute R scripts
 
-We are going to put the collection of rules that build our project into a file.
-We can then use the `Snakemake` to execute these rules and build our project.
-The set of rules we want to construct are going to go into the file called `Snakefile` - which is the name of a file that Snakemake will look into by default to execite a project.
-Lets open the file called `Snakefile` in the project's main directory.
-When you open it it should look as follows:
+We can run any R script with the `Rscript` shell command.
+The command expects the path to an `.R` script as the first argument.
+Simple R scripts that do not require additional options can be just run as such:
 
-```{r snakefile-start, engine = 'bash', eval = FALSE}
-# Main Workflow - SOME PROJECT
-#
-# Contributors: YOUR NAME(S)
+```{r, engine = 'bash', eval = FALSE}
+Rscript PATH/TO/SCRIPT.R
 ```
 
-Note that the amount of structure we have here is not totally necessary.
-However, good structure will make understanding easier later.
-Let's go through what we see.
-The first lines of code are comments, to help us navigate a little and understand what we are looking at.
-The very first line tells us that this is a project workflow, and then tells us what the particular project is.
-The second line tells us who contributed to this file.
-This can be useful so we know who to contact with questions.
-You should do update the name of the project, and add your name to the list of contributors.
-For us, the top 2 lines becomes:
+Most scripts in this project have been written to require additional parameters.
+We can run any R script that requires parameters with the `--help` option to see a list of arguments.
 
-```{r snakefile-start-2, engine = 'bash', eval = FALSE}
-# Main Workflow - MRW Replication
-#
-# Contributors: @lachlandeer, @julianlanger
-```
+Let us apply this and execute the `rename_variables.R` script with the `--help` flag:
 
-The next few lines are:
-
-```{r snakefile-start-3, engine = 'bash', eval = FALSE}
-# --- Main Build Rules --- #
-## To be constructed
-```
-
-These are more comments.
-We are using the `# --- Something --- #` notation to break up the code into logical blocks.
-It is in this block that we will assemble the rules on which our project will be built.
-
-## Rule Structure
-
-A `Snakefile` is a collection of rules that together define the order in which a project will be executed.
-In our `Snakefile` we will start to assemble rules under the `# --- Main Build Rules --- #` section to keep things tidy.
-Each rule can be thought of as a recipe that combines different **inputs**, such as data and and R script together to produce one or more **output(s)**.
-The key components we are going to use to construct a rule are:
-
-(i) a name for the rule,
-(ii) the list of inputs
-(iii) the list of outputs produced
-(iv) a shell command that tells snakemake how to combine the inputs to produce a outputs.
-
-`Snakemake` expects these components to be provided in a particular way so that it knows what to do with the information you provided.
-We are going to specify rules in the following format:
-
-```{r snakefile-rule-str, engine = 'bash', eval = FALSE}
-rule rule_name:
-    input:
-        input_name1 = "PATH/TO/input_one",
-        input_name2 = "PATH/TO/input_two"
-    output:
-        output_name1 = "PATH/TO/SAVE/output_one",
-        output_name2 = "PATH/TO/SAVE/output_two"
-    shell:
-        "HOW TO MIX IT ALL TOGETHER"
-```
-
-We can have as many inputs and outputs as we need to have per rule.
-Each input and each output are given names, for example `input_name1` which take the value to the file path and name of the file.
-It is important to wrap each of these paths into quotations, and to separate each of the multiple inputs and outputs with a comma.
-
-## Our First Rule
-
-
-### Constructing the Rule
-As mentioned above, we will start with the data management step.
-
-First script to run is `rename_variables.R` which is located in the data management subdirectory.
-This is a simple script that renames some variables for us to be easier to understand.
-
-We can then start our snakemake script by adding this script as an input:
-
-```{r rename-vars, engine = 'bash', eval = FALSE}
-rule rule_name:
-    input:
-        script = "src/data-management/rename_variables.R",
-        input_name2 = "PATH/TO/input_two"
-    output:
-        output_name1 = "PATH/TO/SAVE/output_one",
-        output_name2 = "PATH/TO/SAVE/output_two"
-    shell:
-        "HOW TO MIX IT ALL TOGETHER"
-```
-
-Next, we want to add any additional inputs and also specify any outputs that the file produces.
-We have set up all R scripts in this example to provide us with 'help' so that we know what we might need to add.
-To find out what inputs are required and what outputs are produced, we use the `--help` flag when calling the file with `R`:
-
-```{r rename-vars-2, engine = 'bash', eval = FALSE}
+```{r, engine = 'bash', eval = FALSE}
 $ Rscript src/data-management/rename_variables.R --help
 ```
 
-And the following output is produced:
+This prints the following output to the console:
 
-```{r rename-vars-3, engine = 'out', eval = FALSE}
+```{r, engine = 'bash', eval = FALSE}
 Usage: src/data-management/rename_variables.R [options]
-
 
 Options:
 	-d CHARACTER, --data=CHARACTER
@@ -145,11 +99,70 @@ Options:
 		Show this help message and exit
 ```
 
-This suggests the script needs ...
+This suggests the script expects
 
-We update our `rename_variables` as:
+1. a `--data` option which defines the filepath to a stata data set. This is the input dataset which the script transforms.
+2. a `--out` option which defines the filepath the transformed data set will be saved to.
 
-```{r rename-vars-4, engine = 'bash', eval = FALSE}
+Next we will learn how to define inputs and outputs in snakemake.
+
+### The input and output arguments
+
+Our `hello_world` rule was very simple and did not interact with the file system.
+In a research workflow we typically want to interact with **input** files such as data or R scripts which produce one or more **outputs** like transformed data, tables, or graphs.
+A snakemake rule can be thought of as the recipe that combines  the inputs to produce the outputs. 
+
+`Snakemake` expects these components to be provided in a particular way so that it knows what to do with the information we provide.
+We are going to specify rules in the following format:
+
+```{r, engine = 'bash', eval = FALSE}
+rule rule_name:
+    input:
+        input_name1 = "PATH/TO/input_one",
+        input_name2 = "PATH/TO/input_two"
+    output:
+        output_name1 = "PATH/TO/SAVE/output_one",
+        output_name2 = "PATH/TO/SAVE/output_two"
+    shell:
+        "HOW TO MIX IT ALL TOGETHER"
+```
+
+We can have as many inputs and outputs as the rule needs to function.
+Each input and each output are given names, for example `input_name1` which take the value to the file path and name of the file.
+It is important to wrap each of these paths into quotations, and to separate each of the multiple inputs and outputs with a comma.
+
+### A rule to rename variables.
+
+Let us now define a snakemake rule which executes the `rename_variables.R` script with the correct input and output paths.
+To do so, we copy the example rule into our snakefile above the `hello_world` rule.
+Let us also rename the rule to `rename_vars`.
+
+The rule will use the `rename_variables.R` script as a first input.
+Let us therefore rename the first input into `script` and replace the right hand side with the path to the `rename_variables.R` script which we have used above when we printed the script's help function.
+
+Our `rename_vars` rule should now look something like this:
+
+```{r, engine = 'bash', eval = FALSE}
+rule rename_vars:
+    input:
+        script = "src/data-management/rename_variables.R",
+        input_name2 = "PATH/TO/input_two"
+    output:
+        output_name1 = "PATH/TO/SAVE/output_one",
+        output_name2 = "PATH/TO/SAVE/output_two"
+    shell:
+        "HOW TO MIX IT ALL TOGETHER"
+```
+
+Next, we want to add any additional inputs and also specify any outputs that the file produces.
+From the `help` output we know the script expects a stata dataset as an additional input which we can find in the `src/data/` folder.
+We rename the second input into `data` and replace the right hand side with the path to @mrw's stata dataset.
+Finally, we replace the first output name with `data` and define an appropriate output file path as the right hand side.
+This is the location our transformed data will be saved to.
+
+After these steps, our rule should look something like this:
+
+```{r, engine = 'bash', eval = FALSE}
 rule rename_vars:
     input:
         script = "src/data-management/rename_variables.R",
@@ -160,9 +173,16 @@ rule rename_vars:
         "HOW TO MIX IT ALL TOGETHER"
 ```
 
-Next we provide a recipe telling snakemake how to mix the inputs to create the outputs:
+Lastly, we need to edit the `shell` command to combine inputs and output.
+We know that we can execute the R script via the `Rscript` command with the path to the script as the first argument.
+Gladly, snakemake does not require it to write the full path out again.
+We can instead refer to the input's and output's which we have defined via their names which Snakemake expects within `{}`.
+Executing an R script can therefore be done via `Rscript {input.script}`.
+The dataset and the output location can be passed to our script as `--data` and `--out` arguments and we will pass it the input and output options which we have defined in our rule. 
 
-```{r rename-vars-5, engine = 'bash', eval = FALSE}
+Putting it all together will give us the following rule:
+
+```{r, engine = 'bash', eval = FALSE}
 rule rename_vars:
     input:
         script = "src/data-management/rename_variables.R",
@@ -175,21 +195,30 @@ rule rename_vars:
             --out {output.data}"
 ```
 
-We can now try and run snakemake to execute this rule ...
+Note that `\` in the shell command allows us to write the command over several lines for better readability. 
+They can be omitted when we write the command in a single line.
+
+After saving we can execute our newly rule via:
 
 ```{r rename-vars-6, engine = 'bash', eval = FALSE}
-$ snakemake
+$ snakemake --cores 1 rename_vars
 ```
 
-Stuff happens ...
+Snakemake will give us some console output informing us about the execution of our rule. 
+A successful execution will be displayed through green text ending in 
 
-### Analysing Output
+```{r, engine = 'bash', eval = FALSE}
+TODO: Make green
+Finished job 0.
+1 of 1 steps (100%) done
+```
 
-We can look into our output directory to see if anything has happened:
+If the execution was successful, we can look into our output directory to see if anything has happened:
 
 ```{r, engine = 'bash', eval = FALSE}
 $ ls out/data/
 ```
+
 which yields
 
 ```{r, engine = 'out', eval=FALSE}
@@ -198,26 +227,30 @@ mrw_renamed.csv
 
 Our file has been created as we expected.
 
-Try and run snakemake again
+## Redundant Executions -- (Don't) Run a Rule Repeatedly
+
+What would happen if the run the rule a second time after it has been successfully completed before?
+Let us execute the `rename_vars` rule a second time:
+
 ```{r, engine = 'bash', eval = FALSE}
-$ snakemake
+$ snakemake --cores 1 rename_vars
 ```
 
-and we see the following output:
+We see the following output:
 
 ```{r, engine = 'out', eval = FALSE}
 Building DAG of jobs...
 Nothing to be done.
 ```
 
-Why?
+To understand the status of the project as seen by Snakemake, we can use the **summary** option as such:
 
-Snakemake provides the a *summary* option which tells us what is going on:
 ```{r, engine = 'bash', eval = FALSE}
-snakemake --summary
+$ snakemake --summary
 ```
 
-The output is:
+In our case the output following output is printed to the console:
+
 ```{r, engine = 'out', eval = FALSE}
 Building DAG of jobs...
 output_file	                      date	                  rule	    version	 log-file(s)	status	plan
@@ -225,19 +258,22 @@ out/data/mrw_renamed.csv	Thu Jan 10 20:31:08 2019	rename_vars	   -		            
 
 ```
 
-Explain what this tells us ...
+Snakemake tells us the status of the output file of the `rename_vars` rule is `ok` and that it plans not to update the file.
 
-Suppose we updated one of the inputs ...
+Now, let us what happens if we update one of the input files.
+The following command updates the time the `rename_variables.R` was last edited without changing the actual content of the file: 
 
 ```{r, engine = 'bash', eval = FALSE}
 $ touch src/data-management/rename_variables.R
 ```
 
-and then look at the summary from snakemake:
+Running the summary command again
 
 ```{r, engine = 'bash', eval = FALSE}
-$ snakemake
+$ snakemake --summary
 ```
+
+yields the following output:
 
 ```{r, engine = 'out', eval = FALSE}
 Building DAG of jobs...
@@ -245,162 +281,22 @@ output_file	                       date	                   rule	    version	log-
 out/data/mrw_renamed.csv	Thu Jan 10 20:31:08 2019	rename_vars	   -		        updated input files	update pending
 ```
 
-What this means?
+Snakemake has detected that one input file is more recent than the output file.
+It therefore will execute the rule when asked to do so.
 
-Run snakemake to build the output:
-
-```
-snakemake
-```
-
-### Exercise: Deleting Output {- .exercise}
-Delete the output `out/data/mrw_renamed.csv`.
-Run `snakemake --summary` and explain the output it produced.
-
-## Creating a Second Rule
-
-The second step in our data management is to create some variables we will use in our regression analysis.
-The script `gen_reg_vars.R` in the `src/data-management` folder does this for us.
-We are going to build a rule called `gen_regression_vars` to do this in Snakemake.
-Let's see what the script expects to be passed:
+Running the rule again via
 
 ```{r, engine = 'bash', eval = FALSE}
-$ Rscript src/data-management/gen_reg_vars.R --help
+snakemake --cores 1 rename_vars
 ```
 
-```{r, engine = 'out', eval = FALSE}
-Usage: src/data-management/gen_reg_vars.R [options]
+will execute the rule.
 
+We see one mayor advantage of Snakemake over simpler and very common alternatives to execute projects.
+Often researchers chain do files together in a linear and static way.
+It is very common in such a workflow to comment out chunks of the code to prevent redundant executions to safe time.
 
-Options:
-	-d CHARACTER, --data=CHARACTER
-		a csv file name
-
-	-p CHARACTER, --param=CHARACTER
-		a file name containing model parameters
-
-	-o CHARACTER, --out=CHARACTER
-		output file name [default = out.csv]
-
-	-h, --help
-		Show this help message and exit
-
-```
-
-So we need to provide:
-
-to provide the output ...
-
-Let's create this rule:
-
-```{r, engine = 'bash', eval = FALSE}
-rule gen_regression_vars:
-    input:
-        script = "src/data-management/gen_reg_vars.R",
-        data   = "out/data/mrw_renamed.csv",
-        params = "src/data-specs/param_solow.json",
-    output:
-        data = "out/data/mrw_complete.csv"
-    shell:
-        "Rscript {input.script} \
-            --data {input.data} \
-            --param {input.params} \
-            --out {output.data}"
-```
-
-What will Snakemake want to do next? Let's use the summary option to see ...
-
-```{r, engine = 'bash', eval = FALSE}
-$ snakemake --summary
-```
-
-```{r, engine = 'out', eval = FALSE}
-Building DAG of jobs...
-output_file	                   date	                    rule	              version	log-file(s)	status	   plan
-out/data/mrw_complete.csv	-	                        gen_regression_vars	    -		            missing	update pending
-out/data/mrw_renamed.csv	Fri Jan 11 13:40:07 2019	rename_vars	            -		            ok	        no update
-```
-
-Explain what this means
-
-Let's run snakemake to build our new file:
-
-```{r, engine = 'bash', eval = FALSE}
-$ snakemake
-```
-
-When we look at our output directory:
-
-```{r, engine = 'bash', eval = FALSE}
-$ ls out/data/
-```
-
-```{r, engine = 'out', eval = FALSE}
-mrw_complete.csv  mrw_renamed.csv
-```
-
-So we see that our data set has been built.
-
-### Exercise: Creating Rules {- .exercise}
-The MRW paper estimates the Solow model for three subsets of data.
-You need to create rules to do estimate the Solow model for each of these data sets.
-The R script `src/analysis/estimate_ols.R` will estimate a OLS model for a given dataset when you provide the necessary inputs.
-
-1. What inputs do you need to provide?
-2. What outputs will be produced?
-3. Write Snakemake rules to estimate the solow model for each subset of data.
-
-## Clean Rules
-
-So far, we have built up our Snakefile to:
-
-1. Clean data
-2. Run a regression model on different subsets of data
-
-As we continue to extend our Snakefile in the coming chapters we might want to be able to delete all of the produced outputs, and see if we can rebuild our project from the first step.
-One way to do this would be to go to our terminal window and enter the following command each time:
-
-```{r, engine = 'bash', eval = FALSE}
-$ rm -rf out/*
-```
-
-Instead of doing this each time, we can integrate this *cleaning* of computer produced outputs into our Snakefile.
-We can create a rule called `clean` that stores the shell command from above:
-
-```{r, engine = 'bash', eval = FALSE}
-rule clean:
-    shell:
-        "rm -rf out/*"
-```
-
-Note that this rule has no inputs or outputs.
-
-To use this rule, we enter the following into our terminal:
-```{r, engine = 'bash', eval = FALSE}
-$ snakemake clean
-```
-
-Notice that to use the clean rule we had to call the rule name, clean, explicitly.
-
-Now if we look out the output of running the summary call with snakemake, we see the following output:
-
-```{r, engine = 'bash', eval = FALSE}
-snakemake --summary
-```
-
-```{r, engine = 'out', eval = FALSE}
-Building DAG of jobs...
-output_file	                                       date	  rule	version	log-file(s)	    status	plan
-out/analysis/model_solow_subset_intermediate.rds	-	  inter	       -    	        missing	update pending
-out/analysis/model_solow_subset_nonoil.rds	        -	  nonoil       -	            missing	update pending
-out/analysis/model_solow_subset_oecd.rds	        -	  oecd	       -	            missing	update pending
-out/data/mrw_complete.csv	                        -	  gen_regression_vars   		missing	update pending
-out/data/mrw_renamed.csv	                        -	  rename_vars	          		missing	update pending
-```
-
-Which reveals snakemake's plan the next time its run will be to build all outputs.
-
-### Exercise: Creating Cleaning Rules {- .exercise}
-So far we have written a cleaning rule that deletes everything in the `out/` directory.
-Construct rules that would separately clean the `out/data/` and `out/analysis` subdirectories.
-Why might we want to do this?
+Snakemake keeps track of dependencies and updates to input files.
+We therefore do not have to worry about preventing the execution of previously run scripts to gain efficiency and safe time.
+We can simply run the most down stream rule of our project and let Snakemake figure out which upstream rules need to be re-run.
+We will explain later in this tutorial how to write an `all` rule which takes care of this.
