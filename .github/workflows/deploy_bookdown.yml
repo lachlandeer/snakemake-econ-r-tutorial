@@ -42,7 +42,7 @@ jobs:
          # Destination path
          path: _book # optional
      - name: Deploy to GitHub Pages
-       uses: Cecilapp/GitHub-Pages-deploy@master
+       uses: Cecilapp/GitHub-Pages-deploy@v2
        with:
           build_dir: _book/
           email: lachlan.deer@gmail.com
