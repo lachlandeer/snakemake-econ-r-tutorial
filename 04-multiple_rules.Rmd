@@ -1,0 +1,284 @@
+# Working With Multiple Rules
+
+Learning goals
+
+- How do we chain Snakemake rules together?
+- How does Snakemake know in which order to execute rules?
+- Practice writing Snakemake rules
+- What are clean rules and how can they make our life easier?
+
+In the last chapter we have learned how to write and execute a single Snakemake rule.
+This is obviously not sufficient for a real world research workflow which requires many different operations to be executed sequentially.
+in this chapter we will therefore learn how to work with several rules and how they interact with each other.
+
+
+## Creating a second rule
+
+The second step in our data management is to create additional variables we will use in our regression analysis.
+The script `gen_reg_vars.R` in the `src/data-management` folder does this for us.
+We are going to build a rule called `gen_regression_vars` to do this from Snakemake.
+Let's see what arguments the script expects to be passed:
+
+```{r, engine = 'bash', eval = FALSE}
+$ Rscript src/data-management/gen_reg_vars.R --help
+```
+
+```{r, engine = 'out', eval = FALSE}
+Options:
+	-d CHARACTER, --data=CHARACTER
+		a csv file name
+
+	-p NUMERIC, --param=NUMERIC
+		Solow`s Constant, as a numeric [default = 0.05]
+
+	-o CHARACTER, --out=CHARACTER
+		output file name [default = out.csv]
+
+	-h, --help
+		Show this help message and exit
+```
+
+We see that script expects three arguments:
+
+- `--data`, the file path of the input file
+- `--out`, the file path of the output file
+- `--param`, Solow's constant which defaults to 0.05, the parameter used in CITE. We can safely ignore this for now.
+
+To chain two rules together, the second one needs to use the output of the first rule as its input.
+This way the second script will receive all the changes the first script made so they are not lost.
+
+Let us incorporate this here and create a `gen_regression_vars` rule on top of the `rename_vars` rule. 
+The rule takes two inputs:
+`{input.script}` will be `gen_reg_vars.R` and `{input.data}` will be the file defined as `{output.data}` in the `rename_vars` rule. 
+Our new rule now should look something like this:
+
+```{r, engine = 'bash', eval = FALSE}
+rule gen_regression_vars:
+    input:
+        script = "src/data-management/gen_reg_vars.R",
+        data   = "out/data/mrw_renamed.csv"
+```
+
+Let us now add the filepath the output of the rule will be saved to.
+We will use a new filename in the `out/data` folder and choose `mrw_complete.csv` to indicate that this data set includes all data modifications the project requires:
+
+```{r, engine = 'bash', eval = FALSE}
+rule gen_regression_vars:
+    input:
+        script = "src/data-management/gen_reg_vars.R",
+        data   = "out/data/mrw_renamed.csv",
+    output:
+        data   = "out/data/mrw_complete.csv"
+```
+
+Finally, let us add the `shell` argument, which is identical to the one used in our first rule.
+Now, our rule is complete:
+
+```{r, engine = 'bash', eval = FALSE}
+rule gen_regression_vars:
+    input:
+        script = "src/data-management/gen_reg_vars.R",
+        data   = "out/data/mrw_renamed.csv"
+    output:
+        data   = "out/data/mrw_complete.csv"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --out {output.data}"
+```
+
+To find out how Snakemake perceives our projects, let's use the summary option
+
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake --summary
+```
+
+which yields the following console output:
+
+```{r, engine = 'out', eval = FALSE}
+Building DAG of jobs...
+output_file	                   date	                    rule	              version	log-file(s)	status	   plan
+out/data/mrw_complete.csv	-	                        gen_regression_vars	    -		            missing	update pending
+out/data/mrw_renamed.csv	Fri Jan 11 13:40:07 2019	rename_vars	            -		            ok	        no update
+```
+
+Snakemake knows that the output of the `rename_vars` rule is up to date and therefore plans to only execute the `gen_regression_vars` rule as it's output
+`out/data/mrw_complete.csv` does not yet exist.
+
+Let's run snakemake to build our new file:
+
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake --cores 1
+```
+
+When we look at our output directory
+
+```{r, engine = 'bash', eval = FALSE}
+$ ls out/data/
+```
+
+we see that the second output file has been created.
+
+```{r, engine = 'out', eval = FALSE}
+mrw_complete.csv  mrw_renamed.csv
+```
+
+### Exercise: Creating Rules {- .exercise}
+@mrw estimate the Solow model for three subsets of data.
+The R script `src/analysis/estimate_ols.R` will estimate a OLS model for a given dataset when you provide the necessary inputs.
+
+- The script expects an OLS specification.
+You can point to the basic OLS specification from @mrw in `src/model-specs/model_solow.json`.
+- You will find the necessary data subsetting conditions in `src/data-specs`.
+
+Write one rule for each subset of the data.
+
+1. What inputs do you need to provide?
+2. What outputs will be produced?
+3. Write Snakemake rules to estimate the solow model for each subset of data.
+
+### Solution {- .solution}
+
+1. What inputs do you need to provide?
+
+- `--data` the file path of a csv dataset as an input. We use the output of our last rule: `out/data/mrw_complete.csv`.
+- `--model` the file path of a regression model. We follow the hint and use `src/model-specs/model_solow.json`.
+- `--subset` the file path of a sub setting condition. We will use one of the three files in `src/data-specs` for each rule respectively.
+- `--out` the file path for the output file. 
+
+2. What outputs will be produced?
+
+One `.rds` file for each ols model.
+This is a `R` data type appropriate for saving `R` objects.
+The rule therefore outputs one `R` object containing the regression results for each rule.
+Loading the `.rds` file in another script will allow us later to use the regression results to create regression tables and graphs.
+
+3. Write Snakemake rules to estimate the solow model for each subset of data.
+
+Incorporating everything will give us three rules similar to these:
+
+```{r, engine = 'out', eval = FALSE}
+rule solow_intermediate:
+    input:
+        script   = "src/analysis/estimate_ols_model.R",
+        data     = "out/data/mrw_complete.csv",
+        model    = "src/model-specs/model_solow.json",
+        subset   = "src/data-specs/subset_intermediate.json"
+    output:
+        estimate = "out/analysis/model_solow_subset_intermediate.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+
+rule solow_nonoil:
+    input:
+        script   = "src/analysis/estimate_ols_model.R",
+        data     = "out/data/mrw_complete.csv",
+        model    = "src/model-specs/model_solow.json",
+        subset   = "src/data-specs/subset_nonoil.json"
+    output:
+        estimate = "out/analysis/model_solow_subset_nonoil.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+
+rule solow_oecd:
+    input:
+        script   = "src/analysis/estimate_ols_model.R",
+        data     = "out/data/mrw_complete.csv",
+        model    = "src/model-specs/model_solow.json",
+        subset   = "src/data-specs/subset_oecd.json"
+    output:
+        estimate = "out/analysis/model_solow_subset_oecd.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+```
+
+## Clean Rules
+
+We want to end this chapter with a little extra rule which will make our life easier down the road.
+
+So far we have built rules to move our replication of @mrw forward.
+As we continue to extend our Snakefile in the coming chapters we might want to be able to delete all of the produced outputs and make sure our projects builds cleanly from start to end.
+
+The manual way to do this is to go to our terminal window and enter the following command each time
+
+```{r, engine = 'bash', eval = FALSE}
+$ rm -rf out/*
+```
+
+which deletes all contents of the `out` folder.
+
+To make this task a bit more comfortable, we write a clean rule which deletes all contents of the output folder.
+
+We can create a rule called `clean`  at the bottom of our `Snakefile` that stores the shell command from above:
+
+```{r, engine = 'bash', eval = FALSE}
+rule clean:
+    shell:
+        "rm -rf out/*"
+```
+
+Note that this rule has no inputs or outputs.
+
+To use this rule, we enter the following into our terminal:
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake --cores 1 clean
+```
+
+Notice that to use the clean rule we had to call the rule name, `clean`, explicitly.
+This is necessary as the rule is at the bottom of our Snakefile.
+Snakemake the first rule it finds at the top of the file when not explicitly told otherwise.
+
+Now if we look out the output of running the summary call with snakemake, we see the following output:
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --summary
+```
+
+```{r, engine = 'out', eval = FALSE}
+Building DAG of jobs...
+output_file	                                       date	  rule	version	log-file(s)	    status	plan
+out/analysis/model_solow_subset_intermediate.rds	-	  inter	       -    	        missing	update pending
+out/analysis/model_solow_subset_nonoil.rds	        -	  nonoil       -	            missing	update pending
+out/analysis/model_solow_subset_oecd.rds	        -	  oecd	       -	            missing	update pending
+out/data/mrw_complete.csv	                        -	  gen_regression_vars   		missing	update pending
+out/data/mrw_renamed.csv	                        -	  rename_vars	          		missing	update pending
+```
+
+Which reveals snakemake's plan the next time its run will be to build all outputs.
+
+### Exercise: Creating Cleaning Rules {- .exercise}
+So far we have written a cleaning rule that deletes everything in the `out/` directory.
+Construct rules that would separately clean the `out/data/` and `out/analysis` subdirectories.
+Why might we want to do this?
+
+### Solution {- .solution}
+
+We only need to change the folders to delete in the shell command.
+A solution might look something like this:
+
+```{r, engine = 'bash', eval = FALSE}
+rule clean_data:
+    shell:
+        "rm -rf out/data/*"
+
+rule clean_analysis:
+    shell:
+        "rm -rf out/analysis/*"
+```
+
+Splitting the clean rule gives us a bit more control on what we want to refresh.
+In practice, data cleaning and wrangling can be computationally very taxing.
+Especially later in a project's life cycle these task seldomly change.
+It can therefore be beneficial and sufficient to only reset all other analysis via a clean rule that does not delete the transformed data.
