@@ -1,95 +1,171 @@
-# PART I {-}
 # Project Organization
 
+## Learning Objectives {-}
 
-## Project Structure I: Separating Inputs and Outputs
+TODO: Turn these into actual goals
 
-Structuring our project and the locations of files is an important concept.
+* Separate inputs and outputs 
+* Separate directories by function
+* Minimize hard-coded information inside scripts 
 
-Let's look at the structure of our project's folder.
-Open a terminal and change into this directory
+## Subtitle TBD
+
+As researchers and students we are famililar with the notion a paper or report needs to be written in a 
+  clean and organized way that can be understood by ourselves and others.
+Papers and reports have a logical structure, and are broken into logical chunks.
+When the conclusions are driven by assumptions or ... we try to make this explicit by
+  highlighting where they are or having a separate section to introduce them.
+When logic is unclear and assumptions are not clearly laid out, 
+  we are encouraged to organize written our arguments in a better way.
+
+The idea of maintaining a clean and organized structure often does not extend to our thinking about the code and data
+  that are used to construct the paper's main results.
+Despite our best intentions to keep our code and data organized and coherent as researcher, 
+  it too often becomes one of the first principles we throw out - 
+  either when the complexity grows too large,
+  or when looming deadlines favour the production of results rather than how clean the scripts that produce them look.^[
+    This propensity to pre-maturely throw out code and data organization is something the authors of this tutorial
+     can relate to, as it has often tempted us in our own research - and even when writing this tutorial.
+     ]
+
+Until recently, our paper's "backend" of code and data is typically only visible to the authors of a project, 
+  meaning any frustration and difficulties brought about by bad code and data organization fell only on us, 
+  the authors.
+The rise of open science and reproducibility requirements by publishers have started to open up these backends, 
+  increasing the need for our code and data to be structured in a way that that is amenable to others to look at and understand.
+As a result, the pressure to adopt a coherent way to organize our research project's files has risen 
+  beyond keeping the frustations of our coauthors and our future-selves in check, demanding a solution.
+
+This aim of this chapter is to provide an example structure for a research project and 
+  explain the logic behind the structure we propose.
+There are two core principles behind the way we organize the files for a project:
+  (1) the separation of logical chunks of a project's code and data, and 
+  (2) the separation of parameters, specifications and paths from code.
+A side benefit of both of these principles is that our project's structure becomes portable across multiple research projects.
+This means that once we make a decision to adopt a structure, we can continue to use the same structure repeatedly into the future.^[
+    Our own personal experience suggests that this side benefit reaps just as many rewards.
+    Knowing immediately where to look for pieces of code and parameterizations because all our projects look identical in their organization is definitely a frustration reducing benefit of structure.
+]
+
+We are going to use the files and structure of the folder you have downloaded that replicates Mankiw, Romer and Weil's analysis (hereafter MRW) to look explore one way to organize a research project.^[
+ We discussed downloading these files HERE along with any software you need to install to work through subsequant chapters.
+ ]
+The organization of code and data that you will see emphasizes the notions of separating logical chunks of 
+  code, data, file paths & specifications, along with the files that the statistical analysis that R produces.
+As you work through what follows you may begin to question the extent of logical separation, and whether it is a step too far. 
+If this is where your thoughts start to go, 
+  also reflect on how this structure could be extended if this project were to develop further and
+  on how readily it could be adopted for use in a new project.
+
+## Project Organization I: Separating Inputs and Outputs
+
+The first step in our 'logical separation journey' is the organization of files and folders.
+Starting a project with the right folder structure, even before a line of code is written, 
+  is an easy starting point and will help us stay on track as the project develops.
+Let's take a look at the main folder structures present in our MRW project.
+
+To get started, we need to "open up" the folder to inspect what is there.
+As with the remainder of this tutorial - we will use the terminal to interact with our computer, 
+so "opening" a folder means we will change into that directory.
+Thus, open a terminal^[
+ LINK BACK TO HOW TO DO THIS ACROSS OSes.
+] 
+and change directory to the MRW project directory as follows:
 
 ```{r cd-bash, engine = 'bash', eval = FALSE}
-cd YOUR/PATH/TO/snakemake-econ-r-student
+$ cd YOUR/PATH/TO/snakemake-econ-r-learner
 ```
 
-And list the subdirectories of the main directory
+You can verify you have done this correctly by entering the `pwd` command into the terminal and hitting the `RETURN` key.
+The expected output will be:
+
+```{r pwd-bash, engine = 'bash', eval = FALSE}
+YOUR/PATH/TO/snakemake-econ-r-learner
+```
+
+Now we want to look at the files and folders present in that directory:
 
 ```{r ls-bash, engine = 'bash', eval = FALSE}
-ls -d */
+$ ls 
 ```
 
-We see the following folder structure
+We see the following:
+
 ```{r ls-bash-res, engine = 'bash', eval = FALSE}
 ./
     |- src/
     |- out/
     |- log/
     |- sandbox/
+    README.md
+    Snakefile
 ```
+The main idea here is that there is a top level directory `./` which contains four sub-folders: 
+  `src`, `out`, `log` and `sandbox`.
+In addition to these subfolders, there is two files, `README.md` and `Snakefile`.
+Importantly there is no `R` scripts or data files in this top level directory.
+We briefly discuss each of these in turn.
 
+**Root Folder (`./`).**
+This is the main folder of the project. 
+Everything that is used or produced for the project should be located in a this folder, or better yet a sub-folder.
+Think of it as a 'one-stop shop' for what you are working on for this project. 
+If it's important - you must be able to find it here.
 
-We recommend the following structure for any project:
+**`src` folder**. 
+This is the 'source' folder. 
+It contains all of your code files you develop during your analysis and the original datasets you begin your analysis with.
 
-* Root Folder
-* `src` folder for input files
-* `out` folder for output files
-* a `log` folder to store computer logs
-* a `sandbox` folder that gives us a 'safe place' to develop new code
+**`out` folder**.
+This is the output directory.
+We will put anything that we create by running a `R` script.
+For example, it can contain new datasets we create by cleaning and merging our original data, 
+  saved regression results and saved figures or summary tables.
+The main point is that anything we can recreate by running `R` scripts will get saved here - 
+  whether they be 'temporary' or 'intermediate' outputs that will get used by another `R` script later in our project,
+  or 'final' outputs that we will want to insert into a paper, report or slide deck.
 
-We discuss each of these in turn.
+**`log` folder**.
+When we run and `R` script it produces output and messages, typically printing them to the screen.
+If we want to save those messages to a file, so we can refer to them in the future, we will save them here.
 
-### The Root Folder
+**`sandbox` folder**.
+As we work through our project, we will want to explore new ideas and test out how to code them.
+While we play with these bits and pieces of code, we save them in the `sandbox`.
+Separating them from `src` means we know that `R` scripts in here are 'under development'.
+When they are finalized, we can move them into `src`.
 
-TBD
+**`README.md` file**.
+A `README` is a text file that introduces and explains the project.
+We should write information that explains what the project is about and how someone can run the scripts developed for the project in this file.
+We also recommend providing installation instructions to clarify exactly what needs to be installed to run the project.
 
-### The `src` folder
+**`Snakefile`**.
+We will use the `Snakefile` to write the steps needed that run all the scripts in the project.
+Further discussion of `Snakefiles` are deferred to the next chapter when introduce `Snakemake`.
 
-TBD
-
-### The `out` folder
-
-TBD
-
-### The `log` folder
-
-### Exploring the Full Structure of the MRW Replication Project
-
-Now, let's look at all contents of this main projects directory:
-
-```{r ls-bash-2, engine = 'bash', eval = FALSE}
-ls -F .
-```
-
-We see the following folder structure
-```{r ls-bash-res-2, engine = 'bash', eval = FALSE}
-./
-    |- src/
-    |- out/
-    |- log/
-    |- sandbox/
-    | README.md
-    | Snakefile
-```
-
-Notice that there are no instances of:
-    (i) scripts,
-    (ii) files containing content of the paper or slides
-    (iii) something else we haven't thought of yet
-Instead, there are only two files, a `README.md` and a file called `Snakefile.`
-
-TODO: explain these two files
+The advantage of following this folder structure means that anyone who looks through the your code 
+  can easily figure out what the original/raw data sets are and what files need to be executed versus
+  what files have been created by `R` scripts.
+This is beneficial not only to others trying to understand your code, 
+  but also future versions of yourself when you come back to your project's code after not working on it for a while.
 
 ## Project Structure II: Separating Logical Chunks of the Project
 
-As we have mentioned above, to keep our project's structure clean, we want to keep all the computer code inside the `src` directory.
+Now that we are looking to keep our project's structure clean, we want to keep all the computer code inside the `src` directory.
+However if we were to simply put all our computer code and data into `src` although we solve part of our project disorganization, 
+  we still potentially have many original datasets and many `R` scripts all located in one directory.
+This half-organized - half-disorganized approach is definitely an improvement of having all our files located in one place,
+  but one can (and should) do better.
+To keep our project even more organized, we create a set of subdirectories inside `src` to separate logical chunks of the project.
+ 
 Let's have a look at the content of `src`.
 
 ```{r ls-bash-src, engine = 'bash', eval = FALSE}
-ls -F src/
+$ ls src/
 ```
-
 We see the following output:
+
 ```{r ls-bash-src-res, engine = 'bash', eval = FALSE}
 ./
     |src/
@@ -101,29 +177,87 @@ We see the following output:
         |- lib/
         |- figures/
         |- tables/
+        |- table-specs/
+        |- paper/
+        |- slides/
+```
+Here we see 9 sub-folders inside `src`.
+These are designed to logically separate various aspects of the project:
+
+* `data/` contains all of the project's original/raw data.
+* `data-management/` contains all `R` scripts to clean and merge datasets together
+* `data-specs/` contains any special parameterizations used in cleaning or analysis.
+* `analysis/` contains all `R` scripts that are our main analysis. For example, our regression scripts
+* `model-specs/` conatins
+* `lib/` contains `R` scripts that contain functions that can be used more generally. 
+  For example helper functions that can be used in both data cleaning and analysis could be put here. 
+  So can scripts that contain functions that can be portable across multiple projects. 
+* `figures/` contains `R` scripts that produce figures. One script per figure.
+* `tables/` contains `R` scripts that produce summary tables and regression tables. One script per table.
+* `table-specs` - contains the 
+* `paper` contains the `Rmarkdown` files to write up project results in a paper, i.e. the paper's text.
+* `slides` contains the `Rmarkdown` files to write up project results as a slide deck, i.e. the text of the slides.
+
+
+This separation begins to make clear the logical steps to produce a project which is useful in itself.
+There's some orginal data set in `data` that needs to be tidied in some way.
+The scripts in `data-management` do that cleaning.
+Once the data is cleaned, scripts in `analysis` perform the statistical analysis on clean data.
+Summary figures and tables, and processed results from the analysis come from the scripts inside `tables` and `figures`.
+Finally, `paper` and `slides` contain source files for the writeup and presentation of results.
+Although we are yet to tell anyone how to use these scripts in the sub-folders, the organization of the `src` folder is already extremely suggestive about the steps in our project.
+
+!!IN A WARNING BOX!!
+The presence of the folders `data-specs`, `model-specs` and `table-specs` might still seems a little confusing.
+We use these folders and the files within them to separate out data and model parameterizations - 
+  which can be thought of as a further level of project organization.  
+We will return to this idea in section XX.
+
+In the same way that we have sub-folders in `src`, we also want any of the outputs we produce to organized inside the `out` directory.
+Using a similar structure between `src` and `out` is a good way to do this.
+Let's look at the structure of `out`:
+
+```{r ls-bash-out, engine = 'bash', eval = FALSE}
+$ ls out/
 ```
 
-The type of content we expect in each file is:
+```{r ls-bash-out-res, engine = 'bash', eval = FALSE}
+./
+    |out/
+        |- data/
+        |- analysis/
+        |- figures/
+        |- tables/
+        |- paper/
+        |- slides/
+```
 
-TBD
+We have a sub-folder inside `out` for each sub-folder in `src` that has a step in our project:
 
+* `out/data` can store any datasets that are produced as a result of cleaning and merging
+* `out/analysis` can store any output from statistical analysis, for example saved regression results 
+* `out/figures` holds all figures produced 
+* `out/tables` holds all tables produced
+* `out/paper` has the `pdf` of the paper 
+* `out/slides` has the `pdf` of the slides
 
-### Exploring the Structure of the MRW Replication Subdirectories
+### Aside: Even Deeper Sub-folders
 
-We begin our exploration of the project by looking at the folders that appear to be related to the data.
-If we look inside the `data` directory
+If we look inside the `src/data` directory
 
 ```{r ls-bash-data, engine = 'bash', eval = FALSE}
-ls -F src/data/
+$ ls -F src/data/
 ```
+
+We see one data file:
 
 ```{r ls-bash-data-res, engine = 'bash', eval = FALSE}
 mrw.dta
 ```
 
 That is, our `data/` directory contains the project's original data set.
-
-Note that in more extensive projects, the `data/` subfolder would typically have more than one data set.
+There is only one data set because the project is relatively simple - and only relies on one source of data
+In more extensive projects, the `data/` subfolder would typically have more than one data set.
 For example:
 
 ```{r ls-bash-data-2, engine = 'bash', eval = FALSE}
@@ -132,9 +266,8 @@ dataset2.dta
 dataset3.csv
 ```
 
-TBD - aside on file endings.
-
-Further, your data folder may even contain further subdirectories that organize data further
+If your project uses many data sets, 
+  potentially from many different data providers one could easily add sub-folders for each data provider:
 
 ```{r ls-bash-data-3, engine = 'bash', eval = FALSE}
 ./
@@ -148,35 +281,79 @@ Further, your data folder may even contain further subdirectories that organize 
                 |- dataset4.txt
 ```
 
-If we now turn to the `data-management` directory, we can explore it's contents too:
+i.e. add a further layer of sub-folders.
+This might add extra clarity.
 
-```{r ls-bash-datamgt, engine = 'bash', eval = FALSE}
-ls -F src/data-management/
+!! EXERCISE !!
+Think about whether you could might want additional sub-folders in any of the other `src` directories. 
+Provide some examples you could use, and explain the pros and cons of using them.
+
+
+<!--- 
+
+## Project Structure III: No Hardcoded Paths or Specifications in `R` scripts
+
+So far we have been discussing project organization through structuring our project's folders.
+This is not the only way we can improve the structure & organization of our project.
+We can also work to improve the `R` scripts that we write to make the analysis clearer.
+
+One way to improve `R` scripts is to move away from the notion of 'one project, one script' where each project
+  simply containts one *very* long `R` script that does all the cleaning, analysis, and figure/table generation.
+In this project, we work with the idea of 'one idea, one script'.
+With 'one idea, one script' we have many smaller `R` scripts that each perform one task.
+These smaller scripts are much easier to read and debug when errors come along.
+We organize these smaller scripts within sub-folders of `src` so that we know what each does.^[
+  We also give each `R` script a meaningful filename, which is suggestive of what it does *and* 
+  be liberal with code comments to explain what each part of the script does and where necessary why we are doing that.
+]
+
+A second way to improve the quality of the `R` scripts we write, and in doing so improve our project's organization is 
+  by removing hard-coded file paths as well as data and model specifications from them.
+Instead, we pass across these pieces of information through command line arguments when we run the `R` scripts.
+
+What are hard-coded file paths and why do we remove them from our scripts?
+Hard coded file paths are things like the following inside an `R` script:
+
+```{r, eval = FALSE}
+mrw_data <- read_csv('/users/lachlan/snakemake-econ-r/src/data/mrw.dta')
 ```
 
-```{r ls-bash-datamgt-res, engine = 'bash', eval = FALSE}
-rename_variables.R
-gen_reg_vars.R
+which is an absolute file path, or 
+
+```{r, eval = FALSE}
+mrw_data <- read_csv('src/data/mrw.dta')
 ```
 
-TODO:
+which is a relative file path.
 
-* meaningful filenames
-* Note two different ways to name files
+Absolute file paths are problematic because they mean that scripts that work on one computer will break and give and error message on another.
+For example, if Ulrich wants to run a script on his computer, that uses the absolute file path above, the dataset `mrw.dta` that he is trying to load 
+  doesn't exist on the path `/users/lachlan` on his computer.
+Thus removing absolute file paths means we increase the useabilty of scripts across different computers.
+
+The relative filepath `src/data/mrw.dta` has a better chance of working across multiple computers.
+Lachlan and Ulrich both have the file `mrw.dta` inside the `src/data` sub-folder of the `snakemake-econ-r` project folder.
+So if we both use the `R` script with this line from the project's root folder, it will run for both of us.
 
 
-### Exercise: Exploring the Remaining Subdirectories {- .exercise}
-TBD
+We also remove hardcoded data and model specifications.
+For example, suppose we need to 
+
+-->
 
 ## Project Structure III: Separating Input Parameters from Code
 
-Next we look at the somewhat mysteriously named `data-specs` folder.
-
-And if we explore the folder's contents:
+When we explored the sub-folders of `src` we found three folders that ended with `-specs`: 
+  `data-specs`, `model-specs`, and `table-specs`.
+These folders are used to store alternate specifications that we want to use as part of our data analysis, or table construction.
+To get a better understanding of why these folders exist in our project structure, we are going to take a look at their contents. 
+Let's look at what files are located inside the `data-specs` folder:
 
 ```{r ls-bash-dataspec, engine = 'bash', eval = FALSE}
-ls -F src/data-specs/
+$ ls src/data-specs/
 ```
+
+We see:
 
 ```{r ls-bash-dataspec-res, engine = 'bash', eval = FALSE}
 subset_intermediate.json
@@ -184,12 +361,14 @@ subset_nonoil.json
 subset_oecd.json
 ```
 
-Again, the file names are somewhat meaningful on their own - they appear to be some way of subsetting data (selecting some rows).
+The file names are somewhat meaningful on their own - they appear to be some way of subsetting data (selecting some rows).
 If we look inside one of these files:
 
 ```{r ls-bash-dataspec2, engine = 'bash', eval = FALSE}
 cat src/data-specs/subset_oecd.json
 ```
+
+Which returns:
 
 ```{r ls-bash-dataspec2-res, engine = 'bash', eval = FALSE}
 {
@@ -197,8 +376,13 @@ cat src/data-specs/subset_oecd.json
 }
 ```
 
-We see an a variable `KEEP_CONDITION` which is storing a string `"oecd == 1"`.
+We see what could be interpreted as a variable `KEEP_CONDITION` which stores a string `"oecd == 1"`.
 
-TBD: Why have we done this? See below.
 
-### Exploring Parameter Separation in the MRW Replication Project
+
+!! EXERCISE !!
+
+Inspect the each of the JSON files in `src/model-specs`.
+Explain what you have found, and how you could use these files as part of the project.
+(HINT:) what does `src/analyis/estimate_ols_model.R` do?
+
