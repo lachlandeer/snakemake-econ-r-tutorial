@@ -42,13 +42,13 @@ jobs:
          # Destination path
          path: _book # optional
      - name: Deploy to GitHub Pages
-       uses: Cecilapp/GitHub-Pages-deploy@v2
+       uses: Cecilapp/GitHub-Pages-deploy@v3
        with:
           build_dir: _book/
-          email: lachlan.deer@gmail.com
+          email: ${{ secrets.EMAIL }}
        env:
-          EMAIL: ${{ secrets.EMAIL }}               # must be a verified email
-          GH_TOKEN: ${{ secrets.GH_PAT }} # https://github.com/settings/tokens
-          BUILD_DIR: _book/                     # "_site/" by default
+          #EMAIL: ${{ secrets.EMAIL }}               # must be a verified email
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #BUILD_DIR: _book/                     # "_site/" by default
     
  
