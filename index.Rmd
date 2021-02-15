@@ -71,7 +71,7 @@ While this tutorial is targeted at researchers who are considering adopting Snak
 We often come back to the material ourselves to find snippets of code to include and adapt 
   into our own research workflows and anticipate others may do the same.
 
-## Prequisite Knowledge {-}
+## Pre-requisite Knowledge {-}
 
 To successfully work through this tutorial you will need some programming background with R, python and the command line.
 We have found that familiarity with the following concepts puts you in good stead to understand what follows:
