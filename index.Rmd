@@ -1,10 +1,11 @@
 ---
-title: "Reproducible Research Workflows with Snakemake and `R`"
-subtitle: "An Extended Tutorial for Economists and Social Scientists"
+title: "Reproducible Data Analytic Workflows with Snakemake and `R`"
+subtitle: "An Extended Tutorial for Researchers in Business, Economics and the Social Sciences"
 author:
+    - "Ulrich Bergmann"
     - "Lachlan Deer"
     - "Julian Langer"
-date: "`r Sys.Date()`"
+date: "This Version: `r Sys.Date()` -- Draft Under Active Development"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
 documentclass: book
@@ -15,8 +16,357 @@ github-repo: lachlandeer/snakemake-econ-r-tutorial
 description: "In progress"
 ---
 
-# Prerequisites {-}
+# Preface {-}
 
-This is a _sample_ book written in **Markdown**. You can use anything that Pandoc's Markdown supports, e.g., a math equation $a^2 + b^2 = c^2$.
+## Why we wrote this tutorial {-}
 
-The **bookdown** package can be installed from CRAN or Github:
+Empirical research workflows in economics and other social sciences typically take the form of a 
+  set of steps that need to be performed in a given order.
+For example, one may need to run a set of data cleaning and merging scripts one after the other 
+  before creating a set of summary statistics and figures, 
+  and then running some empirical modelling such as a series of linear regressions.
+These linear regression results need to be compiled into tables, 
+   and these tables need to be included in a research paper and a slide deck.
+The number of steps involved in completing an entire project from initial data preparation, 
+  through to analysis and compiling the final results in a document quickly becomes large, 
+  and the inter-relationships between steps complex.
+Our own experience, and discussions with colleagues suggest that such a workflow quickly becomes unwieldy,
+  being both difficult to remember the relationships between steps and 
+  hard to write down in a way that co-authors and our future selves can access 
+  without blood pressures & stress levels rising. 
+  (the latter, at least from our personal experience stems from a degree of laziness 
+   to document our steps *after* we have completed them).
+We found ourselves frustrated with the headaches manual management of our workflow created
+  and searched for better ways of managing our research workflow.
+
+This tutorial introduces the Snakemake workflow management system as a way to execute research workflows
+  and manage the dependencies between the succesive steps that make up our workflow.
+We have found the Snakemake system to be the best solution to our various workflow needs across our own research in
+  business, economics and social science due to a combination of its' readabilty 
+  and the ease of scaling up as the project becomes increasingly complex.
+Intuitively you can think of Snakemake workflows as a set of of human readable steps 
+  designed to create a replicable analyses:
+We the researcher will need to write down each step in the form of a 'recipe' - 
+  what goes in, 
+  what comes out, and 
+  how do we combine the inputs to produce an output. 
+Once we have written these steps, Snakemake will execute them for us and track the dependencies between steps.
+This means if we update step $x$, for example by changing how we merge data, the .
+Snakemake will then look for other steps in our workflow that would use this updated data, and re-execute them, 
+  *and* any steps further down our analysis that may use this next set of updated outputs.^[
+  If this idea of inter-related steps feels unfamilar at this stage,  
+  we will formalize this idea in the pages that follow.
+  ]
+
+Our hope is that the pages that follow provide a gentle introduction to Snakemake and replicable, automated workflow management.
+The tutorial assumes no knowledge of Snakemake or other workflow management software.
+Each chapter aims to build up one's knowledge through the means of a guided example 
+  combined with some exercises and solutions.
+Our aim is to build up a working understanding of how to use the software
+  so that at the end of the tutorial the reader could get a new or existing project up and running 
+  using the Snakemake paradigm with minimal additional overheads. 
+
+While this tutorial is targeted at researchers who are considering adopting Snakemake for the first time,
+  we hope it can also serve as a useful reference for people are have some working knowledge of Snakemake.
+We often come back to the material ourselves to find snippets of code to include and adapt 
+  into our own research workflows and anticipate others may do the same.
+
+## Pre-requisite Knowledge {-}
+
+To successfully work through this tutorial you will need some programming background with R, python and the command line.
+We have found that familiarity with the following concepts puts you in good stead to understand what follows:
+
+* Working Knowledge of `R`
+    * Including writing command line programs, and Dynamic Reports with `knitr` and `rmarkdown`
+    * For a quick review see Software Carpentry's ['Programming with R'](https://swcarpentry.github.io/python-novice-inflammation/) Lesson
+* Basic Knowledge of `Python` (Snakemake is written in Python)
+    * Data Types, variable creation, lists and dictionaries
+    * For a quick review see sections 1, 5 and 12 of of Software Carpentry's ['Programming with Python'](https://swcarpentry.github.io/python-novice-inflammation/) Lesson
+* Basic Working Knowledge of a `bash` terminal
+    * File system structure, Changing directories, Making directories, Removing Files and Directories, Running a script from command line
+    * For a quick review see sections 1, 2, 3 and 6 of Software Carpentry's ['Unix Shell'](http://swcarpentry.github.io/shell-novice/) Lesson 
+
+## What Needs to be Downloaded & Installed for this Tutorial {-}
+
+### Template Scripts and Documents {-}
+
+The backbone of our tutorial is a dataset and a set of `R` scripts that need to be executed 
+  in a particular order, and two `Rmarkdown` documents which have template versions of a paper and slides. 
+To approximate a larger research workflow, 
+  some scripts will need to be run multiple times across different configurations.
+
+To work through the tutorial - building up your own Snakemake workflow and running the commands yourself on your own computer, 
+  you will need to download these scripts and markdown documents.
+We provide two ways to download these files:
+
+1. Download a zip archive [here](https://github.com/lachlandeer/snakemake-econ-r-learner/archive/master.zip).
+   After downloading, proceed to unzip the folder and move it to a location in your computer that you feel comfortable to work with.^[
+    For example, you could move it your , or your Desktop.
+   ]
+
+2. Download the template scripts using Git:
+
+```{bash, eval = FALSE}
+git clone https://github.com/lachlandeer/snakemake-econ-r-learner.git
+```
+
+!! TIP !!
+
+When we have taught this tutorial live in person in the past, 
+  we have created a folder on each learner's computer which we tell them to think of as a "safe space" - 
+  where we can't accidently move, delete or otherwise modify any files on their computer they deem important by accident.
+For example, if learners have a 'coursework' folder, 
+  we ask them to create a new sub-folder called "20YY-MM-programming class", 
+  where YY and MM are the year and month we are giving the class.   
+We then ask them to download this folder / clone the repository inside this space.
+
+### Software Installation {-}
+
+In addition to the `R` scripts and data, you will need to have some software installed on your computer.
+You need to have the following installed:
+
+1. Access to a `bash` style terminal
+1. Python 3 (Python 3.6 or higher)
+2. Snakemake
+3. R (version 4.0.x)
+4. Some R packages for additional functionality
+
+We provide instructions below.
+
+#### Access to a `bash` style terminal {-}
+
+**Windows Users**
+
+Windows does *not* have a bash terminal installed by default. 
+Follow instructions [here](https://itsfoss.com/install-bash-on-windows/) to install one.
+
+**Mac Users**
+
+You have a  bash style terminal installed by default. 
+To open a terminal session:
+
+* Open spotlight with cmd + space
+* Type in 'terminal'
+* When the terminal appears, open it.
+
+**Linux Users**
+
+You have a bash style terminal installed by default. 
+Instructions to open a terminal vary across Linux flavours. 
+On Ubuntu style flavours, `Ctrl` + `Alt` + `T` will work. 
+
+#### Installing Python {-}
+
+Either:
+
+1. Install Anaconda Python (all OS):
+    - We provide instructions on how to install anaconda python [here](https://pp4rs.github.io/2020-uzh-installation-guide/python/)
+2. Install Python using the deadsnakes ppa (Ubuntu Specific):
+    - Here's how to add the deadsnakes ppa and install Python 3.8
+    ```bash
+    $ sudo apt-get install software-properties-common
+    $ sudo add-apt-repository ppa:deadsnakes/ppa
+    $ sudo apt-get update
+    $ sudo apt-get install python3.8
+    ```
+
+#### Installing Snakemake {-}
+
+Inside your terminal window enter the following command and press `Return`
+
+``` bash
+pip3 install snakemake
+```
+
+you may need to replace `pip3` with `pip`
+
+
+**Windows Users**: If you get an installation error here, the the following commands sequentially:
+
+``` bash
+pip install datrie
+pip install snakemake
+```
+
+If you are still having issues:
+
+* If you are completing this tutorial as part of a live workshop, raise your hand
+* Else, create an issue here, and tell us what the error message is + what operating system you are running on.
+  We will try and resolve it. 
+
+#### Installing `R` {-}
+
+We provide instructions on how to install R [here](https://pp4rs.github.io/2020-uzh-installation-guide/r)
+
+#### Installing the Required `R` libraries {-}
+
+We utilize some additional R packages inside the scripts that build our project.
+To install either:
+
+1. If you have RStudio and are comfortable installing packages there.
+    * Open Rstudio 
+    * Copy and paste the following lines into the R console:
+
+    ``` r
+    to_install <- c("dplyr",
+                    "ggplot2",
+                    "haven",
+                    "magrittr",
+                    "optparse",
+                    "purrr",
+                    "readr",
+                    "rjson",
+                    "rlist",
+                    "stargazer",
+                    "tibble",
+                    )
+
+    install.packages(to_install, repos = "https://cloud.r-project.org/")
+    ```
+
+2. A command line alternative:
+    * Open your terminal and change directory to the folder called `snakemake-econ-r-learner` you downloaded in a previous step
+
+    ```r
+    cd PATH/TO/snakemake-econ-r-learner
+
+    ```
+    * Run type the following command into the terminal and press `Return`:
+
+    ```bash 
+    Rscript install_r_packages.R
+    ```
+
+## What We Can't Cover {-}
+
+Our goal of providing a gentle introduction to workflow management via Snakemake means that we have deliberately 
+  sacrificed details and .
+In particular, we do not cover:
+
+* A detailed discussion about the inner workings of Snakemake
+* A wide-ranging introduction to all of Snakemake's features (which continue to grow)
+
+If you are interested in either of these, we recommend you look at the Snakemake documentation (LINK) 
+  and the supporting technical publication (LINK). 
+We have found each of these references are extremely useful - but quite dense and difficult to process for new-comers. 
+
+## Acknowledgements {-}
+
+First and foremost, we would like to thank the Department of Economics at the University of Zurich for giving us 
+  the opportunity to 
+The idea of 
+
+This tutorial is a extension of the idea and implementation of reproducible workflow management 
+  that we taught during these classes.
+
+We are indebted to the 2016 - 2020 cohorts of the PhD and research assistants who 
+
+Their questions, confused looks and XX have all improved 
+
+We would like to thank our colleagues and friends who co-taught the Programming Practices classes at 
+
+Lachlan and Julian were introduced to the concept of workflow management software by Hans-Martin von Gaudecker 
+  during a short course on Effective Programming Practices in 20XX.
+The introduction to Hans-Martin's Templates for "Reproducible Research Projects in Economics" using Waf 
+  and (now) pytask provided much inspiration for the structure of our own template and this tutorial.
+
+## About the Authors {-}
+
+Ulrich Bergmann is ...
+
+[Lachlan Deer](https://lachlandeer.github.io/) (Twitter handle: [lachlandeer](https://twitter.com/lachlandeer?lang=en)) is an Assistant Professor of Marketing at Tilburg University,
+   a Fellow at the University of Zurich's Centre for Reproducible Science and an instructor and lesson maintainer for the Carpentries Project.
+Prior to joining Tilburg University he was a Postdoctoral Fellow at the University of Chicago Booth School of Business, 
+  and completed his PhD in Economics at the University of Zurich in 2019.
+His substantive research interests lie in social media and it's impact on media and entertainment industries, and the role of social media networks in political revolutions.
+From 2016 he is co-lead at of the "Programming Practices for Research in Economics" inititative teaching coding skills and reproducible research principles to early career researchers in economics and business.
+In his spare time he enjoys strumming his ukelele, improving his caffe latte making skills and building lego models.
+
+
+[Julian Langer](https://www.julianlanger.org/) (Twitter handle: [jlnlanger](https://twitter.com/jlnlanger?lang=en)) is a Fellow at the Access to Justice Lab at Harvard Law School 
+  and a visiting researcher at the Berlin Social Science Center (WZB). 
+He completed his PhD in Economics at the University of Zurich in July 2020.
+His substantive research interests lie in economic history, political economy, the economics of crime, and text-as-data.
+Since 2016 he co-leads the "Programming Practices for Research in Economics" initiative, teaching coding skills and reproducible research principles.
+When not at work he enjoys... 
+
+## License {-}
+
+### Instructional material {-}
+
+
+All instructional material made available under the tutorial titled "Reproducible Data Analytic Workflows with Snakemake and `R`"
+ and authored by Ulrich Bergmann, Lachlan Deer and Julian Langer is
+made available under the [Creative Commons Attribution
+license][cc-by-human]. The following is a human-readable summary of
+(and not a substitute for) the [full legal text of the CC BY 4.0
+license][cc-by-legal].
+
+You are free:
+
+* to **Share**---copy and redistribute the material in any medium or format
+* to **Adapt**---remix, transform, and build upon the material
+
+for any purpose, even commercially.
+
+The licensor cannot revoke these freedoms as long as you follow the
+license terms.
+
+Under the following terms:
+
+* **Attribution**---You must give appropriate credit (mentioning that
+  your work is derived from this tutorial and, where practical, linking to the material
+  http://lachlandeer.github.io/snakemake-econ-r-tutorial), provide a [link to the
+  license][cc-by-human], and indicate if changes were made. You may do
+  so in any reasonable manner, but not in any way that suggests the
+  licensor endorses you or your use.
+
+**No additional restrictions**---You may not apply legal terms or
+technological measures that legally restrict others from doing
+anything the license permits.  With the understanding that:
+
+Notices:
+
+* You do not have to comply with the license for elements of the
+  material in the public domain or where your use is permitted by an
+  applicable exception or limitation.
+* No warranties are given. The license may not give you all of the
+  permissions necessary for your intended use. For example, other
+  rights such as publicity, privacy, or moral rights may limit how you
+  use the material.
+
+### Software {-}
+
+Except where otherwise noted, the example programs and other software provided by Ulrich Bergmann, Lachlan Deer and Julian Langer are made available under the [OSI][osi]-approved
+[MIT license][mit-license].
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+## Citation {-}
+
+Please cite as: 
+
+Bergmann, U, Deer, L and Langer, J. (2021, February).
+"Reproducible Data Analytic Workflows with Snakemake and `R`: An Extended Tutorial for Researchers in Business, Economics and the Social Sciences".
+February 2021 (Version v2021.1.0)
+https://lachlandeer.github.io/snakemake-econ-r-tutorial
+
+```{eval = FALSE}
+@misc{bdl2020snakemakeecon,
+      title={Reproducible Data Analytic Workflows with Snakemake and `R`: An Extended Tutorial for Researchers in Business, Economics and the Social Sciences},
+      author={Ulrich Bergmann and Lachlan Deer and Julian Langer},
+      year={2021},
+      url = "https://lachlandeer.github.io/snakemake-econ-r-tutorial"
+}
+```
+
+[cc-by-human]: https://creativecommons.org/licenses/by/4.0/
+[cc-by-legal]: https://creativecommons.org/licenses/by/4.0/legalcode
+[mit-license]: https://opensource.org/licenses/mit-license.html
+[ci]: http://communityin.org/
+[osi]: https://opensource.org
