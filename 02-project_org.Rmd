@@ -284,20 +284,76 @@ If your project uses many data sets,
 i.e. add a further layer of sub-folders.
 This might add extra clarity.
 
-
 !! EXERCISE !!
 Think about whether you could might want additional sub-folders in any of the other `src` directories. 
 Provide some examples you could use, and explain the pros and cons of using them.
 
+
+<!--- 
+
+## Project Structure III: No Hardcoded Paths or Specifications in `R` scripts
+
+So far we have been discussing project organization through structuring our project's folders.
+This is not the only way we can improve the structure & organization of our project.
+We can also work to improve the `R` scripts that we write to make the analysis clearer.
+
+One way to improve `R` scripts is to move away from the notion of 'one project, one script' where each project
+  simply containts one *very* long `R` script that does all the cleaning, analysis, and figure/table generation.
+In this project, we work with the idea of 'one idea, one script'.
+With 'one idea, one script' we have many smaller `R` scripts that each perform one task.
+These smaller scripts are much easier to read and debug when errors come along.
+We organize these smaller scripts within sub-folders of `src` so that we know what each does.^[
+  We also give each `R` script a meaningful filename, which is suggestive of what it does *and* 
+  be liberal with code comments to explain what each part of the script does and where necessary why we are doing that.
+]
+
+A second way to improve the quality of the `R` scripts we write, and in doing so improve our project's organization is 
+  by removing hard-coded file paths as well as data and model specifications from them.
+Instead, we pass across these pieces of information through command line arguments when we run the `R` scripts.
+
+What are hard-coded file paths and why do we remove them from our scripts?
+Hard coded file paths are things like the following inside an `R` script:
+
+```{r, eval = FALSE}
+mrw_data <- read_csv('/users/lachlan/snakemake-econ-r/src/data/mrw.dta')
+```
+
+which is an absolute file path, or 
+
+```{r, eval = FALSE}
+mrw_data <- read_csv('src/data/mrw.dta')
+```
+
+which is a relative file path.
+
+Absolute file paths are problematic because they mean that scripts that work on one computer will break and give and error message on another.
+For example, if Ulrich wants to run a script on his computer, that uses the absolute file path above, the dataset `mrw.dta` that he is trying to load 
+  doesn't exist on the path `/users/lachlan` on his computer.
+Thus removing absolute file paths means we increase the useabilty of scripts across different computers.
+
+The relative filepath `src/data/mrw.dta` has a better chance of working across multiple computers.
+Lachlan and Ulrich both have the file `mrw.dta` inside the `src/data` sub-folder of the `snakemake-econ-r` project folder.
+So if we both use the `R` script with this line from the project's root folder, it will run for both of us.
+
+
+We also remove hardcoded data and model specifications.
+For example, suppose we need to 
+
+-->
+
 ## Project Structure III: Separating Input Parameters from Code
 
-Next we look at the somewhat mysteriously named `data-specs` folder.
-
-And if we explore the folder's contents:
+When we explored the sub-folders of `src` we found three folders that ended with `-specs`: 
+  `data-specs`, `model-specs`, and `table-specs`.
+These folders are used to store alternate specifications that we want to use as part of our data analysis, or table construction.
+To get a better understanding of why these folders exist in our project structure, we are going to take a look at their contents. 
+Let's look at what files are located inside the `data-specs` folder:
 
 ```{r ls-bash-dataspec, engine = 'bash', eval = FALSE}
-ls -F src/data-specs/
+$ ls src/data-specs/
 ```
+
+We see:
 
 ```{r ls-bash-dataspec-res, engine = 'bash', eval = FALSE}
 subset_intermediate.json
@@ -305,12 +361,14 @@ subset_nonoil.json
 subset_oecd.json
 ```
 
-Again, the file names are somewhat meaningful on their own - they appear to be some way of subsetting data (selecting some rows).
+The file names are somewhat meaningful on their own - they appear to be some way of subsetting data (selecting some rows).
 If we look inside one of these files:
 
 ```{r ls-bash-dataspec2, engine = 'bash', eval = FALSE}
 cat src/data-specs/subset_oecd.json
 ```
+
+Which returns:
 
 ```{r ls-bash-dataspec2-res, engine = 'bash', eval = FALSE}
 {
@@ -318,9 +376,9 @@ cat src/data-specs/subset_oecd.json
 }
 ```
 
-We see an a variable `KEEP_CONDITION` which is storing a string `"oecd == 1"`.
+We see what could be interpreted as a variable `KEEP_CONDITION` which stores a string `"oecd == 1"`.
 
-TBD: Why have we done this? See below.
+
 
 !! EXERCISE !!
 
