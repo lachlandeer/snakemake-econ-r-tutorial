@@ -88,11 +88,39 @@ We have found that familiarity with the following concepts puts you in good stea
 
 ## What Needs to be Downloaded & Installed for this Tutorial {-}
 
+### Template Scripts and Documents {-}
+
 The backbone of our tutorial is a dataset and a set of `R` scripts that need to be executed 
-  in a particular order, and
-  some scripts need to be run multiple times across different configurations.
-To work through the tutorial and run the commands yourself, you will need to download these files.
-You can either:  
+  in a particular order, and two `Rmarkdown` documents which have template versions of a paper and slides. 
+To approximate a larger research workflow, 
+  some scripts will need to be run multiple times across different configurations.
+
+To work through the tutorial - building up your own Snakemake workflow and running the commands yourself on your own computer, 
+  you will need to download these scripts and markdown documents.
+We provide two ways to download these files:
+
+1. Download a zip archive [here](https://github.com/lachlandeer/snakemake-econ-r-learner/archive/master.zip).
+   After downloading, proceed to unzip the folder and move it to a location in your computer that you feel comfortable to work with.^[
+    For example, you could move it your , or your Desktop.
+   ]
+
+2. Download the template scripts using Git:
+
+```{bash}
+git clone https://github.com/lachlandeer/snakemake-econ-r-learner.git
+```
+
+!! TIP !!
+
+When we have taught this tutorial live in person in the past, 
+  we have created a folder on each learner's computer which we tell them to think of as a "safe space" - 
+  where we can't accidently move, delete or otherwise modify any files on their computer they deem important by accident.
+For example, if learners have a 'coursework' folder, 
+  we ask them to create a new sub-folder called "20YY-MM-programming class", 
+  where YY and MM are the year and month we are giving the class.   
+We then ask them to download this folder / clone the repository inside this space.
+
+### Software Installation {-}
 
 In addition to the `R` scripts and data, you will need to have some software installed on your computer.
 You need to have the following installed:
@@ -105,14 +133,14 @@ You need to have the following installed:
 
 We provide instructions below.
 
-### Access to a `bash` style terminal {-}
+#### Access to a `bash` style terminal {-}
 
-#### Windows Users {-}
+**Windows Users**
 
 Windows does *not* have a bash terminal installed by default. 
 Follow instructions [here](https://itsfoss.com/install-bash-on-windows/) to install one.
 
-#### Mac Users {-}
+**Mac Users**
 
 You have a  bash style terminal installed by default. 
 To open a terminal session:
@@ -121,13 +149,13 @@ To open a terminal session:
 * Type in 'terminal'
 * When the terminal appears, open it.
 
-#### Linux Users {-}
+**Linux Users**
 
 You have a bash style terminal installed by default. 
 Instructions to open a terminal vary across Linux flavours. 
 On Ubuntu style flavours, `Ctrl` + `Alt` + `T` will work. 
 
-### Installing Python {-}
+#### Installing Python {-}
 
 Either:
 
@@ -142,7 +170,7 @@ Either:
     $ sudo apt-get install python3.8
     ```
 
-### Installing Snakemake {-}
+#### Installing Snakemake {-}
 
 Inside your terminal window enter the following command and press `Return`
 
@@ -166,11 +194,11 @@ If you are still having issues:
 * Else, create an issue here, and tell us what the error message is + what operating system you are running on.
   We will try and resolve it. 
 
-### Installing `R` {-}
+#### Installing `R` {-}
 
 We provide instructions on how to install R [here](https://pp4rs.github.io/2020-uzh-installation-guide/r)
 
-### Installing the Required `R` libraries {-}
+#### Installing the Required `R` libraries {-}
 
 We utilize some additional R packages inside the scripts that build our project.
 To install either:
