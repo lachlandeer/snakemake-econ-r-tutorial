@@ -6,8 +6,9 @@ snakemake-econ-r-learner/*
 # don't push local rendered files in master branch
 _book/
 _bookdown_files/
-docs/
+docs/*
 libs/
+*.log
 **/*.bib
 **/*.html 
 # ignore all html files except:
