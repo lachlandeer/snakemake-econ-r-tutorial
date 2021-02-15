@@ -1,6 +1,20 @@
-_book
-_bookdown_files
 .snakemake
 log/*
-*.pdf
-*.spl
+
+snakemake-econ-r-learner/*
+
+# don't push local rendered files in master branch
+_book/
+_bookdown_files/
+docs/*
+libs/
+*.log
+**/*.bib
+**/*.html 
+# ignore all html files except:
+!**/mathjax_header.html
+# R and Rstudio specific files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata"
