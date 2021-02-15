@@ -25,8 +25,8 @@ logAll = "2>&1"
 
 rule all:
     input:
-        pdf  = "docs/book.pdf",
-        html = "docs/index.html"
+        pdf  = "_book/book.pdf",
+        html = "_book/index.html"
     # output:
     #     pdf  = "docs/" + PROJ_NAME + ".pdf",
     # shell:
@@ -41,7 +41,7 @@ rule pdf:
         #cls_file   = CLS_FILES,
         runner     = "build_pdfbook.R"
     output:
-        "docs/book.pdf"
+        "_book/book.pdf"
     log:
         "log/build_pdf.Rout"
     shell:
@@ -55,7 +55,7 @@ rule html:
         css_style  = CSS_FILES,
         runner     = "build_htmlbook.R"
     output:
-        "docs/index.html"
+        "_book/index.html"
     log:
         "log/build_html.Rout"
     shell:
