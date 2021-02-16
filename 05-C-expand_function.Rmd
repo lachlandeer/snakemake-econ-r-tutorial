@@ -1,5 +1,16 @@
 # The `expand()` function
 
+There's more work we can do to reduce duplication.
+Look at the rule `run_solow`:
+
+```{r, engine = 'bash', eval = FALSE}
+rule run_solow:
+    input:
+        nonoil = "out/analysis/model_solow_nonoil.rds",
+        oecd   = "out/analysis/model_solow_oecd.rds",
+        intermediate = "out/analysis/model_solow_intermediate.rds"
+```
+
 Each of these inputs listed above have similar structure, with only the name of the subset of data we are using changing.
 We can use another feature of Snakemake to simplify this rule.
 Snakemake has an `expand()` function that can accept a wildcard and replace it with a set of specified values in an iterative manner.
