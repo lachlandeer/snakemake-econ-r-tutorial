@@ -1,0 +1,101 @@
+# Wildcards
+
+This is good progress, but if we look at the *solow_* rules we see that there is quite a lot of duplication.
+All three rules use the same script, data, and model inputs.
+They only differ in the data subsetting found under `{input.subset}` and the output file define under `{output.estimate}`.
+
+Ideally, we want `Snakefile` to feature the minimum amount of duplication possible.
+This has a few advantages:
+
+Limiting redundancy allows us to make changes to the code only once rather than multiple times (imagine changing the `{data.input}` file).
+Any additional copy of code also introduces extra opportunities of typos or other errors and makes the build file generally harder to read and navigate.
+And if we're completely honest, it's also a just a bit ugly...
+
+In this chapter we will 
+
+
+A straight forward solution to remove redundancy is 
+The three *solow_* rules can be collapsed into one rule if can create a variable, for example `iSubset`,
+    that can iterate through the three .json files that contain the subset filters.
+That is, we want to create a rule `solow_model` that can do the work that `solow_nonoil`, `solow_oecd` and `solow_intermediate` currently do.
+In Snakemake, these variables are called *wildcards*.
+
+The format of this rule will be:
+
+```{r, engine = 'bash', eval = FALSE}
+rule solow_model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/model_solow.json",
+        subset = "src/data-specs/subset_{iSubset}.json"
+    output:
+        model_est = "out/analysis/model_solow_{iSubset}.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.model_est}"
+```
+
+We wrapped our wildcard `iSubset` in curly parentheses so that Snakemake knows that we will want to substitute the name of one of the subsets into this value.
+This is conceptually similar to what we have done in our shell commands.
+
+We can now try and run our updated Snakefile:
+
+```{r, engine = 'bash', eval= FALSE}
+$ snakemake
+```
+
+```{r, engine = 'out', eval = FALSE}
+Building DAG of jobs...
+WorkflowError:
+Target rules may not contain wildcards. Please specify concrete files or a rule without wildcards.
+```
+
+What has happened?
+Snakemake will not execute a rule that contains wildcards.^[
+Technically there is another problem here too.
+Snakemake doesn't know what values to substitute into `iSubset.`
+We focus on the Wildcard error because this is what the Snakemake error message mentions.
+By fixing this error, it turns out we also spell out what values to substitute into `iSubset`.
+]
+What we will do is create another rule, `run_solow` that will not contain wildcards ...
+
+```{r, engine = 'bash', eval = FALSE}
+
+rule run_solow:
+    input:
+        nonoil = "out/analysis/model_solow_nonoil.rds",
+        oecd   = "out/analysis/model_solow_oecd.rds",
+        intermediate = "out/analysis/model_solow_intermediate.rds"
+
+rule solow_model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/model_solow.json",
+        subset = "src/data-specs/subset_{iSubset}.json"
+    output:
+        model_est = "out/analysis/model_solow_{iSubset}.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.model_est}"
+```
+
+Explain what happens here...
+
+There's more work we can do to reduce duplication.
+Look at the rule `run_solow`:
+
+```{r, engine = 'bash', eval = FALSE}
+rule run_solow:
+    input:
+        nonoil = "out/analysis/model_solow_nonoil.rds",
+        oecd   = "out/analysis/model_solow_oecd.rds",
+        intermediate = "out/analysis/model_solow_intermediate.rds"
+```

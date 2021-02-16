@@ -1,0 +1,230 @@
+## The `expand()` function
+
+Each of these inputs listed above have similar structure, with only the name of the subset of data we are using changing.
+We can use another feature of Snakemake to simplify this rule.
+Snakemake has an `expand()` function that can accept a wildcard and replace it with a set of specified values in an iterative manner.
+In our case, we want to use the expand function to accept the `{iSubset}` wildcard, and replace it with the values 'nonoil', 'oecd' and 'intermediate' one at a time.
+To proceed we need to do two things:
+
+1. Create a list, DATA_SUBSETS, that contains the values we want to iterate through - 'nonoil', 'oecd' and 'intermediate'.
+2. Use Snakemake's `expand()` function to iteratively replace `{iSubset}` with each value contained in the list `DATA_SUBSET`
+
+Let's start with (1).
+We will use an area above our Snakemake rules to store the `DATA_SUBSET` variable:
+
+```{r, engine = 'bash', eval = FALSE}
+DATA_SUBSET = [
+                "oecd",
+                "intermediate",
+                "nonoil"
+                ]
+
+# --- Build Rules --- #
+...
+```
+
+The capitalization of the list DATA_SUBSET is not essential.
+We do it to separate lists that we will iterate through from other parts of our Snakefile.
+This means whenever we see a capitalized name, we know it is a list that we want to iterate through.
+
+Next, we update the rule `run_solow` as follows:
+
+```{r, engine = 'bash', eval = FALSE}
+rule run_solow:
+    input:
+        expand("out/analysis/model_solow_{iSubset}.rds",
+                    iSubset = DATA_SUBSET)
+```
+
+Now, we can clean our output folder with `$ snakemake clean`.
+If we re-run snakemake we would expect everything to run.
+To see if this is the case we can do a *dry run*.
+A dry run will try go through the Snakefile and print all the rules Snakemake wants to execute in order.
+
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake --dryrun
+```
+
+which yields the following plan:
+
+```{r, engine = 'out', eval = FALSE}
+Building DAG of jobs...
+Job counts:
+	count	jobs
+	1	gen_regression_vars
+	1	rename_vars
+	1	run_solow
+	3	solow_model
+	6
+
+[Fri Jan 11 17:00:32 2019]
+rule rename_vars:
+    input: src/data/mrw.dta, src/data-management/rename_variables.R
+    output: out/data/mrw_renamed.csv
+    jobid: 5
+
+
+[Fri Jan 11 17:00:32 2019]
+rule gen_regression_vars:
+    input: out/data/mrw_renamed.csv, src/data-management/gen_reg_vars.R, src/data-specs/param_solow.json
+    output: out/data/mrw_complete.csv
+    jobid: 4
+
+
+[Fri Jan 11 17:00:32 2019]
+rule solow_model:
+    input: src/data-specs/subset_nonoil.json, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/analysis/estimate_ols_model.R
+    output: out/analysis/model_solow_nonoil.rds
+    jobid: 1
+    wildcards: iSubset=nonoil
+
+
+[Fri Jan 11 17:00:32 2019]
+rule solow_model:
+    input: src/data-specs/subset_oecd.json, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/analysis/estimate_ols_model.R
+    output: out/analysis/model_solow_oecd.rds
+    jobid: 2
+    wildcards: iSubset=oecd
+
+
+[Fri Jan 11 17:00:32 2019]
+rule solow_model:
+    input: src/data-specs/subset_intermediate.json, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/analysis/estimate_ols_model.R
+    output: out/analysis/model_solow_intermediate.rds
+    jobid: 3
+    wildcards: iSubset=intermediate
+
+
+[Fri Jan 11 17:00:32 2019]
+localrule run_solow:
+    input: out/analysis/model_solow_nonoil.rds, out/analysis/model_solow_oecd.rds, out/analysis/model_solow_intermediate.rds
+    jobid: 0
+
+Job counts:
+	count	jobs
+	1	gen_regression_vars
+	1	rename_vars
+	1	run_solow
+	3	solow_model
+	6
+
+```
+
+This looks like what we want to happen.
+Hence, we re-run snakemake to produce all output:
+
+```{r, engine = 'bash', eval = FALSE}
+$ snakemake
+```
+
+### Exercise: Exploring the expand() function I {- .exercise}
+So far we have estimated the basic Solow model.
+MRW also estimate an augmented version of the Solow model, adding human capital.
+The formula required to estimate the augmented model is written up in `src/model-specs/model_aug_solow.json`.
+Use the `expand()` function together with the `estimate_ols.R` script to estimate the augmented solow model on each of the three data subsets.
+The rule structures should look very similar to what we have done so far.
+
+### Exercise: Exploring the expand function II {- .exercise}
+The MRW paper contains three plots.
+Each of these plots use the subset of 'intermediate' countries.
+In the `src/figures/` subdirectory, there are three scripts that reproduce each of the figures.^[
+This is not entirely true, we are yet to figure out how to get the y-axis range from the original paper.
+]
+The scripts are written in such a way that they accept exactly the same options.
+Using wildcards and the expand function extend the Snakefile to construct each figure.
+Each figure should be saved with the following name 'out/figures/SCRIPTNAME.pdf'
+
+## Expanding Multiple Wildcards
+
+The rules used to estimate the standard Solow model, and the augmented Solow model have very similar structure:
+
+```{r, engine = 'bash', eval = FALSE}
+DATA_SUBSET = [
+                "oecd",
+                "intermediate",
+                "nonoil"
+                ]
+
+# --- Build Rules --- #
+rule run_aug_solow:
+    input:
+        expand("out/analysis/model_aug_solow_{iSubset}.rds",
+                    iSubset = DATA_SUBSET)
+
+rule aug_solow_model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/model_aug_solow.json",
+        subset = "src/data-specs/subset_{iSubset}.json"
+    output:
+        model_est = "out/analysis/model_aug_solow_{iSubset}.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.model_est}"
+
+rule run_solow:
+    input:
+        expand("out/analysis/model_solow_{iSubset}.rds",
+                    iSubset = DATA_SUBSET)
+
+rule solow_model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/model_solow.json",
+        subset = "src/data-specs/subset_{iSubset}.json"
+    output:
+        model_est = "out/analysis/model_solow_{iSubset}.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.model_est}"
+```
+
+Add text ...
+
+Ultimately the Snakfile becomes:
+
+```{r, engine = 'bash', eval = FALSE}
+MODELS = [
+          "solow",
+          "aug_solow"
+          ]
+
+DATA_SUBSET = [
+                "oecd",
+                "intermediate",
+                "nonoil"
+                ]
+
+# --- Build Rules --- #
+
+rule estimate_models:
+    input:
+        expand("out/analysis/{iModel}_{iSubset}.rds",
+                    iModel = MODELS,
+                    iSubset = DATA_SUBSET)
+
+rule ols_model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/model_{iModel}.json",
+        subset = "src/data-specs/subset_{iSubset}.json"
+    output:
+        model_est = "out/analysis/model_{iModel}_{iSubset}.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.model_est}"
+
+<...> ## Other Rules below
+```
