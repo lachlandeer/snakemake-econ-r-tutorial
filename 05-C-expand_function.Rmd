@@ -1,4 +1,4 @@
-## The `expand()` function
+# The `expand()` function
 
 Each of these inputs listed above have similar structure, with only the name of the subset of data we are using changing.
 We can use another feature of Snakemake to simplify this rule.
