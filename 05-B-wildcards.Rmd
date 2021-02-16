@@ -1,28 +1,96 @@
 # Wildcards
 
-This is good progress, but if we look at the *solow_* rules we see that there is quite a lot of duplication.
+Adding a target rule to execute all regressions at the same time is good progress, but if we look at the *solow_* rules we see that there is quite a lot of replication of code between them.
 All three rules use the same script, data, and model inputs.
 They only differ in the data subsetting found under `{input.subset}` and the output file define under `{output.estimate}`.
 
 Ideally, we want `Snakefile` to feature the minimum amount of duplication possible.
 This has a few advantages:
 
-Limiting redundancy allows us to make changes to the code only once rather than multiple times (imagine changing the `{data.input}` file).
-Any additional copy of code also introduces extra opportunities of typos or other errors and makes the build file generally harder to read and navigate.
-And if we're completely honest, it's also a just a bit ugly...
+- Limiting redundancy allows us to make changes to the code only once rather than multiple times (imagine changing the `{data.input}` file).
+- Any additional copy of code introduces extra opportunities of typos or other errors and makes the build file generally harder to read and navigate.
+- And if we're completely honest, it's also a just a bit ugly...
 
-In this chapter we will 
-
-
-A straight forward solution to remove redundancy is 
-The three *solow_* rules can be collapsed into one rule if can create a variable, for example `iSubset`,
-    that can iterate through the three .json files that contain the subset filters.
-That is, we want to create a rule `solow_model` that can do the work that `solow_nonoil`, `solow_oecd` and `solow_intermediate` currently do.
+In this chapter we will learn how to unify such redundancies and collapse the three rules `solow_nonoil`, `solow_oecd`, and `solow_intermediate` into one rule.
+To do so, we create a new variable, `iSubset`, that can iterate through the three `.json` files that contain the subset filters.
 In Snakemake, these variables are called *wildcards*.
 
-The format of this rule will be:
+## The starting point of our Snakefile
+
+The top of our Snakefile at the moment looks something like this:
 
 ```{r, engine = 'bash', eval = FALSE}
+
+# --- Build Rules --- #
+
+rule solow_target:
+    input:
+        intermediate = "out/analysis/model_solow_subset_intermediate.rds",
+        nonoil       = "out/analysis/model_solow_subset_nonoil.rds",
+        oecd         = "out/analysis/model_solow_subset_oecd.rds"
+
+rule solow_intermediate:
+    input:
+        script   = "src/analysis/estimate_ols_model.R",
+        data     = "out/data/mrw_complete.csv",
+        model    = "src/model-specs/model_solow.json",
+        subset   = "src/data-specs/subset_intermediate.json"
+    output:
+        estimate = "out/analysis/model_solow_subset_intermediate.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+
+rule solow_nonoil:
+    input:
+        script   = "src/analysis/estimate_ols_model.R",
+        data     = "out/data/mrw_complete.csv",
+        model    = "src/model-specs/model_solow.json",
+        subset   = "src/data-specs/subset_nonoil.json"
+    output:
+        estimate = "out/analysis/model_solow_subset_nonoil.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+
+rule solow_oecd:
+    input:
+        script   = "src/analysis/estimate_ols_model.R",
+        data     = "out/data/mrw_complete.csv",
+        model    = "src/model-specs/model_solow.json",
+        subset   = "src/data-specs/subset_oecd.json"
+    output:
+        estimate = "out/analysis/model_solow_subset_oecd.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+
+...
+```
+
+where `...` stands for the bottom part of our Snakefile that we will not modify.
+
+Let us now replace the three `solow_` rules by a single rule which we call `solow_model` where the unique parts of the `{input.subset}` and `{output.estmiate}` are replace with our wildcard variable `{iSubset}`.
+
+The relevant part now looks something like this:
+
+```{r, engine = 'bash', eval = FALSE}
+
+rule solow_target:
+    input:
+        intermediate = "out/analysis/model_solow_subset_intermediate.rds",
+        nonoil       = "out/analysis/model_solow_subset_nonoil.rds",
+        oecd         = "out/analysis/model_solow_subset_oecd.rds"
+
 rule solow_model:
     input:
         script = "src/analysis/estimate_ols_model.R",
@@ -30,22 +98,26 @@ rule solow_model:
         model  = "src/model-specs/model_solow.json",
         subset = "src/data-specs/subset_{iSubset}.json"
     output:
-        model_est = "out/analysis/model_solow_{iSubset}.rds",
+        estimate = "out/analysis/model_solow_{iSubset}.rds",
     shell:
         "Rscript {input.script} \
             --data {input.data} \
             --model {input.model} \
             --subset {input.subset} \
             --out {output.model_est}"
+
+...
 ```
 
-We wrapped our wildcard `iSubset` in curly parentheses so that Snakemake knows that we will want to substitute the name of one of the subsets into this value.
+We notice right away how much more concise the relevant part of our script has become. 
+
+We wrapped our wildcard `iSubset` in curly parentheses so that Snakemake knows that this part is a variable which we want to substitute with the name of one of the subsets.
 This is conceptually similar to what we have done in our shell commands.
 
-We can now try and run our updated Snakefile:
+Let us first try to execute `solow_model` as a target rule:
 
 ```{r, engine = 'bash', eval= FALSE}
-$ snakemake
+$ snakemake --cores 1 solow_model
 ```
 
 ```{r, engine = 'out', eval = FALSE}
@@ -55,47 +127,20 @@ Target rules may not contain wildcards. Please specify concrete files or a rule 
 ```
 
 What has happened?
-Snakemake will not execute a rule that contains wildcards.^[
-Technically there is another problem here too.
-Snakemake doesn't know what values to substitute into `iSubset.`
-We focus on the Wildcard error because this is what the Snakemake error message mentions.
-By fixing this error, it turns out we also spell out what values to substitute into `iSubset`.
-]
-What we will do is create another rule, `run_solow` that will not contain wildcards ...
+Snakemake will not execute a rule that contains wildcards because it does not know what values to substitute into `iSubset.`
 
-```{r, engine = 'bash', eval = FALSE}
+Gladly, we already have a target rule which does not contain wildcards and explicitly specifies the input files we want to create, our trusty `run_solow` rule.
 
-rule run_solow:
-    input:
-        nonoil = "out/analysis/model_solow_nonoil.rds",
-        oecd   = "out/analysis/model_solow_oecd.rds",
-        intermediate = "out/analysis/model_solow_intermediate.rds"
+Let us therefore try to execute our target rule instead:
 
-rule solow_model:
-    input:
-        script = "src/analysis/estimate_ols_model.R",
-        data   = "out/data/mrw_complete.csv",
-        model  = "src/model-specs/model_solow.json",
-        subset = "src/data-specs/subset_{iSubset}.json"
-    output:
-        model_est = "out/analysis/model_solow_{iSubset}.rds",
-    shell:
-        "Rscript {input.script} \
-            --data {input.data} \
-            --model {input.model} \
-            --subset {input.subset} \
-            --out {output.model_est}"
+```{r, engine = 'bash', eval= FALSE}
+$ snakemake --cores 1 solow_target
 ```
 
-Explain what happens here...
-
-There's more work we can do to reduce duplication.
-Look at the rule `run_solow`:
-
 ```{r, engine = 'bash', eval = FALSE}
-rule run_solow:
-    input:
-        nonoil = "out/analysis/model_solow_nonoil.rds",
-        oecd   = "out/analysis/model_solow_oecd.rds",
-        intermediate = "out/analysis/model_solow_intermediate.rds"
+TODO: Add output here
 ```
+
+TODO: Explain that this works.
+
+TODO: Explain how snakemake plugs in the same values into input and output to create the input files in the target rule.
