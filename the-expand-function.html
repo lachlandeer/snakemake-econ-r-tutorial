@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 12 Self Documenting Help | Reproducible Data Analytic Workflows with Snakemake and R</title>
+  <title>Chapter 7 The expand() function | Reproducible Data Analytic Workflows with Snakemake and R</title>
   <meta name="description" content="In progress" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 12 Self Documenting Help | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta property="og:title" content="Chapter 7 The expand() function | Reproducible Data Analytic Workflows with Snakemake and R" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="lachlandeer/snakemake-econ-r-tutorial" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 12 Self Documenting Help | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta name="twitter:title" content="Chapter 7 The expand() function | Reproducible Data Analytic Workflows with Snakemake and R" />
   
   <meta name="twitter:description" content="In progress" />
   
@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="logging-output-and-errors.html"/>
-<link rel="next" href="config-files.html"/>
+<link rel="prev" href="wildcards.html"/>
+<link rel="next" href="automatic-wildcard-specifications.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -277,136 +277,222 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="self-documenting-help" class="section level1">
-<h1><span class="header-section-number">Chapter 12</span> Self Documenting Help</h1>
-<p>As we build up our Snakemake workflow the Snakefile becomes increasingly complex.
-It is easy to imagine that a future version of you,
-or a co-author,
-might have difficulty understanding what each rule is doing.
-This chapter introduces an approach to add some comments to the Snakefile to make it easier to navigate.
-We also add a new <code>help</code> rule so that we can get a summary of the comments printed to screen.</p>
-<div id="our-commenting-syle" class="section level2">
-<h2><span class="header-section-number">12.1</span> Our Commenting Syle</h2>
-<p>If we look at the Snakefile in it’s current state, we see that there are a bare minimum amount of comments already integrated.
-Because Snakemake is a Python library all comments must begin with one <code>#</code>.
-We then added some additional formatting of comments to create two types.<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>
-Our first type of comment is a ‘double hash’ - <code>##</code>.
-We use this to represent information that someone who reads our code might find helpful to build understanding of the file.
-For example, the head of the Snakefile contains information on the name of the workflow and the authors:</p>
-<div class="sourceCode" id="cb132"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb132-1"><a href="self-documenting-help.html#cb132-1"></a><span class="co">## Snakemake - MRW Replication</span></span>
-<span id="cb132-2"><a href="self-documenting-help.html#cb132-2"></a><span class="co">##</span></span>
-<span id="cb132-3"><a href="self-documenting-help.html#cb132-3"></a><span class="co">## @yourname</span></span>
-<span id="cb132-4"><a href="self-documenting-help.html#cb132-4"></a><span class="co">##</span></span></code></pre></div>
-<p>Second, we have broken up the Snakefile somewhat into sections such as Dictionaries, Build Rules and Clean Rules using the <code># --- Something --- #</code> notation.</p>
-</div>
-<div id="adding-further-comments" class="section level2">
-<h2><span class="header-section-number">12.2</span> Adding Further Comments</h2>
-<p>The information we have added in comments so far is not really enough to help us remember much.
-What we want is a simple one or two line summary of what each of our rules do so that we can look back at them in the future.
-We are going to make comments above each rule using the <code>##</code> notation.
-The structure will follow a common pattern: <code>rule_name : some description</code>
-For example, for the <code>textbook_solow</code> rule:</p>
-<div class="sourceCode" id="cb133"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb133-1"><a href="self-documenting-help.html#cb133-1"></a><span class="co">## textbook_solow: construct a table of regression estimates for textbook solow model</span></span>
-<span id="cb133-2"><a href="self-documenting-help.html#cb133-2"></a><span class="ex">rule</span> textbook_solow:</span>
-<span id="cb133-3"><a href="self-documenting-help.html#cb133-3"></a>    <span class="ex">input</span>:</span>
-<span id="cb133-4"><a href="self-documenting-help.html#cb133-4"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,</span>
-<span id="cb133-5"><a href="self-documenting-help.html#cb133-5"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb133-6"><a href="self-documenting-help.html#cb133-6"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb133-7"><a href="self-documenting-help.html#cb133-7"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)),</span>
-<span id="cb133-8"><a href="self-documenting-help.html#cb133-8"></a>    <span class="ex">params</span>:</span>
-<span id="cb133-9"><a href="self-documenting-help.html#cb133-9"></a>        <span class="ex">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,</span>
-<span id="cb133-10"><a href="self-documenting-help.html#cb133-10"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
-<span id="cb133-11"><a href="self-documenting-help.html#cb133-11"></a>    <span class="ex">output</span>:</span>
-<span id="cb133-12"><a href="self-documenting-help.html#cb133-12"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></span>
-<span id="cb133-13"><a href="self-documenting-help.html#cb133-13"></a>    <span class="ex">shell</span>:</span>
-<span id="cb133-14"><a href="self-documenting-help.html#cb133-14"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb133-15"><a href="self-documenting-help.html#cb133-15"></a><span class="st">            --filepath {params.filepath} \</span></span>
-<span id="cb133-16"><a href="self-documenting-help.html#cb133-16"></a><span class="st">            --models {params.model_expr} \</span></span>
-<span id="cb133-17"><a href="self-documenting-help.html#cb133-17"></a><span class="st">            --out {output.table}&quot;</span></span></code></pre></div>
-<div id="exercise-adding-comments" class="section level3 unnumbered exercise">
-<h3>Exercise: Adding Comments</h3>
-<p>Add some comments using our suggested style to each of the Snakemake rules we have constructed so far.</p>
-</div>
-</div>
-<div id="a-help-rule" class="section level2">
-<h2><span class="header-section-number">12.3</span> A <code>help</code> Rule</h2>
-<p>The Snakefile is now much easier to understand when reading through it.
-Future you will be grateful for the effort.
-We can go one step further: construct a rule that prints the output of these comments to the screen.
-Let’s call this rule <code>help</code>, so that if we run <code>snakemake help</code> all our useful comments will be printed to screen.
-We usually put this help rule at the bottom of our Snakefile, so that we don’t keep bumping into it as we work.
-The rule has the following structure:</p>
-<div class="sourceCode" id="cb134"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb134-1"><a href="self-documenting-help.html#cb134-1"></a><span class="co"># --- Help Rules --- #</span></span>
-<span id="cb134-2"><a href="self-documenting-help.html#cb134-2"></a><span class="co">## help               : prints help comments for Snakefile</span></span>
-<span id="cb134-3"><a href="self-documenting-help.html#cb134-3"></a><span class="ex">rule</span> help:</span>
-<span id="cb134-4"><a href="self-documenting-help.html#cb134-4"></a>    <span class="ex">input</span>: <span class="st">&quot;Snakefile&quot;</span></span>
-<span id="cb134-5"><a href="self-documenting-help.html#cb134-5"></a>    <span class="ex">shell</span>:</span>
-<span id="cb134-6"><a href="self-documenting-help.html#cb134-6"></a>        <span class="st">&quot;sed -n &#39;s/^##//p&#39; {input}&quot;</span></span></code></pre></div>
-<p>The rule depends on the <code>Snakefile</code> itself - because if the file changes, the might too.
-The shell comand that we use is a little confusing when we look at it the first time.
-Intuitively heres what it is doing:</p>
-<ul>
-<li>The comments we want to print are those that have the double hash notation, <code>##</code>.</li>
-<li><code>sed</code> is a progam that can perform text manipulations to some input
-<ul>
-<li>We want it to find all lines starting with <code>##</code> in our input file …</li>
-<li>… and print out the remainder of those lines</li>
-</ul></li>
-</ul>
-<p>Let’s see it in action:</p>
-<div class="sourceCode" id="cb135"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb135-1"><a href="self-documenting-help.html#cb135-1"></a>$ <span class="ex">snakemake</span> help</span></code></pre></div>
+<div id="the-expand-function" class="section level1">
+<h1><span class="header-section-number">Chapter 7</span> The <code>expand()</code> function</h1>
+<p>There’s more work we can do to reduce duplication.
+Look at the rule <code>run_solow</code>:</p>
+<div class="sourceCode" id="cb82"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb82-1"><a href="the-expand-function.html#cb82-1"></a><span class="ex">rule</span> run_solow:</span>
+<span id="cb82-2"><a href="the-expand-function.html#cb82-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb82-3"><a href="the-expand-function.html#cb82-3"></a>        <span class="ex">nonoil</span> = <span class="st">&quot;out/analysis/model_solow_nonoil.rds&quot;</span>,</span>
+<span id="cb82-4"><a href="the-expand-function.html#cb82-4"></a>        <span class="ex">oecd</span>   = <span class="st">&quot;out/analysis/model_solow_oecd.rds&quot;</span>,</span>
+<span id="cb82-5"><a href="the-expand-function.html#cb82-5"></a>        <span class="ex">intermediate</span> = <span class="st">&quot;out/analysis/model_solow_intermediate.rds&quot;</span></span></code></pre></div>
+<p>Each of these inputs listed above have similar structure, with only the name of the subset of data we are using changing.
+We can use another feature of Snakemake to simplify this rule.
+Snakemake has an <code>expand()</code> function that can accept a wildcard and replace it with a set of specified values in an iterative manner.
+In our case, we want to use the expand function to accept the <code>{iSubset}</code> wildcard, and replace it with the values ‘nonoil’, ‘oecd’ and ‘intermediate’ one at a time.
+To proceed we need to do two things:</p>
+<ol style="list-style-type: decimal">
+<li>Create a list, DATA_SUBSETS, that contains the values we want to iterate through - ‘nonoil’, ‘oecd’ and ‘intermediate’.</li>
+<li>Use Snakemake’s <code>expand()</code> function to iteratively replace <code>{iSubset}</code> with each value contained in the list <code>DATA_SUBSET</code></li>
+</ol>
+<p>Let’s start with (1).
+We will use an area above our Snakemake rules to store the <code>DATA_SUBSET</code> variable:</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb83-1"><a href="the-expand-function.html#cb83-1"></a><span class="ex">DATA_SUBSET</span> = [</span>
+<span id="cb83-2"><a href="the-expand-function.html#cb83-2"></a>                <span class="st">&quot;oecd&quot;</span>,</span>
+<span id="cb83-3"><a href="the-expand-function.html#cb83-3"></a>                <span class="st">&quot;intermediate&quot;</span>,</span>
+<span id="cb83-4"><a href="the-expand-function.html#cb83-4"></a>                <span class="st">&quot;nonoil&quot;</span></span>
+<span id="cb83-5"><a href="the-expand-function.html#cb83-5"></a>                ]</span>
+<span id="cb83-6"><a href="the-expand-function.html#cb83-6"></a></span>
+<span id="cb83-7"><a href="the-expand-function.html#cb83-7"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb83-8"><a href="the-expand-function.html#cb83-8"></a><span class="ex">...</span></span></code></pre></div>
+<p>The capitalization of the list DATA_SUBSET is not essential.
+We do it to separate lists that we will iterate through from other parts of our Snakefile.
+This means whenever we see a capitalized name, we know it is a list that we want to iterate through.</p>
+<p>Next, we update the rule <code>run_solow</code> as follows:</p>
+<div class="sourceCode" id="cb84"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb84-1"><a href="the-expand-function.html#cb84-1"></a><span class="ex">rule</span> run_solow:</span>
+<span id="cb84-2"><a href="the-expand-function.html#cb84-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb84-3"><a href="the-expand-function.html#cb84-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb84-4"><a href="the-expand-function.html#cb84-4"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span></code></pre></div>
+<p>Now, we can clean our output folder with <code>$ snakemake clean</code>.
+If we re-run snakemake we would expect everything to run.
+To see if this is the case we can do a <em>dry run</em>.
+A dry run will try go through the Snakefile and print all the rules Snakemake wants to execute in order.</p>
+<div class="sourceCode" id="cb85"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb85-1"><a href="the-expand-function.html#cb85-1"></a>$ <span class="ex">snakemake</span> --dryrun</span></code></pre></div>
+<p>which yields the following plan:</p>
 <pre class="out"><code>Building DAG of jobs...
-Using shell: /bin/bash
-Provided cores: 1
-Rules claiming more threads will be scaled down.
 Job counts:
     count   jobs
-    1   help
-    1
+    1   gen_regression_vars
+    1   rename_vars
+    1   run_solow
+    3   solow_model
+    6
 
-[Wed Feb  6 19:13:51 2019]
-rule help:
-    input: Snakefile
+[Fri Jan 11 17:00:32 2019]
+rule rename_vars:
+    input: src/data/mrw.dta, src/data-management/rename_variables.R
+    output: out/data/mrw_renamed.csv
+    jobid: 5
+
+
+[Fri Jan 11 17:00:32 2019]
+rule gen_regression_vars:
+    input: out/data/mrw_renamed.csv, src/data-management/gen_reg_vars.R, src/data-specs/param_solow.json
+    output: out/data/mrw_complete.csv
+    jobid: 4
+
+
+[Fri Jan 11 17:00:32 2019]
+rule solow_model:
+    input: src/data-specs/subset_nonoil.json, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/analysis/estimate_ols_model.R
+    output: out/analysis/model_solow_nonoil.rds
+    jobid: 1
+    wildcards: iSubset=nonoil
+
+
+[Fri Jan 11 17:00:32 2019]
+rule solow_model:
+    input: src/data-specs/subset_oecd.json, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/analysis/estimate_ols_model.R
+    output: out/analysis/model_solow_oecd.rds
+    jobid: 2
+    wildcards: iSubset=oecd
+
+
+[Fri Jan 11 17:00:32 2019]
+rule solow_model:
+    input: src/data-specs/subset_intermediate.json, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/analysis/estimate_ols_model.R
+    output: out/analysis/model_solow_intermediate.rds
+    jobid: 3
+    wildcards: iSubset=intermediate
+
+
+[Fri Jan 11 17:00:32 2019]
+localrule run_solow:
+    input: out/analysis/model_solow_nonoil.rds, out/analysis/model_solow_oecd.rds, out/analysis/model_solow_intermediate.rds
     jobid: 0
 
- Snakemake - MRW Replication
-
- @yourname
-
- all                : builds all final outputs
- augment_solow      : construct a table of estimates for augmented solow model
- textbook_solow     : construct a table of regression estimates for textbook solow model
- make_figs          : builds all figures
- figures            : recipe for constructing a figure (cannot be called)
- estimate_models    : estimates all regressions
- ols_models         : recipe for estimating a single regression (cannot be called)
- gen_regression_vars: creates variables needed to estimate a regression
- rename_vars        : creates meaningful variable names
- clean              : removes all content from out/ directory
- help               : prints help comments for Snakefile
-[Wed Feb  6 19:13:51 2019]
-Finished job 0.
-1 of 1 steps (100%) done
+Job counts:
+    count   jobs
+    1   gen_regression_vars
+    1   rename_vars
+    1   run_solow
+    3   solow_model
+    6
 </code></pre>
-<p>We see that after the usual Snakemake output telling us what it is doing, our comments are printed to screen.</p>
-<div id="exercise-saving-help-output-to-file" class="section level3 unnumbered exercise">
-<h3>Exercise: Saving <code>help</code> output to file</h3>
-<p>Modify the <code>help</code> rule so that the printed content is saved in a file called <code>HELP.txt</code></p>
-
+<p>This looks like what we want to happen.
+Hence, we re-run snakemake to produce all output:</p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb87-1"><a href="the-expand-function.html#cb87-1"></a>$ <span class="ex">snakemake</span></span></code></pre></div>
+<div id="exercise-exploring-the-expand-function-i" class="section level3 unnumbered exercise">
+<h3>Exercise: Exploring the expand() function I</h3>
+<p>So far we have estimated the basic Solow model.
+MRW also estimate an augmented version of the Solow model, adding human capital.
+The formula required to estimate the augmented model is written up in <code>src/model-specs/model_aug_solow.json</code>.
+Use the <code>expand()</code> function together with the <code>estimate_ols.R</code> script to estimate the augmented solow model on each of the three data subsets.
+The rule structures should look very similar to what we have done so far.</p>
 </div>
+<div id="exercise-exploring-the-expand-function-ii" class="section level3 unnumbered exercise">
+<h3>Exercise: Exploring the expand function II</h3>
+<p>The MRW paper contains three plots.
+Each of these plots use the subset of ‘intermediate’ countries.
+In the <code>src/figures/</code> subdirectory, there are three scripts that reproduce each of the figures.<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>
+The scripts are written in such a way that they accept exactly the same options.
+Using wildcards and the expand function extend the Snakefile to construct each figure.
+Each figure should be saved with the following name ‘out/figures/SCRIPTNAME.pdf’</p>
+</div>
+<div id="expanding-multiple-wildcards" class="section level2">
+<h2><span class="header-section-number">7.1</span> Expanding Multiple Wildcards</h2>
+<p>The rules used to estimate the standard Solow model, and the augmented Solow model have very similar structure:</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb88-1"><a href="the-expand-function.html#cb88-1"></a><span class="ex">DATA_SUBSET</span> = [</span>
+<span id="cb88-2"><a href="the-expand-function.html#cb88-2"></a>                <span class="st">&quot;oecd&quot;</span>,</span>
+<span id="cb88-3"><a href="the-expand-function.html#cb88-3"></a>                <span class="st">&quot;intermediate&quot;</span>,</span>
+<span id="cb88-4"><a href="the-expand-function.html#cb88-4"></a>                <span class="st">&quot;nonoil&quot;</span></span>
+<span id="cb88-5"><a href="the-expand-function.html#cb88-5"></a>                ]</span>
+<span id="cb88-6"><a href="the-expand-function.html#cb88-6"></a></span>
+<span id="cb88-7"><a href="the-expand-function.html#cb88-7"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb88-8"><a href="the-expand-function.html#cb88-8"></a><span class="ex">rule</span> run_aug_solow:</span>
+<span id="cb88-9"><a href="the-expand-function.html#cb88-9"></a>    <span class="ex">input</span>:</span>
+<span id="cb88-10"><a href="the-expand-function.html#cb88-10"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_aug_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb88-11"><a href="the-expand-function.html#cb88-11"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb88-12"><a href="the-expand-function.html#cb88-12"></a></span>
+<span id="cb88-13"><a href="the-expand-function.html#cb88-13"></a><span class="ex">rule</span> aug_solow_model:</span>
+<span id="cb88-14"><a href="the-expand-function.html#cb88-14"></a>    <span class="ex">input</span>:</span>
+<span id="cb88-15"><a href="the-expand-function.html#cb88-15"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb88-16"><a href="the-expand-function.html#cb88-16"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb88-17"><a href="the-expand-function.html#cb88-17"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_aug_solow.json&quot;</span>,</span>
+<span id="cb88-18"><a href="the-expand-function.html#cb88-18"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_{iSubset}.json&quot;</span></span>
+<span id="cb88-19"><a href="the-expand-function.html#cb88-19"></a>    <span class="ex">output</span>:</span>
+<span id="cb88-20"><a href="the-expand-function.html#cb88-20"></a>        <span class="ex">model_est</span> = <span class="st">&quot;out/analysis/model_aug_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb88-21"><a href="the-expand-function.html#cb88-21"></a>    <span class="ex">shell</span>:</span>
+<span id="cb88-22"><a href="the-expand-function.html#cb88-22"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb88-23"><a href="the-expand-function.html#cb88-23"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb88-24"><a href="the-expand-function.html#cb88-24"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb88-25"><a href="the-expand-function.html#cb88-25"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb88-26"><a href="the-expand-function.html#cb88-26"></a><span class="st">            --out {output.model_est}&quot;</span></span>
+<span id="cb88-27"><a href="the-expand-function.html#cb88-27"></a></span>
+<span id="cb88-28"><a href="the-expand-function.html#cb88-28"></a><span class="ex">rule</span> run_solow:</span>
+<span id="cb88-29"><a href="the-expand-function.html#cb88-29"></a>    <span class="ex">input</span>:</span>
+<span id="cb88-30"><a href="the-expand-function.html#cb88-30"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb88-31"><a href="the-expand-function.html#cb88-31"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb88-32"><a href="the-expand-function.html#cb88-32"></a></span>
+<span id="cb88-33"><a href="the-expand-function.html#cb88-33"></a><span class="ex">rule</span> solow_model:</span>
+<span id="cb88-34"><a href="the-expand-function.html#cb88-34"></a>    <span class="ex">input</span>:</span>
+<span id="cb88-35"><a href="the-expand-function.html#cb88-35"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb88-36"><a href="the-expand-function.html#cb88-36"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb88-37"><a href="the-expand-function.html#cb88-37"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb88-38"><a href="the-expand-function.html#cb88-38"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_{iSubset}.json&quot;</span></span>
+<span id="cb88-39"><a href="the-expand-function.html#cb88-39"></a>    <span class="ex">output</span>:</span>
+<span id="cb88-40"><a href="the-expand-function.html#cb88-40"></a>        <span class="ex">model_est</span> = <span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb88-41"><a href="the-expand-function.html#cb88-41"></a>    <span class="ex">shell</span>:</span>
+<span id="cb88-42"><a href="the-expand-function.html#cb88-42"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb88-43"><a href="the-expand-function.html#cb88-43"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb88-44"><a href="the-expand-function.html#cb88-44"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb88-45"><a href="the-expand-function.html#cb88-45"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb88-46"><a href="the-expand-function.html#cb88-46"></a><span class="st">            --out {output.model_est}&quot;</span></span></code></pre></div>
+<p>Add text …</p>
+<p>Ultimately the Snakfile becomes:</p>
+<div class="sourceCode" id="cb89"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb89-1"><a href="the-expand-function.html#cb89-1"></a><span class="ex">MODELS</span> = [</span>
+<span id="cb89-2"><a href="the-expand-function.html#cb89-2"></a>          <span class="st">&quot;solow&quot;</span>,</span>
+<span id="cb89-3"><a href="the-expand-function.html#cb89-3"></a>          <span class="st">&quot;aug_solow&quot;</span></span>
+<span id="cb89-4"><a href="the-expand-function.html#cb89-4"></a>          ]</span>
+<span id="cb89-5"><a href="the-expand-function.html#cb89-5"></a></span>
+<span id="cb89-6"><a href="the-expand-function.html#cb89-6"></a><span class="ex">DATA_SUBSET</span> = [</span>
+<span id="cb89-7"><a href="the-expand-function.html#cb89-7"></a>                <span class="st">&quot;oecd&quot;</span>,</span>
+<span id="cb89-8"><a href="the-expand-function.html#cb89-8"></a>                <span class="st">&quot;intermediate&quot;</span>,</span>
+<span id="cb89-9"><a href="the-expand-function.html#cb89-9"></a>                <span class="st">&quot;nonoil&quot;</span></span>
+<span id="cb89-10"><a href="the-expand-function.html#cb89-10"></a>                ]</span>
+<span id="cb89-11"><a href="the-expand-function.html#cb89-11"></a></span>
+<span id="cb89-12"><a href="the-expand-function.html#cb89-12"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb89-13"><a href="the-expand-function.html#cb89-13"></a></span>
+<span id="cb89-14"><a href="the-expand-function.html#cb89-14"></a><span class="ex">rule</span> estimate_models:</span>
+<span id="cb89-15"><a href="the-expand-function.html#cb89-15"></a>    <span class="ex">input</span>:</span>
+<span id="cb89-16"><a href="the-expand-function.html#cb89-16"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}_{iSubset}.rds&quot;</span>,</span>
+<span id="cb89-17"><a href="the-expand-function.html#cb89-17"></a>                    <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb89-18"><a href="the-expand-function.html#cb89-18"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb89-19"><a href="the-expand-function.html#cb89-19"></a></span>
+<span id="cb89-20"><a href="the-expand-function.html#cb89-20"></a><span class="ex">rule</span> ols_model:</span>
+<span id="cb89-21"><a href="the-expand-function.html#cb89-21"></a>    <span class="ex">input</span>:</span>
+<span id="cb89-22"><a href="the-expand-function.html#cb89-22"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb89-23"><a href="the-expand-function.html#cb89-23"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb89-24"><a href="the-expand-function.html#cb89-24"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_{iModel}.json&quot;</span>,</span>
+<span id="cb89-25"><a href="the-expand-function.html#cb89-25"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_{iSubset}.json&quot;</span></span>
+<span id="cb89-26"><a href="the-expand-function.html#cb89-26"></a>    <span class="ex">output</span>:</span>
+<span id="cb89-27"><a href="the-expand-function.html#cb89-27"></a>        <span class="ex">model_est</span> = <span class="st">&quot;out/analysis/model_{iModel}_{iSubset}.rds&quot;</span>,</span>
+<span id="cb89-28"><a href="the-expand-function.html#cb89-28"></a>    <span class="ex">shell</span>:</span>
+<span id="cb89-29"><a href="the-expand-function.html#cb89-29"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb89-30"><a href="the-expand-function.html#cb89-30"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb89-31"><a href="the-expand-function.html#cb89-31"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb89-32"><a href="the-expand-function.html#cb89-32"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb89-33"><a href="the-expand-function.html#cb89-33"></a><span class="st">            --out {output.model_est}&quot;</span></span>
+<span id="cb89-34"><a href="the-expand-function.html#cb89-34"></a></span>
+<span id="cb89-35"><a href="the-expand-function.html#cb89-35"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span> <span class="co">## Other Rules below</span></span></code></pre></div>
+
 </div>
 </div>
 <div class="footnotes">
 <hr />
-<ol start="14">
-<li id="fn14"><p>
-Do notice that the exact formatting of all this help is totally arbitrary.
-Noone tells you that two <code>#</code>’s or a mix of <code>#</code>’s and <code>-</code>’s are meaningful, correct or standard ways of
-putting comments in a file.
-Our choice reflects path dependence in the way we started writing Snakefiles, and we have found them useful
-and persisted with our initial choice.
-Feel free to create your own.
-The only important thing is the line starts with one <code>#</code> so that Snakemake doesnt try and execute that line as code.<a href="self-documenting-help.html#fnref14" class="footnote-back">↩︎</a></p></li>
+<ol start="8">
+<li id="fn8"><p>
+This is not entirely true, we are yet to figure out how to get the y-axis range from the original paper.<a href="the-expand-function.html#fnref8" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
             </section>
@@ -414,8 +500,8 @@ The only important thing is the line starts with one <code>#</code> so that Snak
           </div>
         </div>
       </div>
-<a href="logging-output-and-errors.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="config-files.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="wildcards.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="automatic-wildcard-specifications.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -446,7 +532,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/19-documenting_help.Rmd",
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/05-C-expand_function.Rmd",
 "text": "Edit"
 },
 "history": {

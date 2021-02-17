@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 11 Config Files | Reproducible Data Analytic Workflows with Snakemake and R</title>
+  <title>Chapter 13 Config Files | Reproducible Data Analytic Workflows with Snakemake and R</title>
   <meta name="description" content="In progress" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 11 Config Files | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta property="og:title" content="Chapter 13 Config Files | Reproducible Data Analytic Workflows with Snakemake and R" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="lachlandeer/snakemake-econ-r-tutorial" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 11 Config Files | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta name="twitter:title" content="Chapter 13 Config Files | Reproducible Data Analytic Workflows with Snakemake and R" />
   
   <meta name="twitter:description" content="In progress" />
   
@@ -192,64 +192,71 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution-1"><i class="fa fa-check"></i>Solution</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="pattern-rules.html"><a href="pattern-rules.html"><i class="fa fa-check"></i><b>5</b> Pattern Rules</a><ul>
-<li class="chapter" data-level="5.1" data-path="pattern-rules.html"><a href="pattern-rules.html#how-snakemake-determines-the-build-order-when-multiple-rules-are-present"><i class="fa fa-check"></i><b>5.1</b> How Snakemake determines the build order when multiple rules are present</a></li>
-<li class="chapter" data-level="5.2" data-path="pattern-rules.html"><a href="pattern-rules.html#where-we-are-now"><i class="fa fa-check"></i><b>5.2</b> Where we are now?</a></li>
-<li class="chapter" data-level="5.3" data-path="pattern-rules.html"><a href="pattern-rules.html#the-expand-function"><i class="fa fa-check"></i><b>5.3</b> The <code>expand()</code> function</a><ul>
-<li class="chapter" data-level="" data-path="pattern-rules.html"><a href="pattern-rules.html#exercise-exploring-the-expand-function-i"><i class="fa fa-check"></i>Exercise: Exploring the expand() function I</a></li>
-<li class="chapter" data-level="" data-path="pattern-rules.html"><a href="pattern-rules.html#exercise-exploring-the-expand-function-ii"><i class="fa fa-check"></i>Exercise: Exploring the expand function II</a></li>
+<li class="chapter" data-level="5" data-path="target-rules.html"><a href="target-rules.html"><i class="fa fa-check"></i><b>5</b> Target Rules</a><ul>
+<li class="chapter" data-level="5.1" data-path="target-rules.html"><a href="target-rules.html#where-we-are-now"><i class="fa fa-check"></i><b>5.1</b> Where we are now?</a></li>
+<li class="chapter" data-level="5.2" data-path="target-rules.html"><a href="target-rules.html#how-snakemake-determines-the-build-order-when-multiple-rules-are-present"><i class="fa fa-check"></i><b>5.2</b> How Snakemake determines the build order when multiple rules are present</a></li>
+<li class="chapter" data-level="5.3" data-path="target-rules.html"><a href="target-rules.html#dedicated-target-rules-to-execute-multiple-rules"><i class="fa fa-check"></i><b>5.3</b> Dedicated target rules to execute multiple rules</a><ul>
+<li class="chapter" data-level="" data-path="target-rules.html"><a href="target-rules.html#exercise-using-target-rules"><i class="fa fa-check"></i>Exercise: Using target rules</a></li>
+<li class="chapter" data-level="" data-path="target-rules.html"><a href="target-rules.html#solution-2"><i class="fa fa-check"></i>Solution</a></li>
 </ul></li>
-<li class="chapter" data-level="5.4" data-path="pattern-rules.html"><a href="pattern-rules.html#expanding-multiple-wildcards"><i class="fa fa-check"></i><b>5.4</b> Expanding Multiple Wildcards</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html"><i class="fa fa-check"></i><b>6</b> Automatic Wildcard Specifications</a><ul>
-<li class="chapter" data-level="6.1" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#the-glob_wildcards-function"><i class="fa fa-check"></i><b>6.1</b> The <code>glob_wildcards</code> Function</a><ul>
+<li class="chapter" data-level="6" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>6</b> Wildcards</a><ul>
+<li class="chapter" data-level="6.1" data-path="wildcards.html"><a href="wildcards.html#the-starting-point-of-our-snakefile"><i class="fa fa-check"></i><b>6.1</b> The starting point of our Snakefile</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="the-expand-function.html"><a href="the-expand-function.html"><i class="fa fa-check"></i><b>7</b> The <code>expand()</code> function</a><ul>
+<li class="chapter" data-level="" data-path="the-expand-function.html"><a href="the-expand-function.html#exercise-exploring-the-expand-function-i"><i class="fa fa-check"></i>Exercise: Exploring the expand() function I</a></li>
+<li class="chapter" data-level="" data-path="the-expand-function.html"><a href="the-expand-function.html#exercise-exploring-the-expand-function-ii"><i class="fa fa-check"></i>Exercise: Exploring the expand function II</a></li>
+<li class="chapter" data-level="7.1" data-path="the-expand-function.html"><a href="the-expand-function.html#expanding-multiple-wildcards"><i class="fa fa-check"></i><b>7.1</b> Expanding Multiple Wildcards</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html"><i class="fa fa-check"></i><b>8</b> Automatic Wildcard Specifications</a><ul>
+<li class="chapter" data-level="8.1" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#the-glob_wildcards-function"><i class="fa fa-check"></i><b>8.1</b> The <code>glob_wildcards</code> Function</a><ul>
 <li class="chapter" data-level="" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#exercise-exploring-glob_wildcards"><i class="fa fa-check"></i>Exercise: Exploring glob_wildcards()</a></li>
 </ul></li>
-<li class="chapter" data-level="6.2" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#further-restricting-the-glob_wildcards-output"><i class="fa fa-check"></i><b>6.2</b> Further Restricting the <code>glob_wildcards</code> output</a></li>
+<li class="chapter" data-level="8.2" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#further-restricting-the-glob_wildcards-output"><i class="fa fa-check"></i><b>8.2</b> Further Restricting the <code>glob_wildcards</code> output</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html"><i class="fa fa-check"></i><b>7</b> Building all outputs at once</a><ul>
-<li class="chapter" data-level="7.1" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html#creating-an-all-rule"><i class="fa fa-check"></i><b>7.1</b> Creating an <code>all</code> rule</a></li>
+<li class="chapter" data-level="9" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html"><i class="fa fa-check"></i><b>9</b> Building all outputs at once</a><ul>
+<li class="chapter" data-level="9.1" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html#creating-an-all-rule"><i class="fa fa-check"></i><b>9.1</b> Creating an <code>all</code> rule</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>8</b> Adding Parameters</a><ul>
-<li class="chapter" data-level="8.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>8.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
-<li class="chapter" data-level="8.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>8.2</b> Creating a Rule with <code>params</code></a><ul>
+<li class="chapter" data-level="10" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>10</b> Adding Parameters</a><ul>
+<li class="chapter" data-level="10.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>10.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
+<li class="chapter" data-level="10.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>10.2</b> Creating a Rule with <code>params</code></a><ul>
 <li class="chapter" data-level="" data-path="adding-parameters.html"><a href="adding-parameters.html#exercise-building-table-2"><i class="fa fa-check"></i>Exercise: Building Table 2</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="part-ii.html"><a href="part-ii.html"><i class="fa fa-check"></i>PART II</a></li>
-<li class="chapter" data-level="9" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>9</b> Logging Output and Errors</a><ul>
-<li class="chapter" data-level="9.1" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output"><i class="fa fa-check"></i><b>9.1</b> Logging Output</a></li>
-<li class="chapter" data-level="9.2" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output-and-errors-in-one-file"><i class="fa fa-check"></i><b>9.2</b> Logging Output and Errors in One File</a><ul>
+<li class="chapter" data-level="11" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>11</b> Logging Output and Errors</a><ul>
+<li class="chapter" data-level="11.1" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output"><i class="fa fa-check"></i><b>11.1</b> Logging Output</a></li>
+<li class="chapter" data-level="11.2" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output-and-errors-in-one-file"><i class="fa fa-check"></i><b>11.2</b> Logging Output and Errors in One File</a><ul>
 <li class="chapter" data-level="" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#exercise-logging-all-r-scripts"><i class="fa fa-check"></i>Exercise: Logging all R Scripts</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>10</b> Self Documenting Help</a><ul>
-<li class="chapter" data-level="10.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>10.1</b> Our Commenting Syle</a></li>
-<li class="chapter" data-level="10.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>10.2</b> Adding Further Comments</a><ul>
+<li class="chapter" data-level="12" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>12</b> Self Documenting Help</a><ul>
+<li class="chapter" data-level="12.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>12.1</b> Our Commenting Syle</a></li>
+<li class="chapter" data-level="12.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>12.2</b> Adding Further Comments</a><ul>
 <li class="chapter" data-level="" data-path="self-documenting-help.html"><a href="self-documenting-help.html#exercise-adding-comments"><i class="fa fa-check"></i>Exercise: Adding Comments</a></li>
 </ul></li>
-<li class="chapter" data-level="10.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>10.3</b> A <code>help</code> Rule</a><ul>
+<li class="chapter" data-level="12.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>12.3</b> A <code>help</code> Rule</a><ul>
 <li><a href="self-documenting-help.html#exercise-saving-help-output-to-file">Exercise: Saving <code>help</code> output to file</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>11</b> Config Files</a><ul>
-<li class="chapter" data-level="11.1" data-path="config-files.html"><a href="config-files.html#the-config.yaml-filepath"><i class="fa fa-check"></i><b>11.1</b> The <code>config.yaml</code> filepath</a></li>
-<li class="chapter" data-level="11.2" data-path="config-files.html"><a href="config-files.html#using-paths-from-the-config-file"><i class="fa fa-check"></i><b>11.2</b> Using paths from the config file</a><ul>
+<li class="chapter" data-level="13" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>13</b> Config Files</a><ul>
+<li class="chapter" data-level="13.1" data-path="config-files.html"><a href="config-files.html#the-config.yaml-filepath"><i class="fa fa-check"></i><b>13.1</b> The <code>config.yaml</code> filepath</a></li>
+<li class="chapter" data-level="13.2" data-path="config-files.html"><a href="config-files.html#using-paths-from-the-config-file"><i class="fa fa-check"></i><b>13.2</b> Using paths from the config file</a><ul>
 <li class="chapter" data-level="" data-path="config-files.html"><a href="config-files.html#exercise-using-config-files"><i class="fa fa-check"></i>Exercise: Using Config Files</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="12" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>12</b> Subworkflows: Divide and Conquer</a><ul>
-<li class="chapter" data-level="12.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>12.1</b> Subworkflow Basics</a></li>
-<li class="chapter" data-level="12.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>12.2</b> Subworkflow dependencies</a><ul>
+<li class="chapter" data-level="14" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>14</b> Subworkflows: Divide and Conquer</a><ul>
+<li class="chapter" data-level="14.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>14.1</b> Subworkflow Basics</a></li>
+<li class="chapter" data-level="14.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>14.2</b> Subworkflow dependencies</a><ul>
 <li class="chapter" data-level="" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#exercise-more-subworkflows"><i class="fa fa-check"></i>Exercise: More Subworkflows</a></li>
 <li><a href="subworkflows-divide-and-conquer.html#guided-exercise-help-rules-with-subworkflows">Guided Exercise: <code>help</code> rules with subworkflows</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="part-iii.html"><a href="part-iii.html"><i class="fa fa-check"></i>PART III</a></li>
-<li class="chapter" data-level="13" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>13</b> Reproducible Articles with Rmd</a></li>
-<li class="chapter" data-level="14" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>14</b> Reproducible Slides with Rmd</a></li>
-<li class="chapter" data-level="15" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>15</b> Package Dependencies with Packrat</a></li>
-<li class="chapter" data-level="16" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>16</b> Containers</a></li>
+<li class="chapter" data-level="15" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>15</b> Reproducible Articles with Rmd</a></li>
+<li class="chapter" data-level="16" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>16</b> Reproducible Slides with Rmd</a></li>
+<li class="chapter" data-level="17" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>17</b> Package Dependencies with Packrat</a></li>
+<li class="chapter" data-level="18" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>18</b> Containers</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -271,19 +278,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="config-files" class="section level1">
-<h1><span class="header-section-number">Chapter 11</span> Config Files</h1>
+<h1><span class="header-section-number">Chapter 13</span> Config Files</h1>
 <p>Motivation…</p>
 <div id="the-config.yaml-filepath" class="section level2">
-<h2><span class="header-section-number">11.1</span> The <code>config.yaml</code> filepath</h2>
+<h2><span class="header-section-number">13.1</span> The <code>config.yaml</code> filepath</h2>
 <p>In our project’s root directory we have the file <code>config.yaml</code>:</p>
-<div class="sourceCode" id="cb126"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb126-1"><a href="config-files.html#cb126-1"></a>$ <span class="fu">ls</span> -F</span></code></pre></div>
+<div class="sourceCode" id="cb137"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb137-1"><a href="config-files.html#cb137-1"></a>$ <span class="fu">ls</span> -F</span></code></pre></div>
 <pre class="out"><code>config.yaml  find_r_packages.sh  HELP.txt
 install_r_packages.R  logs/  out/
 README.md  REQUIREMENTS.txt  sandbox/
 Snakefile  src/</code></pre>
 <p>If we look at the contents of <code>config.yaml</code> we see a collection of paths that
 match up to the paths in our project:</p>
-<div class="sourceCode" id="cb128"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb128-1"><a href="config-files.html#cb128-1"></a>$ <span class="fu">cat</span> config.yaml</span></code></pre></div>
+<div class="sourceCode" id="cb139"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb139-1"><a href="config-files.html#cb139-1"></a>$ <span class="fu">cat</span> config.yaml</span></code></pre></div>
 <pre class="out"><code>ROOT: &quot;.&quot;
 sub2root: &quot;../../&quot;
 src: &quot;src/&quot;
@@ -310,20 +317,20 @@ out_slides: &quot;out/slides/&quot;</code></pre>
 First we must import the <code>config.yaml</code> file into the Snakefile.
 We import it using the <code>configfile:</code> notation, and so it’s easy for us to find,
 we place it at the very top of our Snakefile.</p>
-<div class="sourceCode" id="cb130"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb130-1"><a href="config-files.html#cb130-1"></a><span class="co">## Snakemake - MRW Replication</span></span>
-<span id="cb130-2"><a href="config-files.html#cb130-2"></a><span class="co">##</span></span>
-<span id="cb130-3"><a href="config-files.html#cb130-3"></a><span class="co">## @yourname</span></span>
-<span id="cb130-4"><a href="config-files.html#cb130-4"></a><span class="co">##</span></span>
-<span id="cb130-5"><a href="config-files.html#cb130-5"></a></span>
-<span id="cb130-6"><a href="config-files.html#cb130-6"></a><span class="co"># --- Importing Configuration Files --- #</span></span>
-<span id="cb130-7"><a href="config-files.html#cb130-7"></a></span>
-<span id="cb130-8"><a href="config-files.html#cb130-8"></a><span class="ex">configfile</span>: <span class="st">&quot;config.yaml&quot;</span></span>
-<span id="cb130-9"><a href="config-files.html#cb130-9"></a></span>
-<span id="cb130-10"><a href="config-files.html#cb130-10"></a><span class="co"># --- Dictionaries --- #</span></span>
-<span id="cb130-11"><a href="config-files.html#cb130-11"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb141"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb141-1"><a href="config-files.html#cb141-1"></a><span class="co">## Snakemake - MRW Replication</span></span>
+<span id="cb141-2"><a href="config-files.html#cb141-2"></a><span class="co">##</span></span>
+<span id="cb141-3"><a href="config-files.html#cb141-3"></a><span class="co">## @yourname</span></span>
+<span id="cb141-4"><a href="config-files.html#cb141-4"></a><span class="co">##</span></span>
+<span id="cb141-5"><a href="config-files.html#cb141-5"></a></span>
+<span id="cb141-6"><a href="config-files.html#cb141-6"></a><span class="co"># --- Importing Configuration Files --- #</span></span>
+<span id="cb141-7"><a href="config-files.html#cb141-7"></a></span>
+<span id="cb141-8"><a href="config-files.html#cb141-8"></a><span class="ex">configfile</span>: <span class="st">&quot;config.yaml&quot;</span></span>
+<span id="cb141-9"><a href="config-files.html#cb141-9"></a></span>
+<span id="cb141-10"><a href="config-files.html#cb141-10"></a><span class="co"># --- Dictionaries --- #</span></span>
+<span id="cb141-11"><a href="config-files.html#cb141-11"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span></code></pre></div>
 </div>
 <div id="using-paths-from-the-config-file" class="section level2">
-<h2><span class="header-section-number">11.2</span> Using paths from the config file</h2>
+<h2><span class="header-section-number">13.2</span> Using paths from the config file</h2>
 <p>We can now use the paths in <code>config.yaml</code> throughout the Snakefile.
 The text to the left of the colon in each line of the file is our reference to a
 particular path, so <code>src_data</code> will serve as our reference to the folder <code>src/data/</code>.
@@ -332,20 +339,20 @@ so we reference it as <code>config["src_data"]</code>.
 The path is then connected to the filename with a <code>+</code>.
 Hence we can reference the original MRW data located in <code>src/data</code> as <code>config["src_data"] + "mrw.dta"</code>
 Here is the new version of the rule <code>rename_vars</code> using the config file to simplify the paths:</p>
-<div class="sourceCode" id="cb131"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb131-1"><a href="config-files.html#cb131-1"></a><span class="co">## rename_vars        : creates meaningful variable names</span></span>
-<span id="cb131-2"><a href="config-files.html#cb131-2"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb131-3"><a href="config-files.html#cb131-3"></a>    <span class="ex">input</span>:</span>
-<span id="cb131-4"><a href="config-files.html#cb131-4"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;rename_variables.R&quot;</span>,</span>
-<span id="cb131-5"><a href="config-files.html#cb131-5"></a>        <span class="ex">data</span>   = config[<span class="st">&quot;src_data&quot;</span>] + <span class="st">&quot;mrw.dta&quot;</span></span>
-<span id="cb131-6"><a href="config-files.html#cb131-6"></a>    <span class="ex">output</span>:</span>
-<span id="cb131-7"><a href="config-files.html#cb131-7"></a>        <span class="ex">data</span> = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_renamed.csv&quot;</span></span>
-<span id="cb131-8"><a href="config-files.html#cb131-8"></a>    <span class="ex">log</span>:</span>
-<span id="cb131-9"><a href="config-files.html#cb131-9"></a>        <span class="ex">config</span>[<span class="st">&quot;out_log&quot;</span>] + <span class="st">&quot;data_mgt/rename_variables.Rout&quot;</span></span>
-<span id="cb131-10"><a href="config-files.html#cb131-10"></a>    <span class="ex">shell</span>:</span>
-<span id="cb131-11"><a href="config-files.html#cb131-11"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb131-12"><a href="config-files.html#cb131-12"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb131-13"><a href="config-files.html#cb131-13"></a><span class="st">            --out {output.data} \</span></span>
-<span id="cb131-14"><a href="config-files.html#cb131-14"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb142"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb142-1"><a href="config-files.html#cb142-1"></a><span class="co">## rename_vars        : creates meaningful variable names</span></span>
+<span id="cb142-2"><a href="config-files.html#cb142-2"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb142-3"><a href="config-files.html#cb142-3"></a>    <span class="ex">input</span>:</span>
+<span id="cb142-4"><a href="config-files.html#cb142-4"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;rename_variables.R&quot;</span>,</span>
+<span id="cb142-5"><a href="config-files.html#cb142-5"></a>        <span class="ex">data</span>   = config[<span class="st">&quot;src_data&quot;</span>] + <span class="st">&quot;mrw.dta&quot;</span></span>
+<span id="cb142-6"><a href="config-files.html#cb142-6"></a>    <span class="ex">output</span>:</span>
+<span id="cb142-7"><a href="config-files.html#cb142-7"></a>        <span class="ex">data</span> = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_renamed.csv&quot;</span></span>
+<span id="cb142-8"><a href="config-files.html#cb142-8"></a>    <span class="ex">log</span>:</span>
+<span id="cb142-9"><a href="config-files.html#cb142-9"></a>        <span class="ex">config</span>[<span class="st">&quot;out_log&quot;</span>] + <span class="st">&quot;data_mgt/rename_variables.Rout&quot;</span></span>
+<span id="cb142-10"><a href="config-files.html#cb142-10"></a>    <span class="ex">shell</span>:</span>
+<span id="cb142-11"><a href="config-files.html#cb142-11"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb142-12"><a href="config-files.html#cb142-12"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb142-13"><a href="config-files.html#cb142-13"></a><span class="st">            --out {output.data} \</span></span>
+<span id="cb142-14"><a href="config-files.html#cb142-14"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
 <div id="exercise-using-config-files" class="section level3 unnumbered exercise">
 <h3>Exercise: Using Config Files</h3>
 <p>Go through the remainder of the Snakefile and replace all explicit paths with references

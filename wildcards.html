@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 12 Self Documenting Help | Reproducible Data Analytic Workflows with Snakemake and R</title>
+  <title>Chapter 6 Wildcards | Reproducible Data Analytic Workflows with Snakemake and R</title>
   <meta name="description" content="In progress" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 12 Self Documenting Help | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta property="og:title" content="Chapter 6 Wildcards | Reproducible Data Analytic Workflows with Snakemake and R" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="lachlandeer/snakemake-econ-r-tutorial" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 12 Self Documenting Help | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta name="twitter:title" content="Chapter 6 Wildcards | Reproducible Data Analytic Workflows with Snakemake and R" />
   
   <meta name="twitter:description" content="In progress" />
   
@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="logging-output-and-errors.html"/>
-<link rel="next" href="config-files.html"/>
+<link rel="prev" href="target-rules.html"/>
+<link rel="next" href="the-expand-function.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -277,145 +277,131 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="self-documenting-help" class="section level1">
-<h1><span class="header-section-number">Chapter 12</span> Self Documenting Help</h1>
-<p>As we build up our Snakemake workflow the Snakefile becomes increasingly complex.
-It is easy to imagine that a future version of you,
-or a co-author,
-might have difficulty understanding what each rule is doing.
-This chapter introduces an approach to add some comments to the Snakefile to make it easier to navigate.
-We also add a new <code>help</code> rule so that we can get a summary of the comments printed to screen.</p>
-<div id="our-commenting-syle" class="section level2">
-<h2><span class="header-section-number">12.1</span> Our Commenting Syle</h2>
-<p>If we look at the Snakefile in it’s current state, we see that there are a bare minimum amount of comments already integrated.
-Because Snakemake is a Python library all comments must begin with one <code>#</code>.
-We then added some additional formatting of comments to create two types.<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>
-Our first type of comment is a ‘double hash’ - <code>##</code>.
-We use this to represent information that someone who reads our code might find helpful to build understanding of the file.
-For example, the head of the Snakefile contains information on the name of the workflow and the authors:</p>
-<div class="sourceCode" id="cb132"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb132-1"><a href="self-documenting-help.html#cb132-1"></a><span class="co">## Snakemake - MRW Replication</span></span>
-<span id="cb132-2"><a href="self-documenting-help.html#cb132-2"></a><span class="co">##</span></span>
-<span id="cb132-3"><a href="self-documenting-help.html#cb132-3"></a><span class="co">## @yourname</span></span>
-<span id="cb132-4"><a href="self-documenting-help.html#cb132-4"></a><span class="co">##</span></span></code></pre></div>
-<p>Second, we have broken up the Snakefile somewhat into sections such as Dictionaries, Build Rules and Clean Rules using the <code># --- Something --- #</code> notation.</p>
-</div>
-<div id="adding-further-comments" class="section level2">
-<h2><span class="header-section-number">12.2</span> Adding Further Comments</h2>
-<p>The information we have added in comments so far is not really enough to help us remember much.
-What we want is a simple one or two line summary of what each of our rules do so that we can look back at them in the future.
-We are going to make comments above each rule using the <code>##</code> notation.
-The structure will follow a common pattern: <code>rule_name : some description</code>
-For example, for the <code>textbook_solow</code> rule:</p>
-<div class="sourceCode" id="cb133"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb133-1"><a href="self-documenting-help.html#cb133-1"></a><span class="co">## textbook_solow: construct a table of regression estimates for textbook solow model</span></span>
-<span id="cb133-2"><a href="self-documenting-help.html#cb133-2"></a><span class="ex">rule</span> textbook_solow:</span>
-<span id="cb133-3"><a href="self-documenting-help.html#cb133-3"></a>    <span class="ex">input</span>:</span>
-<span id="cb133-4"><a href="self-documenting-help.html#cb133-4"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,</span>
-<span id="cb133-5"><a href="self-documenting-help.html#cb133-5"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb133-6"><a href="self-documenting-help.html#cb133-6"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb133-7"><a href="self-documenting-help.html#cb133-7"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)),</span>
-<span id="cb133-8"><a href="self-documenting-help.html#cb133-8"></a>    <span class="ex">params</span>:</span>
-<span id="cb133-9"><a href="self-documenting-help.html#cb133-9"></a>        <span class="ex">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,</span>
-<span id="cb133-10"><a href="self-documenting-help.html#cb133-10"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
-<span id="cb133-11"><a href="self-documenting-help.html#cb133-11"></a>    <span class="ex">output</span>:</span>
-<span id="cb133-12"><a href="self-documenting-help.html#cb133-12"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></span>
-<span id="cb133-13"><a href="self-documenting-help.html#cb133-13"></a>    <span class="ex">shell</span>:</span>
-<span id="cb133-14"><a href="self-documenting-help.html#cb133-14"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb133-15"><a href="self-documenting-help.html#cb133-15"></a><span class="st">            --filepath {params.filepath} \</span></span>
-<span id="cb133-16"><a href="self-documenting-help.html#cb133-16"></a><span class="st">            --models {params.model_expr} \</span></span>
-<span id="cb133-17"><a href="self-documenting-help.html#cb133-17"></a><span class="st">            --out {output.table}&quot;</span></span></code></pre></div>
-<div id="exercise-adding-comments" class="section level3 unnumbered exercise">
-<h3>Exercise: Adding Comments</h3>
-<p>Add some comments using our suggested style to each of the Snakemake rules we have constructed so far.</p>
-</div>
-</div>
-<div id="a-help-rule" class="section level2">
-<h2><span class="header-section-number">12.3</span> A <code>help</code> Rule</h2>
-<p>The Snakefile is now much easier to understand when reading through it.
-Future you will be grateful for the effort.
-We can go one step further: construct a rule that prints the output of these comments to the screen.
-Let’s call this rule <code>help</code>, so that if we run <code>snakemake help</code> all our useful comments will be printed to screen.
-We usually put this help rule at the bottom of our Snakefile, so that we don’t keep bumping into it as we work.
-The rule has the following structure:</p>
-<div class="sourceCode" id="cb134"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb134-1"><a href="self-documenting-help.html#cb134-1"></a><span class="co"># --- Help Rules --- #</span></span>
-<span id="cb134-2"><a href="self-documenting-help.html#cb134-2"></a><span class="co">## help               : prints help comments for Snakefile</span></span>
-<span id="cb134-3"><a href="self-documenting-help.html#cb134-3"></a><span class="ex">rule</span> help:</span>
-<span id="cb134-4"><a href="self-documenting-help.html#cb134-4"></a>    <span class="ex">input</span>: <span class="st">&quot;Snakefile&quot;</span></span>
-<span id="cb134-5"><a href="self-documenting-help.html#cb134-5"></a>    <span class="ex">shell</span>:</span>
-<span id="cb134-6"><a href="self-documenting-help.html#cb134-6"></a>        <span class="st">&quot;sed -n &#39;s/^##//p&#39; {input}&quot;</span></span></code></pre></div>
-<p>The rule depends on the <code>Snakefile</code> itself - because if the file changes, the might too.
-The shell comand that we use is a little confusing when we look at it the first time.
-Intuitively heres what it is doing:</p>
+<div id="wildcards" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> Wildcards</h1>
+<p>Adding a target rule to execute all regressions at the same time is good progress, but if we look at the <em>solow_</em> rules we see that there is quite a lot of replication of code between them.
+All three rules use the same script, data, and model inputs.
+They only differ in the data subsetting found under <code>{input.subset}</code> and the output file define under <code>{output.estimate}</code>.</p>
+<p>Ideally, we want <code>Snakefile</code> to feature the minimum amount of duplication possible.
+This has a few advantages:</p>
 <ul>
-<li>The comments we want to print are those that have the double hash notation, <code>##</code>.</li>
-<li><code>sed</code> is a progam that can perform text manipulations to some input
-<ul>
-<li>We want it to find all lines starting with <code>##</code> in our input file …</li>
-<li>… and print out the remainder of those lines</li>
-</ul></li>
+<li>Limiting redundancy allows us to make changes to the code only once rather than multiple times (imagine changing the <code>{data.input}</code> file).</li>
+<li>Any additional copy of code introduces extra opportunities of typos or other errors and makes the build file generally harder to read and navigate.</li>
+<li>And if we’re completely honest, it’s also a just a bit ugly…</li>
 </ul>
-<p>Let’s see it in action:</p>
-<div class="sourceCode" id="cb135"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb135-1"><a href="self-documenting-help.html#cb135-1"></a>$ <span class="ex">snakemake</span> help</span></code></pre></div>
+<p>In this chapter we will learn how to unify such redundancies and collapse the three rules <code>solow_nonoil</code>, <code>solow_oecd</code>, and <code>solow_intermediate</code> into one rule.
+To do so, we create a new variable, <code>iSubset</code>, that can iterate through the three <code>.json</code> files that contain the subset filters.
+In Snakemake, these variables are called <em>wildcards</em>.</p>
+<div id="the-starting-point-of-our-snakefile" class="section level2">
+<h2><span class="header-section-number">6.1</span> The starting point of our Snakefile</h2>
+<p>The top of our Snakefile at the moment looks something like this:</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb76-1"><a href="wildcards.html#cb76-1"></a></span>
+<span id="cb76-2"><a href="wildcards.html#cb76-2"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb76-3"><a href="wildcards.html#cb76-3"></a></span>
+<span id="cb76-4"><a href="wildcards.html#cb76-4"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb76-5"><a href="wildcards.html#cb76-5"></a>    <span class="ex">input</span>:</span>
+<span id="cb76-6"><a href="wildcards.html#cb76-6"></a>        <span class="ex">intermediate</span> = <span class="st">&quot;out/analysis/model_solow_subset_intermediate.rds&quot;</span>,</span>
+<span id="cb76-7"><a href="wildcards.html#cb76-7"></a>        <span class="ex">nonoil</span>       = <span class="st">&quot;out/analysis/model_solow_subset_nonoil.rds&quot;</span>,</span>
+<span id="cb76-8"><a href="wildcards.html#cb76-8"></a>        <span class="ex">oecd</span>         = <span class="st">&quot;out/analysis/model_solow_subset_oecd.rds&quot;</span></span>
+<span id="cb76-9"><a href="wildcards.html#cb76-9"></a></span>
+<span id="cb76-10"><a href="wildcards.html#cb76-10"></a><span class="ex">rule</span> solow_intermediate:</span>
+<span id="cb76-11"><a href="wildcards.html#cb76-11"></a>    <span class="ex">input</span>:</span>
+<span id="cb76-12"><a href="wildcards.html#cb76-12"></a>        <span class="ex">script</span>   = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb76-13"><a href="wildcards.html#cb76-13"></a>        <span class="ex">data</span>     = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb76-14"><a href="wildcards.html#cb76-14"></a>        <span class="ex">model</span>    = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb76-15"><a href="wildcards.html#cb76-15"></a>        <span class="ex">subset</span>   = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
+<span id="cb76-16"><a href="wildcards.html#cb76-16"></a>    <span class="ex">output</span>:</span>
+<span id="cb76-17"><a href="wildcards.html#cb76-17"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_subset_intermediate.rds&quot;</span>,</span>
+<span id="cb76-18"><a href="wildcards.html#cb76-18"></a>    <span class="ex">shell</span>:</span>
+<span id="cb76-19"><a href="wildcards.html#cb76-19"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb76-20"><a href="wildcards.html#cb76-20"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb76-21"><a href="wildcards.html#cb76-21"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb76-22"><a href="wildcards.html#cb76-22"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb76-23"><a href="wildcards.html#cb76-23"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb76-24"><a href="wildcards.html#cb76-24"></a></span>
+<span id="cb76-25"><a href="wildcards.html#cb76-25"></a><span class="ex">rule</span> solow_nonoil:</span>
+<span id="cb76-26"><a href="wildcards.html#cb76-26"></a>    <span class="ex">input</span>:</span>
+<span id="cb76-27"><a href="wildcards.html#cb76-27"></a>        <span class="ex">script</span>   = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb76-28"><a href="wildcards.html#cb76-28"></a>        <span class="ex">data</span>     = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb76-29"><a href="wildcards.html#cb76-29"></a>        <span class="ex">model</span>    = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb76-30"><a href="wildcards.html#cb76-30"></a>        <span class="ex">subset</span>   = <span class="st">&quot;src/data-specs/subset_nonoil.json&quot;</span></span>
+<span id="cb76-31"><a href="wildcards.html#cb76-31"></a>    <span class="ex">output</span>:</span>
+<span id="cb76-32"><a href="wildcards.html#cb76-32"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_subset_nonoil.rds&quot;</span>,</span>
+<span id="cb76-33"><a href="wildcards.html#cb76-33"></a>    <span class="ex">shell</span>:</span>
+<span id="cb76-34"><a href="wildcards.html#cb76-34"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb76-35"><a href="wildcards.html#cb76-35"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb76-36"><a href="wildcards.html#cb76-36"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb76-37"><a href="wildcards.html#cb76-37"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb76-38"><a href="wildcards.html#cb76-38"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb76-39"><a href="wildcards.html#cb76-39"></a></span>
+<span id="cb76-40"><a href="wildcards.html#cb76-40"></a><span class="ex">rule</span> solow_oecd:</span>
+<span id="cb76-41"><a href="wildcards.html#cb76-41"></a>    <span class="ex">input</span>:</span>
+<span id="cb76-42"><a href="wildcards.html#cb76-42"></a>        <span class="ex">script</span>   = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb76-43"><a href="wildcards.html#cb76-43"></a>        <span class="ex">data</span>     = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb76-44"><a href="wildcards.html#cb76-44"></a>        <span class="ex">model</span>    = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb76-45"><a href="wildcards.html#cb76-45"></a>        <span class="ex">subset</span>   = <span class="st">&quot;src/data-specs/subset_oecd.json&quot;</span></span>
+<span id="cb76-46"><a href="wildcards.html#cb76-46"></a>    <span class="ex">output</span>:</span>
+<span id="cb76-47"><a href="wildcards.html#cb76-47"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_subset_oecd.rds&quot;</span>,</span>
+<span id="cb76-48"><a href="wildcards.html#cb76-48"></a>    <span class="ex">shell</span>:</span>
+<span id="cb76-49"><a href="wildcards.html#cb76-49"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb76-50"><a href="wildcards.html#cb76-50"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb76-51"><a href="wildcards.html#cb76-51"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb76-52"><a href="wildcards.html#cb76-52"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb76-53"><a href="wildcards.html#cb76-53"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb76-54"><a href="wildcards.html#cb76-54"></a></span>
+<span id="cb76-55"><a href="wildcards.html#cb76-55"></a><span class="ex">...</span></span></code></pre></div>
+<p>where <code>...</code> stands for the bottom part of our Snakefile that we will not modify.</p>
+<p>Let us now replace the three <code>solow_</code> rules by a single rule which we call <code>solow_model</code> where the unique parts of the <code>{input.subset}</code> and <code>{output.estmiate}</code> are replace with our wildcard variable <code>{iSubset}</code>.</p>
+<p>The relevant part now looks something like this:</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb77-1"><a href="wildcards.html#cb77-1"></a></span>
+<span id="cb77-2"><a href="wildcards.html#cb77-2"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb77-3"><a href="wildcards.html#cb77-3"></a>    <span class="ex">input</span>:</span>
+<span id="cb77-4"><a href="wildcards.html#cb77-4"></a>        <span class="ex">intermediate</span> = <span class="st">&quot;out/analysis/model_solow_subset_intermediate.rds&quot;</span>,</span>
+<span id="cb77-5"><a href="wildcards.html#cb77-5"></a>        <span class="ex">nonoil</span>       = <span class="st">&quot;out/analysis/model_solow_subset_nonoil.rds&quot;</span>,</span>
+<span id="cb77-6"><a href="wildcards.html#cb77-6"></a>        <span class="ex">oecd</span>         = <span class="st">&quot;out/analysis/model_solow_subset_oecd.rds&quot;</span></span>
+<span id="cb77-7"><a href="wildcards.html#cb77-7"></a></span>
+<span id="cb77-8"><a href="wildcards.html#cb77-8"></a><span class="ex">rule</span> solow_model:</span>
+<span id="cb77-9"><a href="wildcards.html#cb77-9"></a>    <span class="ex">input</span>:</span>
+<span id="cb77-10"><a href="wildcards.html#cb77-10"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb77-11"><a href="wildcards.html#cb77-11"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb77-12"><a href="wildcards.html#cb77-12"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb77-13"><a href="wildcards.html#cb77-13"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_{iSubset}.json&quot;</span></span>
+<span id="cb77-14"><a href="wildcards.html#cb77-14"></a>    <span class="ex">output</span>:</span>
+<span id="cb77-15"><a href="wildcards.html#cb77-15"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb77-16"><a href="wildcards.html#cb77-16"></a>    <span class="ex">shell</span>:</span>
+<span id="cb77-17"><a href="wildcards.html#cb77-17"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb77-18"><a href="wildcards.html#cb77-18"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb77-19"><a href="wildcards.html#cb77-19"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb77-20"><a href="wildcards.html#cb77-20"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb77-21"><a href="wildcards.html#cb77-21"></a><span class="st">            --out {output.model_est}&quot;</span></span>
+<span id="cb77-22"><a href="wildcards.html#cb77-22"></a></span>
+<span id="cb77-23"><a href="wildcards.html#cb77-23"></a><span class="ex">...</span></span></code></pre></div>
+<p>We notice right away how much more concise the relevant part of our script has become.</p>
+<p>We wrapped our wildcard <code>iSubset</code> in curly parentheses so that Snakemake knows that this part is a variable which we want to substitute with the name of one of the subsets.
+This is conceptually similar to what we have done in our shell commands.</p>
+<p>Let us first try to execute <code>solow_model</code> as a target rule:</p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb78-1"><a href="wildcards.html#cb78-1"></a>$ <span class="ex">snakemake</span> --cores 1 solow_model</span></code></pre></div>
 <pre class="out"><code>Building DAG of jobs...
-Using shell: /bin/bash
-Provided cores: 1
-Rules claiming more threads will be scaled down.
-Job counts:
-    count   jobs
-    1   help
-    1
-
-[Wed Feb  6 19:13:51 2019]
-rule help:
-    input: Snakefile
-    jobid: 0
-
- Snakemake - MRW Replication
-
- @yourname
-
- all                : builds all final outputs
- augment_solow      : construct a table of estimates for augmented solow model
- textbook_solow     : construct a table of regression estimates for textbook solow model
- make_figs          : builds all figures
- figures            : recipe for constructing a figure (cannot be called)
- estimate_models    : estimates all regressions
- ols_models         : recipe for estimating a single regression (cannot be called)
- gen_regression_vars: creates variables needed to estimate a regression
- rename_vars        : creates meaningful variable names
- clean              : removes all content from out/ directory
- help               : prints help comments for Snakefile
-[Wed Feb  6 19:13:51 2019]
-Finished job 0.
-1 of 1 steps (100%) done
-</code></pre>
-<p>We see that after the usual Snakemake output telling us what it is doing, our comments are printed to screen.</p>
-<div id="exercise-saving-help-output-to-file" class="section level3 unnumbered exercise">
-<h3>Exercise: Saving <code>help</code> output to file</h3>
-<p>Modify the <code>help</code> rule so that the printed content is saved in a file called <code>HELP.txt</code></p>
+WorkflowError:
+Target rules may not contain wildcards. Please specify concrete files or a rule without wildcards.</code></pre>
+<p>What has happened?
+Snakemake will not execute a rule that contains wildcards because it does not know what values to substitute into <code>iSubset.</code></p>
+<p>Gladly, we already have a target rule which does not contain wildcards and explicitly specifies the input files we want to create, our trusty <code>run_solow</code> rule.</p>
+<p>Let us therefore try to execute our target rule instead:</p>
+<div class="sourceCode" id="cb80"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb80-1"><a href="wildcards.html#cb80-1"></a>$ <span class="ex">snakemake</span> --cores 1 solow_target</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb81-1"><a href="wildcards.html#cb81-1"></a><span class="ex">TODO</span>: Add output here</span></code></pre></div>
+<p>TODO: Explain that this works.</p>
+<p>TODO: Explain how snakemake plugs in the same values into input and output to create the input files in the target rule.</p>
 
 </div>
-</div>
-</div>
-<div class="footnotes">
-<hr />
-<ol start="14">
-<li id="fn14"><p>
-Do notice that the exact formatting of all this help is totally arbitrary.
-Noone tells you that two <code>#</code>’s or a mix of <code>#</code>’s and <code>-</code>’s are meaningful, correct or standard ways of
-putting comments in a file.
-Our choice reflects path dependence in the way we started writing Snakefiles, and we have found them useful
-and persisted with our initial choice.
-Feel free to create your own.
-The only important thing is the line starts with one <code>#</code> so that Snakemake doesnt try and execute that line as code.<a href="self-documenting-help.html#fnref14" class="footnote-back">↩︎</a></p></li>
-</ol>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="logging-output-and-errors.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="config-files.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="target-rules.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="the-expand-function.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -446,7 +432,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/19-documenting_help.Rmd",
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/05-B-wildcards.Rmd",
 "text": "Edit"
 },
 "history": {

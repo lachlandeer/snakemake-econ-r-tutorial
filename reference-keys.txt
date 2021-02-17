@@ -22,9 +22,12 @@ redundant-executions-dont-run-a-rule-repeatedly
 working-with-multiple-rules
 creating-a-second-rule
 clean-rules
-pattern-rules
-how-snakemake-determines-the-build-order-when-multiple-rules-are-present
+target-rules
 where-we-are-now
+how-snakemake-determines-the-build-order-when-multiple-rules-are-present
+dedicated-target-rules-to-execute-multiple-rules
+wildcards
+the-starting-point-of-our-snakefile
 the-expand-function
 expanding-multiple-wildcards
 automatic-wildcard-specifications
