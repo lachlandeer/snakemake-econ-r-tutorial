@@ -42,7 +42,7 @@ We see that script expects three arguments:
 
 - `--data`, the file path of the input file
 - `--out`, the file path of the output file
-- `--param`, Solow's constant which defaults to 0.05, the parameter used in CITE. We can safely ignore this for now.
+- `--param`, Solow's constant which defaults to 0.05, the parameter used in @mrw. We can safely ignore this for now.
 
 To chain two rules together, the second one needs to use the output of the first rule as its input.
 This way the second script will receive all the changes the first script made so they are not lost.

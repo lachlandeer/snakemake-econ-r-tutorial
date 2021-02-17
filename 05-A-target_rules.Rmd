@@ -1,0 +1,225 @@
+# Target Rules
+
+## Where we are now?
+
+If you still have the `hello_world` rule in your Snakefile, now is a good moment to remove it.
+Then, your Snakefile should look something like this:
+
+```{r, engine = 'bash', eval = FALSE}
+## Snakemake - MRW Replication
+##
+## @yourname
+
+# --- Build Rules --- #
+
+rule solow_intermediate:
+    input:
+        script   = "src/analysis/estimate_ols_model.R",
+        data     = "out/data/mrw_complete.csv",
+        model    = "src/model-specs/model_solow.json",
+        subset   = "src/data-specs/subset_intermediate.json"
+    output:
+        estimate = "out/analysis/model_solow_subset_intermediate.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+
+rule solow_nonoil:
+    input:
+        script   = "src/analysis/estimate_ols_model.R",
+        data     = "out/data/mrw_complete.csv",
+        model    = "src/model-specs/model_solow.json",
+        subset   = "src/data-specs/subset_nonoil.json"
+    output:
+        estimate = "out/analysis/model_solow_subset_nonoil.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+
+rule solow_oecd:
+    input:
+        script   = "src/analysis/estimate_ols_model.R",
+        data     = "out/data/mrw_complete.csv",
+        model    = "src/model-specs/model_solow.json",
+        subset   = "src/data-specs/subset_oecd.json"
+    output:
+        estimate = "out/analysis/model_solow_subset_oecd.rds",
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+
+rule gen_regression_vars:
+    input:
+        script = "src/data-management/gen_reg_vars.R",
+        data   = "out/data/mrw_renamed.csv"
+    output:
+        data   = "out/data/mrw_complete.csv"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --out {output.data}"
+
+rule rename_vars:
+    input:
+        script = "src/data-management/rename_variables.R",
+        data   = "src/data/mrw.dta"
+    output:
+        data = "out/data/mrw_renamed.csv"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --out {output.data}"
+
+# --- Clean Rules --- #
+
+rule clean:
+    shell:
+        "rm -rf out/*"
+
+rule clean_data:
+    shell:
+        "rm -rf out/data/*"
+
+rule clean_analysis:
+    shell:
+        "rm -rf out/analysis/*"
+
+```
+
+## How Snakemake determines the build order when multiple rules are present
+
+Now that we have worked with multiple rules and seen how one can execute another rule, let us try to understand the principle behind this.
+
+As we know, we can execute any rule in `Snakefile` explicitly by calling it by name:
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 solow_intermediate
+```
+
+When no rule name is explicitly given, Snakemake will execute the first rule it encounters at the top of `Snakefile`:
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1
+```
+
+If you followed the order of rules in the solution to the previous exercise, `solow_intermediate` is the first rule in `Snakefile`.
+In this case, both the explicit and implicit commands are equivalent.
+You can verify this by cleaning your project before executing either or by adding `--summary` to either command.
+
+The rule we ask `Snakemake` to execute either explicitly or implicitly is called a **target rule**.
+Snakemake focusses on executing this rule.
+
+When all necessary inputs to build the target rule exist, Snakemake will simply execute the rule and build the defined outputs.
+
+When Snakemake recognizes that a necessary input to execute the target rule is missing, Snakemake will try to build it through the other rules present in `Snakefile`.
+
+To illustrate this, let us stick to our present project and assume the target rule is `solow_intermediate`.
+The following graph shows all rules which lead up to the target rule:
+
+![filegraph](img/filegraph.pdf)
+
+`mrw_complete.csv` is a necessary input to `solow_intermediate`.
+If the file does not exist, `Snakemake` will search through `Snakefile` for another rule which has `mrw_complete.csv` as its output -- in our case `gen_regression_vars`.
+In this case, Snakemake will first execute `gen_regression_vars` before executing the target rule `solow_intermediate`.
+
+If necessary inputs are missing to execute `gen_regression_vars`, Snakemake will search for other rules to produce it and so forth...
+
+To allow Snakemake to work properly, the input and output relationships in a project need to follow a **directed acyclic graph (DAG)**.
+Directed here means that....
+Acyclic implies that there can be no two rules which require output from one another as inputs, either directly or in a larger loop.
+
+This has a few implications on how we should define our intermediate input and output files.
+We should follow the following best practices to prevent problems:
+
+- **No rule should have the same file as input and output.** It is often common practice to load a certain dataset, perform operations on it and overwrite the original file. While there are good reasons to never do this in any workflow, this behavior can lead to more severe problems when using Snakemake. Snakemake only searches for rules which can create input files which do **not** exist. If a rule overwrites an already existing input file, Snakemake would not recognize it as a dependency and simply ignore it. This implies that a project might run through cleanly and produce incorrect results without this being detected. In our workflow, we prevented such behavior by making sure the `gen_regression_vars` writes its results to a new file.
+- **No two rules should have the same output.** When Snakemake searches for a file to create a missing input file, it will execute the first rule it encounters which produces this file. To make sure our input and output relationships are explicit and reproducible, we do not want the order of the rules in a `Snakefile` determine which rule is actually executed.
+- **A project should have a clear direction.** A project should have a clear trajectory. In practice this typically starts with data manipulations which are necessary to perform analysis, which in turn will be used to create plots and tables, which finally end up in a paper or set of slides.
+In such a typical workflow, directedness implies for example that a regression table ist not an input in the data manipulation steps.
+- **A project cannot be circular.** Any circularity would let Snakemake search for rules in an infinite loop.
+
+## Dedicated target rules to execute multiple rules
+
+Currently, our project has three rules which perform OLS regressions parallel to one another at the top of `Snakefile`.
+As only one rule can be the target, it would require us to execute Snakemake three times -- once for every OLS regression:
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 solow_intermediate
+snakemake --cores 1 solow_nonoil
+snakemake --cores 1 solow_oecd
+```
+
+While either command would simplify our lives a bit by also running all the necessary data manipulations automatically, it's still a bit silly to run Snakemake repeatedly.
+After all it is our goal to make our workflow reproducible via a single line of code.
+
+Now that we understand the concept of `target rules`, we will try to make use of them to our advantage.
+
+As we know, Snakemake will execute any rule which can produce an output which a target rule requires as its input.
+Adding a new dedicated target rule which requires the outputs of our three solow models will allow us to execute all three rules via a single line of code.
+
+We add this rule at the top of `Snakefile` and name it `solow_target`.
+The rule only has three inputs, one for the output of each solow model like so: 
+
+```{r, engine = 'bash', eval = FALSE}
+rule solow_target:
+    input:
+        intermediate = "out/analysis/model_solow_subset_intermediate.rds",
+        nonoil       = "out/analysis/model_solow_subset_nonoil.rds",
+        oecd         = "out/analysis/model_solow_subset_oecd.rds"
+```
+
+After saving `Snakefile`, we can inspect how Snakemake perceives the state of our project with the summary option
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --summary
+```
+
+```{r, engine = 'bash', eval = FALSE}
+TODO: Add output
+```
+
+DESCRIBE output
+
+### Exercise: Using target rules {- .exercise}
+
+It is time to put our new and shiny target rule to work and execute our full workflow with a single line of code.
+
+1. Delete the content of the `out/` folder with help of the `clean` rule.
+2. Verify that the output folder is empty.
+3. Execute the `solow_target` rule and build all outputs in a single swoop.
+
+### Solution {- .solution}
+
+1. Delete the content of the `out/` folder with help of the `clean` rule.
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 clean
+```
+
+2. Verify that the output folder is empty.
+
+```{r, engine = 'bash', eval = FALSE}
+ls out
+```
+
+```{r, engine = 'bash', eval = FALSE}
+TODO: Add output
+```
+
+3. Execute the `solow_target` rule and build all outputs in a single swoop.
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 solow_target
+```
+
+```{r, engine = 'bash', eval = FALSE}
+TODO: Add output
+```
