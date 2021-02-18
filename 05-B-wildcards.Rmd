@@ -1,17 +1,24 @@
 # Wildcards
 
-Adding a target rule to execute all regressions at the same time is good progress, but if we look at the *solow_* rules we see that there is quite a lot of replication of code between them.
-All three rules use the same script, data, and model inputs.
+Adding a target rule to execute all regressions at the same time is good progress to simplify the execution of our project.
+In this chapter we want to make our life easier to write and maintain our project.
+
+If we look at the *solow_* rules we see that there is quite a lot of replication of code between them.
+All three rules use the same `script`, `data`, and `model` inputs.
 They only differ in the data subsetting found under `{input.subset}` and the output file define under `{output.estimate}`.
 
 Ideally, we want `Snakefile` to feature the minimum amount of duplication possible.
+
 This has a few advantages:
 
 - Limiting redundancy allows us to make changes to the code only once rather than multiple times (imagine changing the `{data.input}` file).
 - Any additional copy of code introduces extra opportunities of typos or other errors and makes the build file generally harder to read and navigate.
 - And if we're completely honest, it's also a just a bit ugly...
 
-In this chapter we will learn how to unify such redundancies and collapse the three rules `solow_nonoil`, `solow_oecd`, and `solow_intermediate` into one rule.
+While maintaining duplicate code for three rules is still bearable, redundancy becomes a larger problem when we have many duplicate rule executions.
+Imagine managing 15 OLS specifications instead of three.
+
+In this chapter we will learn how to unify such redundancies and collapse the three rules `solow_nonoil`, `solow_oecd`, and `solow_intermediate` into a single rule.
 To do so, we create a new variable, `iSubset`, that can iterate through the three `.json` files that contain the subset filters.
 In Snakemake, these variables are called *wildcards*.
 
@@ -74,12 +81,14 @@ rule solow_oecd:
             --subset {input.subset} \
             --out {output.estimate}"
 
-...
+[...]
 ```
 
-where `...` stands for the bottom part of our Snakefile that we will not modify.
+where `[...]` stands for the bottom part of our Snakefile that we will not modify in this chapter.
 
-Let us now replace the three `solow_` rules by a single rule which we call `solow_model` where the unique parts of the `{input.subset}` and `{output.estmiate}` are replace with our wildcard variable `{iSubset}`.
+## Using wildcards to tidy up our code
+
+Let us now replace the three `solow_` rules by a single rule which we call `solow_model` where the unique parts of the `{input.subset}` and `{output.estimate}` are replaced with our wildcard variable `{iSubset}`.
 
 The relevant part now looks something like this:
 
@@ -98,23 +107,30 @@ rule solow_model:
         model  = "src/model-specs/model_solow.json",
         subset = "src/data-specs/subset_{iSubset}.json"
     output:
-        estimate = "out/analysis/model_solow_{iSubset}.rds",
+        estimate = "out/analysis/model_solow_subset_{iSubset}.rds",
     shell:
         "Rscript {input.script} \
             --data {input.data} \
             --model {input.model} \
             --subset {input.subset} \
-            --out {output.model_est}"
+            --out {output.estimate}"
 
-...
+[...]
 ```
 
-We notice right away how much more concise the relevant part of our script has become. 
+We notice right away how much more concise the relevant part of our script has become.
+With a bit of practice it is also much easier to read and understand what these rules do.
 
 We wrapped our wildcard `iSubset` in curly parentheses so that Snakemake knows that this part is a variable which we want to substitute with the name of one of the subsets.
 This is conceptually similar to what we have done in our shell commands.
 
-Let us first try to execute `solow_model` as a target rule:
+Let us clean our output folder again via
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 clean
+```
+
+and try to execute `solow_model` as a target rule:
 
 ```{r, engine = 'bash', eval= FALSE}
 $ snakemake --cores 1 solow_model
@@ -138,9 +154,41 @@ $ snakemake --cores 1 solow_target
 ```
 
 ```{r, engine = 'bash', eval = FALSE}
-TODO: Add output here
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 4
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	gen_regression_vars
+	1	rename_vars
+	3	solow_model
+	1	solow_target
+	6
+
+[...]
+
+[Thu Feb 18 19:50:04 2021]
+localrule solow_target:
+    input: out/analysis/model_solow_subset_intermediate.rds, out/analysis/model_solow_subset_nonoil.rds, out/analysis/model_solow_subset_oecd.rds
+    jobid: 0
+
+[Thu Feb 18 19:50:04 2021]
+Finished job 0.
+6 of 6 steps (100%) done
 ```
 
-TODO: Explain that this works.
+Nice!
+Our error is gone and we have produced the same output as before an a much more manageable manner.
 
-TODO: Explain how snakemake plugs in the same values into input and output to create the input files in the target rule.
+We see one difference to our execution from the previous chapter in the printed job counts at the beginning.
+Instead of running all `solow_*` rules once, Snakemake sees that it needs to execute the `solo_model` rule instead three times --- once for every subset.
+
+We might ask ourselves how the wildcard approach has worked.
+Essentially, Snakemake knows it needs to create the three outputs `model_solow_subset_intermediate.rds`, `model_solow_subset_nonoil.rds`, and `model_solow_subset_oecd.rds"`.
+To so so it looks for other rules which can produce these files.
+Snakemake finds the `solow_model` rule which can produce these files as its output when `{iSubject}` is replaced with `intermediate`, `nonoil`, and `oecd` respectively.
+
+However, for each execution of the rule it needs to fill `{iSubject}` with the same value in both the output and input part.
+Snakemake therefore then checks whether it can find the appropriate input files when filling `{iSubject}` with the corresponding value.
+When these files exist for the same wildcard value, it will take the corresponding input file to execute the rule.
