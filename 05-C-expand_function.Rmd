@@ -451,36 +451,14 @@ rule clean_analysis:
 The rules used to estimate the standard Solow model, and the augmented Solow model have very similar structure:
 
 ```{r, engine = 'bash', eval = FALSE}
-DATA_SUBSET = [
-                "oecd",
-                "intermediate",
-                "nonoil"
-                ]
-
-# --- Build Rules --- #
-rule run_aug_solow:
-    input:
-        expand("out/analysis/model_aug_solow_{iSubset}.rds",
-                    iSubset = DATA_SUBSET)
-
-rule aug_solow_model:
-    input:
-        script = "src/analysis/estimate_ols_model.R",
-        data   = "out/data/mrw_complete.csv",
-        model  = "src/model-specs/model_aug_solow.json",
-        subset = "src/data-specs/subset_{iSubset}.json"
-    output:
-        model_est = "out/analysis/model_aug_solow_{iSubset}.rds",
-    shell:
-        "Rscript {input.script} \
-            --data {input.data} \
-            --model {input.model} \
-            --subset {input.subset} \
-            --out {output.model_est}"
-
-rule run_solow:
+rule solow_target:
     input:
         expand("out/analysis/model_solow_{iSubset}.rds",
+                    iSubset = DATA_SUBSET)
+
+rule aug_solow_target:
+    input:
+        expand("out/analysis/model_aug_solow_{iSubset}.rds",
                     iSubset = DATA_SUBSET)
 
 rule solow_model:
@@ -488,55 +466,218 @@ rule solow_model:
         script = "src/analysis/estimate_ols_model.R",
         data   = "out/data/mrw_complete.csv",
         model  = "src/model-specs/model_solow.json",
-        subset = "src/data-specs/subset_{iSubset}.json"
+        subset = "src/data-specs/{iSubset}.json"
     output:
-        model_est = "out/analysis/model_solow_{iSubset}.rds",
+        estimate = "out/analysis/model_solow_{iSubset}.rds"
     shell:
         "Rscript {input.script} \
             --data {input.data} \
             --model {input.model} \
             --subset {input.subset} \
-            --out {output.model_est}"
-```
+            --out {output.estimate}"
 
-Add text ...
-
-Ultimately the Snakfile becomes:
-
-```{r, engine = 'bash', eval = FALSE}
-MODELS = [
-          "solow",
-          "aug_solow"
-          ]
-
-DATA_SUBSET = [
-                "oecd",
-                "intermediate",
-                "nonoil"
-                ]
-
-# --- Build Rules --- #
-
-rule estimate_models:
-    input:
-        expand("out/analysis/{iModel}_{iSubset}.rds",
-                    iModel = MODELS,
-                    iSubset = DATA_SUBSET)
-
-rule ols_model:
+rule aug_solow_model:
     input:
         script = "src/analysis/estimate_ols_model.R",
         data   = "out/data/mrw_complete.csv",
-        model  = "src/model-specs/model_{iModel}.json",
-        subset = "src/data-specs/subset_{iSubset}.json"
+        model  = "src/model-specs/model_aug_solow.json",
+        subset = "src/data-specs/{iSubset}.json"
     output:
-        model_est = "out/analysis/model_{iModel}_{iSubset}.rds",
+        estimate = "out/analysis/model_aug_solow_{iSubset}.rds"
     shell:
         "Rscript {input.script} \
             --data {input.data} \
             --model {input.model} \
             --subset {input.subset} \
-            --out {output.model_est}"
-
-<...> ## Other Rules below
+            --out {output.estimate}"
 ```
+
+We see that the only difference between the `aug_solow_target` and `solow_target` rules 
+  is that the filename differs by three letters: `out/analysis/model_aug_solow_{iSubset}.rds` versus
+  `out/analysis/model_solow_{iSubset}.rds`.
+
+And, when we look at `aug_solow_model` and compare it to `solow_model` we again see only small differences:
+the model changes from `model_aug_solow.json` to `model_solow.json` and the outputs change in a similar way.
+
+We want to exploit this similarity and condense these four rules into two:
+one that estimates the model, named `model` and a target rule that will run each specification, names `run_models`.
+We are going to do this by creating a new list, called `MODELS`. 
+`MODELS` will contain two elements, "model_solow" and "model_aug_solow".
+Let's add this to the top of our Snakefile:
+
+```{bash, eval = FALSE}
+# --- Dictionaries --- #
+MODELS = [
+          "model_solow",
+          "model_aug_solow"
+          ]
+
+DATA_SUBSET = [
+                "subset_oecd",
+                "subset_intermediate",
+                "subset_nonoil"
+                ]
+
+PLOTS = [
+    "aug_conditional_convergence",
+    "conditional_convergence",
+    "unconditional_convergence"
+]
+
+```
+
+We are now going to delete the target rules `aug_solow_target` and `solow_target`, and the estimation rules 
+  `aug_solow_model` and  `solow_model`.
+Let's replace them with the following:
+
+```{bash, eval = FALSE}
+rule run_models:
+    input:
+        expand("out/analysis/{iModel}_{iSubset}.rds",
+                    iSubset = DATA_SUBSET,
+                    iModel = MODELS)
+
+rule model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/{iModel}.json",
+        subset = "src/data-specs/{iSubset}.json"
+    output:
+        estimate = "out/analysis/{iModel}_{iSubset}.rds"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+```
+
+The rule `model` is a generalization of the `solow_model` we had before.
+We have added an extra wildcard, `{iModel}` so that the rule can estimate a wider set of models that we specify in the `src/model-specs` folder.
+It's `input.model` now takes a wildcard {iModel} and it's output is a `{iModel}` - `{iSubset}` pair.
+
+Similarly, the target rule `run_models` is a generalization of `solow_target`.
+Instead of taking only the `model_solow` models as inputs - and looking for how to build those, it now takes any `{iModel}` as an input.
+Notice there are now **two** wildcards in the `expand()` function, `{iSubset}` as before, and now also `{iModel}`.
+We then naturally have to tell Snakemake which lists to use to expand each wildcard, 
+  `DATA_SUBSET` for `{iSubset}`, and
+  `MODELS` for `{iModel}`.
+
+Let's clean our output folder and then use Snakemakes `--summary` to see what Snakemake wants to build.
+We anticipate it will want to to the data cleaning steps, and then six regression models.
+The six regression models will be three each of `model_solow` and `model_aug_solow`.
+Each model should be run on each data subset.
+
+```{bash, eval=FALSE}
+$ snakemake clean --cores 1
+```
+
+```{bash, eval=FALSE}
+$ snakemake --summary
+```
+
+Here's the output we get:
+
+```{bash, eval = FALSE}
+MissingInputException in line 42 of /home/lachlan/teaching/snakemake-econ-r-learner/Snakefile:
+Missing input files for rule model:
+src/data-specs/oecd.json
+src/model-specs/model_solow_subset.json
+```
+
+What is going on here?
+The problem is as follows:
+because our filenames have underscores `_` in them *and* we are using the underscore to separate `{iModel}` and `{iSubset}`
+  Snakemake cannot figure out where the first wildcard substitution ends.
+We think `model_solow` should be substituted as `{iModel}` and `subset_oecd` should be substituted for `iSubset`.
+Unfortunately Snakemake can't handle use of underscores in both file names and wildcard separation simultaneously.
+
+Worry not, there is simple ways around this.
+We are going to solve it by separating the wildcards with a period `.` rather than an underscore.^[
+ There's other ways to go here.
+ You could continue to use underscores but add a few letters inbetween the wildcards and it would also work.
+ This means `out/analysis/{iModel}.{iSubset}.rds` would become `out/analysis/{iModel}_SOMETEXT_{iSubset}.rds`.
+ It's equally valid.
+]
+We make this change in both the `model` and `run_models` rules.
+This breaks any ambiguity about where a wildcard ends and another begins.
+Our updated rules are:
+
+```{bash, eval = FALSE}
+rule run_models:
+    input:
+        expand("out/analysis/{iModel}.{iSubset}.rds",
+                    iSubset = DATA_SUBSET,
+                    iModel = MODELS)
+
+rule model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/{iModel}.json",
+        subset = "src/data-specs/{iSubset}.json"
+    output:
+        estimate = "out/analysis/{iModel}.{iSubset}.rds"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+```
+
+Now we again try to get the summary information from Snakemake:
+
+```{bash, eval=FALSE}
+$ snakemake --summary
+```
+
+There's no longer an error, and instead we see: 
+
+```{bash, eval=FALSE}
+output_file     date    rule    version log-file(s)     status  plan
+out/analysis/model_solow.subset_oecd.rds        -       -       -       -       missing update pending
+out/analysis/model_aug_solow.subset_oecd.rds    -       -       -       -       missing update pending
+out/analysis/model_solow.subset_intermediate.rds        -       -       -       -       missing update pending
+out/analysis/model_aug_solow.subset_intermediate.rds    -       -       -       -       missing update pending
+out/analysis/model_solow.subset_nonoil.rds      -       -       -       -       missing update pending
+out/analysis/model_aug_solow.subset_nonoil.rds  -       -       -       -       missing update pending
+out/data/mrw_complete.csv       -       gen_regression_vars     -               missing update pending
+out/data/mrw_renamed.csv        -       rename_vars     -               missing update pending
+```
+
+which confirms that Snakemake wants to do our data cleaning steps before estimating the six regressions.
+Let's do it:
+
+```{bash, eval=FALSE}
+$ snakemake --cores 1
+```
+
+Our Snakemake rule graph - which shows the rules we execute in our workflow is now:
+
+```{r, fig.align="center", echo=FALSE}
+knitr::include_graphics("img/ch-5c/rulegraph.pdf")
+```
+
+TODO? Some explanation?
+
+And the DAG is:
+
+```{r, fig.align="center", echo=FALSE}
+knitr::include_graphics("img/ch-5c/dag.pdf")
+```
+
+The DAG makes crystal clear what our workflow is doing:
+
+* Snakemake wants to build the inputs listed in  `run_models`
+* It can build those inputs by running the `model` rule six times when it iterates over the wildcards
+* To run each model, it needs the clean data, so it needs to run the two data cleaning steps first
+
+!!! REMARK !!!
+
+Notice how the figures aren't produced automatically. 
+Do you remember why?
+If not, revisit Chapter XX.
+You can build them with `snakemake --cores 1 make_figures`
+
