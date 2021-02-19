@@ -10,7 +10,8 @@ Then, your Snakefile should look something like this:
 ##
 ## @yourname
 
-# --- Build Rules --- #
+
+# --- OLS Rules --- #
 
 rule solow_intermediate:
     input:
@@ -57,6 +58,9 @@ rule solow_oecd:
             --subset {input.subset} \
             --out {output.estimate}"
 
+
+# --- Data Management --- #
+
 rule gen_regression_vars:
     input:
         script = "src/data-management/gen_reg_vars.R",
@@ -78,6 +82,7 @@ rule rename_vars:
         "Rscript {input.script} \
             --data {input.data} \
             --out {output.data}"
+
 
 # --- Clean Rules --- #
 
@@ -134,13 +139,14 @@ In this case, Snakemake will first execute `gen_regression_vars` before executin
 If necessary inputs are missing to execute `gen_regression_vars`, Snakemake will search for other rules to produce it and so forth...
 
 To allow Snakemake to work properly, the input and output relationships in a project need to follow a **directed acyclic graph (DAG)**.
+TODO: Finish sentence.
 Directed here means that....
 Acyclic implies that there can be no two rules which require output from one another as inputs, either directly or in a larger loop.
 
 This has a few implications on how we should define our intermediate input and output files.
 We should follow the following best practices to prevent problems:
 
-- **No rule should have the same file as input and output.** It is often common practice to load a certain dataset, perform operations on it and overwrite the original file. While there are good reasons to never do this in any workflow, this behavior can lead to more severe problems when using Snakemake. Snakemake only searches for rules which can create input files which do **not** exist. If a rule overwrites an already existing input file, Snakemake would not recognize it as a dependency and simply ignore it. This implies that a project might run through cleanly and produce incorrect results without this being detected. In our workflow, we prevented such behavior by making sure the `gen_regression_vars` writes its results to a new file.
+- **No rule should have the same file as input and output.** It is often common practice to load a certain dataset, perform operations on it and overwrite the original file. While there are good reasons to never do this in any workflow, this behavior can lead to more severe problems when using Snakemake. Snakemake only searches for rules which can create input files which do **not** exist. If a rule overwrites an already existing input file, Snakemake would not recognize it as a dependency and simply ignore it. This implies that a project might run through cleanly and produce incorrect results without this being detected. In our workflow, we prevented such behavior by making sure the `gen_regression_vars` rule writes its results to a new file.
 - **No two rules should have the same output.** When Snakemake searches for a file to create a missing input file, it will execute the first rule it encounters which produces this file. To make sure our input and output relationships are explicit and reproducible, we do not want the order of the rules in a `Snakefile` determine which rule is actually executed.
 - **A project should have a clear direction.** A project should have a clear trajectory. In practice this typically starts with data manipulations which are necessary to perform analysis, which in turn will be used to create plots and tables, which finally end up in a paper or set of slides.
 In such a typical workflow, directedness implies for example that a regression table ist not an input in the data manipulation steps.
@@ -183,10 +189,22 @@ snakemake --summary
 ```
 
 ```{r, engine = 'bash', eval = FALSE}
-TODO: Add output
+output_file	date	rule	version	log-file(s)	status	plan
+out/analysis/model_solow_subset_intermediate.rds	Thu Feb 18 14:18:20 2021	solow_intermediate	-		ok	no update
+out/analysis/model_solow_subset_nonoil.rds	-	-	-	-	missing	update pending
+out/analysis/model_solow_subset_oecd.rds	-	-	-	-	missing	update pending
+out/data/mrw_complete.csv	Thu Feb 11 16:29:24 2021	gen_regression_vars	-		ok	no update
+out/data/mrw_renamed.csv	Tue Feb  9 15:46:38 2021	rename_vars	-		ok	no update
 ```
 
-DESCRIBE output
+What does this mean?
+Snakemake sees the three `model_solow_*` outputs as files it needs to create for the `solow_target` rule.
+Out of these three files, the first, `model_solow_subset_intermediate.rds` already exists and is up to date after our last run above.
+The other two files, `model_solow_subset_nonoil.rds` and `model_solow_subset_oecd.rds`, do not yet exist and must be created.
+The rule column presents the rule Snakemake found to create the respective output file.
+
+The output therefore shows, that a single run of `solow_target` would create all files in our project.
+In the following exercise, you will practice executing the project with help of our new target rule.
 
 ### Exercise: Using target rules {- .exercise}
 
@@ -211,8 +229,10 @@ ls out
 ```
 
 ```{r, engine = 'bash', eval = FALSE}
-TODO: Add output
+Nothing to show here
 ```
+
+This shows that the output folder is indeed cleaned properly.
 
 3. Execute the `solow_target` rule and build all outputs in a single swoop.
 
@@ -221,5 +241,54 @@ snakemake --cores 1 solow_target
 ```
 
 ```{r, engine = 'bash', eval = FALSE}
-TODO: Add output
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	gen_regression_vars
+	1	rename_vars
+	1	solow_intermediate
+	1	solow_nonoil
+	1	solow_oecd
+	1	solow_target
+	6
+
+[...]
+
+[Thu Feb 18 14:38:11 2021]
+localrule solow_target:
+    input: out/analysis/model_solow_subset_intermediate.rds, out/analysis/model_solow_subset_nonoil.rds, out/analysis/model_solow_subset_oecd.rds
+    jobid: 0
+
+[Thu Feb 18 14:38:11 2021]
+Finished job 0.
+6 of 6 steps (100%) done
 ```
+
+The output which Snakemake prints to the screen starts with the plan Snakemake develops to generate the input files of `solow_target`.
+We see that it needs to run each of the other rules once.
+Snakemake then plans to execute `solow_target` at the end.
+The execution of the whole chain of rules sums up to six different task that Snakemake will execute.
+
+The middle part of the output, which we ommit here as `[...]` contains the messages which would be printed to screen for each of the rules which are executed.
+This contains information about Snakemake's execution as well as the console output that R would print if we execute each of the R scripts in an appropriate IDE such as `Rstudio`.
+
+Finally the last part prints Snakemake's reports about the final `solow_target` rule.
+In accordance with the rule itself, it only features input files.
+
+The bottom message contains information about the successful execution of all six rules with a completion rate of 100%.
+Snakemake is done.
+
+## Target rules can do more for us
+
+As we know, the last execution of our target rule did nothing substantial, as the rule only includes the `input` part of the rule.
+
+In practice we can also use the target rule to perform other small tasks for us with the desired output.
+
+- When compiling LaTeX files, it is often easier to have all latex inputs in a separate folder.
+LaTeX is typically not very good with relatives paths and likes to create many temporary files which we probably do not want to keep.
+To keep things tidy, we can therefore include the cleaning of unwanted LaTeX temporary files and copy the output PDF to the main directory of our project for convenience. 
+- Some of us also use the target rule to copy the output PDF to a shared folder where colleagues can access them.
+When you share your work in a Dropbox folder, it can be a large time saver to not copy the output PDF there manually after each update of the draft.
