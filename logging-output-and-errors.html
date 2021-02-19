@@ -199,9 +199,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="target-rules.html"><a href="target-rules.html#exercise-using-target-rules"><i class="fa fa-check"></i>Exercise: Using target rules</a></li>
 <li class="chapter" data-level="" data-path="target-rules.html"><a href="target-rules.html#solution-2"><i class="fa fa-check"></i>Solution</a></li>
 </ul></li>
+<li class="chapter" data-level="5.4" data-path="target-rules.html"><a href="target-rules.html#target-rules-can-do-more-for-us"><i class="fa fa-check"></i><b>5.4</b> Target rules can do more for us</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>6</b> Wildcards</a><ul>
 <li class="chapter" data-level="6.1" data-path="wildcards.html"><a href="wildcards.html#the-starting-point-of-our-snakefile"><i class="fa fa-check"></i><b>6.1</b> The starting point of our Snakefile</a></li>
+<li class="chapter" data-level="6.2" data-path="wildcards.html"><a href="wildcards.html#using-wildcards-to-tidy-up-our-code"><i class="fa fa-check"></i><b>6.2</b> Using wildcards to tidy up our code</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="the-expand-function.html"><a href="the-expand-function.html"><i class="fa fa-check"></i><b>7</b> The <code>expand()</code> function</a><ul>
 <li class="chapter" data-level="" data-path="the-expand-function.html"><a href="the-expand-function.html#exercise-exploring-the-expand-function-i"><i class="fa fa-check"></i>Exercise: Exploring the expand() function I</a></li>
@@ -283,33 +285,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">11.1</span> Logging Output</h2>
 <p>BLAH BLAH</p>
 <p>Let’s add a log file the <code>textbook_solow</code> rule.</p>
-<div class="sourceCode" id="cb127"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb127-1"><a href="logging-output-and-errors.html#cb127-1"></a><span class="ex">rule</span> textbook_solow:</span>
-<span id="cb127-2"><a href="logging-output-and-errors.html#cb127-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb127-3"><a href="logging-output-and-errors.html#cb127-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,</span>
-<span id="cb127-4"><a href="logging-output-and-errors.html#cb127-4"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb127-5"><a href="logging-output-and-errors.html#cb127-5"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb127-6"><a href="logging-output-and-errors.html#cb127-6"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET),</span>
-<span id="cb127-7"><a href="logging-output-and-errors.html#cb127-7"></a>    <span class="ex">params</span>:</span>
-<span id="cb127-8"><a href="logging-output-and-errors.html#cb127-8"></a>        <span class="ex">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,</span>
-<span id="cb127-9"><a href="logging-output-and-errors.html#cb127-9"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
-<span id="cb127-10"><a href="logging-output-and-errors.html#cb127-10"></a>    <span class="ex">output</span>:</span>
-<span id="cb127-11"><a href="logging-output-and-errors.html#cb127-11"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></span>
-<span id="cb127-12"><a href="logging-output-and-errors.html#cb127-12"></a>    <span class="ex">log</span>:</span>
-<span id="cb127-13"><a href="logging-output-and-errors.html#cb127-13"></a>        <span class="st">&quot;logs/tables/tab01_textbook_solow.Rout&quot;</span></span>
-<span id="cb127-14"><a href="logging-output-and-errors.html#cb127-14"></a>    <span class="ex">shell</span>:</span>
-<span id="cb127-15"><a href="logging-output-and-errors.html#cb127-15"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb127-16"><a href="logging-output-and-errors.html#cb127-16"></a><span class="st">            --filepath {params.filepath} \</span></span>
-<span id="cb127-17"><a href="logging-output-and-errors.html#cb127-17"></a><span class="st">            --models {params.model_expr} \</span></span>
-<span id="cb127-18"><a href="logging-output-and-errors.html#cb127-18"></a><span class="st">            --out {output.table} \</span></span>
-<span id="cb127-19"><a href="logging-output-and-errors.html#cb127-19"></a><span class="st">            &gt; {log}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb128"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb128-1"><a href="logging-output-and-errors.html#cb128-1"></a><span class="ex">rule</span> textbook_solow:</span>
+<span id="cb128-2"><a href="logging-output-and-errors.html#cb128-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb128-3"><a href="logging-output-and-errors.html#cb128-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,</span>
+<span id="cb128-4"><a href="logging-output-and-errors.html#cb128-4"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb128-5"><a href="logging-output-and-errors.html#cb128-5"></a>                            <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb128-6"><a href="logging-output-and-errors.html#cb128-6"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET),</span>
+<span id="cb128-7"><a href="logging-output-and-errors.html#cb128-7"></a>    <span class="ex">params</span>:</span>
+<span id="cb128-8"><a href="logging-output-and-errors.html#cb128-8"></a>        <span class="ex">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,</span>
+<span id="cb128-9"><a href="logging-output-and-errors.html#cb128-9"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
+<span id="cb128-10"><a href="logging-output-and-errors.html#cb128-10"></a>    <span class="ex">output</span>:</span>
+<span id="cb128-11"><a href="logging-output-and-errors.html#cb128-11"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></span>
+<span id="cb128-12"><a href="logging-output-and-errors.html#cb128-12"></a>    <span class="ex">log</span>:</span>
+<span id="cb128-13"><a href="logging-output-and-errors.html#cb128-13"></a>        <span class="st">&quot;logs/tables/tab01_textbook_solow.Rout&quot;</span></span>
+<span id="cb128-14"><a href="logging-output-and-errors.html#cb128-14"></a>    <span class="ex">shell</span>:</span>
+<span id="cb128-15"><a href="logging-output-and-errors.html#cb128-15"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb128-16"><a href="logging-output-and-errors.html#cb128-16"></a><span class="st">            --filepath {params.filepath} \</span></span>
+<span id="cb128-17"><a href="logging-output-and-errors.html#cb128-17"></a><span class="st">            --models {params.model_expr} \</span></span>
+<span id="cb128-18"><a href="logging-output-and-errors.html#cb128-18"></a><span class="st">            --out {output.table} \</span></span>
+<span id="cb128-19"><a href="logging-output-and-errors.html#cb128-19"></a><span class="st">            &gt; {log}&quot;</span></span></code></pre></div>
 <p>Notice <code>.Rout</code> is a convention …, can use anything we like.</p>
 <p>If we run Snakemake on the <code>textbook_solow</code> rule, it will tell us there is nothing to be done.
 We can force Snakemake to execute a rule by adding the <code>--force</code> flag:</p>
-<div class="sourceCode" id="cb128"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb128-1"><a href="logging-output-and-errors.html#cb128-1"></a>$ <span class="ex">snakemake</span> --force textbook_solow</span></code></pre></div>
+<div class="sourceCode" id="cb129"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb129-1"><a href="logging-output-and-errors.html#cb129-1"></a>$ <span class="ex">snakemake</span> --force textbook_solow</span></code></pre></div>
 <p>We see that as the R script is run the printout of the LaTeX table no longer goes to the screen,
 it has been redirected to the log file.
 This can be verified by viewing the contents of the log file:</p>
-<div class="sourceCode" id="cb129"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb129-1"><a href="logging-output-and-errors.html#cb129-1"></a><span class="fu">cat</span> logs/tables/tab01_textbook_solow.Rout</span></code></pre></div>
+<div class="sourceCode" id="cb130"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb130-1"><a href="logging-output-and-errors.html#cb130-1"></a><span class="fu">cat</span> logs/tables/tab01_textbook_solow.Rout</span></code></pre></div>
 <pre class="out"><code>% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
 % Date and time: Tue, Feb 05, 2019 - 06:34:51 PM
 \begin{table}[!htbp] \centering
@@ -353,25 +355,25 @@ stdout in this case is the table contents.
 The remaining information is called stderr, also known as standard error, is where BLAH.<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>
 To integrate stderr into the same log file as the stdout we use <code>&gt;&amp;</code> instead of <code>&gt;</code>.
 Then our rule becomes:</p>
-<div class="sourceCode" id="cb131"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb131-1"><a href="logging-output-and-errors.html#cb131-1"></a><span class="ex">rule</span> textbook_solow:</span>
-<span id="cb131-2"><a href="logging-output-and-errors.html#cb131-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb131-3"><a href="logging-output-and-errors.html#cb131-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,</span>
-<span id="cb131-4"><a href="logging-output-and-errors.html#cb131-4"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb131-5"><a href="logging-output-and-errors.html#cb131-5"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb131-6"><a href="logging-output-and-errors.html#cb131-6"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET),</span>
-<span id="cb131-7"><a href="logging-output-and-errors.html#cb131-7"></a>    <span class="ex">params</span>:</span>
-<span id="cb131-8"><a href="logging-output-and-errors.html#cb131-8"></a>        <span class="ex">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,</span>
-<span id="cb131-9"><a href="logging-output-and-errors.html#cb131-9"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
-<span id="cb131-10"><a href="logging-output-and-errors.html#cb131-10"></a>    <span class="ex">output</span>:</span>
-<span id="cb131-11"><a href="logging-output-and-errors.html#cb131-11"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></span>
-<span id="cb131-12"><a href="logging-output-and-errors.html#cb131-12"></a>    <span class="ex">log</span>:</span>
-<span id="cb131-13"><a href="logging-output-and-errors.html#cb131-13"></a>        <span class="st">&quot;logs/tables/tab01_textbook_solow.Rout&quot;</span></span>
-<span id="cb131-14"><a href="logging-output-and-errors.html#cb131-14"></a>    <span class="ex">shell</span>:</span>
-<span id="cb131-15"><a href="logging-output-and-errors.html#cb131-15"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb131-16"><a href="logging-output-and-errors.html#cb131-16"></a><span class="st">            --filepath {params.filepath} \</span></span>
-<span id="cb131-17"><a href="logging-output-and-errors.html#cb131-17"></a><span class="st">            --models {params.model_expr} \</span></span>
-<span id="cb131-18"><a href="logging-output-and-errors.html#cb131-18"></a><span class="st">            --out {output.table} \</span></span>
-<span id="cb131-19"><a href="logging-output-and-errors.html#cb131-19"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb132"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb132-1"><a href="logging-output-and-errors.html#cb132-1"></a><span class="ex">rule</span> textbook_solow:</span>
+<span id="cb132-2"><a href="logging-output-and-errors.html#cb132-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb132-3"><a href="logging-output-and-errors.html#cb132-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,</span>
+<span id="cb132-4"><a href="logging-output-and-errors.html#cb132-4"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb132-5"><a href="logging-output-and-errors.html#cb132-5"></a>                            <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb132-6"><a href="logging-output-and-errors.html#cb132-6"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET),</span>
+<span id="cb132-7"><a href="logging-output-and-errors.html#cb132-7"></a>    <span class="ex">params</span>:</span>
+<span id="cb132-8"><a href="logging-output-and-errors.html#cb132-8"></a>        <span class="ex">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,</span>
+<span id="cb132-9"><a href="logging-output-and-errors.html#cb132-9"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
+<span id="cb132-10"><a href="logging-output-and-errors.html#cb132-10"></a>    <span class="ex">output</span>:</span>
+<span id="cb132-11"><a href="logging-output-and-errors.html#cb132-11"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></span>
+<span id="cb132-12"><a href="logging-output-and-errors.html#cb132-12"></a>    <span class="ex">log</span>:</span>
+<span id="cb132-13"><a href="logging-output-and-errors.html#cb132-13"></a>        <span class="st">&quot;logs/tables/tab01_textbook_solow.Rout&quot;</span></span>
+<span id="cb132-14"><a href="logging-output-and-errors.html#cb132-14"></a>    <span class="ex">shell</span>:</span>
+<span id="cb132-15"><a href="logging-output-and-errors.html#cb132-15"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb132-16"><a href="logging-output-and-errors.html#cb132-16"></a><span class="st">            --filepath {params.filepath} \</span></span>
+<span id="cb132-17"><a href="logging-output-and-errors.html#cb132-17"></a><span class="st">            --models {params.model_expr} \</span></span>
+<span id="cb132-18"><a href="logging-output-and-errors.html#cb132-18"></a><span class="st">            --out {output.table} \</span></span>
+<span id="cb132-19"><a href="logging-output-and-errors.html#cb132-19"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
 <p>Now when we again run <code>snakemake --force textbook_solow</code> we see that no information from our R session is printed to the screen.</p>
 <div id="exercise-logging-all-r-scripts" class="section level3 unnumbered exercise">
 <h3>Exercise: Logging all R Scripts</h3>

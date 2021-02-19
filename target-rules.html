@@ -199,9 +199,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="target-rules.html"><a href="target-rules.html#exercise-using-target-rules"><i class="fa fa-check"></i>Exercise: Using target rules</a></li>
 <li class="chapter" data-level="" data-path="target-rules.html"><a href="target-rules.html#solution-2"><i class="fa fa-check"></i>Solution</a></li>
 </ul></li>
+<li class="chapter" data-level="5.4" data-path="target-rules.html"><a href="target-rules.html#target-rules-can-do-more-for-us"><i class="fa fa-check"></i><b>5.4</b> Target rules can do more for us</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>6</b> Wildcards</a><ul>
 <li class="chapter" data-level="6.1" data-path="wildcards.html"><a href="wildcards.html#the-starting-point-of-our-snakefile"><i class="fa fa-check"></i><b>6.1</b> The starting point of our Snakefile</a></li>
+<li class="chapter" data-level="6.2" data-path="wildcards.html"><a href="wildcards.html#using-wildcards-to-tidy-up-our-code"><i class="fa fa-check"></i><b>6.2</b> Using wildcards to tidy up our code</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="the-expand-function.html"><a href="the-expand-function.html"><i class="fa fa-check"></i><b>7</b> The <code>expand()</code> function</a><ul>
 <li class="chapter" data-level="" data-path="the-expand-function.html"><a href="the-expand-function.html#exercise-exploring-the-expand-function-i"><i class="fa fa-check"></i>Exercise: Exploring the expand() function I</a></li>
@@ -287,88 +289,93 @@ Then, your Snakefile should look something like this:</p>
 <span id="cb64-2"><a href="target-rules.html#cb64-2"></a><span class="co">##</span></span>
 <span id="cb64-3"><a href="target-rules.html#cb64-3"></a><span class="co">## @yourname</span></span>
 <span id="cb64-4"><a href="target-rules.html#cb64-4"></a></span>
-<span id="cb64-5"><a href="target-rules.html#cb64-5"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb64-6"><a href="target-rules.html#cb64-6"></a></span>
-<span id="cb64-7"><a href="target-rules.html#cb64-7"></a><span class="ex">rule</span> solow_intermediate:</span>
-<span id="cb64-8"><a href="target-rules.html#cb64-8"></a>    <span class="ex">input</span>:</span>
-<span id="cb64-9"><a href="target-rules.html#cb64-9"></a>        <span class="ex">script</span>   = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
-<span id="cb64-10"><a href="target-rules.html#cb64-10"></a>        <span class="ex">data</span>     = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb64-11"><a href="target-rules.html#cb64-11"></a>        <span class="ex">model</span>    = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
-<span id="cb64-12"><a href="target-rules.html#cb64-12"></a>        <span class="ex">subset</span>   = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
-<span id="cb64-13"><a href="target-rules.html#cb64-13"></a>    <span class="ex">output</span>:</span>
-<span id="cb64-14"><a href="target-rules.html#cb64-14"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_subset_intermediate.rds&quot;</span>,</span>
-<span id="cb64-15"><a href="target-rules.html#cb64-15"></a>    <span class="ex">shell</span>:</span>
-<span id="cb64-16"><a href="target-rules.html#cb64-16"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb64-17"><a href="target-rules.html#cb64-17"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb64-18"><a href="target-rules.html#cb64-18"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb64-19"><a href="target-rules.html#cb64-19"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb64-20"><a href="target-rules.html#cb64-20"></a><span class="st">            --out {output.estimate}&quot;</span></span>
-<span id="cb64-21"><a href="target-rules.html#cb64-21"></a></span>
-<span id="cb64-22"><a href="target-rules.html#cb64-22"></a><span class="ex">rule</span> solow_nonoil:</span>
-<span id="cb64-23"><a href="target-rules.html#cb64-23"></a>    <span class="ex">input</span>:</span>
-<span id="cb64-24"><a href="target-rules.html#cb64-24"></a>        <span class="ex">script</span>   = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
-<span id="cb64-25"><a href="target-rules.html#cb64-25"></a>        <span class="ex">data</span>     = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb64-26"><a href="target-rules.html#cb64-26"></a>        <span class="ex">model</span>    = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
-<span id="cb64-27"><a href="target-rules.html#cb64-27"></a>        <span class="ex">subset</span>   = <span class="st">&quot;src/data-specs/subset_nonoil.json&quot;</span></span>
-<span id="cb64-28"><a href="target-rules.html#cb64-28"></a>    <span class="ex">output</span>:</span>
-<span id="cb64-29"><a href="target-rules.html#cb64-29"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_subset_nonoil.rds&quot;</span>,</span>
-<span id="cb64-30"><a href="target-rules.html#cb64-30"></a>    <span class="ex">shell</span>:</span>
-<span id="cb64-31"><a href="target-rules.html#cb64-31"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb64-32"><a href="target-rules.html#cb64-32"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb64-33"><a href="target-rules.html#cb64-33"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb64-34"><a href="target-rules.html#cb64-34"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb64-35"><a href="target-rules.html#cb64-35"></a><span class="st">            --out {output.estimate}&quot;</span></span>
-<span id="cb64-36"><a href="target-rules.html#cb64-36"></a></span>
-<span id="cb64-37"><a href="target-rules.html#cb64-37"></a><span class="ex">rule</span> solow_oecd:</span>
-<span id="cb64-38"><a href="target-rules.html#cb64-38"></a>    <span class="ex">input</span>:</span>
-<span id="cb64-39"><a href="target-rules.html#cb64-39"></a>        <span class="ex">script</span>   = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
-<span id="cb64-40"><a href="target-rules.html#cb64-40"></a>        <span class="ex">data</span>     = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb64-41"><a href="target-rules.html#cb64-41"></a>        <span class="ex">model</span>    = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
-<span id="cb64-42"><a href="target-rules.html#cb64-42"></a>        <span class="ex">subset</span>   = <span class="st">&quot;src/data-specs/subset_oecd.json&quot;</span></span>
-<span id="cb64-43"><a href="target-rules.html#cb64-43"></a>    <span class="ex">output</span>:</span>
-<span id="cb64-44"><a href="target-rules.html#cb64-44"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_subset_oecd.rds&quot;</span>,</span>
-<span id="cb64-45"><a href="target-rules.html#cb64-45"></a>    <span class="ex">shell</span>:</span>
-<span id="cb64-46"><a href="target-rules.html#cb64-46"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb64-47"><a href="target-rules.html#cb64-47"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb64-48"><a href="target-rules.html#cb64-48"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb64-49"><a href="target-rules.html#cb64-49"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb64-50"><a href="target-rules.html#cb64-50"></a><span class="st">            --out {output.estimate}&quot;</span></span>
-<span id="cb64-51"><a href="target-rules.html#cb64-51"></a></span>
-<span id="cb64-52"><a href="target-rules.html#cb64-52"></a><span class="ex">rule</span> gen_regression_vars:</span>
-<span id="cb64-53"><a href="target-rules.html#cb64-53"></a>    <span class="ex">input</span>:</span>
-<span id="cb64-54"><a href="target-rules.html#cb64-54"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
-<span id="cb64-55"><a href="target-rules.html#cb64-55"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb64-56"><a href="target-rules.html#cb64-56"></a>    <span class="ex">output</span>:</span>
-<span id="cb64-57"><a href="target-rules.html#cb64-57"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
-<span id="cb64-58"><a href="target-rules.html#cb64-58"></a>    <span class="ex">shell</span>:</span>
-<span id="cb64-59"><a href="target-rules.html#cb64-59"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb64-60"><a href="target-rules.html#cb64-60"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb64-61"><a href="target-rules.html#cb64-61"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb64-62"><a href="target-rules.html#cb64-62"></a></span>
-<span id="cb64-63"><a href="target-rules.html#cb64-63"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb64-64"><a href="target-rules.html#cb64-64"></a>    <span class="ex">input</span>:</span>
-<span id="cb64-65"><a href="target-rules.html#cb64-65"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb64-66"><a href="target-rules.html#cb64-66"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
-<span id="cb64-67"><a href="target-rules.html#cb64-67"></a>    <span class="ex">output</span>:</span>
-<span id="cb64-68"><a href="target-rules.html#cb64-68"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb64-69"><a href="target-rules.html#cb64-69"></a>    <span class="ex">shell</span>:</span>
-<span id="cb64-70"><a href="target-rules.html#cb64-70"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb64-71"><a href="target-rules.html#cb64-71"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb64-72"><a href="target-rules.html#cb64-72"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb64-73"><a href="target-rules.html#cb64-73"></a></span>
-<span id="cb64-74"><a href="target-rules.html#cb64-74"></a><span class="co"># --- Clean Rules --- #</span></span>
-<span id="cb64-75"><a href="target-rules.html#cb64-75"></a></span>
-<span id="cb64-76"><a href="target-rules.html#cb64-76"></a><span class="ex">rule</span> clean:</span>
-<span id="cb64-77"><a href="target-rules.html#cb64-77"></a>    <span class="ex">shell</span>:</span>
-<span id="cb64-78"><a href="target-rules.html#cb64-78"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
-<span id="cb64-79"><a href="target-rules.html#cb64-79"></a></span>
-<span id="cb64-80"><a href="target-rules.html#cb64-80"></a><span class="ex">rule</span> clean_data:</span>
-<span id="cb64-81"><a href="target-rules.html#cb64-81"></a>    <span class="ex">shell</span>:</span>
-<span id="cb64-82"><a href="target-rules.html#cb64-82"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
-<span id="cb64-83"><a href="target-rules.html#cb64-83"></a></span>
-<span id="cb64-84"><a href="target-rules.html#cb64-84"></a><span class="ex">rule</span> clean_analysis:</span>
-<span id="cb64-85"><a href="target-rules.html#cb64-85"></a>    <span class="ex">shell</span>:</span>
-<span id="cb64-86"><a href="target-rules.html#cb64-86"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
+<span id="cb64-5"><a href="target-rules.html#cb64-5"></a></span>
+<span id="cb64-6"><a href="target-rules.html#cb64-6"></a><span class="co"># --- OLS Rules --- #</span></span>
+<span id="cb64-7"><a href="target-rules.html#cb64-7"></a></span>
+<span id="cb64-8"><a href="target-rules.html#cb64-8"></a><span class="ex">rule</span> solow_intermediate:</span>
+<span id="cb64-9"><a href="target-rules.html#cb64-9"></a>    <span class="ex">input</span>:</span>
+<span id="cb64-10"><a href="target-rules.html#cb64-10"></a>        <span class="ex">script</span>   = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb64-11"><a href="target-rules.html#cb64-11"></a>        <span class="ex">data</span>     = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb64-12"><a href="target-rules.html#cb64-12"></a>        <span class="ex">model</span>    = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb64-13"><a href="target-rules.html#cb64-13"></a>        <span class="ex">subset</span>   = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
+<span id="cb64-14"><a href="target-rules.html#cb64-14"></a>    <span class="ex">output</span>:</span>
+<span id="cb64-15"><a href="target-rules.html#cb64-15"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_subset_intermediate.rds&quot;</span>,</span>
+<span id="cb64-16"><a href="target-rules.html#cb64-16"></a>    <span class="ex">shell</span>:</span>
+<span id="cb64-17"><a href="target-rules.html#cb64-17"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb64-18"><a href="target-rules.html#cb64-18"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb64-19"><a href="target-rules.html#cb64-19"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb64-20"><a href="target-rules.html#cb64-20"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb64-21"><a href="target-rules.html#cb64-21"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb64-22"><a href="target-rules.html#cb64-22"></a></span>
+<span id="cb64-23"><a href="target-rules.html#cb64-23"></a><span class="ex">rule</span> solow_nonoil:</span>
+<span id="cb64-24"><a href="target-rules.html#cb64-24"></a>    <span class="ex">input</span>:</span>
+<span id="cb64-25"><a href="target-rules.html#cb64-25"></a>        <span class="ex">script</span>   = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb64-26"><a href="target-rules.html#cb64-26"></a>        <span class="ex">data</span>     = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb64-27"><a href="target-rules.html#cb64-27"></a>        <span class="ex">model</span>    = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb64-28"><a href="target-rules.html#cb64-28"></a>        <span class="ex">subset</span>   = <span class="st">&quot;src/data-specs/subset_nonoil.json&quot;</span></span>
+<span id="cb64-29"><a href="target-rules.html#cb64-29"></a>    <span class="ex">output</span>:</span>
+<span id="cb64-30"><a href="target-rules.html#cb64-30"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_subset_nonoil.rds&quot;</span>,</span>
+<span id="cb64-31"><a href="target-rules.html#cb64-31"></a>    <span class="ex">shell</span>:</span>
+<span id="cb64-32"><a href="target-rules.html#cb64-32"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb64-33"><a href="target-rules.html#cb64-33"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb64-34"><a href="target-rules.html#cb64-34"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb64-35"><a href="target-rules.html#cb64-35"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb64-36"><a href="target-rules.html#cb64-36"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb64-37"><a href="target-rules.html#cb64-37"></a></span>
+<span id="cb64-38"><a href="target-rules.html#cb64-38"></a><span class="ex">rule</span> solow_oecd:</span>
+<span id="cb64-39"><a href="target-rules.html#cb64-39"></a>    <span class="ex">input</span>:</span>
+<span id="cb64-40"><a href="target-rules.html#cb64-40"></a>        <span class="ex">script</span>   = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb64-41"><a href="target-rules.html#cb64-41"></a>        <span class="ex">data</span>     = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb64-42"><a href="target-rules.html#cb64-42"></a>        <span class="ex">model</span>    = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb64-43"><a href="target-rules.html#cb64-43"></a>        <span class="ex">subset</span>   = <span class="st">&quot;src/data-specs/subset_oecd.json&quot;</span></span>
+<span id="cb64-44"><a href="target-rules.html#cb64-44"></a>    <span class="ex">output</span>:</span>
+<span id="cb64-45"><a href="target-rules.html#cb64-45"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_subset_oecd.rds&quot;</span>,</span>
+<span id="cb64-46"><a href="target-rules.html#cb64-46"></a>    <span class="ex">shell</span>:</span>
+<span id="cb64-47"><a href="target-rules.html#cb64-47"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb64-48"><a href="target-rules.html#cb64-48"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb64-49"><a href="target-rules.html#cb64-49"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb64-50"><a href="target-rules.html#cb64-50"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb64-51"><a href="target-rules.html#cb64-51"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb64-52"><a href="target-rules.html#cb64-52"></a></span>
+<span id="cb64-53"><a href="target-rules.html#cb64-53"></a></span>
+<span id="cb64-54"><a href="target-rules.html#cb64-54"></a><span class="co"># --- Data Management --- #</span></span>
+<span id="cb64-55"><a href="target-rules.html#cb64-55"></a></span>
+<span id="cb64-56"><a href="target-rules.html#cb64-56"></a><span class="ex">rule</span> gen_regression_vars:</span>
+<span id="cb64-57"><a href="target-rules.html#cb64-57"></a>    <span class="ex">input</span>:</span>
+<span id="cb64-58"><a href="target-rules.html#cb64-58"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
+<span id="cb64-59"><a href="target-rules.html#cb64-59"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb64-60"><a href="target-rules.html#cb64-60"></a>    <span class="ex">output</span>:</span>
+<span id="cb64-61"><a href="target-rules.html#cb64-61"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
+<span id="cb64-62"><a href="target-rules.html#cb64-62"></a>    <span class="ex">shell</span>:</span>
+<span id="cb64-63"><a href="target-rules.html#cb64-63"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb64-64"><a href="target-rules.html#cb64-64"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb64-65"><a href="target-rules.html#cb64-65"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb64-66"><a href="target-rules.html#cb64-66"></a></span>
+<span id="cb64-67"><a href="target-rules.html#cb64-67"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb64-68"><a href="target-rules.html#cb64-68"></a>    <span class="ex">input</span>:</span>
+<span id="cb64-69"><a href="target-rules.html#cb64-69"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb64-70"><a href="target-rules.html#cb64-70"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb64-71"><a href="target-rules.html#cb64-71"></a>    <span class="ex">output</span>:</span>
+<span id="cb64-72"><a href="target-rules.html#cb64-72"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb64-73"><a href="target-rules.html#cb64-73"></a>    <span class="ex">shell</span>:</span>
+<span id="cb64-74"><a href="target-rules.html#cb64-74"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb64-75"><a href="target-rules.html#cb64-75"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb64-76"><a href="target-rules.html#cb64-76"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb64-77"><a href="target-rules.html#cb64-77"></a></span>
+<span id="cb64-78"><a href="target-rules.html#cb64-78"></a></span>
+<span id="cb64-79"><a href="target-rules.html#cb64-79"></a><span class="co"># --- Clean Rules --- #</span></span>
+<span id="cb64-80"><a href="target-rules.html#cb64-80"></a></span>
+<span id="cb64-81"><a href="target-rules.html#cb64-81"></a><span class="ex">rule</span> clean:</span>
+<span id="cb64-82"><a href="target-rules.html#cb64-82"></a>    <span class="ex">shell</span>:</span>
+<span id="cb64-83"><a href="target-rules.html#cb64-83"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
+<span id="cb64-84"><a href="target-rules.html#cb64-84"></a></span>
+<span id="cb64-85"><a href="target-rules.html#cb64-85"></a><span class="ex">rule</span> clean_data:</span>
+<span id="cb64-86"><a href="target-rules.html#cb64-86"></a>    <span class="ex">shell</span>:</span>
+<span id="cb64-87"><a href="target-rules.html#cb64-87"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
+<span id="cb64-88"><a href="target-rules.html#cb64-88"></a></span>
+<span id="cb64-89"><a href="target-rules.html#cb64-89"></a><span class="ex">rule</span> clean_analysis:</span>
+<span id="cb64-90"><a href="target-rules.html#cb64-90"></a>    <span class="ex">shell</span>:</span>
+<span id="cb64-91"><a href="target-rules.html#cb64-91"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
 </div>
 <div id="how-snakemake-determines-the-build-order-when-multiple-rules-are-present" class="section level2">
 <h2><span class="header-section-number">5.2</span> How Snakemake determines the build order when multiple rules are present</h2>
@@ -395,12 +402,13 @@ If the file does not exist, <code>Snakemake</code> will search through <code>Sna
 In this case, Snakemake will first execute <code>gen_regression_vars</code> before executing the target rule <code>solow_intermediate</code>.</p>
 <p>If necessary inputs are missing to execute <code>gen_regression_vars</code>, Snakemake will search for other rules to produce it and so forth…</p>
 <p>To allow Snakemake to work properly, the input and output relationships in a project need to follow a <strong>directed acyclic graph (DAG)</strong>.
+TODO: Finish sentence.
 Directed here means that….
 Acyclic implies that there can be no two rules which require output from one another as inputs, either directly or in a larger loop.</p>
 <p>This has a few implications on how we should define our intermediate input and output files.
 We should follow the following best practices to prevent problems:</p>
 <ul>
-<li><strong>No rule should have the same file as input and output.</strong> It is often common practice to load a certain dataset, perform operations on it and overwrite the original file. While there are good reasons to never do this in any workflow, this behavior can lead to more severe problems when using Snakemake. Snakemake only searches for rules which can create input files which do <strong>not</strong> exist. If a rule overwrites an already existing input file, Snakemake would not recognize it as a dependency and simply ignore it. This implies that a project might run through cleanly and produce incorrect results without this being detected. In our workflow, we prevented such behavior by making sure the <code>gen_regression_vars</code> writes its results to a new file.</li>
+<li><strong>No rule should have the same file as input and output.</strong> It is often common practice to load a certain dataset, perform operations on it and overwrite the original file. While there are good reasons to never do this in any workflow, this behavior can lead to more severe problems when using Snakemake. Snakemake only searches for rules which can create input files which do <strong>not</strong> exist. If a rule overwrites an already existing input file, Snakemake would not recognize it as a dependency and simply ignore it. This implies that a project might run through cleanly and produce incorrect results without this being detected. In our workflow, we prevented such behavior by making sure the <code>gen_regression_vars</code> rule writes its results to a new file.</li>
 <li><strong>No two rules should have the same output.</strong> When Snakemake searches for a file to create a missing input file, it will execute the first rule it encounters which produces this file. To make sure our input and output relationships are explicit and reproducible, we do not want the order of the rules in a <code>Snakefile</code> determine which rule is actually executed.</li>
 <li><strong>A project should have a clear direction.</strong> A project should have a clear trajectory. In practice this typically starts with data manipulations which are necessary to perform analysis, which in turn will be used to create plots and tables, which finally end up in a paper or set of slides.
 In such a typical workflow, directedness implies for example that a regression table ist not an input in the data manipulation steps.</li>
@@ -428,8 +436,19 @@ The rule only has three inputs, one for the output of each solow model like so:<
 <span id="cb68-5"><a href="target-rules.html#cb68-5"></a>        <span class="ex">oecd</span>         = <span class="st">&quot;out/analysis/model_solow_subset_oecd.rds&quot;</span></span></code></pre></div>
 <p>After saving <code>Snakefile</code>, we can inspect how Snakemake perceives the state of our project with the summary option</p>
 <div class="sourceCode" id="cb69"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb69-1"><a href="target-rules.html#cb69-1"></a><span class="ex">snakemake</span> --summary</span></code></pre></div>
-<div class="sourceCode" id="cb70"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb70-1"><a href="target-rules.html#cb70-1"></a><span class="ex">TODO</span>: Add output</span></code></pre></div>
-<p>DESCRIBE output</p>
+<div class="sourceCode" id="cb70"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb70-1"><a href="target-rules.html#cb70-1"></a><span class="ex">output_file</span> date    rule    version log-file(s) <span class="ex">status</span>  plan</span>
+<span id="cb70-2"><a href="target-rules.html#cb70-2"></a><span class="ex">out/analysis/model_solow_subset_intermediate.rds</span>    Thu Feb 18 14:18:20 2021    solow_intermediate  -       ok  no update</span>
+<span id="cb70-3"><a href="target-rules.html#cb70-3"></a><span class="ex">out/analysis/model_solow_subset_nonoil.rds</span>  -   -   -   -   missing update pending</span>
+<span id="cb70-4"><a href="target-rules.html#cb70-4"></a><span class="ex">out/analysis/model_solow_subset_oecd.rds</span>    -   -   -   -   missing update pending</span>
+<span id="cb70-5"><a href="target-rules.html#cb70-5"></a><span class="ex">out/data/mrw_complete.csv</span>   Thu Feb 11 16:29:24 2021    gen_regression_vars -       ok  no update</span>
+<span id="cb70-6"><a href="target-rules.html#cb70-6"></a><span class="ex">out/data/mrw_renamed.csv</span>    Tue Feb  9 15:46:38 2021    rename_vars -       ok  no update</span></code></pre></div>
+<p>What does this mean?
+Snakemake sees the three <code>model_solow_*</code> outputs as files it needs to create for the <code>solow_target</code> rule.
+Out of these three files, the first, <code>model_solow_subset_intermediate.rds</code> already exists and is up to date after our last run above.
+The other two files, <code>model_solow_subset_nonoil.rds</code> and <code>model_solow_subset_oecd.rds</code>, do not yet exist and must be created.
+The rule column presents the rule Snakemake found to create the respective output file.</p>
+<p>The output therefore shows, that a single run of <code>solow_target</code> would create all files in our project.
+In the following exercise, you will practice executing the project with help of our new target rule.</p>
 <div id="exercise-using-target-rules" class="section level3 unnumbered exercise">
 <h3>Exercise: Using target rules</h3>
 <p>It is time to put our new and shiny target rule to work and execute our full workflow with a single line of code.</p>
@@ -449,14 +468,60 @@ The rule only has three inputs, one for the output of each solow model like so:<
 <li>Verify that the output folder is empty.</li>
 </ol>
 <div class="sourceCode" id="cb72"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb72-1"><a href="target-rules.html#cb72-1"></a><span class="fu">ls</span> out</span></code></pre></div>
-<div class="sourceCode" id="cb73"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb73-1"><a href="target-rules.html#cb73-1"></a><span class="ex">TODO</span>: Add output</span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb73-1"><a href="target-rules.html#cb73-1"></a><span class="ex">Nothing</span> to show here</span></code></pre></div>
+<p>This shows that the output folder is indeed cleaned properly.</p>
 <ol start="3" style="list-style-type: decimal">
 <li>Execute the <code>solow_target</code> rule and build all outputs in a single swoop.</li>
 </ol>
 <div class="sourceCode" id="cb74"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb74-1"><a href="target-rules.html#cb74-1"></a><span class="ex">snakemake</span> --cores 1 solow_target</span></code></pre></div>
-<div class="sourceCode" id="cb75"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb75-1"><a href="target-rules.html#cb75-1"></a><span class="ex">TODO</span>: Add output</span></code></pre></div>
-
+<div class="sourceCode" id="cb75"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb75-1"><a href="target-rules.html#cb75-1"></a><span class="ex">Building</span> DAG of jobs...</span>
+<span id="cb75-2"><a href="target-rules.html#cb75-2"></a><span class="ex">Using</span> shell: /bin/bash</span>
+<span id="cb75-3"><a href="target-rules.html#cb75-3"></a><span class="ex">Provided</span> cores: 1 (use --cores to define parallelism)</span>
+<span id="cb75-4"><a href="target-rules.html#cb75-4"></a><span class="ex">Rules</span> claiming more threads will be scaled down.</span>
+<span id="cb75-5"><a href="target-rules.html#cb75-5"></a><span class="ex">Job</span> counts:</span>
+<span id="cb75-6"><a href="target-rules.html#cb75-6"></a>    <span class="ex">count</span>   jobs</span>
+<span id="cb75-7"><a href="target-rules.html#cb75-7"></a>    <span class="ex">1</span>   gen_regression_vars</span>
+<span id="cb75-8"><a href="target-rules.html#cb75-8"></a>    <span class="ex">1</span>   rename_vars</span>
+<span id="cb75-9"><a href="target-rules.html#cb75-9"></a>    <span class="ex">1</span>   solow_intermediate</span>
+<span id="cb75-10"><a href="target-rules.html#cb75-10"></a>    <span class="ex">1</span>   solow_nonoil</span>
+<span id="cb75-11"><a href="target-rules.html#cb75-11"></a>    <span class="ex">1</span>   solow_oecd</span>
+<span id="cb75-12"><a href="target-rules.html#cb75-12"></a>    <span class="ex">1</span>   solow_target</span>
+<span id="cb75-13"><a href="target-rules.html#cb75-13"></a>    <span class="ex">6</span></span>
+<span id="cb75-14"><a href="target-rules.html#cb75-14"></a></span>
+<span id="cb75-15"><a href="target-rules.html#cb75-15"></a>[<span class="ex">...</span>]</span>
+<span id="cb75-16"><a href="target-rules.html#cb75-16"></a></span>
+<span id="cb75-17"><a href="target-rules.html#cb75-17"></a>[<span class="ex">Thu</span> Feb 18 14:38:11 2021]</span>
+<span id="cb75-18"><a href="target-rules.html#cb75-18"></a><span class="ex">localrule</span> solow_target:</span>
+<span id="cb75-19"><a href="target-rules.html#cb75-19"></a>    <span class="ex">input</span>: out/analysis/model_solow_subset_intermediate.rds, out/analysis/model_solow_subset_nonoil.rds, out/analysis/model_solow_subset_oecd.rds</span>
+<span id="cb75-20"><a href="target-rules.html#cb75-20"></a>    <span class="ex">jobid</span>: 0</span>
+<span id="cb75-21"><a href="target-rules.html#cb75-21"></a></span>
+<span id="cb75-22"><a href="target-rules.html#cb75-22"></a>[<span class="ex">Thu</span> Feb 18 14:38:11 2021]</span>
+<span id="cb75-23"><a href="target-rules.html#cb75-23"></a><span class="ex">Finished</span> job 0.</span>
+<span id="cb75-24"><a href="target-rules.html#cb75-24"></a><span class="ex">6</span> of 6 steps (100%) <span class="kw">done</span></span></code></pre></div>
+<p>The output which Snakemake prints to the screen starts with the plan Snakemake develops to generate the input files of <code>solow_target</code>.
+We see that it needs to run each of the other rules once.
+Snakemake then plans to execute <code>solow_target</code> at the end.
+The execution of the whole chain of rules sums up to six different task that Snakemake will execute.</p>
+<p>The middle part of the output, which we ommit here as <code>[...]</code> contains the messages which would be printed to screen for each of the rules which are executed.
+This contains information about Snakemake’s execution as well as the console output that R would print if we execute each of the R scripts in an appropriate IDE such as <code>Rstudio</code>.</p>
+<p>Finally the last part prints Snakemake’s reports about the final <code>solow_target</code> rule.
+In accordance with the rule itself, it only features input files.</p>
+<p>The bottom message contains information about the successful execution of all six rules with a completion rate of 100%.
+Snakemake is done.</p>
 </div>
+</div>
+<div id="target-rules-can-do-more-for-us" class="section level2">
+<h2><span class="header-section-number">5.4</span> Target rules can do more for us</h2>
+<p>As we know, the last execution of our target rule did nothing substantial, as the rule only includes the <code>input</code> part of the rule.</p>
+<p>In practice we can also use the target rule to perform other small tasks for us with the desired output.</p>
+<ul>
+<li>When compiling LaTeX files, it is often easier to have all latex inputs in a separate folder.
+LaTeX is typically not very good with relatives paths and likes to create many temporary files which we probably do not want to keep.
+To keep things tidy, we can therefore include the cleaning of unwanted LaTeX temporary files and copy the output PDF to the main directory of our project for convenience.</li>
+<li>Some of us also use the target rule to copy the output PDF to a shared folder where colleagues can access them.
+When you share your work in a Dropbox folder, it can be a large time saver to not copy the output PDF there manually after each update of the draft.</li>
+</ul>
+
 </div>
 </div>
             </section>

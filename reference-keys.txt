@@ -26,8 +26,10 @@ target-rules
 where-we-are-now
 how-snakemake-determines-the-build-order-when-multiple-rules-are-present
 dedicated-target-rules-to-execute-multiple-rules
+target-rules-can-do-more-for-us
 wildcards
 the-starting-point-of-our-snakefile
+using-wildcards-to-tidy-up-our-code
 the-expand-function
 expanding-multiple-wildcards
 automatic-wildcard-specifications

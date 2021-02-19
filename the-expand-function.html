@@ -199,9 +199,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="target-rules.html"><a href="target-rules.html#exercise-using-target-rules"><i class="fa fa-check"></i>Exercise: Using target rules</a></li>
 <li class="chapter" data-level="" data-path="target-rules.html"><a href="target-rules.html#solution-2"><i class="fa fa-check"></i>Solution</a></li>
 </ul></li>
+<li class="chapter" data-level="5.4" data-path="target-rules.html"><a href="target-rules.html#target-rules-can-do-more-for-us"><i class="fa fa-check"></i><b>5.4</b> Target rules can do more for us</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>6</b> Wildcards</a><ul>
 <li class="chapter" data-level="6.1" data-path="wildcards.html"><a href="wildcards.html#the-starting-point-of-our-snakefile"><i class="fa fa-check"></i><b>6.1</b> The starting point of our Snakefile</a></li>
+<li class="chapter" data-level="6.2" data-path="wildcards.html"><a href="wildcards.html#using-wildcards-to-tidy-up-our-code"><i class="fa fa-check"></i><b>6.2</b> Using wildcards to tidy up our code</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="the-expand-function.html"><a href="the-expand-function.html"><i class="fa fa-check"></i><b>7</b> The <code>expand()</code> function</a><ul>
 <li class="chapter" data-level="" data-path="the-expand-function.html"><a href="the-expand-function.html#exercise-exploring-the-expand-function-i"><i class="fa fa-check"></i>Exercise: Exploring the expand() function I</a></li>
@@ -281,11 +283,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">Chapter 7</span> The <code>expand()</code> function</h1>
 <p>There’s more work we can do to reduce duplication.
 Look at the rule <code>run_solow</code>:</p>
-<div class="sourceCode" id="cb82"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb82-1"><a href="the-expand-function.html#cb82-1"></a><span class="ex">rule</span> run_solow:</span>
-<span id="cb82-2"><a href="the-expand-function.html#cb82-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb82-3"><a href="the-expand-function.html#cb82-3"></a>        <span class="ex">nonoil</span> = <span class="st">&quot;out/analysis/model_solow_nonoil.rds&quot;</span>,</span>
-<span id="cb82-4"><a href="the-expand-function.html#cb82-4"></a>        <span class="ex">oecd</span>   = <span class="st">&quot;out/analysis/model_solow_oecd.rds&quot;</span>,</span>
-<span id="cb82-5"><a href="the-expand-function.html#cb82-5"></a>        <span class="ex">intermediate</span> = <span class="st">&quot;out/analysis/model_solow_intermediate.rds&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb83-1"><a href="the-expand-function.html#cb83-1"></a><span class="ex">rule</span> run_solow:</span>
+<span id="cb83-2"><a href="the-expand-function.html#cb83-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb83-3"><a href="the-expand-function.html#cb83-3"></a>        <span class="ex">nonoil</span> = <span class="st">&quot;out/analysis/model_solow_nonoil.rds&quot;</span>,</span>
+<span id="cb83-4"><a href="the-expand-function.html#cb83-4"></a>        <span class="ex">oecd</span>   = <span class="st">&quot;out/analysis/model_solow_oecd.rds&quot;</span>,</span>
+<span id="cb83-5"><a href="the-expand-function.html#cb83-5"></a>        <span class="ex">intermediate</span> = <span class="st">&quot;out/analysis/model_solow_intermediate.rds&quot;</span></span></code></pre></div>
 <p>Each of these inputs listed above have similar structure, with only the name of the subset of data we are using changing.
 We can use another feature of Snakemake to simplify this rule.
 Snakemake has an <code>expand()</code> function that can accept a wildcard and replace it with a set of specified values in an iterative manner.
@@ -297,27 +299,27 @@ To proceed we need to do two things:</p>
 </ol>
 <p>Let’s start with (1).
 We will use an area above our Snakemake rules to store the <code>DATA_SUBSET</code> variable:</p>
-<div class="sourceCode" id="cb83"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb83-1"><a href="the-expand-function.html#cb83-1"></a><span class="ex">DATA_SUBSET</span> = [</span>
-<span id="cb83-2"><a href="the-expand-function.html#cb83-2"></a>                <span class="st">&quot;oecd&quot;</span>,</span>
-<span id="cb83-3"><a href="the-expand-function.html#cb83-3"></a>                <span class="st">&quot;intermediate&quot;</span>,</span>
-<span id="cb83-4"><a href="the-expand-function.html#cb83-4"></a>                <span class="st">&quot;nonoil&quot;</span></span>
-<span id="cb83-5"><a href="the-expand-function.html#cb83-5"></a>                ]</span>
-<span id="cb83-6"><a href="the-expand-function.html#cb83-6"></a></span>
-<span id="cb83-7"><a href="the-expand-function.html#cb83-7"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb83-8"><a href="the-expand-function.html#cb83-8"></a><span class="ex">...</span></span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb84-1"><a href="the-expand-function.html#cb84-1"></a><span class="ex">DATA_SUBSET</span> = [</span>
+<span id="cb84-2"><a href="the-expand-function.html#cb84-2"></a>                <span class="st">&quot;oecd&quot;</span>,</span>
+<span id="cb84-3"><a href="the-expand-function.html#cb84-3"></a>                <span class="st">&quot;intermediate&quot;</span>,</span>
+<span id="cb84-4"><a href="the-expand-function.html#cb84-4"></a>                <span class="st">&quot;nonoil&quot;</span></span>
+<span id="cb84-5"><a href="the-expand-function.html#cb84-5"></a>                ]</span>
+<span id="cb84-6"><a href="the-expand-function.html#cb84-6"></a></span>
+<span id="cb84-7"><a href="the-expand-function.html#cb84-7"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb84-8"><a href="the-expand-function.html#cb84-8"></a><span class="ex">...</span></span></code></pre></div>
 <p>The capitalization of the list DATA_SUBSET is not essential.
 We do it to separate lists that we will iterate through from other parts of our Snakefile.
 This means whenever we see a capitalized name, we know it is a list that we want to iterate through.</p>
 <p>Next, we update the rule <code>run_solow</code> as follows:</p>
-<div class="sourceCode" id="cb84"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb84-1"><a href="the-expand-function.html#cb84-1"></a><span class="ex">rule</span> run_solow:</span>
-<span id="cb84-2"><a href="the-expand-function.html#cb84-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb84-3"><a href="the-expand-function.html#cb84-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
-<span id="cb84-4"><a href="the-expand-function.html#cb84-4"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span></code></pre></div>
+<div class="sourceCode" id="cb85"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb85-1"><a href="the-expand-function.html#cb85-1"></a><span class="ex">rule</span> run_solow:</span>
+<span id="cb85-2"><a href="the-expand-function.html#cb85-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb85-3"><a href="the-expand-function.html#cb85-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb85-4"><a href="the-expand-function.html#cb85-4"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span></code></pre></div>
 <p>Now, we can clean our output folder with <code>$ snakemake clean</code>.
 If we re-run snakemake we would expect everything to run.
 To see if this is the case we can do a <em>dry run</em>.
 A dry run will try go through the Snakefile and print all the rules Snakemake wants to execute in order.</p>
-<div class="sourceCode" id="cb85"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb85-1"><a href="the-expand-function.html#cb85-1"></a>$ <span class="ex">snakemake</span> --dryrun</span></code></pre></div>
+<div class="sourceCode" id="cb86"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb86-1"><a href="the-expand-function.html#cb86-1"></a>$ <span class="ex">snakemake</span> --dryrun</span></code></pre></div>
 <p>which yields the following plan:</p>
 <pre class="out"><code>Building DAG of jobs...
 Job counts:
@@ -381,7 +383,7 @@ Job counts:
 </code></pre>
 <p>This looks like what we want to happen.
 Hence, we re-run snakemake to produce all output:</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb87-1"><a href="the-expand-function.html#cb87-1"></a>$ <span class="ex">snakemake</span></span></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb88-1"><a href="the-expand-function.html#cb88-1"></a>$ <span class="ex">snakemake</span></span></code></pre></div>
 <div id="exercise-exploring-the-expand-function-i" class="section level3 unnumbered exercise">
 <h3>Exercise: Exploring the expand() function I</h3>
 <p>So far we have estimated the basic Solow model.
@@ -402,89 +404,89 @@ Each figure should be saved with the following name ‘out/figures/SCRIPTNAME.pd
 <div id="expanding-multiple-wildcards" class="section level2">
 <h2><span class="header-section-number">7.1</span> Expanding Multiple Wildcards</h2>
 <p>The rules used to estimate the standard Solow model, and the augmented Solow model have very similar structure:</p>
-<div class="sourceCode" id="cb88"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb88-1"><a href="the-expand-function.html#cb88-1"></a><span class="ex">DATA_SUBSET</span> = [</span>
-<span id="cb88-2"><a href="the-expand-function.html#cb88-2"></a>                <span class="st">&quot;oecd&quot;</span>,</span>
-<span id="cb88-3"><a href="the-expand-function.html#cb88-3"></a>                <span class="st">&quot;intermediate&quot;</span>,</span>
-<span id="cb88-4"><a href="the-expand-function.html#cb88-4"></a>                <span class="st">&quot;nonoil&quot;</span></span>
-<span id="cb88-5"><a href="the-expand-function.html#cb88-5"></a>                ]</span>
-<span id="cb88-6"><a href="the-expand-function.html#cb88-6"></a></span>
-<span id="cb88-7"><a href="the-expand-function.html#cb88-7"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb88-8"><a href="the-expand-function.html#cb88-8"></a><span class="ex">rule</span> run_aug_solow:</span>
-<span id="cb88-9"><a href="the-expand-function.html#cb88-9"></a>    <span class="ex">input</span>:</span>
-<span id="cb88-10"><a href="the-expand-function.html#cb88-10"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_aug_solow_{iSubset}.rds&quot;</span>,</span>
-<span id="cb88-11"><a href="the-expand-function.html#cb88-11"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
-<span id="cb88-12"><a href="the-expand-function.html#cb88-12"></a></span>
-<span id="cb88-13"><a href="the-expand-function.html#cb88-13"></a><span class="ex">rule</span> aug_solow_model:</span>
-<span id="cb88-14"><a href="the-expand-function.html#cb88-14"></a>    <span class="ex">input</span>:</span>
-<span id="cb88-15"><a href="the-expand-function.html#cb88-15"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
-<span id="cb88-16"><a href="the-expand-function.html#cb88-16"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb88-17"><a href="the-expand-function.html#cb88-17"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_aug_solow.json&quot;</span>,</span>
-<span id="cb88-18"><a href="the-expand-function.html#cb88-18"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_{iSubset}.json&quot;</span></span>
-<span id="cb88-19"><a href="the-expand-function.html#cb88-19"></a>    <span class="ex">output</span>:</span>
-<span id="cb88-20"><a href="the-expand-function.html#cb88-20"></a>        <span class="ex">model_est</span> = <span class="st">&quot;out/analysis/model_aug_solow_{iSubset}.rds&quot;</span>,</span>
-<span id="cb88-21"><a href="the-expand-function.html#cb88-21"></a>    <span class="ex">shell</span>:</span>
-<span id="cb88-22"><a href="the-expand-function.html#cb88-22"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb88-23"><a href="the-expand-function.html#cb88-23"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb88-24"><a href="the-expand-function.html#cb88-24"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb88-25"><a href="the-expand-function.html#cb88-25"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb88-26"><a href="the-expand-function.html#cb88-26"></a><span class="st">            --out {output.model_est}&quot;</span></span>
-<span id="cb88-27"><a href="the-expand-function.html#cb88-27"></a></span>
-<span id="cb88-28"><a href="the-expand-function.html#cb88-28"></a><span class="ex">rule</span> run_solow:</span>
-<span id="cb88-29"><a href="the-expand-function.html#cb88-29"></a>    <span class="ex">input</span>:</span>
-<span id="cb88-30"><a href="the-expand-function.html#cb88-30"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
-<span id="cb88-31"><a href="the-expand-function.html#cb88-31"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
-<span id="cb88-32"><a href="the-expand-function.html#cb88-32"></a></span>
-<span id="cb88-33"><a href="the-expand-function.html#cb88-33"></a><span class="ex">rule</span> solow_model:</span>
-<span id="cb88-34"><a href="the-expand-function.html#cb88-34"></a>    <span class="ex">input</span>:</span>
-<span id="cb88-35"><a href="the-expand-function.html#cb88-35"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
-<span id="cb88-36"><a href="the-expand-function.html#cb88-36"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb88-37"><a href="the-expand-function.html#cb88-37"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
-<span id="cb88-38"><a href="the-expand-function.html#cb88-38"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_{iSubset}.json&quot;</span></span>
-<span id="cb88-39"><a href="the-expand-function.html#cb88-39"></a>    <span class="ex">output</span>:</span>
-<span id="cb88-40"><a href="the-expand-function.html#cb88-40"></a>        <span class="ex">model_est</span> = <span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
-<span id="cb88-41"><a href="the-expand-function.html#cb88-41"></a>    <span class="ex">shell</span>:</span>
-<span id="cb88-42"><a href="the-expand-function.html#cb88-42"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb88-43"><a href="the-expand-function.html#cb88-43"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb88-44"><a href="the-expand-function.html#cb88-44"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb88-45"><a href="the-expand-function.html#cb88-45"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb88-46"><a href="the-expand-function.html#cb88-46"></a><span class="st">            --out {output.model_est}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb89-1"><a href="the-expand-function.html#cb89-1"></a><span class="ex">DATA_SUBSET</span> = [</span>
+<span id="cb89-2"><a href="the-expand-function.html#cb89-2"></a>                <span class="st">&quot;oecd&quot;</span>,</span>
+<span id="cb89-3"><a href="the-expand-function.html#cb89-3"></a>                <span class="st">&quot;intermediate&quot;</span>,</span>
+<span id="cb89-4"><a href="the-expand-function.html#cb89-4"></a>                <span class="st">&quot;nonoil&quot;</span></span>
+<span id="cb89-5"><a href="the-expand-function.html#cb89-5"></a>                ]</span>
+<span id="cb89-6"><a href="the-expand-function.html#cb89-6"></a></span>
+<span id="cb89-7"><a href="the-expand-function.html#cb89-7"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb89-8"><a href="the-expand-function.html#cb89-8"></a><span class="ex">rule</span> run_aug_solow:</span>
+<span id="cb89-9"><a href="the-expand-function.html#cb89-9"></a>    <span class="ex">input</span>:</span>
+<span id="cb89-10"><a href="the-expand-function.html#cb89-10"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_aug_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb89-11"><a href="the-expand-function.html#cb89-11"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb89-12"><a href="the-expand-function.html#cb89-12"></a></span>
+<span id="cb89-13"><a href="the-expand-function.html#cb89-13"></a><span class="ex">rule</span> aug_solow_model:</span>
+<span id="cb89-14"><a href="the-expand-function.html#cb89-14"></a>    <span class="ex">input</span>:</span>
+<span id="cb89-15"><a href="the-expand-function.html#cb89-15"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb89-16"><a href="the-expand-function.html#cb89-16"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb89-17"><a href="the-expand-function.html#cb89-17"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_aug_solow.json&quot;</span>,</span>
+<span id="cb89-18"><a href="the-expand-function.html#cb89-18"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_{iSubset}.json&quot;</span></span>
+<span id="cb89-19"><a href="the-expand-function.html#cb89-19"></a>    <span class="ex">output</span>:</span>
+<span id="cb89-20"><a href="the-expand-function.html#cb89-20"></a>        <span class="ex">model_est</span> = <span class="st">&quot;out/analysis/model_aug_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb89-21"><a href="the-expand-function.html#cb89-21"></a>    <span class="ex">shell</span>:</span>
+<span id="cb89-22"><a href="the-expand-function.html#cb89-22"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb89-23"><a href="the-expand-function.html#cb89-23"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb89-24"><a href="the-expand-function.html#cb89-24"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb89-25"><a href="the-expand-function.html#cb89-25"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb89-26"><a href="the-expand-function.html#cb89-26"></a><span class="st">            --out {output.model_est}&quot;</span></span>
+<span id="cb89-27"><a href="the-expand-function.html#cb89-27"></a></span>
+<span id="cb89-28"><a href="the-expand-function.html#cb89-28"></a><span class="ex">rule</span> run_solow:</span>
+<span id="cb89-29"><a href="the-expand-function.html#cb89-29"></a>    <span class="ex">input</span>:</span>
+<span id="cb89-30"><a href="the-expand-function.html#cb89-30"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb89-31"><a href="the-expand-function.html#cb89-31"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb89-32"><a href="the-expand-function.html#cb89-32"></a></span>
+<span id="cb89-33"><a href="the-expand-function.html#cb89-33"></a><span class="ex">rule</span> solow_model:</span>
+<span id="cb89-34"><a href="the-expand-function.html#cb89-34"></a>    <span class="ex">input</span>:</span>
+<span id="cb89-35"><a href="the-expand-function.html#cb89-35"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb89-36"><a href="the-expand-function.html#cb89-36"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb89-37"><a href="the-expand-function.html#cb89-37"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb89-38"><a href="the-expand-function.html#cb89-38"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_{iSubset}.json&quot;</span></span>
+<span id="cb89-39"><a href="the-expand-function.html#cb89-39"></a>    <span class="ex">output</span>:</span>
+<span id="cb89-40"><a href="the-expand-function.html#cb89-40"></a>        <span class="ex">model_est</span> = <span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb89-41"><a href="the-expand-function.html#cb89-41"></a>    <span class="ex">shell</span>:</span>
+<span id="cb89-42"><a href="the-expand-function.html#cb89-42"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb89-43"><a href="the-expand-function.html#cb89-43"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb89-44"><a href="the-expand-function.html#cb89-44"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb89-45"><a href="the-expand-function.html#cb89-45"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb89-46"><a href="the-expand-function.html#cb89-46"></a><span class="st">            --out {output.model_est}&quot;</span></span></code></pre></div>
 <p>Add text …</p>
 <p>Ultimately the Snakfile becomes:</p>
-<div class="sourceCode" id="cb89"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb89-1"><a href="the-expand-function.html#cb89-1"></a><span class="ex">MODELS</span> = [</span>
-<span id="cb89-2"><a href="the-expand-function.html#cb89-2"></a>          <span class="st">&quot;solow&quot;</span>,</span>
-<span id="cb89-3"><a href="the-expand-function.html#cb89-3"></a>          <span class="st">&quot;aug_solow&quot;</span></span>
-<span id="cb89-4"><a href="the-expand-function.html#cb89-4"></a>          ]</span>
-<span id="cb89-5"><a href="the-expand-function.html#cb89-5"></a></span>
-<span id="cb89-6"><a href="the-expand-function.html#cb89-6"></a><span class="ex">DATA_SUBSET</span> = [</span>
-<span id="cb89-7"><a href="the-expand-function.html#cb89-7"></a>                <span class="st">&quot;oecd&quot;</span>,</span>
-<span id="cb89-8"><a href="the-expand-function.html#cb89-8"></a>                <span class="st">&quot;intermediate&quot;</span>,</span>
-<span id="cb89-9"><a href="the-expand-function.html#cb89-9"></a>                <span class="st">&quot;nonoil&quot;</span></span>
-<span id="cb89-10"><a href="the-expand-function.html#cb89-10"></a>                ]</span>
-<span id="cb89-11"><a href="the-expand-function.html#cb89-11"></a></span>
-<span id="cb89-12"><a href="the-expand-function.html#cb89-12"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb89-13"><a href="the-expand-function.html#cb89-13"></a></span>
-<span id="cb89-14"><a href="the-expand-function.html#cb89-14"></a><span class="ex">rule</span> estimate_models:</span>
-<span id="cb89-15"><a href="the-expand-function.html#cb89-15"></a>    <span class="ex">input</span>:</span>
-<span id="cb89-16"><a href="the-expand-function.html#cb89-16"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}_{iSubset}.rds&quot;</span>,</span>
-<span id="cb89-17"><a href="the-expand-function.html#cb89-17"></a>                    <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb89-18"><a href="the-expand-function.html#cb89-18"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
-<span id="cb89-19"><a href="the-expand-function.html#cb89-19"></a></span>
-<span id="cb89-20"><a href="the-expand-function.html#cb89-20"></a><span class="ex">rule</span> ols_model:</span>
-<span id="cb89-21"><a href="the-expand-function.html#cb89-21"></a>    <span class="ex">input</span>:</span>
-<span id="cb89-22"><a href="the-expand-function.html#cb89-22"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
-<span id="cb89-23"><a href="the-expand-function.html#cb89-23"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb89-24"><a href="the-expand-function.html#cb89-24"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_{iModel}.json&quot;</span>,</span>
-<span id="cb89-25"><a href="the-expand-function.html#cb89-25"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_{iSubset}.json&quot;</span></span>
-<span id="cb89-26"><a href="the-expand-function.html#cb89-26"></a>    <span class="ex">output</span>:</span>
-<span id="cb89-27"><a href="the-expand-function.html#cb89-27"></a>        <span class="ex">model_est</span> = <span class="st">&quot;out/analysis/model_{iModel}_{iSubset}.rds&quot;</span>,</span>
-<span id="cb89-28"><a href="the-expand-function.html#cb89-28"></a>    <span class="ex">shell</span>:</span>
-<span id="cb89-29"><a href="the-expand-function.html#cb89-29"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb89-30"><a href="the-expand-function.html#cb89-30"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb89-31"><a href="the-expand-function.html#cb89-31"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb89-32"><a href="the-expand-function.html#cb89-32"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb89-33"><a href="the-expand-function.html#cb89-33"></a><span class="st">            --out {output.model_est}&quot;</span></span>
-<span id="cb89-34"><a href="the-expand-function.html#cb89-34"></a></span>
-<span id="cb89-35"><a href="the-expand-function.html#cb89-35"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span> <span class="co">## Other Rules below</span></span></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb90-1"><a href="the-expand-function.html#cb90-1"></a><span class="ex">MODELS</span> = [</span>
+<span id="cb90-2"><a href="the-expand-function.html#cb90-2"></a>          <span class="st">&quot;solow&quot;</span>,</span>
+<span id="cb90-3"><a href="the-expand-function.html#cb90-3"></a>          <span class="st">&quot;aug_solow&quot;</span></span>
+<span id="cb90-4"><a href="the-expand-function.html#cb90-4"></a>          ]</span>
+<span id="cb90-5"><a href="the-expand-function.html#cb90-5"></a></span>
+<span id="cb90-6"><a href="the-expand-function.html#cb90-6"></a><span class="ex">DATA_SUBSET</span> = [</span>
+<span id="cb90-7"><a href="the-expand-function.html#cb90-7"></a>                <span class="st">&quot;oecd&quot;</span>,</span>
+<span id="cb90-8"><a href="the-expand-function.html#cb90-8"></a>                <span class="st">&quot;intermediate&quot;</span>,</span>
+<span id="cb90-9"><a href="the-expand-function.html#cb90-9"></a>                <span class="st">&quot;nonoil&quot;</span></span>
+<span id="cb90-10"><a href="the-expand-function.html#cb90-10"></a>                ]</span>
+<span id="cb90-11"><a href="the-expand-function.html#cb90-11"></a></span>
+<span id="cb90-12"><a href="the-expand-function.html#cb90-12"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb90-13"><a href="the-expand-function.html#cb90-13"></a></span>
+<span id="cb90-14"><a href="the-expand-function.html#cb90-14"></a><span class="ex">rule</span> estimate_models:</span>
+<span id="cb90-15"><a href="the-expand-function.html#cb90-15"></a>    <span class="ex">input</span>:</span>
+<span id="cb90-16"><a href="the-expand-function.html#cb90-16"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}_{iSubset}.rds&quot;</span>,</span>
+<span id="cb90-17"><a href="the-expand-function.html#cb90-17"></a>                    <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb90-18"><a href="the-expand-function.html#cb90-18"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb90-19"><a href="the-expand-function.html#cb90-19"></a></span>
+<span id="cb90-20"><a href="the-expand-function.html#cb90-20"></a><span class="ex">rule</span> ols_model:</span>
+<span id="cb90-21"><a href="the-expand-function.html#cb90-21"></a>    <span class="ex">input</span>:</span>
+<span id="cb90-22"><a href="the-expand-function.html#cb90-22"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb90-23"><a href="the-expand-function.html#cb90-23"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb90-24"><a href="the-expand-function.html#cb90-24"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_{iModel}.json&quot;</span>,</span>
+<span id="cb90-25"><a href="the-expand-function.html#cb90-25"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_{iSubset}.json&quot;</span></span>
+<span id="cb90-26"><a href="the-expand-function.html#cb90-26"></a>    <span class="ex">output</span>:</span>
+<span id="cb90-27"><a href="the-expand-function.html#cb90-27"></a>        <span class="ex">model_est</span> = <span class="st">&quot;out/analysis/model_{iModel}_{iSubset}.rds&quot;</span>,</span>
+<span id="cb90-28"><a href="the-expand-function.html#cb90-28"></a>    <span class="ex">shell</span>:</span>
+<span id="cb90-29"><a href="the-expand-function.html#cb90-29"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb90-30"><a href="the-expand-function.html#cb90-30"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb90-31"><a href="the-expand-function.html#cb90-31"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb90-32"><a href="the-expand-function.html#cb90-32"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb90-33"><a href="the-expand-function.html#cb90-33"></a><span class="st">            --out {output.model_est}&quot;</span></span>
+<span id="cb90-34"><a href="the-expand-function.html#cb90-34"></a></span>
+<span id="cb90-35"><a href="the-expand-function.html#cb90-35"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span> <span class="co">## Other Rules below</span></span></code></pre></div>
 
 </div>
 </div>
