@@ -1,4 +1,116 @@
-# Automatic Wildcard Specifications
+# Automating List Construction for Wildcard Expansion
+
+## Learning Objectives
+
+TODO!
+
+## State of the Snakefile
+
+TODO: Make this a box + code fold
+
+To proceed with this chapter, we expect you Snakefile to look as follows:
+
+```{bash, eval = FALSE}
+# --- Dictionaries --- #
+
+MODELS = [
+          "model_solow",
+          "model_aug_solow"
+          ]
+
+DATA_SUBSET = [
+                "subset_oecd",
+                "subset_intermediate",
+                "subset_nonoil"
+                ]
+
+PLOTS = [
+    "aug_conditional_convergence",
+    "conditional_convergence",
+    "unconditional_convergence"
+]
+
+# --- Build Rules --- #
+
+rule run_models:
+    input:
+        expand("out/analysis/{iModel}.{iSubset}.rds",
+                    iSubset = DATA_SUBSET,
+                    iModel = MODELS)
+
+rule model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/{iModel}.json",
+        subset = "src/data-specs/{iSubset}.json"
+    output:
+        estimate = "out/analysis/{iModel}.{iSubset}.rds"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+
+rule make_figures:
+    input:
+        expand("out/figures/{iFigure}.pdf",
+                    iFigure = PLOTS)
+
+
+rule figure:
+    input:
+        script = "src/figures/{iFigure}.R",
+        data   = "out/data/mrw_complete.csv",
+        subset = "src/data-specs/subset_intermediate.json"
+    output:
+        fig = "out/figures/{iFigure}.pdf"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --subset {input.subset} \
+            --out {output.fig}"
+
+
+rule gen_regression_vars:
+    input:
+        script = "src/data-management/gen_reg_vars.R",
+        data   = "out/data/mrw_renamed.csv",
+        param  = "src/data-specs/param_solow.json"
+    output:
+        data   = "out/data/mrw_complete.csv"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --param {input.param} \
+            --out {output.data}"
+
+rule rename_vars:
+    input:
+        script = "src/data-management/rename_variables.R",
+        data   = "src/data/mrw.dta"
+    output:
+        data = "out/data/mrw_renamed.csv"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --out {output.data}"
+
+
+rule clean:
+    shell:
+        "rm -rf out/*"
+
+rule clean_data:
+    shell:
+        "rm -rf out/data/*"
+
+rule clean_analysis:
+    shell:
+        "rm -rf out/analysis/*"
+```
+
 
 So far when we have wanted to expand wildcards we have manually specified the values we want them to take.
 By doing so, the beginning of our Snakefile looks like this:
