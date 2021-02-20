@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 7 Automatic Expansion of Wildcards | Reproducible Data Analytic Workflows with Snakemake and R</title>
+  <meta name="description" content="In progress" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 7 Automatic Expansion of Wildcards | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="In progress" />
+  <meta name="github-repo" content="lachlandeer/snakemake-econ-r-tutorial" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 7 Automatic Expansion of Wildcards | Reproducible Data Analytic Workflows with Snakemake and R" />
+  
+  <meta name="twitter:description" content="In progress" />
+  
+
+<meta name="author" content="Ulrich Bergmann" />
+<meta name="author" content="Lachlan Deer" />
+<meta name="author" content="Julian Langer" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="wildcards.html"/>
+<link rel="next" href="automatic-wildcard-specifications.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./index.html">Reproducible Data Analytic Workflows with Snakemake and `R`</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#why-we-wrote-this-tutorial"><i class="fa fa-check"></i>Why we wrote this tutorial</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#pre-requisite-knowledge"><i class="fa fa-check"></i>Pre-requisite Knowledge</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-needs-to-be-downloaded-installed-for-this-tutorial"><i class="fa fa-check"></i>What Needs to be Downloaded &amp; Installed for this Tutorial</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#template-scripts-and-documents"><i class="fa fa-check"></i>Template Scripts and Documents</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#software-installation"><i class="fa fa-check"></i>Software Installation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#what-we-cant-cover"><i class="fa fa-check"></i>What We Can’t Cover</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i>Acknowledgements</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-the-authors"><i class="fa fa-check"></i>About the Authors</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#license"><i class="fa fa-check"></i>License</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#instructional-material"><i class="fa fa-check"></i>Instructional material</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#software"><i class="fa fa-check"></i>Software</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#citation"><i class="fa fa-check"></i>Citation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="part-i-preliminaries.html"><a href="part-i-preliminaries.html"><i class="fa fa-check"></i>PART I - Preliminaries</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Motivating &amp; Rationale</a><ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#a-case-for-reproducibility"><i class="fa fa-check"></i><b>1.1</b> A Case for Reproducibility</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#how-far-to-go-in-the-quest-for-reproducibility"><i class="fa fa-check"></i><b>1.1.1</b> How far to go in the quest for reproducibility?</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#what-is-snakemake-why-should-you-use-it"><i class="fa fa-check"></i><b>1.2</b> What is <code>Snakemake</code> &amp; Why Should you use it?</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#why-r"><i class="fa fa-check"></i><b>1.3</b> Why <code>R</code>?</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#working-example-replicating-mankiw-romer-and-weils-1992-qje"><i class="fa fa-check"></i><b>1.4</b> Working Example: Replicating Mankiw, Romer and Weil’s 1992 QJE</a></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#the-way-forward"><i class="fa fa-check"></i><b>1.5</b> The way forward</a><ul>
+<li class="chapter" data-level="" data-path="intro.html"><a href="intro.html#exercise-your-own-projects-steps"><i class="fa fa-check"></i>Exercise: Your own project’s steps</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="project-organization.html"><a href="project-organization.html"><i class="fa fa-check"></i><b>2</b> Project Organization</a><ul>
+<li class="chapter" data-level="" data-path="project-organization.html"><a href="project-organization.html#learning-objectives"><i class="fa fa-check"></i>Learning Objectives</a></li>
+<li class="chapter" data-level="2.1" data-path="project-organization.html"><a href="project-organization.html#subtitle-tbd"><i class="fa fa-check"></i><b>2.1</b> Subtitle TBD</a></li>
+<li class="chapter" data-level="2.2" data-path="project-organization.html"><a href="project-organization.html#project-organization-i-separating-inputs-and-outputs"><i class="fa fa-check"></i><b>2.2</b> Project Organization I: Separating Inputs and Outputs</a></li>
+<li class="chapter" data-level="2.3" data-path="project-organization.html"><a href="project-organization.html#project-structure-ii-separating-logical-chunks-of-the-project"><i class="fa fa-check"></i><b>2.3</b> Project Structure II: Separating Logical Chunks of the Project</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="project-organization.html"><a href="project-organization.html#aside-even-deeper-sub-folders"><i class="fa fa-check"></i><b>2.3.1</b> Aside: Even Deeper Sub-folders</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="project-organization.html"><a href="project-organization.html#project-structure-iii-separating-input-parameters-from-code"><i class="fa fa-check"></i><b>2.4</b> Project Structure III: Separating Input Parameters from Code</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html"><i class="fa fa-check"></i><b>3</b> Initial Steps with Snakemake</a><ul>
+<li class="chapter" data-level="3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#snakefile-writing-our-first-rule"><i class="fa fa-check"></i><b>3.1</b> Snakefile – Writing Our First Rule</a></li>
+<li class="chapter" data-level="3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-snakemake-command-executing-a-rule"><i class="fa fa-check"></i><b>3.2</b> The Snakemake Command – Executing a Rule</a></li>
+<li class="chapter" data-level="3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#reading-and-writing-files-first-steps-in-a-data-science-pipeline"><i class="fa fa-check"></i><b>3.3</b> Reading and Writing Files – First Steps in a Data Science Pipeline</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#using-the-rscript-command-to-execute-r-scripts"><i class="fa fa-check"></i><b>3.3.1</b> Using the Rscript command to execute R scripts</a></li>
+<li class="chapter" data-level="3.3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-input-and-output-arguments"><i class="fa fa-check"></i><b>3.3.2</b> The input and output arguments</a></li>
+<li class="chapter" data-level="3.3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#a-rule-to-rename-variables."><i class="fa fa-check"></i><b>3.3.3</b> A rule to rename variables.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#redundant-executions-dont-run-a-rule-repeatedly"><i class="fa fa-check"></i><b>3.4</b> Redundant Executions – (Don’t) Run a Rule Repeatedly</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html"><i class="fa fa-check"></i><b>4</b> Working With Multiple Rules</a><ul>
+<li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a second rule</a><ul>
+<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-rules"><i class="fa fa-check"></i>Exercise: Creating Rules</a></li>
+<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution"><i class="fa fa-check"></i>Solution</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#clean-rules"><i class="fa fa-check"></i><b>4.2</b> Clean Rules</a><ul>
+<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-cleaning-rules"><i class="fa fa-check"></i>Exercise: Creating Cleaning Rules</a></li>
+<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution-1"><i class="fa fa-check"></i>Solution</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="target-rules.html"><a href="target-rules.html"><i class="fa fa-check"></i><b>5</b> Target Rules</a><ul>
+<li class="chapter" data-level="5.1" data-path="target-rules.html"><a href="target-rules.html#where-we-are-now"><i class="fa fa-check"></i><b>5.1</b> Where we are now?</a></li>
+<li class="chapter" data-level="5.2" data-path="target-rules.html"><a href="target-rules.html#how-snakemake-determines-the-build-order-when-multiple-rules-are-present"><i class="fa fa-check"></i><b>5.2</b> How Snakemake determines the build order when multiple rules are present</a></li>
+<li class="chapter" data-level="5.3" data-path="target-rules.html"><a href="target-rules.html#dedicated-target-rules-to-execute-multiple-rules"><i class="fa fa-check"></i><b>5.3</b> Dedicated target rules to execute multiple rules</a><ul>
+<li class="chapter" data-level="" data-path="target-rules.html"><a href="target-rules.html#exercise-using-target-rules"><i class="fa fa-check"></i>Exercise: Using target rules</a></li>
+<li class="chapter" data-level="" data-path="target-rules.html"><a href="target-rules.html#solution-2"><i class="fa fa-check"></i>Solution</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="target-rules.html"><a href="target-rules.html#target-rules-can-do-more-for-us"><i class="fa fa-check"></i><b>5.4</b> Target rules can do more for us</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>6</b> Wildcards</a><ul>
+<li class="chapter" data-level="6.1" data-path="wildcards.html"><a href="wildcards.html#the-starting-point-of-our-snakefile"><i class="fa fa-check"></i><b>6.1</b> The starting point of our Snakefile</a></li>
+<li class="chapter" data-level="6.2" data-path="wildcards.html"><a href="wildcards.html#using-wildcards-to-tidy-up-our-code"><i class="fa fa-check"></i><b>6.2</b> Using wildcards to tidy up our code</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html"><i class="fa fa-check"></i><b>7</b> Automatic Expansion of Wildcards</a><ul>
+<li class="chapter" data-level="7.1" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#learning-goals"><i class="fa fa-check"></i><b>7.1</b> Learning Goals</a></li>
+<li class="chapter" data-level="7.2" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#the-expand-function"><i class="fa fa-check"></i><b>7.2</b> The <code>expand()</code> function</a><ul>
+<li class="chapter" data-level="" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#exercise-exploring-the-expand-function-i"><i class="fa fa-check"></i>Exercise: Exploring the expand function I</a></li>
+<li class="chapter" data-level="7.2.1" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#solution-3"><i class="fa fa-check"></i><b>7.2.1</b> SOLUTION:</a></li>
+<li class="chapter" data-level="" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#exercise-exploring-the-expand-function-ii"><i class="fa fa-check"></i>Exercise: Exploring the expand() function II</a></li>
+<li class="chapter" data-level="7.2.2" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#solution-4"><i class="fa fa-check"></i><b>7.2.2</b> Solution</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#expanding-multiple-wildcards"><i class="fa fa-check"></i><b>7.3</b> Expanding Multiple Wildcards</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html"><i class="fa fa-check"></i><b>8</b> Automatic Wildcard Specifications</a><ul>
+<li class="chapter" data-level="8.1" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#the-glob_wildcards-function"><i class="fa fa-check"></i><b>8.1</b> The <code>glob_wildcards</code> Function</a><ul>
+<li class="chapter" data-level="" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#exercise-exploring-glob_wildcards"><i class="fa fa-check"></i>Exercise: Exploring glob_wildcards()</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#further-restricting-the-glob_wildcards-output"><i class="fa fa-check"></i><b>8.2</b> Further Restricting the <code>glob_wildcards</code> output</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html"><i class="fa fa-check"></i><b>9</b> Building all outputs at once</a><ul>
+<li class="chapter" data-level="9.1" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html#creating-an-all-rule"><i class="fa fa-check"></i><b>9.1</b> Creating an <code>all</code> rule</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>10</b> Adding Parameters</a><ul>
+<li class="chapter" data-level="10.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>10.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
+<li class="chapter" data-level="10.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>10.2</b> Creating a Rule with <code>params</code></a><ul>
+<li class="chapter" data-level="" data-path="adding-parameters.html"><a href="adding-parameters.html#exercise-building-table-2"><i class="fa fa-check"></i>Exercise: Building Table 2</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="part-ii.html"><a href="part-ii.html"><i class="fa fa-check"></i>PART II</a></li>
+<li class="chapter" data-level="11" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>11</b> Logging Output and Errors</a><ul>
+<li class="chapter" data-level="11.1" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output"><i class="fa fa-check"></i><b>11.1</b> Logging Output</a></li>
+<li class="chapter" data-level="11.2" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output-and-errors-in-one-file"><i class="fa fa-check"></i><b>11.2</b> Logging Output and Errors in One File</a><ul>
+<li class="chapter" data-level="" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#exercise-logging-all-r-scripts"><i class="fa fa-check"></i>Exercise: Logging all R Scripts</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>12</b> Self Documenting Help</a><ul>
+<li class="chapter" data-level="12.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>12.1</b> Our Commenting Syle</a></li>
+<li class="chapter" data-level="12.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>12.2</b> Adding Further Comments</a><ul>
+<li class="chapter" data-level="" data-path="self-documenting-help.html"><a href="self-documenting-help.html#exercise-adding-comments"><i class="fa fa-check"></i>Exercise: Adding Comments</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>12.3</b> A <code>help</code> Rule</a><ul>
+<li><a href="self-documenting-help.html#exercise-saving-help-output-to-file">Exercise: Saving <code>help</code> output to file</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>13</b> Config Files</a><ul>
+<li class="chapter" data-level="13.1" data-path="config-files.html"><a href="config-files.html#the-config.yaml-filepath"><i class="fa fa-check"></i><b>13.1</b> The <code>config.yaml</code> filepath</a></li>
+<li class="chapter" data-level="13.2" data-path="config-files.html"><a href="config-files.html#using-paths-from-the-config-file"><i class="fa fa-check"></i><b>13.2</b> Using paths from the config file</a><ul>
+<li class="chapter" data-level="" data-path="config-files.html"><a href="config-files.html#exercise-using-config-files"><i class="fa fa-check"></i>Exercise: Using Config Files</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>14</b> Subworkflows: Divide and Conquer</a><ul>
+<li class="chapter" data-level="14.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>14.1</b> Subworkflow Basics</a></li>
+<li class="chapter" data-level="14.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>14.2</b> Subworkflow dependencies</a><ul>
+<li class="chapter" data-level="" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#exercise-more-subworkflows"><i class="fa fa-check"></i>Exercise: More Subworkflows</a></li>
+<li><a href="subworkflows-divide-and-conquer.html#guided-exercise-help-rules-with-subworkflows">Guided Exercise: <code>help</code> rules with subworkflows</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="part-iii.html"><a href="part-iii.html"><i class="fa fa-check"></i>PART III</a></li>
+<li class="chapter" data-level="15" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>15</b> Reproducible Articles with Rmd</a></li>
+<li class="chapter" data-level="16" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>16</b> Reproducible Slides with Rmd</a></li>
+<li class="chapter" data-level="17" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>17</b> Package Dependencies with Packrat</a></li>
+<li class="chapter" data-level="18" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>18</b> Containers</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Reproducible Data Analytic Workflows with Snakemake and <code>R</code></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="automatic-expansion-of-wildcards" class="section level1">
+<h1><span class="header-section-number">Chapter 7</span> Automatic Expansion of Wildcards</h1>
+<div id="learning-goals" class="section level2">
+<h2><span class="header-section-number">7.1</span> Learning Goals</h2>
+<p>TODO: Add Goals</p>
+<p>TODO:</p>
+<p>!!! State of the Snakefile !!!</p>
+<p>Add a box with how the snakefile needs to be at the beginning of this chapter</p>
+</div>
+<div id="the-expand-function" class="section level2">
+<h2><span class="header-section-number">7.2</span> The <code>expand()</code> function</h2>
+<p>When we look at our target rule:</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb83-1"><a href="automatic-expansion-of-wildcards.html#cb83-1"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb83-2"><a href="automatic-expansion-of-wildcards.html#cb83-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb83-3"><a href="automatic-expansion-of-wildcards.html#cb83-3"></a>        <span class="ex">intermediate</span> = <span class="st">&quot;out/analysis/model_solow_subset_intermediate.rds&quot;</span>,</span>
+<span id="cb83-4"><a href="automatic-expansion-of-wildcards.html#cb83-4"></a>        <span class="ex">nonoil</span>       = <span class="st">&quot;out/analysis/model_solow_subset_nonoil.rds&quot;</span>,</span>
+<span id="cb83-5"><a href="automatic-expansion-of-wildcards.html#cb83-5"></a>        <span class="ex">oecd</span>         = <span class="st">&quot;out/analysis/model_solow_subset_oecd.rds&quot;</span></span></code></pre></div>
+<p>We can see that each of inputs listed have similar structure:</p>
+<ul>
+<li>The outputs live on the same path <code>out/analysis/</code>, and</li>
+<li>The filenames of each output begin with <code>model_solow</code> and end with <code>.rds</code>.</li>
+</ul>
+<p>Only the name of the subset of data we are using changing.
+We can use the idea of wildcards from the previous chapter together with some additional Snakemake functionality to simplify this target rule.
+Using what we learned in Chapter XX, we can modify <code>solow_target</code> using a wildcard:</p>
+<div class="sourceCode" id="cb84"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb84-1"><a href="automatic-expansion-of-wildcards.html#cb84-1"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb84-2"><a href="automatic-expansion-of-wildcards.html#cb84-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb84-3"><a href="automatic-expansion-of-wildcards.html#cb84-3"></a>        <span class="ex">models</span> = <span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span></code></pre></div>
+<p>If we try and run snakemake with our target rule written like this we see the following:</p>
+<div class="sourceCode" id="cb85"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb85-1"><a href="automatic-expansion-of-wildcards.html#cb85-1"></a>$ <span class="ex">snakemake</span> --cores 1 solow_target</span></code></pre></div>
+<p>We get an error:</p>
+<div class="sourceCode" id="cb86"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb86-1"><a href="automatic-expansion-of-wildcards.html#cb86-1"></a><span class="ex">Building</span> DAG of jobs...</span>
+<span id="cb86-2"><a href="automatic-expansion-of-wildcards.html#cb86-2"></a><span class="ex">WildcardError</span> in line 12 of /home/lachlan/teaching/snakemake-econ-r-learner/Snakefile:</span>
+<span id="cb86-3"><a href="automatic-expansion-of-wildcards.html#cb86-3"></a><span class="ex">Wildcards</span> in input files cannot be determined from output files:</span>
+<span id="cb86-4"><a href="automatic-expansion-of-wildcards.html#cb86-4"></a><span class="st">&#39;iSubset&#39;</span></span></code></pre></div>
+<p>Recall that Snakemake won’t run a rule that contains a wildcard because it does not know how to resolve it,
+i.e. Snakemake doesn’t know to replace <code>{iSubset}</code> with either of <code>subset_oecd</code>, <code>subset_intermediate</code> or <code>subset_nonoil</code>.
+It is our job to tell Snakemake that this is what we want to happen.
+Luckily Snakemake has a functionality that allows us to tell it how to accept a wildcard and replace it with a set of specific values.</p>
+<p>The function we are looking for is the <code>expand()</code> function.
+As the name suggests its job is to expand a wildcard by replacing with with a specified value.
+All we need to do is tell Snakemake what to substitute in the wildcard’s place.
+We can use the <code>expand()</code> function as follows:</p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb87-1"><a href="automatic-expansion-of-wildcards.html#cb87-1"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb87-2"><a href="automatic-expansion-of-wildcards.html#cb87-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb87-3"><a href="automatic-expansion-of-wildcards.html#cb87-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb87-4"><a href="automatic-expansion-of-wildcards.html#cb87-4"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span></code></pre></div>
+<p>This says replace the wildcard <code>{iSubset}</code> with some value <code>DATA_SUBSET</code>.
+Let’s look at the what this buys us.</p>
+<p>First, let’s clean up our output folder with <code>snakemake clean</code> so that we have an clean slate to work with:</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb88-1"><a href="automatic-expansion-of-wildcards.html#cb88-1"></a>$ <span class="ex">snakemake</span> --cores 1 clean</span></code></pre></div>
+<p>Now replace <code>DATA_SUBSET</code> in our target rule of the Snakefile with one of our data subsets the analysis uses,
+<code>subset_nonoil</code>:</p>
+<div class="sourceCode" id="cb89"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb89-1"><a href="automatic-expansion-of-wildcards.html#cb89-1"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb89-2"><a href="automatic-expansion-of-wildcards.html#cb89-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb89-3"><a href="automatic-expansion-of-wildcards.html#cb89-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb89-4"><a href="automatic-expansion-of-wildcards.html#cb89-4"></a>                    <span class="ex">iSubset</span> = <span class="st">&quot;subset_nonoil&quot;</span>)</span></code></pre></div>
+<p>And let’s use the <code>--summary</code> option of snakemake to see what the build plan would be:</p>
+<div class="sourceCode" id="cb90"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb90-1"><a href="automatic-expansion-of-wildcards.html#cb90-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
+<p>We see:</p>
+<div class="sourceCode" id="cb91"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb91-1"><a href="automatic-expansion-of-wildcards.html#cb91-1"></a><span class="ex">output_file</span>     date    rule    version log-file(s)     <span class="ex">status</span>  plan</span>
+<span id="cb91-2"><a href="automatic-expansion-of-wildcards.html#cb91-2"></a><span class="ex">out/analysis/model_solow_subset_nonoil.rds</span>      -       solow_model     -               missing update pending</span>
+<span id="cb91-3"><a href="automatic-expansion-of-wildcards.html#cb91-3"></a><span class="ex">out/data/mrw_complete.csv</span>       -       gen_regression_vars     -               missing update pending</span>
+<span id="cb91-4"><a href="automatic-expansion-of-wildcards.html#cb91-4"></a><span class="ex">out/data/mrw_renamed.csv</span>        -       rename_vars     -               missing update pending</span></code></pre></div>
+<p>From the top line of the output, we can see that Snakemake wants to build the file <code>out/analysis/model_solow_subset_nonoil.rds</code>.
+This means Snakemake has indeed replaced the wildcard <code>iSubset</code> with <code>subset_nonoil</code>.
+And, because we were not thrown an error message, the problem of not being able to resolve a wildcard has been solved through the use of <code>expand()</code>.</p>
+<p>Now that we have the idea that <code>expand()</code> can replace a wilcard with a value, we want to know how to replace a wildcard with multiple values iteratively,
+i.e., first with <code>subset_nonoil</code>, then with <code>subset_oecd</code> and finally with <code>subset_intermediate</code>.
+We do this by passing a list, in the python sense of the word, of values that we want {iSubset} to take.
+For example, if we want to run the model on both <code>subset_nonoil</code> and <code>subset_oecd</code>:</p>
+<div class="sourceCode" id="cb92"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb92-1"><a href="automatic-expansion-of-wildcards.html#cb92-1"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb92-2"><a href="automatic-expansion-of-wildcards.html#cb92-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb92-3"><a href="automatic-expansion-of-wildcards.html#cb92-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb92-4"><a href="automatic-expansion-of-wildcards.html#cb92-4"></a>                    <span class="ex">iSubset</span> = [<span class="st">&quot;subset_nonoil&quot;</span>, <span class="st">&quot;subset_oecd&quot;</span>])</span></code></pre></div>
+<p>If we then look at the summary:</p>
+<div class="sourceCode" id="cb93"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb93-1"><a href="automatic-expansion-of-wildcards.html#cb93-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
+<p>We see:</p>
+<div class="sourceCode" id="cb94"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb94-1"><a href="automatic-expansion-of-wildcards.html#cb94-1"></a><span class="ex">output_file</span>     date    rule    version log-file(s)     <span class="ex">status</span>  plan</span>
+<span id="cb94-2"><a href="automatic-expansion-of-wildcards.html#cb94-2"></a><span class="ex">out/analysis/model_solow_subset_nonoil.rds</span>      -       solow_model     -               missing update pending</span>
+<span id="cb94-3"><a href="automatic-expansion-of-wildcards.html#cb94-3"></a><span class="ex">out/analysis/model_solow_subset_oecd.rds</span>        -       solow_model     -               missing update pending</span>
+<span id="cb94-4"><a href="automatic-expansion-of-wildcards.html#cb94-4"></a><span class="ex">out/data/mrw_complete.csv</span>       -       gen_regression_vars     -               missing update pending</span>
+<span id="cb94-5"><a href="automatic-expansion-of-wildcards.html#cb94-5"></a><span class="ex">out/data/mrw_renamed.csv</span>        -       rename_vars     -               missing update pending</span></code></pre></div>
+<p>The top two lines show the wildcard {iSubset} has indeed been replaced successively with <code>subset_nonoil</code> and then <code>subset_oecd</code>.</p>
+<p>The notion of constructing a list of values for Snakemake to iterate through is definitely beneficial,
+and progress has been made.
+However, specifying the list each time in the rule itself is not ideal for at least two reasons:</p>
+<ol style="list-style-type: lower-roman">
+<li>If we need to use the same list multiple times across different rules we have to copy and paste it, and then be sure we update it correctly each time, and</li>
+<li>It can be hard to find the lists we are iterating over when we read through the Snakefile.</li>
+</ol>
+<p>We can easily overcome both limitations by creating our list of data subsets outside of the rule,
+and then referring the list by name as needed.
+To do this, at the top of our Snakefile we will create an area to store lists we will want to iterate through.
+For us right now, we want to create a list of data subsets, so let’s call the list <code>DATA_SUBSET</code>.<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>
+Inside that list we put the three subsets:</p>
+<div class="sourceCode" id="cb95"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb95-1"><a href="automatic-expansion-of-wildcards.html#cb95-1"></a><span class="ex">DATA_SUBSET</span> = [</span>
+<span id="cb95-2"><a href="automatic-expansion-of-wildcards.html#cb95-2"></a>                <span class="st">&quot;subset_oecd&quot;</span>,</span>
+<span id="cb95-3"><a href="automatic-expansion-of-wildcards.html#cb95-3"></a>                <span class="st">&quot;subset_intermediate&quot;</span>,</span>
+<span id="cb95-4"><a href="automatic-expansion-of-wildcards.html#cb95-4"></a>                <span class="st">&quot;subset_nonoil&quot;</span></span>
+<span id="cb95-5"><a href="automatic-expansion-of-wildcards.html#cb95-5"></a>                ]</span></code></pre></div>
+<p>Then we inside our <code>expand()</code> we write <code>iSubset = DATA_SUBSET</code> so Snakemake knows to iterate through that list:</p>
+<div class="sourceCode" id="cb96"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb96-1"><a href="automatic-expansion-of-wildcards.html#cb96-1"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb96-2"><a href="automatic-expansion-of-wildcards.html#cb96-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb96-3"><a href="automatic-expansion-of-wildcards.html#cb96-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb96-4"><a href="automatic-expansion-of-wildcards.html#cb96-4"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span></code></pre></div>
+<p>Now when we look at the build plan with the <code>summary</code> option:</p>
+<div class="sourceCode" id="cb97"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb97-1"><a href="automatic-expansion-of-wildcards.html#cb97-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
+<p>We see:</p>
+<div class="sourceCode" id="cb98"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb98-1"><a href="automatic-expansion-of-wildcards.html#cb98-1"></a><span class="ex">output_file</span>     date    rule    version log-file(s)     <span class="ex">status</span>  plan</span>
+<span id="cb98-2"><a href="automatic-expansion-of-wildcards.html#cb98-2"></a><span class="ex">out/analysis/model_solow_subset_oecd.rds</span>        -       solow_model     -               missing update pending</span>
+<span id="cb98-3"><a href="automatic-expansion-of-wildcards.html#cb98-3"></a><span class="ex">out/analysis/model_solow_subset_intermediate.rds</span>        -       solow_model     -               missing update pending</span>
+<span id="cb98-4"><a href="automatic-expansion-of-wildcards.html#cb98-4"></a><span class="ex">out/analysis/model_solow_subset_nonoil.rds</span>      -       solow_model     -               missing update pending</span>
+<span id="cb98-5"><a href="automatic-expansion-of-wildcards.html#cb98-5"></a><span class="ex">out/data/mrw_complete.csv</span>       -       gen_regression_vars     -               missing update pending</span>
+<span id="cb98-6"><a href="automatic-expansion-of-wildcards.html#cb98-6"></a><span class="ex">out/data/mrw_renamed.csv</span>        -       rename_vars     -               missing update pending</span></code></pre></div>
+<p>Which shows Snakemake wants to run the regression on all three data subsets.</p>
+<p>Let’s do that now:</p>
+<div class="sourceCode" id="cb99"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb99-1"><a href="automatic-expansion-of-wildcards.html#cb99-1"></a>$ <span class="ex">snakemake</span> --cores 1 </span></code></pre></div>
+<p>!! TO DO !!</p>
+<p>add the output here</p>
+<div id="exercise-exploring-the-expand-function-i" class="section level3 unnumbered exercise">
+<h3>Exercise: Exploring the expand function I</h3>
+<p>The MRW paper contains three plots.
+Each of these plots use the data subset of ‘intermediate’ countries.
+In the <code>src/figures/</code> subdirectory, there are three scripts that reproduce the figures one script per plot.<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></p>
+<ol style="list-style-type: lower-alpha">
+<li>Write three rules <code>fig_1</code>, <code>fig_2</code> and <code>fig_3</code> to produce each figure.
+Each figure should be saved with the following name ‘out/figures/SCRIPTNAME.pdf’</li>
+<li>Create a list called <code>PLOTS</code> that contains the file names of each of the three plot scripts (without <code>.R</code>).
+Use what you have learned about wildcards and the <code>expand</code> function to condense the three rules in (a) into
+one rule <code>figures</code> that can make each figure and a target rule <code>make_figures</code> so that <code>snakemake --cores 1 figs_target</code>
+builds all three figures, one after the other.</li>
+</ol>
+<p>HINT:
+The scripts are written in such a way that they accept exactly the same options.
+Using wildcards and the expand function extend the Snakefile to construct each figure.</p>
+</div>
+<div id="solution-3" class="section level3">
+<h3><span class="header-section-number">7.2.1</span> SOLUTION:</h3>
+<p>Use <code>snakemake --cores 1 make_figures</code> to run the figures</p>
+<div class="sourceCode" id="cb100"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb100-1"><a href="automatic-expansion-of-wildcards.html#cb100-1"></a><span class="co"># --- Dictionaries --- #</span></span>
+<span id="cb100-2"><a href="automatic-expansion-of-wildcards.html#cb100-2"></a></span>
+<span id="cb100-3"><a href="automatic-expansion-of-wildcards.html#cb100-3"></a><span class="ex">DATA_SUBSET</span> = [</span>
+<span id="cb100-4"><a href="automatic-expansion-of-wildcards.html#cb100-4"></a>                <span class="st">&quot;subset_oecd&quot;</span>,</span>
+<span id="cb100-5"><a href="automatic-expansion-of-wildcards.html#cb100-5"></a>                <span class="st">&quot;subset_intermediate&quot;</span>,</span>
+<span id="cb100-6"><a href="automatic-expansion-of-wildcards.html#cb100-6"></a>                <span class="st">&quot;subset_nonoil&quot;</span></span>
+<span id="cb100-7"><a href="automatic-expansion-of-wildcards.html#cb100-7"></a>                ]</span>
+<span id="cb100-8"><a href="automatic-expansion-of-wildcards.html#cb100-8"></a></span>
+<span id="cb100-9"><a href="automatic-expansion-of-wildcards.html#cb100-9"></a><span class="ex">PLOTS</span> = [</span>
+<span id="cb100-10"><a href="automatic-expansion-of-wildcards.html#cb100-10"></a>    <span class="st">&quot;aug_conditional_convergence&quot;</span>,</span>
+<span id="cb100-11"><a href="automatic-expansion-of-wildcards.html#cb100-11"></a>    <span class="st">&quot;conditional_convergence&quot;</span>,</span>
+<span id="cb100-12"><a href="automatic-expansion-of-wildcards.html#cb100-12"></a>    <span class="st">&quot;unconditional_convergence&quot;</span></span>
+<span id="cb100-13"><a href="automatic-expansion-of-wildcards.html#cb100-13"></a>]</span>
+<span id="cb100-14"><a href="automatic-expansion-of-wildcards.html#cb100-14"></a></span>
+<span id="cb100-15"><a href="automatic-expansion-of-wildcards.html#cb100-15"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb100-16"><a href="automatic-expansion-of-wildcards.html#cb100-16"></a></span>
+<span id="cb100-17"><a href="automatic-expansion-of-wildcards.html#cb100-17"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb100-18"><a href="automatic-expansion-of-wildcards.html#cb100-18"></a>    <span class="ex">input</span>:</span>
+<span id="cb100-19"><a href="automatic-expansion-of-wildcards.html#cb100-19"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb100-20"><a href="automatic-expansion-of-wildcards.html#cb100-20"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb100-21"><a href="automatic-expansion-of-wildcards.html#cb100-21"></a></span>
+<span id="cb100-22"><a href="automatic-expansion-of-wildcards.html#cb100-22"></a><span class="ex">rule</span> solow_model:</span>
+<span id="cb100-23"><a href="automatic-expansion-of-wildcards.html#cb100-23"></a>    <span class="ex">input</span>:</span>
+<span id="cb100-24"><a href="automatic-expansion-of-wildcards.html#cb100-24"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb100-25"><a href="automatic-expansion-of-wildcards.html#cb100-25"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb100-26"><a href="automatic-expansion-of-wildcards.html#cb100-26"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb100-27"><a href="automatic-expansion-of-wildcards.html#cb100-27"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb100-28"><a href="automatic-expansion-of-wildcards.html#cb100-28"></a>    <span class="ex">output</span>:</span>
+<span id="cb100-29"><a href="automatic-expansion-of-wildcards.html#cb100-29"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span></span>
+<span id="cb100-30"><a href="automatic-expansion-of-wildcards.html#cb100-30"></a>    <span class="ex">shell</span>:</span>
+<span id="cb100-31"><a href="automatic-expansion-of-wildcards.html#cb100-31"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb100-32"><a href="automatic-expansion-of-wildcards.html#cb100-32"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb100-33"><a href="automatic-expansion-of-wildcards.html#cb100-33"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb100-34"><a href="automatic-expansion-of-wildcards.html#cb100-34"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb100-35"><a href="automatic-expansion-of-wildcards.html#cb100-35"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb100-36"><a href="automatic-expansion-of-wildcards.html#cb100-36"></a></span>
+<span id="cb100-37"><a href="automatic-expansion-of-wildcards.html#cb100-37"></a></span>
+<span id="cb100-38"><a href="automatic-expansion-of-wildcards.html#cb100-38"></a><span class="ex">rule</span> make_figures:</span>
+<span id="cb100-39"><a href="automatic-expansion-of-wildcards.html#cb100-39"></a>    <span class="ex">input</span>:</span>
+<span id="cb100-40"><a href="automatic-expansion-of-wildcards.html#cb100-40"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb100-41"><a href="automatic-expansion-of-wildcards.html#cb100-41"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
+<span id="cb100-42"><a href="automatic-expansion-of-wildcards.html#cb100-42"></a></span>
+<span id="cb100-43"><a href="automatic-expansion-of-wildcards.html#cb100-43"></a><span class="ex">rule</span> figure:</span>
+<span id="cb100-44"><a href="automatic-expansion-of-wildcards.html#cb100-44"></a>    <span class="ex">input</span>:</span>
+<span id="cb100-45"><a href="automatic-expansion-of-wildcards.html#cb100-45"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
+<span id="cb100-46"><a href="automatic-expansion-of-wildcards.html#cb100-46"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb100-47"><a href="automatic-expansion-of-wildcards.html#cb100-47"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
+<span id="cb100-48"><a href="automatic-expansion-of-wildcards.html#cb100-48"></a>    <span class="ex">output</span>:</span>
+<span id="cb100-49"><a href="automatic-expansion-of-wildcards.html#cb100-49"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
+<span id="cb100-50"><a href="automatic-expansion-of-wildcards.html#cb100-50"></a>    <span class="ex">shell</span>:</span>
+<span id="cb100-51"><a href="automatic-expansion-of-wildcards.html#cb100-51"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb100-52"><a href="automatic-expansion-of-wildcards.html#cb100-52"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb100-53"><a href="automatic-expansion-of-wildcards.html#cb100-53"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb100-54"><a href="automatic-expansion-of-wildcards.html#cb100-54"></a><span class="st">            --out {output.fig}&quot;</span></span>
+<span id="cb100-55"><a href="automatic-expansion-of-wildcards.html#cb100-55"></a></span>
+<span id="cb100-56"><a href="automatic-expansion-of-wildcards.html#cb100-56"></a><span class="ex">rule</span> gen_regression_vars:</span>
+<span id="cb100-57"><a href="automatic-expansion-of-wildcards.html#cb100-57"></a>    <span class="ex">input</span>:</span>
+<span id="cb100-58"><a href="automatic-expansion-of-wildcards.html#cb100-58"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
+<span id="cb100-59"><a href="automatic-expansion-of-wildcards.html#cb100-59"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
+<span id="cb100-60"><a href="automatic-expansion-of-wildcards.html#cb100-60"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
+<span id="cb100-61"><a href="automatic-expansion-of-wildcards.html#cb100-61"></a>    <span class="ex">output</span>:</span>
+<span id="cb100-62"><a href="automatic-expansion-of-wildcards.html#cb100-62"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
+<span id="cb100-63"><a href="automatic-expansion-of-wildcards.html#cb100-63"></a>    <span class="ex">shell</span>:</span>
+<span id="cb100-64"><a href="automatic-expansion-of-wildcards.html#cb100-64"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb100-65"><a href="automatic-expansion-of-wildcards.html#cb100-65"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb100-66"><a href="automatic-expansion-of-wildcards.html#cb100-66"></a><span class="st">            --param {input.param} \</span></span>
+<span id="cb100-67"><a href="automatic-expansion-of-wildcards.html#cb100-67"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb100-68"><a href="automatic-expansion-of-wildcards.html#cb100-68"></a></span>
+<span id="cb100-69"><a href="automatic-expansion-of-wildcards.html#cb100-69"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb100-70"><a href="automatic-expansion-of-wildcards.html#cb100-70"></a>    <span class="ex">input</span>:</span>
+<span id="cb100-71"><a href="automatic-expansion-of-wildcards.html#cb100-71"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb100-72"><a href="automatic-expansion-of-wildcards.html#cb100-72"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb100-73"><a href="automatic-expansion-of-wildcards.html#cb100-73"></a>    <span class="ex">output</span>:</span>
+<span id="cb100-74"><a href="automatic-expansion-of-wildcards.html#cb100-74"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb100-75"><a href="automatic-expansion-of-wildcards.html#cb100-75"></a>    <span class="ex">shell</span>:</span>
+<span id="cb100-76"><a href="automatic-expansion-of-wildcards.html#cb100-76"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb100-77"><a href="automatic-expansion-of-wildcards.html#cb100-77"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb100-78"><a href="automatic-expansion-of-wildcards.html#cb100-78"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb100-79"><a href="automatic-expansion-of-wildcards.html#cb100-79"></a></span>
+<span id="cb100-80"><a href="automatic-expansion-of-wildcards.html#cb100-80"></a><span class="ex">rule</span> clean:</span>
+<span id="cb100-81"><a href="automatic-expansion-of-wildcards.html#cb100-81"></a>    <span class="ex">shell</span>:</span>
+<span id="cb100-82"><a href="automatic-expansion-of-wildcards.html#cb100-82"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
+<span id="cb100-83"><a href="automatic-expansion-of-wildcards.html#cb100-83"></a></span>
+<span id="cb100-84"><a href="automatic-expansion-of-wildcards.html#cb100-84"></a><span class="ex">rule</span> clean_data:</span>
+<span id="cb100-85"><a href="automatic-expansion-of-wildcards.html#cb100-85"></a>    <span class="ex">shell</span>:</span>
+<span id="cb100-86"><a href="automatic-expansion-of-wildcards.html#cb100-86"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
+<span id="cb100-87"><a href="automatic-expansion-of-wildcards.html#cb100-87"></a></span>
+<span id="cb100-88"><a href="automatic-expansion-of-wildcards.html#cb100-88"></a><span class="ex">rule</span> clean_analysis:</span>
+<span id="cb100-89"><a href="automatic-expansion-of-wildcards.html#cb100-89"></a>    <span class="ex">shell</span>:</span>
+<span id="cb100-90"><a href="automatic-expansion-of-wildcards.html#cb100-90"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
+</div>
+<div id="exercise-exploring-the-expand-function-ii" class="section level3 unnumbered exercise">
+<h3>Exercise: Exploring the expand() function II</h3>
+<p>So far we have estimated the basic Solow model.
+MRW also estimate an augmented version of the Solow model, adding human capital.
+The regression model required to estimate the augmented model is written up in <code>src/model-specs/model_aug_solow.json</code>.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Write the pair of rules <code>aug_solow_model</code> and <code>aug_solow_target</code> to estimate this model on each of the data subsets in <code>DATA_SUBSET</code></li>
+</ol>
+<p>HINT: Use the <code>expand()</code> function together with the <code>estimate_ols.R</code> script to estimate the augmented solow model on each of the three data subsets.
+The rule structures should look very similar to what we have done so far.</p>
+</div>
+<div id="solution-4" class="section level3">
+<h3><span class="header-section-number">7.2.2</span> Solution</h3>
+<div class="sourceCode" id="cb101"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb101-1"><a href="automatic-expansion-of-wildcards.html#cb101-1"></a><span class="co"># --- Dictionaries --- #</span></span>
+<span id="cb101-2"><a href="automatic-expansion-of-wildcards.html#cb101-2"></a></span>
+<span id="cb101-3"><a href="automatic-expansion-of-wildcards.html#cb101-3"></a><span class="ex">DATA_SUBSET</span> = [</span>
+<span id="cb101-4"><a href="automatic-expansion-of-wildcards.html#cb101-4"></a>                <span class="st">&quot;subset_oecd&quot;</span>,</span>
+<span id="cb101-5"><a href="automatic-expansion-of-wildcards.html#cb101-5"></a>                <span class="st">&quot;subset_intermediate&quot;</span>,</span>
+<span id="cb101-6"><a href="automatic-expansion-of-wildcards.html#cb101-6"></a>                <span class="st">&quot;subset_nonoil&quot;</span></span>
+<span id="cb101-7"><a href="automatic-expansion-of-wildcards.html#cb101-7"></a>                ]</span>
+<span id="cb101-8"><a href="automatic-expansion-of-wildcards.html#cb101-8"></a></span>
+<span id="cb101-9"><a href="automatic-expansion-of-wildcards.html#cb101-9"></a><span class="ex">PLOTS</span> = [</span>
+<span id="cb101-10"><a href="automatic-expansion-of-wildcards.html#cb101-10"></a>    <span class="st">&quot;aug_conditional_convergence&quot;</span>,</span>
+<span id="cb101-11"><a href="automatic-expansion-of-wildcards.html#cb101-11"></a>    <span class="st">&quot;conditional_convergence&quot;</span>,</span>
+<span id="cb101-12"><a href="automatic-expansion-of-wildcards.html#cb101-12"></a>    <span class="st">&quot;unconditional_convergence&quot;</span></span>
+<span id="cb101-13"><a href="automatic-expansion-of-wildcards.html#cb101-13"></a>]</span>
+<span id="cb101-14"><a href="automatic-expansion-of-wildcards.html#cb101-14"></a></span>
+<span id="cb101-15"><a href="automatic-expansion-of-wildcards.html#cb101-15"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb101-16"><a href="automatic-expansion-of-wildcards.html#cb101-16"></a></span>
+<span id="cb101-17"><a href="automatic-expansion-of-wildcards.html#cb101-17"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb101-18"><a href="automatic-expansion-of-wildcards.html#cb101-18"></a>    <span class="ex">input</span>:</span>
+<span id="cb101-19"><a href="automatic-expansion-of-wildcards.html#cb101-19"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb101-20"><a href="automatic-expansion-of-wildcards.html#cb101-20"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb101-21"><a href="automatic-expansion-of-wildcards.html#cb101-21"></a></span>
+<span id="cb101-22"><a href="automatic-expansion-of-wildcards.html#cb101-22"></a><span class="ex">rule</span> aug_solow_target:</span>
+<span id="cb101-23"><a href="automatic-expansion-of-wildcards.html#cb101-23"></a>    <span class="ex">input</span>:</span>
+<span id="cb101-24"><a href="automatic-expansion-of-wildcards.html#cb101-24"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_aug_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb101-25"><a href="automatic-expansion-of-wildcards.html#cb101-25"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb101-26"><a href="automatic-expansion-of-wildcards.html#cb101-26"></a></span>
+<span id="cb101-27"><a href="automatic-expansion-of-wildcards.html#cb101-27"></a><span class="ex">rule</span> solow_model:</span>
+<span id="cb101-28"><a href="automatic-expansion-of-wildcards.html#cb101-28"></a>    <span class="ex">input</span>:</span>
+<span id="cb101-29"><a href="automatic-expansion-of-wildcards.html#cb101-29"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb101-30"><a href="automatic-expansion-of-wildcards.html#cb101-30"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb101-31"><a href="automatic-expansion-of-wildcards.html#cb101-31"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb101-32"><a href="automatic-expansion-of-wildcards.html#cb101-32"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb101-33"><a href="automatic-expansion-of-wildcards.html#cb101-33"></a>    <span class="ex">output</span>:</span>
+<span id="cb101-34"><a href="automatic-expansion-of-wildcards.html#cb101-34"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span></span>
+<span id="cb101-35"><a href="automatic-expansion-of-wildcards.html#cb101-35"></a>    <span class="ex">shell</span>:</span>
+<span id="cb101-36"><a href="automatic-expansion-of-wildcards.html#cb101-36"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb101-37"><a href="automatic-expansion-of-wildcards.html#cb101-37"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb101-38"><a href="automatic-expansion-of-wildcards.html#cb101-38"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb101-39"><a href="automatic-expansion-of-wildcards.html#cb101-39"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb101-40"><a href="automatic-expansion-of-wildcards.html#cb101-40"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb101-41"><a href="automatic-expansion-of-wildcards.html#cb101-41"></a></span>
+<span id="cb101-42"><a href="automatic-expansion-of-wildcards.html#cb101-42"></a><span class="ex">rule</span> aug_solow_model:</span>
+<span id="cb101-43"><a href="automatic-expansion-of-wildcards.html#cb101-43"></a>    <span class="ex">input</span>:</span>
+<span id="cb101-44"><a href="automatic-expansion-of-wildcards.html#cb101-44"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb101-45"><a href="automatic-expansion-of-wildcards.html#cb101-45"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb101-46"><a href="automatic-expansion-of-wildcards.html#cb101-46"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_aug_solow.json&quot;</span>,</span>
+<span id="cb101-47"><a href="automatic-expansion-of-wildcards.html#cb101-47"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb101-48"><a href="automatic-expansion-of-wildcards.html#cb101-48"></a>    <span class="ex">output</span>:</span>
+<span id="cb101-49"><a href="automatic-expansion-of-wildcards.html#cb101-49"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_aug_solow_{iSubset}.rds&quot;</span></span>
+<span id="cb101-50"><a href="automatic-expansion-of-wildcards.html#cb101-50"></a>    <span class="ex">shell</span>:</span>
+<span id="cb101-51"><a href="automatic-expansion-of-wildcards.html#cb101-51"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb101-52"><a href="automatic-expansion-of-wildcards.html#cb101-52"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb101-53"><a href="automatic-expansion-of-wildcards.html#cb101-53"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb101-54"><a href="automatic-expansion-of-wildcards.html#cb101-54"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb101-55"><a href="automatic-expansion-of-wildcards.html#cb101-55"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb101-56"><a href="automatic-expansion-of-wildcards.html#cb101-56"></a></span>
+<span id="cb101-57"><a href="automatic-expansion-of-wildcards.html#cb101-57"></a></span>
+<span id="cb101-58"><a href="automatic-expansion-of-wildcards.html#cb101-58"></a><span class="ex">rule</span> make_figures:</span>
+<span id="cb101-59"><a href="automatic-expansion-of-wildcards.html#cb101-59"></a>    <span class="ex">input</span>:</span>
+<span id="cb101-60"><a href="automatic-expansion-of-wildcards.html#cb101-60"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb101-61"><a href="automatic-expansion-of-wildcards.html#cb101-61"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
+<span id="cb101-62"><a href="automatic-expansion-of-wildcards.html#cb101-62"></a></span>
+<span id="cb101-63"><a href="automatic-expansion-of-wildcards.html#cb101-63"></a><span class="ex">rule</span> figure:</span>
+<span id="cb101-64"><a href="automatic-expansion-of-wildcards.html#cb101-64"></a>    <span class="ex">input</span>:</span>
+<span id="cb101-65"><a href="automatic-expansion-of-wildcards.html#cb101-65"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
+<span id="cb101-66"><a href="automatic-expansion-of-wildcards.html#cb101-66"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb101-67"><a href="automatic-expansion-of-wildcards.html#cb101-67"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
+<span id="cb101-68"><a href="automatic-expansion-of-wildcards.html#cb101-68"></a>    <span class="ex">output</span>:</span>
+<span id="cb101-69"><a href="automatic-expansion-of-wildcards.html#cb101-69"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
+<span id="cb101-70"><a href="automatic-expansion-of-wildcards.html#cb101-70"></a>    <span class="ex">shell</span>:</span>
+<span id="cb101-71"><a href="automatic-expansion-of-wildcards.html#cb101-71"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb101-72"><a href="automatic-expansion-of-wildcards.html#cb101-72"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb101-73"><a href="automatic-expansion-of-wildcards.html#cb101-73"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb101-74"><a href="automatic-expansion-of-wildcards.html#cb101-74"></a><span class="st">            --out {output.fig}&quot;</span></span>
+<span id="cb101-75"><a href="automatic-expansion-of-wildcards.html#cb101-75"></a></span>
+<span id="cb101-76"><a href="automatic-expansion-of-wildcards.html#cb101-76"></a><span class="ex">rule</span> gen_regression_vars:</span>
+<span id="cb101-77"><a href="automatic-expansion-of-wildcards.html#cb101-77"></a>    <span class="ex">input</span>:</span>
+<span id="cb101-78"><a href="automatic-expansion-of-wildcards.html#cb101-78"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
+<span id="cb101-79"><a href="automatic-expansion-of-wildcards.html#cb101-79"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
+<span id="cb101-80"><a href="automatic-expansion-of-wildcards.html#cb101-80"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
+<span id="cb101-81"><a href="automatic-expansion-of-wildcards.html#cb101-81"></a>    <span class="ex">output</span>:</span>
+<span id="cb101-82"><a href="automatic-expansion-of-wildcards.html#cb101-82"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
+<span id="cb101-83"><a href="automatic-expansion-of-wildcards.html#cb101-83"></a>    <span class="ex">shell</span>:</span>
+<span id="cb101-84"><a href="automatic-expansion-of-wildcards.html#cb101-84"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb101-85"><a href="automatic-expansion-of-wildcards.html#cb101-85"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb101-86"><a href="automatic-expansion-of-wildcards.html#cb101-86"></a><span class="st">            --param {input.param} \</span></span>
+<span id="cb101-87"><a href="automatic-expansion-of-wildcards.html#cb101-87"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb101-88"><a href="automatic-expansion-of-wildcards.html#cb101-88"></a></span>
+<span id="cb101-89"><a href="automatic-expansion-of-wildcards.html#cb101-89"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb101-90"><a href="automatic-expansion-of-wildcards.html#cb101-90"></a>    <span class="ex">input</span>:</span>
+<span id="cb101-91"><a href="automatic-expansion-of-wildcards.html#cb101-91"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb101-92"><a href="automatic-expansion-of-wildcards.html#cb101-92"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb101-93"><a href="automatic-expansion-of-wildcards.html#cb101-93"></a>    <span class="ex">output</span>:</span>
+<span id="cb101-94"><a href="automatic-expansion-of-wildcards.html#cb101-94"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb101-95"><a href="automatic-expansion-of-wildcards.html#cb101-95"></a>    <span class="ex">shell</span>:</span>
+<span id="cb101-96"><a href="automatic-expansion-of-wildcards.html#cb101-96"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb101-97"><a href="automatic-expansion-of-wildcards.html#cb101-97"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb101-98"><a href="automatic-expansion-of-wildcards.html#cb101-98"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb101-99"><a href="automatic-expansion-of-wildcards.html#cb101-99"></a></span>
+<span id="cb101-100"><a href="automatic-expansion-of-wildcards.html#cb101-100"></a><span class="ex">rule</span> clean:</span>
+<span id="cb101-101"><a href="automatic-expansion-of-wildcards.html#cb101-101"></a>    <span class="ex">shell</span>:</span>
+<span id="cb101-102"><a href="automatic-expansion-of-wildcards.html#cb101-102"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
+<span id="cb101-103"><a href="automatic-expansion-of-wildcards.html#cb101-103"></a></span>
+<span id="cb101-104"><a href="automatic-expansion-of-wildcards.html#cb101-104"></a><span class="ex">rule</span> clean_data:</span>
+<span id="cb101-105"><a href="automatic-expansion-of-wildcards.html#cb101-105"></a>    <span class="ex">shell</span>:</span>
+<span id="cb101-106"><a href="automatic-expansion-of-wildcards.html#cb101-106"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
+<span id="cb101-107"><a href="automatic-expansion-of-wildcards.html#cb101-107"></a></span>
+<span id="cb101-108"><a href="automatic-expansion-of-wildcards.html#cb101-108"></a><span class="ex">rule</span> clean_analysis:</span>
+<span id="cb101-109"><a href="automatic-expansion-of-wildcards.html#cb101-109"></a>    <span class="ex">shell</span>:</span>
+<span id="cb101-110"><a href="automatic-expansion-of-wildcards.html#cb101-110"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
+</div>
+</div>
+<div id="expanding-multiple-wildcards" class="section level2">
+<h2><span class="header-section-number">7.3</span> Expanding Multiple Wildcards</h2>
+<p>The rules used to estimate the standard Solow model, and the augmented Solow model have very similar structure:</p>
+<div class="sourceCode" id="cb102"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb102-1"><a href="automatic-expansion-of-wildcards.html#cb102-1"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb102-2"><a href="automatic-expansion-of-wildcards.html#cb102-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb102-3"><a href="automatic-expansion-of-wildcards.html#cb102-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb102-4"><a href="automatic-expansion-of-wildcards.html#cb102-4"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb102-5"><a href="automatic-expansion-of-wildcards.html#cb102-5"></a></span>
+<span id="cb102-6"><a href="automatic-expansion-of-wildcards.html#cb102-6"></a><span class="ex">rule</span> aug_solow_target:</span>
+<span id="cb102-7"><a href="automatic-expansion-of-wildcards.html#cb102-7"></a>    <span class="ex">input</span>:</span>
+<span id="cb102-8"><a href="automatic-expansion-of-wildcards.html#cb102-8"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_aug_solow_{iSubset}.rds&quot;</span>,</span>
+<span id="cb102-9"><a href="automatic-expansion-of-wildcards.html#cb102-9"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb102-10"><a href="automatic-expansion-of-wildcards.html#cb102-10"></a></span>
+<span id="cb102-11"><a href="automatic-expansion-of-wildcards.html#cb102-11"></a><span class="ex">rule</span> solow_model:</span>
+<span id="cb102-12"><a href="automatic-expansion-of-wildcards.html#cb102-12"></a>    <span class="ex">input</span>:</span>
+<span id="cb102-13"><a href="automatic-expansion-of-wildcards.html#cb102-13"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb102-14"><a href="automatic-expansion-of-wildcards.html#cb102-14"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb102-15"><a href="automatic-expansion-of-wildcards.html#cb102-15"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb102-16"><a href="automatic-expansion-of-wildcards.html#cb102-16"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb102-17"><a href="automatic-expansion-of-wildcards.html#cb102-17"></a>    <span class="ex">output</span>:</span>
+<span id="cb102-18"><a href="automatic-expansion-of-wildcards.html#cb102-18"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span></span>
+<span id="cb102-19"><a href="automatic-expansion-of-wildcards.html#cb102-19"></a>    <span class="ex">shell</span>:</span>
+<span id="cb102-20"><a href="automatic-expansion-of-wildcards.html#cb102-20"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb102-21"><a href="automatic-expansion-of-wildcards.html#cb102-21"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb102-22"><a href="automatic-expansion-of-wildcards.html#cb102-22"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb102-23"><a href="automatic-expansion-of-wildcards.html#cb102-23"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb102-24"><a href="automatic-expansion-of-wildcards.html#cb102-24"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb102-25"><a href="automatic-expansion-of-wildcards.html#cb102-25"></a></span>
+<span id="cb102-26"><a href="automatic-expansion-of-wildcards.html#cb102-26"></a><span class="ex">rule</span> aug_solow_model:</span>
+<span id="cb102-27"><a href="automatic-expansion-of-wildcards.html#cb102-27"></a>    <span class="ex">input</span>:</span>
+<span id="cb102-28"><a href="automatic-expansion-of-wildcards.html#cb102-28"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb102-29"><a href="automatic-expansion-of-wildcards.html#cb102-29"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb102-30"><a href="automatic-expansion-of-wildcards.html#cb102-30"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_aug_solow.json&quot;</span>,</span>
+<span id="cb102-31"><a href="automatic-expansion-of-wildcards.html#cb102-31"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb102-32"><a href="automatic-expansion-of-wildcards.html#cb102-32"></a>    <span class="ex">output</span>:</span>
+<span id="cb102-33"><a href="automatic-expansion-of-wildcards.html#cb102-33"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_aug_solow_{iSubset}.rds&quot;</span></span>
+<span id="cb102-34"><a href="automatic-expansion-of-wildcards.html#cb102-34"></a>    <span class="ex">shell</span>:</span>
+<span id="cb102-35"><a href="automatic-expansion-of-wildcards.html#cb102-35"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb102-36"><a href="automatic-expansion-of-wildcards.html#cb102-36"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb102-37"><a href="automatic-expansion-of-wildcards.html#cb102-37"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb102-38"><a href="automatic-expansion-of-wildcards.html#cb102-38"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb102-39"><a href="automatic-expansion-of-wildcards.html#cb102-39"></a><span class="st">            --out {output.estimate}&quot;</span></span></code></pre></div>
+<p>We see that the only difference between the <code>aug_solow_target</code> and <code>solow_target</code> rules
+is that the filename differs by three letters: <code>out/analysis/model_aug_solow_{iSubset}.rds</code> versus
+<code>out/analysis/model_solow_{iSubset}.rds</code>.</p>
+<p>And, when we look at <code>aug_solow_model</code> and compare it to <code>solow_model</code> we again see only small differences:
+the model changes from <code>model_aug_solow.json</code> to <code>model_solow.json</code> and the outputs change in a similar way.</p>
+<p>We want to exploit this similarity and condense these four rules into two:
+one that estimates the model, named <code>model</code> and a target rule that will run each specification, names <code>run_models</code>.
+We are going to do this by creating a new list, called <code>MODELS</code>.
+<code>MODELS</code> will contain two elements, “model_solow” and “model_aug_solow”.
+Let’s add this to the top of our Snakefile:</p>
+<div class="sourceCode" id="cb103"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb103-1"><a href="automatic-expansion-of-wildcards.html#cb103-1"></a><span class="co"># --- Dictionaries --- #</span></span>
+<span id="cb103-2"><a href="automatic-expansion-of-wildcards.html#cb103-2"></a><span class="ex">MODELS</span> = [</span>
+<span id="cb103-3"><a href="automatic-expansion-of-wildcards.html#cb103-3"></a>          <span class="st">&quot;model_solow&quot;</span>,</span>
+<span id="cb103-4"><a href="automatic-expansion-of-wildcards.html#cb103-4"></a>          <span class="st">&quot;model_aug_solow&quot;</span></span>
+<span id="cb103-5"><a href="automatic-expansion-of-wildcards.html#cb103-5"></a>          ]</span>
+<span id="cb103-6"><a href="automatic-expansion-of-wildcards.html#cb103-6"></a></span>
+<span id="cb103-7"><a href="automatic-expansion-of-wildcards.html#cb103-7"></a><span class="ex">DATA_SUBSET</span> = [</span>
+<span id="cb103-8"><a href="automatic-expansion-of-wildcards.html#cb103-8"></a>                <span class="st">&quot;subset_oecd&quot;</span>,</span>
+<span id="cb103-9"><a href="automatic-expansion-of-wildcards.html#cb103-9"></a>                <span class="st">&quot;subset_intermediate&quot;</span>,</span>
+<span id="cb103-10"><a href="automatic-expansion-of-wildcards.html#cb103-10"></a>                <span class="st">&quot;subset_nonoil&quot;</span></span>
+<span id="cb103-11"><a href="automatic-expansion-of-wildcards.html#cb103-11"></a>                ]</span>
+<span id="cb103-12"><a href="automatic-expansion-of-wildcards.html#cb103-12"></a></span>
+<span id="cb103-13"><a href="automatic-expansion-of-wildcards.html#cb103-13"></a><span class="ex">PLOTS</span> = [</span>
+<span id="cb103-14"><a href="automatic-expansion-of-wildcards.html#cb103-14"></a>    <span class="st">&quot;aug_conditional_convergence&quot;</span>,</span>
+<span id="cb103-15"><a href="automatic-expansion-of-wildcards.html#cb103-15"></a>    <span class="st">&quot;conditional_convergence&quot;</span>,</span>
+<span id="cb103-16"><a href="automatic-expansion-of-wildcards.html#cb103-16"></a>    <span class="st">&quot;unconditional_convergence&quot;</span></span>
+<span id="cb103-17"><a href="automatic-expansion-of-wildcards.html#cb103-17"></a>]</span></code></pre></div>
+<p>We are now going to delete the target rules <code>aug_solow_target</code> and <code>solow_target</code>, and the estimation rules
+<code>aug_solow_model</code> and <code>solow_model</code>.
+Let’s replace them with the following:</p>
+<div class="sourceCode" id="cb104"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb104-1"><a href="automatic-expansion-of-wildcards.html#cb104-1"></a><span class="ex">rule</span> run_models:</span>
+<span id="cb104-2"><a href="automatic-expansion-of-wildcards.html#cb104-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb104-3"><a href="automatic-expansion-of-wildcards.html#cb104-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}_{iSubset}.rds&quot;</span>,</span>
+<span id="cb104-4"><a href="automatic-expansion-of-wildcards.html#cb104-4"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
+<span id="cb104-5"><a href="automatic-expansion-of-wildcards.html#cb104-5"></a>                    <span class="ex">iModel</span> = MODELS)</span>
+<span id="cb104-6"><a href="automatic-expansion-of-wildcards.html#cb104-6"></a></span>
+<span id="cb104-7"><a href="automatic-expansion-of-wildcards.html#cb104-7"></a><span class="ex">rule</span> model:</span>
+<span id="cb104-8"><a href="automatic-expansion-of-wildcards.html#cb104-8"></a>    <span class="ex">input</span>:</span>
+<span id="cb104-9"><a href="automatic-expansion-of-wildcards.html#cb104-9"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb104-10"><a href="automatic-expansion-of-wildcards.html#cb104-10"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb104-11"><a href="automatic-expansion-of-wildcards.html#cb104-11"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
+<span id="cb104-12"><a href="automatic-expansion-of-wildcards.html#cb104-12"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb104-13"><a href="automatic-expansion-of-wildcards.html#cb104-13"></a>    <span class="ex">output</span>:</span>
+<span id="cb104-14"><a href="automatic-expansion-of-wildcards.html#cb104-14"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}_{iSubset}.rds&quot;</span></span>
+<span id="cb104-15"><a href="automatic-expansion-of-wildcards.html#cb104-15"></a>    <span class="ex">shell</span>:</span>
+<span id="cb104-16"><a href="automatic-expansion-of-wildcards.html#cb104-16"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb104-17"><a href="automatic-expansion-of-wildcards.html#cb104-17"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb104-18"><a href="automatic-expansion-of-wildcards.html#cb104-18"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb104-19"><a href="automatic-expansion-of-wildcards.html#cb104-19"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb104-20"><a href="automatic-expansion-of-wildcards.html#cb104-20"></a><span class="st">            --out {output.estimate}&quot;</span></span></code></pre></div>
+<p>The rule <code>model</code> is a generalization of the <code>solow_model</code> we had before.
+We have added an extra wildcard, <code>{iModel}</code> so that the rule can estimate a wider set of models that we specify in the <code>src/model-specs</code> folder.
+It’s <code>input.model</code> now takes a wildcard {iModel} and it’s output is a <code>{iModel}</code> - <code>{iSubset}</code> pair.</p>
+<p>Similarly, the target rule <code>run_models</code> is a generalization of <code>solow_target</code>.
+Instead of taking only the <code>model_solow</code> models as inputs - and looking for how to build those, it now takes any <code>{iModel}</code> as an input.
+Notice there are now <strong>two</strong> wildcards in the <code>expand()</code> function, <code>{iSubset}</code> as before, and now also <code>{iModel}</code>.
+We then naturally have to tell Snakemake which lists to use to expand each wildcard,
+<code>DATA_SUBSET</code> for <code>{iSubset}</code>, and
+<code>MODELS</code> for <code>{iModel}</code>.</p>
+<p>Let’s clean our output folder and then use Snakemakes <code>--summary</code> to see what Snakemake wants to build.
+We anticipate it will want to to the data cleaning steps, and then six regression models.
+The six regression models will be three each of <code>model_solow</code> and <code>model_aug_solow</code>.
+Each model should be run on each data subset.</p>
+<div class="sourceCode" id="cb105"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb105-1"><a href="automatic-expansion-of-wildcards.html#cb105-1"></a>$ <span class="ex">snakemake</span> clean --cores 1</span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb106-1"><a href="automatic-expansion-of-wildcards.html#cb106-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
+<p>Here’s the output we get:</p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb107-1"><a href="automatic-expansion-of-wildcards.html#cb107-1"></a><span class="ex">MissingInputException</span> in line 42 of /home/lachlan/teaching/snakemake-econ-r-learner/Snakefile:</span>
+<span id="cb107-2"><a href="automatic-expansion-of-wildcards.html#cb107-2"></a><span class="ex">Missing</span> input files for rule model:</span>
+<span id="cb107-3"><a href="automatic-expansion-of-wildcards.html#cb107-3"></a><span class="ex">src/data-specs/oecd.json</span></span>
+<span id="cb107-4"><a href="automatic-expansion-of-wildcards.html#cb107-4"></a><span class="ex">src/model-specs/model_solow_subset.json</span></span></code></pre></div>
+<p>What is going on here?
+The problem is as follows:
+because our filenames have underscores <code>_</code> in them <em>and</em> we are using the underscore to separate <code>{iModel}</code> and <code>{iSubset}</code>
+Snakemake cannot figure out where the first wildcard substitution ends.
+We think <code>model_solow</code> should be substituted as <code>{iModel}</code> and <code>subset_oecd</code> should be substituted for <code>iSubset</code>.
+Unfortunately Snakemake can’t handle use of underscores in both file names and wildcard separation simultaneously.</p>
+<p>Worry not, there is simple ways around this.
+We are going to solve it by separating the wildcards with a period <code>.</code> rather than an underscore.<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>
+We make this change in both the <code>model</code> and <code>run_models</code> rules.
+This breaks any ambiguity about where a wildcard ends and another begins.
+Our updated rules are:</p>
+<div class="sourceCode" id="cb108"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb108-1"><a href="automatic-expansion-of-wildcards.html#cb108-1"></a><span class="ex">rule</span> run_models:</span>
+<span id="cb108-2"><a href="automatic-expansion-of-wildcards.html#cb108-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb108-3"><a href="automatic-expansion-of-wildcards.html#cb108-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
+<span id="cb108-4"><a href="automatic-expansion-of-wildcards.html#cb108-4"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
+<span id="cb108-5"><a href="automatic-expansion-of-wildcards.html#cb108-5"></a>                    <span class="ex">iModel</span> = MODELS)</span>
+<span id="cb108-6"><a href="automatic-expansion-of-wildcards.html#cb108-6"></a></span>
+<span id="cb108-7"><a href="automatic-expansion-of-wildcards.html#cb108-7"></a><span class="ex">rule</span> model:</span>
+<span id="cb108-8"><a href="automatic-expansion-of-wildcards.html#cb108-8"></a>    <span class="ex">input</span>:</span>
+<span id="cb108-9"><a href="automatic-expansion-of-wildcards.html#cb108-9"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb108-10"><a href="automatic-expansion-of-wildcards.html#cb108-10"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb108-11"><a href="automatic-expansion-of-wildcards.html#cb108-11"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
+<span id="cb108-12"><a href="automatic-expansion-of-wildcards.html#cb108-12"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb108-13"><a href="automatic-expansion-of-wildcards.html#cb108-13"></a>    <span class="ex">output</span>:</span>
+<span id="cb108-14"><a href="automatic-expansion-of-wildcards.html#cb108-14"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
+<span id="cb108-15"><a href="automatic-expansion-of-wildcards.html#cb108-15"></a>    <span class="ex">shell</span>:</span>
+<span id="cb108-16"><a href="automatic-expansion-of-wildcards.html#cb108-16"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb108-17"><a href="automatic-expansion-of-wildcards.html#cb108-17"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb108-18"><a href="automatic-expansion-of-wildcards.html#cb108-18"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb108-19"><a href="automatic-expansion-of-wildcards.html#cb108-19"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb108-20"><a href="automatic-expansion-of-wildcards.html#cb108-20"></a><span class="st">            --out {output.estimate}&quot;</span></span></code></pre></div>
+<p>Now we again try to get the summary information from Snakemake:</p>
+<div class="sourceCode" id="cb109"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb109-1"><a href="automatic-expansion-of-wildcards.html#cb109-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
+<p>There’s no longer an error, and instead we see:</p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb110-1"><a href="automatic-expansion-of-wildcards.html#cb110-1"></a><span class="ex">output_file</span>     date    rule    version log-file(s)     <span class="ex">status</span>  plan</span>
+<span id="cb110-2"><a href="automatic-expansion-of-wildcards.html#cb110-2"></a><span class="ex">out/analysis/model_solow.subset_oecd.rds</span>        -       -       -       -       missing update pending</span>
+<span id="cb110-3"><a href="automatic-expansion-of-wildcards.html#cb110-3"></a><span class="ex">out/analysis/model_aug_solow.subset_oecd.rds</span>    -       -       -       -       missing update pending</span>
+<span id="cb110-4"><a href="automatic-expansion-of-wildcards.html#cb110-4"></a><span class="ex">out/analysis/model_solow.subset_intermediate.rds</span>        -       -       -       -       missing update pending</span>
+<span id="cb110-5"><a href="automatic-expansion-of-wildcards.html#cb110-5"></a><span class="ex">out/analysis/model_aug_solow.subset_intermediate.rds</span>    -       -       -       -       missing update pending</span>
+<span id="cb110-6"><a href="automatic-expansion-of-wildcards.html#cb110-6"></a><span class="ex">out/analysis/model_solow.subset_nonoil.rds</span>      -       -       -       -       missing update pending</span>
+<span id="cb110-7"><a href="automatic-expansion-of-wildcards.html#cb110-7"></a><span class="ex">out/analysis/model_aug_solow.subset_nonoil.rds</span>  -       -       -       -       missing update pending</span>
+<span id="cb110-8"><a href="automatic-expansion-of-wildcards.html#cb110-8"></a><span class="ex">out/data/mrw_complete.csv</span>       -       gen_regression_vars     -               missing update pending</span>
+<span id="cb110-9"><a href="automatic-expansion-of-wildcards.html#cb110-9"></a><span class="ex">out/data/mrw_renamed.csv</span>        -       rename_vars     -               missing update pending</span></code></pre></div>
+<p>which confirms that Snakemake wants to do our data cleaning steps before estimating the six regressions.
+Let’s do it:</p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb111-1"><a href="automatic-expansion-of-wildcards.html#cb111-1"></a>$ <span class="ex">snakemake</span> --cores 1</span></code></pre></div>
+<p>Our Snakemake rule graph - which shows the rules we execute in our workflow is now:</p>
+<embed src="img/ch-5c/rulegraph.pdf" style="display: block; margin: auto;" type="application/pdf" />
+<p>TODO? Some explanation?</p>
+<p>And the DAG is:</p>
+<embed src="img/ch-5c/dag.pdf" style="display: block; margin: auto;" type="application/pdf" />
+<p>The DAG makes crystal clear what our workflow is doing:</p>
+<ul>
+<li>Snakemake wants to build the inputs listed in <code>run_models</code></li>
+<li>It can build those inputs by running the <code>model</code> rule six times when it iterates over the wildcards</li>
+<li>To run each model, it needs the clean data, so it needs to run the two data cleaning steps first</li>
+</ul>
+<p>!!! REMARK !!!</p>
+<p>Notice how the figures aren’t produced automatically.
+Do you remember why?
+If not, revisit Chapter XX.
+You can build them with <code>snakemake --cores 1 make_figures</code></p>
+
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="8">
+<li id="fn8"><p>
+The capitalization of the list <code>DATA_SUBSET</code> is not essential.
+We do it to separate lists that we will iterate through from other parts of our Snakefile.
+This means whenever we see a capitalized name, we know it is a list that we want to iterate through.<a href="automatic-expansion-of-wildcards.html#fnref8" class="footnote-back">↩︎</a></p></li>
+<li id="fn9"><p>
+This is not entirely true, we are yet to figure out how to get the y-axis range from the original paper.<a href="automatic-expansion-of-wildcards.html#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>
+There’s other ways to go here.
+You could continue to use underscores but add a few letters inbetween the wildcards and it would also work.
+This means <code>out/analysis/{iModel}.{iSubset}.rds</code> would become <code>out/analysis/{iModel}_SOMETEXT_{iSubset}.rds</code>.
+It’s equally valid.<a href="automatic-expansion-of-wildcards.html#fnref10" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="wildcards.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="automatic-wildcard-specifications.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/05-C-expand_function.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["book.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -30,7 +30,11 @@ target-rules-can-do-more-for-us
 wildcards
 the-starting-point-of-our-snakefile
 using-wildcards-to-tidy-up-our-code
+automatic-expansion-of-wildcards
+learning-goals
 the-expand-function
+solution-3
+solution-4
 expanding-multiple-wildcards
 automatic-wildcard-specifications
 the-glob_wildcards-function

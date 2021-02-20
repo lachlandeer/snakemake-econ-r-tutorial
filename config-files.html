@@ -205,10 +205,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.1" data-path="wildcards.html"><a href="wildcards.html#the-starting-point-of-our-snakefile"><i class="fa fa-check"></i><b>6.1</b> The starting point of our Snakefile</a></li>
 <li class="chapter" data-level="6.2" data-path="wildcards.html"><a href="wildcards.html#using-wildcards-to-tidy-up-our-code"><i class="fa fa-check"></i><b>6.2</b> Using wildcards to tidy up our code</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="the-expand-function.html"><a href="the-expand-function.html"><i class="fa fa-check"></i><b>7</b> The <code>expand()</code> function</a><ul>
-<li class="chapter" data-level="" data-path="the-expand-function.html"><a href="the-expand-function.html#exercise-exploring-the-expand-function-i"><i class="fa fa-check"></i>Exercise: Exploring the expand() function I</a></li>
-<li class="chapter" data-level="" data-path="the-expand-function.html"><a href="the-expand-function.html#exercise-exploring-the-expand-function-ii"><i class="fa fa-check"></i>Exercise: Exploring the expand function II</a></li>
-<li class="chapter" data-level="7.1" data-path="the-expand-function.html"><a href="the-expand-function.html#expanding-multiple-wildcards"><i class="fa fa-check"></i><b>7.1</b> Expanding Multiple Wildcards</a></li>
+<li class="chapter" data-level="7" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html"><i class="fa fa-check"></i><b>7</b> Automatic Expansion of Wildcards</a><ul>
+<li class="chapter" data-level="7.1" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#learning-goals"><i class="fa fa-check"></i><b>7.1</b> Learning Goals</a></li>
+<li class="chapter" data-level="7.2" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#the-expand-function"><i class="fa fa-check"></i><b>7.2</b> The <code>expand()</code> function</a><ul>
+<li class="chapter" data-level="" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#exercise-exploring-the-expand-function-i"><i class="fa fa-check"></i>Exercise: Exploring the expand function I</a></li>
+<li class="chapter" data-level="7.2.1" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#solution-3"><i class="fa fa-check"></i><b>7.2.1</b> SOLUTION:</a></li>
+<li class="chapter" data-level="" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#exercise-exploring-the-expand-function-ii"><i class="fa fa-check"></i>Exercise: Exploring the expand() function II</a></li>
+<li class="chapter" data-level="7.2.2" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#solution-4"><i class="fa fa-check"></i><b>7.2.2</b> Solution</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="automatic-expansion-of-wildcards.html"><a href="automatic-expansion-of-wildcards.html#expanding-multiple-wildcards"><i class="fa fa-check"></i><b>7.3</b> Expanding Multiple Wildcards</a></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html"><i class="fa fa-check"></i><b>8</b> Automatic Wildcard Specifications</a><ul>
 <li class="chapter" data-level="8.1" data-path="automatic-wildcard-specifications.html"><a href="automatic-wildcard-specifications.html#the-glob_wildcards-function"><i class="fa fa-check"></i><b>8.1</b> The <code>glob_wildcards</code> Function</a><ul>
@@ -285,14 +290,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="the-config.yaml-filepath" class="section level2">
 <h2><span class="header-section-number">13.1</span> The <code>config.yaml</code> filepath</h2>
 <p>In our project’s root directory we have the file <code>config.yaml</code>:</p>
-<div class="sourceCode" id="cb138"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb138-1"><a href="config-files.html#cb138-1"></a>$ <span class="fu">ls</span> -F</span></code></pre></div>
+<div class="sourceCode" id="cb159"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb159-1"><a href="config-files.html#cb159-1"></a>$ <span class="fu">ls</span> -F</span></code></pre></div>
 <pre class="out"><code>config.yaml  find_r_packages.sh  HELP.txt
 install_r_packages.R  logs/  out/
 README.md  REQUIREMENTS.txt  sandbox/
 Snakefile  src/</code></pre>
 <p>If we look at the contents of <code>config.yaml</code> we see a collection of paths that
 match up to the paths in our project:</p>
-<div class="sourceCode" id="cb140"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb140-1"><a href="config-files.html#cb140-1"></a>$ <span class="fu">cat</span> config.yaml</span></code></pre></div>
+<div class="sourceCode" id="cb161"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb161-1"><a href="config-files.html#cb161-1"></a>$ <span class="fu">cat</span> config.yaml</span></code></pre></div>
 <pre class="out"><code>ROOT: &quot;.&quot;
 sub2root: &quot;../../&quot;
 src: &quot;src/&quot;
@@ -319,17 +324,17 @@ out_slides: &quot;out/slides/&quot;</code></pre>
 First we must import the <code>config.yaml</code> file into the Snakefile.
 We import it using the <code>configfile:</code> notation, and so it’s easy for us to find,
 we place it at the very top of our Snakefile.</p>
-<div class="sourceCode" id="cb142"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb142-1"><a href="config-files.html#cb142-1"></a><span class="co">## Snakemake - MRW Replication</span></span>
-<span id="cb142-2"><a href="config-files.html#cb142-2"></a><span class="co">##</span></span>
-<span id="cb142-3"><a href="config-files.html#cb142-3"></a><span class="co">## @yourname</span></span>
-<span id="cb142-4"><a href="config-files.html#cb142-4"></a><span class="co">##</span></span>
-<span id="cb142-5"><a href="config-files.html#cb142-5"></a></span>
-<span id="cb142-6"><a href="config-files.html#cb142-6"></a><span class="co"># --- Importing Configuration Files --- #</span></span>
-<span id="cb142-7"><a href="config-files.html#cb142-7"></a></span>
-<span id="cb142-8"><a href="config-files.html#cb142-8"></a><span class="ex">configfile</span>: <span class="st">&quot;config.yaml&quot;</span></span>
-<span id="cb142-9"><a href="config-files.html#cb142-9"></a></span>
-<span id="cb142-10"><a href="config-files.html#cb142-10"></a><span class="co"># --- Dictionaries --- #</span></span>
-<span id="cb142-11"><a href="config-files.html#cb142-11"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb163"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb163-1"><a href="config-files.html#cb163-1"></a><span class="co">## Snakemake - MRW Replication</span></span>
+<span id="cb163-2"><a href="config-files.html#cb163-2"></a><span class="co">##</span></span>
+<span id="cb163-3"><a href="config-files.html#cb163-3"></a><span class="co">## @yourname</span></span>
+<span id="cb163-4"><a href="config-files.html#cb163-4"></a><span class="co">##</span></span>
+<span id="cb163-5"><a href="config-files.html#cb163-5"></a></span>
+<span id="cb163-6"><a href="config-files.html#cb163-6"></a><span class="co"># --- Importing Configuration Files --- #</span></span>
+<span id="cb163-7"><a href="config-files.html#cb163-7"></a></span>
+<span id="cb163-8"><a href="config-files.html#cb163-8"></a><span class="ex">configfile</span>: <span class="st">&quot;config.yaml&quot;</span></span>
+<span id="cb163-9"><a href="config-files.html#cb163-9"></a></span>
+<span id="cb163-10"><a href="config-files.html#cb163-10"></a><span class="co"># --- Dictionaries --- #</span></span>
+<span id="cb163-11"><a href="config-files.html#cb163-11"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span></code></pre></div>
 </div>
 <div id="using-paths-from-the-config-file" class="section level2">
 <h2><span class="header-section-number">13.2</span> Using paths from the config file</h2>
@@ -341,20 +346,20 @@ so we reference it as <code>config["src_data"]</code>.
 The path is then connected to the filename with a <code>+</code>.
 Hence we can reference the original MRW data located in <code>src/data</code> as <code>config["src_data"] + "mrw.dta"</code>
 Here is the new version of the rule <code>rename_vars</code> using the config file to simplify the paths:</p>
-<div class="sourceCode" id="cb143"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb143-1"><a href="config-files.html#cb143-1"></a><span class="co">## rename_vars        : creates meaningful variable names</span></span>
-<span id="cb143-2"><a href="config-files.html#cb143-2"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb143-3"><a href="config-files.html#cb143-3"></a>    <span class="ex">input</span>:</span>
-<span id="cb143-4"><a href="config-files.html#cb143-4"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;rename_variables.R&quot;</span>,</span>
-<span id="cb143-5"><a href="config-files.html#cb143-5"></a>        <span class="ex">data</span>   = config[<span class="st">&quot;src_data&quot;</span>] + <span class="st">&quot;mrw.dta&quot;</span></span>
-<span id="cb143-6"><a href="config-files.html#cb143-6"></a>    <span class="ex">output</span>:</span>
-<span id="cb143-7"><a href="config-files.html#cb143-7"></a>        <span class="ex">data</span> = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_renamed.csv&quot;</span></span>
-<span id="cb143-8"><a href="config-files.html#cb143-8"></a>    <span class="ex">log</span>:</span>
-<span id="cb143-9"><a href="config-files.html#cb143-9"></a>        <span class="ex">config</span>[<span class="st">&quot;out_log&quot;</span>] + <span class="st">&quot;data_mgt/rename_variables.Rout&quot;</span></span>
-<span id="cb143-10"><a href="config-files.html#cb143-10"></a>    <span class="ex">shell</span>:</span>
-<span id="cb143-11"><a href="config-files.html#cb143-11"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb143-12"><a href="config-files.html#cb143-12"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb143-13"><a href="config-files.html#cb143-13"></a><span class="st">            --out {output.data} \</span></span>
-<span id="cb143-14"><a href="config-files.html#cb143-14"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb164"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb164-1"><a href="config-files.html#cb164-1"></a><span class="co">## rename_vars        : creates meaningful variable names</span></span>
+<span id="cb164-2"><a href="config-files.html#cb164-2"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb164-3"><a href="config-files.html#cb164-3"></a>    <span class="ex">input</span>:</span>
+<span id="cb164-4"><a href="config-files.html#cb164-4"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;rename_variables.R&quot;</span>,</span>
+<span id="cb164-5"><a href="config-files.html#cb164-5"></a>        <span class="ex">data</span>   = config[<span class="st">&quot;src_data&quot;</span>] + <span class="st">&quot;mrw.dta&quot;</span></span>
+<span id="cb164-6"><a href="config-files.html#cb164-6"></a>    <span class="ex">output</span>:</span>
+<span id="cb164-7"><a href="config-files.html#cb164-7"></a>        <span class="ex">data</span> = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_renamed.csv&quot;</span></span>
+<span id="cb164-8"><a href="config-files.html#cb164-8"></a>    <span class="ex">log</span>:</span>
+<span id="cb164-9"><a href="config-files.html#cb164-9"></a>        <span class="ex">config</span>[<span class="st">&quot;out_log&quot;</span>] + <span class="st">&quot;data_mgt/rename_variables.Rout&quot;</span></span>
+<span id="cb164-10"><a href="config-files.html#cb164-10"></a>    <span class="ex">shell</span>:</span>
+<span id="cb164-11"><a href="config-files.html#cb164-11"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb164-12"><a href="config-files.html#cb164-12"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb164-13"><a href="config-files.html#cb164-13"></a><span class="st">            --out {output.data} \</span></span>
+<span id="cb164-14"><a href="config-files.html#cb164-14"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
 <div id="exercise-using-config-files" class="section level3 unnumbered exercise">
 <h3>Exercise: Using Config Files</h3>
 <p>Go through the remainder of the Snakefile and replace all explicit paths with references
