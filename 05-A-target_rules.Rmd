@@ -134,7 +134,9 @@ When Snakemake recognizes that a necessary input to execute the target rule is m
 To illustrate this, let us stick to our present project and assume the target rule is `solow_intermediate`.
 The following graph shows all rules which lead up to the target rule:
 
-![filegraph](img/filegraph.pdf)
+```{r, fig.align="center", echo=FALSE}
+knitr::include_graphics("img/ch-5a/filegraph.pdf")
+```
 
 `mrw_complete.csv` is a necessary input to `solow_intermediate`.
 If the file does not exist, `Snakemake` will search through `Snakefile` for another rule which has `mrw_complete.csv` as its output -- in our case `gen_regression_vars`.
