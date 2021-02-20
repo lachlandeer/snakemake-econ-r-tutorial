@@ -401,10 +401,7 @@ Snakemake focusses on executing this rule.</p>
 <p>When Snakemake recognizes that a necessary input to execute the target rule is missing, Snakemake will try to build it through the other rules present in <code>Snakefile</code>.</p>
 <p>To illustrate this, let us stick to our present project and assume the target rule is <code>solow_intermediate</code>.
 The following graph shows all rules which lead up to the target rule:</p>
-<div class="figure">
-<embed src="img/filegraph.pdf" />
-<p class="caption">filegraph</p>
-</div>
+<embed src="img/ch-5a/filegraph.pdf" style="display: block; margin: auto;" type="application/pdf" />
 <p><code>mrw_complete.csv</code> is a necessary input to <code>solow_intermediate</code>.
 If the file does not exist, <code>Snakemake</code> will search through <code>Snakefile</code> for another rule which has <code>mrw_complete.csv</code> as its output – in our case <code>gen_regression_vars</code>.
 In this case, Snakemake will first execute <code>gen_regression_vars</code> before executing the target rule <code>solow_intermediate</code>.</p>
