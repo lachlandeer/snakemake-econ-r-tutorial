@@ -1,5 +1,9 @@
 # Target Rules
 
+Learning Goals:
+
+- How to build several parallel tasks at once
+
 ## Where we are now?
 
 If you still have the `hello_world` rule in your Snakefile, now is a good moment to remove it.
