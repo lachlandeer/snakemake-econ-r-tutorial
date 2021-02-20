@@ -249,7 +249,7 @@ Recall that in Chapter XX we estimated two models, `aug_solow` and `solow`.
 This means there are six models left to run, each across 3 data sets, for a total of 18 steps.
 If we look through the dry run output we see that is indeed what is going to happen:
 
-{r, engine = 'out', eval = FALSE}
+```{r, engine = 'out', eval = FALSE}
 Building DAG of jobs...
 Job counts:
         count   jobs
@@ -456,7 +456,7 @@ The Snakemake file still has two manually specified lists, `DATA_SUBSET` and `PL
 
 ### Solution
 
-Will need to run Snakemake twice `snakemake --cores 1` and `snakemake --cores 1 make_figures`.
+Will need to run Snakemake twice `snakemake --cores 1 run_models` and `snakemake --cores 1 make_figures`.
 
 ```{r, engine = 'bash', eval = FALSE}
 # --- Dictionaries --- #
