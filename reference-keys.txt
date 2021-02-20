@@ -36,9 +36,12 @@ the-expand-function
 solution-3
 solution-4
 expanding-multiple-wildcards
-automatic-wildcard-specifications
+automating-list-construction-for-wildcard-expansion
+learning-objectives-1
+state-of-the-snakefile
 the-glob_wildcards-function
-further-restricting-the-glob_wildcards-output
+looking-at-the-dag-redux
+solution-5
 building-all-outputs-at-once
 creating-an-all-rule
 adding-parameters
