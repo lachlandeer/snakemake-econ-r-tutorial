@@ -1,0 +1,215 @@
+# Installation Guide
+
+## Windows 
+
+### Bash terminal
+
+Windows does *not* have a bash terminal installed by default. 
+Follow instructions [here](https://itsfoss.com/install-bash-on-windows/) to install one.
+
+### Python
+
+Install Anaconda Python
+
+- We provide instructions on how to install anaconda python [here](https://pp4rs.github.io/2020-uzh-installation-guide/python/)
+
+### Installing Snakemake {-}
+
+Inside your terminal window enter the following command and press `Return`
+
+``` bash
+pip3 install snakemake
+```
+
+you may need to replace `pip3` with `pip`
+
+If you get an installation error here, the the following commands sequentially:
+
+``` bash
+pip install datrie
+pip install snakemake
+```
+
+If you are still having issues:
+
+* If you are completing this tutorial as part of a live workshop, raise your hand
+* Else, create an issue here, and tell us what the error message is + what operating system you are running on.
+  We will try and resolve it. 
+
+#### Installing `R` {-}
+
+We provide instructions on how to install R [here](https://pp4rs.github.io/2020-uzh-installation-guide/r)
+
+#### Installing the Required `R` libraries {-}
+
+We utilize some additional R packages inside the scripts that build our project.
+To install either:
+
+1. If you have RStudio and are comfortable installing packages there.
+    * Open Rstudio 
+    * Copy and paste the following lines into the R console:
+
+    ``` r
+    to_install <- c("dplyr",
+                    "ggplot2",
+                    "haven",
+                    "magrittr",
+                    "optparse",
+                    "purrr",
+                    "readr",
+                    "rjson",
+                    "rlist",
+                    "stargazer",
+                    "tibble",
+                    )
+
+    install.packages(to_install, repos = "https://cloud.r-project.org/")
+    ```
+
+2. A command line alternative:
+    * Open your bash terminal and change directory to the folder called `snakemake-econ-r-learner` you downloaded in Chapter XX.
+
+    ```r
+    cd PATH/TO/snakemake-econ-r-learner
+
+    ```
+    * Run type the following command into the terminal and press `Return`:
+
+    ```bash 
+    Rscript install_r_packages.R
+    ```
+
+## Mac 
+
+### Bash terminal
+
+You have a  bash style terminal installed by default. 
+To open a terminal session:
+
+* Open spotlight with cmd + space
+* Type in 'terminal'
+* When the terminal appears, open it.
+
+### Python
+
+Install Anaconda Python:
+
+We provide instructions on how to install anaconda python [here](https://pp4rs.github.io/2020-uzh-installation-guide/python/)
+
+### Installing Snakemake {-}
+
+Inside your terminal window enter the following command and press `Return`
+
+``` bash
+pip3 install snakemake
+```
+
+you may need to replace `pip3` with `pip`
+
+#### Installing `R` {-}
+
+We provide instructions on how to install R [here](https://pp4rs.github.io/2020-uzh-installation-guide/r)
+
+#### Installing the Required `R` libraries {-}
+
+We utilize some additional R packages inside the scripts that build our project.
+To install either:
+
+1. If you have RStudio and are comfortable installing packages there.
+    * Open Rstudio 
+    * Copy and paste the following lines into the R console:
+
+    ``` r
+    to_install <- c("dplyr",
+                    "ggplot2",
+                    "haven",
+                    "magrittr",
+                    "optparse",
+                    "purrr",
+                    "readr",
+                    "rjson",
+                    "rlist",
+                    "stargazer",
+                    "tibble",
+                    )
+
+    install.packages(to_install, repos = "https://cloud.r-project.org/")
+    ```
+
+2. A command line alternative:
+    * Open your terminal and change directory to the folder called `snakemake-econ-r-learner` you downloaded in Chapter XX.
+
+    ```r
+    cd PATH/TO/snakemake-econ-r-learner
+
+    ```
+    * Run type the following command into the terminal and press `Return`:
+
+    ```bash 
+    Rscript install_r_packages.R
+    ```
+
+
+## Linux / Ubuntu
+
+### Bash terminal
+
+You have a bash style terminal installed by default. 
+Instructions to open a terminal vary across Linux flavours. 
+On Ubuntu style flavours, `Ctrl` + `Alt` + `T` will work. 
+
+### Python
+
+Install Python using the deadsnakes ppa (Ubuntu Specific):
+
+- Here's how to add the deadsnakes ppa and install Python 3.8
+
+```bash
+$ sudo apt-get install software-properties-common
+$ sudo add-apt-repository ppa:deadsnakes/ppa
+$ sudo apt-get update
+$ sudo apt-get install python3.8
+```
+
+#### Installing `R` {-}
+
+We provide instructions on how to install R [here](https://pp4rs.github.io/2020-uzh-installation-guide/r)
+
+#### Installing the Required `R` libraries {-}
+
+We utilize some additional R packages inside the scripts that build our project.
+To install either:
+
+1. If you have RStudio and are comfortable installing packages there.
+    * Open Rstudio 
+    * Copy and paste the following lines into the R console:
+
+    ``` r
+    to_install <- c("dplyr",
+                    "ggplot2",
+                    "haven",
+                    "magrittr",
+                    "optparse",
+                    "purrr",
+                    "readr",
+                    "rjson",
+                    "rlist",
+                    "stargazer",
+                    "tibble",
+                    )
+
+    install.packages(to_install, repos = "https://cloud.r-project.org/")
+    ```
+
+2. A command line alternative:
+    * Open your bash terminal and change directory to the folder called `snakemake-econ-r-learner` you downloaded in Chapter XX.
+
+    ```r
+    cd PATH/TO/snakemake-econ-r-learner
+
+    ```
+    * Run type the following command into the terminal and press `Return`:
+
+    ```bash 
+    Rscript install_r_packages.R
+    ```

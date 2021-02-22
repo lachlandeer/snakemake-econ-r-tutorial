@@ -1,3 +1,5 @@
+# PART I - Basic Snakemake Workflows {-}
+
 # Initial Steps with Snakemake
 
 Learning goals
