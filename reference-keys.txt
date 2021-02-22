@@ -46,8 +46,10 @@ make-tables
 the-state-of-the-snakefile
 building-a-single-table
 building-all-tables-at-once
-building-all-outputs-at-once
-creating-an-all-rule
+one-rule-to-rule-them-all
+the-state-of-the-snakefile-1
+creating-an-all-target-rule
+concluding-remarks
 adding-parameters
 motivating-example-constructing-a-regression-table-from-ols-results
 creating-a-rule-with-params

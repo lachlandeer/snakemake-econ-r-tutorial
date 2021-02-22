@@ -232,8 +232,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="make-tables.html"><a href="make-tables.html#solution-6"><i class="fa fa-check"></i>Solution</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html"><i class="fa fa-check"></i><b>10</b> Building all outputs at once</a><ul>
-<li class="chapter" data-level="10.1" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html#creating-an-all-rule"><i class="fa fa-check"></i><b>10.1</b> Creating an <code>all</code> rule</a></li>
+<li class="chapter" data-level="10" data-path="one-rule-to-rule-them-all.html"><a href="one-rule-to-rule-them-all.html"><i class="fa fa-check"></i><b>10</b> One rule to rule them all</a><ul>
+<li class="chapter" data-level="10.1" data-path="one-rule-to-rule-them-all.html"><a href="one-rule-to-rule-them-all.html#the-state-of-the-snakefile-1"><i class="fa fa-check"></i><b>10.1</b> The State of the Snakefile</a></li>
+<li class="chapter" data-level="10.2" data-path="one-rule-to-rule-them-all.html"><a href="one-rule-to-rule-them-all.html#creating-an-all-target-rule"><i class="fa fa-check"></i><b>10.2</b> Creating an <code>all</code> target rule</a></li>
+<li class="chapter" data-level="10.3" data-path="one-rule-to-rule-them-all.html"><a href="one-rule-to-rule-them-all.html#concluding-remarks"><i class="fa fa-check"></i><b>10.3</b> Concluding Remarks</a></li>
 </ul></li>
 <li class="chapter" data-level="11" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>11</b> Adding Parameters</a><ul>
 <li class="chapter" data-level="11.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>11.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
@@ -307,14 +309,14 @@ We also add a new <code>help</code> rule so that we can get a summary of the com
 <h2><span class="header-section-number">13.1</span> Our Commenting Syle</h2>
 <p>If we look at the Snakefile in it’s current state, we see that there are a bare minimum amount of comments already integrated.
 Because Snakemake is a Python library all comments must begin with one <code>#</code>.
-We then added some additional formatting of comments to create two types.<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>
+We then added some additional formatting of comments to create two types.<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>
 Our first type of comment is a ‘double hash’ - <code>##</code>.
 We use this to represent information that someone who reads our code might find helpful to build understanding of the file.
 For example, the head of the Snakefile contains information on the name of the workflow and the authors:</p>
-<div class="sourceCode" id="cb171"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb171-1"><a href="self-documenting-help.html#cb171-1"></a><span class="co">## Snakemake - MRW Replication</span></span>
-<span id="cb171-2"><a href="self-documenting-help.html#cb171-2"></a><span class="co">##</span></span>
-<span id="cb171-3"><a href="self-documenting-help.html#cb171-3"></a><span class="co">## @yourname</span></span>
-<span id="cb171-4"><a href="self-documenting-help.html#cb171-4"></a><span class="co">##</span></span></code></pre></div>
+<div class="sourceCode" id="cb170"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb170-1"><a href="self-documenting-help.html#cb170-1"></a><span class="co">## Snakemake - MRW Replication</span></span>
+<span id="cb170-2"><a href="self-documenting-help.html#cb170-2"></a><span class="co">##</span></span>
+<span id="cb170-3"><a href="self-documenting-help.html#cb170-3"></a><span class="co">## @yourname</span></span>
+<span id="cb170-4"><a href="self-documenting-help.html#cb170-4"></a><span class="co">##</span></span></code></pre></div>
 <p>Second, we have broken up the Snakefile somewhat into sections such as Dictionaries, Build Rules and Clean Rules using the <code># --- Something --- #</code> notation.</p>
 </div>
 <div id="adding-further-comments" class="section level2">
@@ -324,23 +326,23 @@ What we want is a simple one or two line summary of what each of our rules do so
 We are going to make comments above each rule using the <code>##</code> notation.
 The structure will follow a common pattern: <code>rule_name : some description</code>
 For example, for the <code>textbook_solow</code> rule:</p>
-<div class="sourceCode" id="cb172"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb172-1"><a href="self-documenting-help.html#cb172-1"></a><span class="co">## textbook_solow: construct a table of regression estimates for textbook solow model</span></span>
-<span id="cb172-2"><a href="self-documenting-help.html#cb172-2"></a><span class="ex">rule</span> textbook_solow:</span>
-<span id="cb172-3"><a href="self-documenting-help.html#cb172-3"></a>    <span class="ex">input</span>:</span>
-<span id="cb172-4"><a href="self-documenting-help.html#cb172-4"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,</span>
-<span id="cb172-5"><a href="self-documenting-help.html#cb172-5"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb172-6"><a href="self-documenting-help.html#cb172-6"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb172-7"><a href="self-documenting-help.html#cb172-7"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)),</span>
-<span id="cb172-8"><a href="self-documenting-help.html#cb172-8"></a>    <span class="ex">params</span>:</span>
-<span id="cb172-9"><a href="self-documenting-help.html#cb172-9"></a>        <span class="ex">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,</span>
-<span id="cb172-10"><a href="self-documenting-help.html#cb172-10"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
-<span id="cb172-11"><a href="self-documenting-help.html#cb172-11"></a>    <span class="ex">output</span>:</span>
-<span id="cb172-12"><a href="self-documenting-help.html#cb172-12"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></span>
-<span id="cb172-13"><a href="self-documenting-help.html#cb172-13"></a>    <span class="ex">shell</span>:</span>
-<span id="cb172-14"><a href="self-documenting-help.html#cb172-14"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb172-15"><a href="self-documenting-help.html#cb172-15"></a><span class="st">            --filepath {params.filepath} \</span></span>
-<span id="cb172-16"><a href="self-documenting-help.html#cb172-16"></a><span class="st">            --models {params.model_expr} \</span></span>
-<span id="cb172-17"><a href="self-documenting-help.html#cb172-17"></a><span class="st">            --out {output.table}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb171"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb171-1"><a href="self-documenting-help.html#cb171-1"></a><span class="co">## textbook_solow: construct a table of regression estimates for textbook solow model</span></span>
+<span id="cb171-2"><a href="self-documenting-help.html#cb171-2"></a><span class="ex">rule</span> textbook_solow:</span>
+<span id="cb171-3"><a href="self-documenting-help.html#cb171-3"></a>    <span class="ex">input</span>:</span>
+<span id="cb171-4"><a href="self-documenting-help.html#cb171-4"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,</span>
+<span id="cb171-5"><a href="self-documenting-help.html#cb171-5"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb171-6"><a href="self-documenting-help.html#cb171-6"></a>                            <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb171-7"><a href="self-documenting-help.html#cb171-7"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)),</span>
+<span id="cb171-8"><a href="self-documenting-help.html#cb171-8"></a>    <span class="ex">params</span>:</span>
+<span id="cb171-9"><a href="self-documenting-help.html#cb171-9"></a>        <span class="ex">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,</span>
+<span id="cb171-10"><a href="self-documenting-help.html#cb171-10"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
+<span id="cb171-11"><a href="self-documenting-help.html#cb171-11"></a>    <span class="ex">output</span>:</span>
+<span id="cb171-12"><a href="self-documenting-help.html#cb171-12"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></span>
+<span id="cb171-13"><a href="self-documenting-help.html#cb171-13"></a>    <span class="ex">shell</span>:</span>
+<span id="cb171-14"><a href="self-documenting-help.html#cb171-14"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb171-15"><a href="self-documenting-help.html#cb171-15"></a><span class="st">            --filepath {params.filepath} \</span></span>
+<span id="cb171-16"><a href="self-documenting-help.html#cb171-16"></a><span class="st">            --models {params.model_expr} \</span></span>
+<span id="cb171-17"><a href="self-documenting-help.html#cb171-17"></a><span class="st">            --out {output.table}&quot;</span></span></code></pre></div>
 <div id="exercise-adding-comments" class="section level3 unnumbered exercise">
 <h3>Exercise: Adding Comments</h3>
 <p>Add some comments using our suggested style to each of the Snakemake rules we have constructed so far.</p>
@@ -354,12 +356,12 @@ We can go one step further: construct a rule that prints the output of these com
 Let’s call this rule <code>help</code>, so that if we run <code>snakemake help</code> all our useful comments will be printed to screen.
 We usually put this help rule at the bottom of our Snakefile, so that we don’t keep bumping into it as we work.
 The rule has the following structure:</p>
-<div class="sourceCode" id="cb173"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb173-1"><a href="self-documenting-help.html#cb173-1"></a><span class="co"># --- Help Rules --- #</span></span>
-<span id="cb173-2"><a href="self-documenting-help.html#cb173-2"></a><span class="co">## help               : prints help comments for Snakefile</span></span>
-<span id="cb173-3"><a href="self-documenting-help.html#cb173-3"></a><span class="ex">rule</span> help:</span>
-<span id="cb173-4"><a href="self-documenting-help.html#cb173-4"></a>    <span class="ex">input</span>: <span class="st">&quot;Snakefile&quot;</span></span>
-<span id="cb173-5"><a href="self-documenting-help.html#cb173-5"></a>    <span class="ex">shell</span>:</span>
-<span id="cb173-6"><a href="self-documenting-help.html#cb173-6"></a>        <span class="st">&quot;sed -n &#39;s/^##//p&#39; {input}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb172"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb172-1"><a href="self-documenting-help.html#cb172-1"></a><span class="co"># --- Help Rules --- #</span></span>
+<span id="cb172-2"><a href="self-documenting-help.html#cb172-2"></a><span class="co">## help               : prints help comments for Snakefile</span></span>
+<span id="cb172-3"><a href="self-documenting-help.html#cb172-3"></a><span class="ex">rule</span> help:</span>
+<span id="cb172-4"><a href="self-documenting-help.html#cb172-4"></a>    <span class="ex">input</span>: <span class="st">&quot;Snakefile&quot;</span></span>
+<span id="cb172-5"><a href="self-documenting-help.html#cb172-5"></a>    <span class="ex">shell</span>:</span>
+<span id="cb172-6"><a href="self-documenting-help.html#cb172-6"></a>        <span class="st">&quot;sed -n &#39;s/^##//p&#39; {input}&quot;</span></span></code></pre></div>
 <p>The rule depends on the <code>Snakefile</code> itself - because if the file changes, the might too.
 The shell comand that we use is a little confusing when we look at it the first time.
 Intuitively heres what it is doing:</p>
@@ -372,7 +374,7 @@ Intuitively heres what it is doing:</p>
 </ul></li>
 </ul>
 <p>Let’s see it in action:</p>
-<div class="sourceCode" id="cb174"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb174-1"><a href="self-documenting-help.html#cb174-1"></a>$ <span class="ex">snakemake</span> help</span></code></pre></div>
+<div class="sourceCode" id="cb173"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb173-1"><a href="self-documenting-help.html#cb173-1"></a>$ <span class="ex">snakemake</span> help</span></code></pre></div>
 <pre class="out"><code>Building DAG of jobs...
 Using shell: /bin/bash
 Provided cores: 1
@@ -416,15 +418,15 @@ Finished job 0.
 </div>
 <div class="footnotes">
 <hr />
-<ol start="16">
-<li id="fn16"><p>
+<ol start="14">
+<li id="fn14"><p>
 Do notice that the exact formatting of all this help is totally arbitrary.
 Noone tells you that two <code>#</code>’s or a mix of <code>#</code>’s and <code>-</code>’s are meaningful, correct or standard ways of
 putting comments in a file.
 Our choice reflects path dependence in the way we started writing Snakefiles, and we have found them useful
 and persisted with our initial choice.
 Feel free to create your own.
-The only important thing is the line starts with one <code>#</code> so that Snakemake doesnt try and execute that line as code.<a href="self-documenting-help.html#fnref16" class="footnote-back">↩︎</a></p></li>
+The only important thing is the line starts with one <code>#</code> so that Snakemake doesnt try and execute that line as code.<a href="self-documenting-help.html#fnref14" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
             </section>
