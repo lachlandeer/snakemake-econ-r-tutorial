@@ -42,6 +42,10 @@ state-of-the-snakefile
 the-glob_wildcards-function
 looking-at-the-dag-redux
 solution-5
+make-tables
+the-state-of-the-snakefile
+building-a-single-table
+building-all-tables-at-once
 building-all-outputs-at-once
 creating-an-all-rule
 adding-parameters

@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 9 Building all outputs at once | Reproducible Data Analytic Workflows with Snakemake and R</title>
+  <title>Chapter 10 Building all outputs at once | Reproducible Data Analytic Workflows with Snakemake and R</title>
   <meta name="description" content="In progress" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 9 Building all outputs at once | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta property="og:title" content="Chapter 10 Building all outputs at once | Reproducible Data Analytic Workflows with Snakemake and R" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="lachlandeer/snakemake-econ-r-tutorial" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 9 Building all outputs at once | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta name="twitter:title" content="Chapter 10 Building all outputs at once | Reproducible Data Analytic Workflows with Snakemake and R" />
   
   <meta name="twitter:description" content="In progress" />
   
@@ -32,7 +32,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="automating-list-construction-for-wildcard-expansion.html"/>
+<link rel="prev" href="make-tables.html"/>
 <link rel="next" href="adding-parameters.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -224,49 +224,57 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="8.4.1" data-path="automating-list-construction-for-wildcard-expansion.html"><a href="automating-list-construction-for-wildcard-expansion.html#solution-5"><i class="fa fa-check"></i><b>8.4.1</b> Solution</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html"><i class="fa fa-check"></i><b>9</b> Building all outputs at once</a><ul>
-<li class="chapter" data-level="9.1" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html#creating-an-all-rule"><i class="fa fa-check"></i><b>9.1</b> Creating an <code>all</code> rule</a></li>
+<li class="chapter" data-level="9" data-path="make-tables.html"><a href="make-tables.html"><i class="fa fa-check"></i><b>9</b> Make Tables</a><ul>
+<li class="chapter" data-level="9.1" data-path="make-tables.html"><a href="make-tables.html#the-state-of-the-snakefile"><i class="fa fa-check"></i><b>9.1</b> The State of the Snakefile</a></li>
+<li class="chapter" data-level="9.2" data-path="make-tables.html"><a href="make-tables.html#building-a-single-table"><i class="fa fa-check"></i><b>9.2</b> Building a single table</a></li>
+<li class="chapter" data-level="9.3" data-path="make-tables.html"><a href="make-tables.html#building-all-tables-at-once"><i class="fa fa-check"></i><b>9.3</b> Building all tables at once</a><ul>
+<li class="chapter" data-level="" data-path="make-tables.html"><a href="make-tables.html#exercise"><i class="fa fa-check"></i>Exercise</a></li>
+<li class="chapter" data-level="" data-path="make-tables.html"><a href="make-tables.html#solution-6"><i class="fa fa-check"></i>Solution</a></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>10</b> Adding Parameters</a><ul>
-<li class="chapter" data-level="10.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>10.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
-<li class="chapter" data-level="10.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>10.2</b> Creating a Rule with <code>params</code></a><ul>
+</ul></li>
+<li class="chapter" data-level="10" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html"><i class="fa fa-check"></i><b>10</b> Building all outputs at once</a><ul>
+<li class="chapter" data-level="10.1" data-path="building-all-outputs-at-once.html"><a href="building-all-outputs-at-once.html#creating-an-all-rule"><i class="fa fa-check"></i><b>10.1</b> Creating an <code>all</code> rule</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>11</b> Adding Parameters</a><ul>
+<li class="chapter" data-level="11.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>11.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
+<li class="chapter" data-level="11.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>11.2</b> Creating a Rule with <code>params</code></a><ul>
 <li class="chapter" data-level="" data-path="adding-parameters.html"><a href="adding-parameters.html#exercise-building-table-2"><i class="fa fa-check"></i>Exercise: Building Table 2</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="part-ii.html"><a href="part-ii.html"><i class="fa fa-check"></i>PART II</a></li>
-<li class="chapter" data-level="11" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>11</b> Logging Output and Errors</a><ul>
-<li class="chapter" data-level="11.1" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output"><i class="fa fa-check"></i><b>11.1</b> Logging Output</a></li>
-<li class="chapter" data-level="11.2" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output-and-errors-in-one-file"><i class="fa fa-check"></i><b>11.2</b> Logging Output and Errors in One File</a><ul>
+<li class="chapter" data-level="12" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>12</b> Logging Output and Errors</a><ul>
+<li class="chapter" data-level="12.1" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output"><i class="fa fa-check"></i><b>12.1</b> Logging Output</a></li>
+<li class="chapter" data-level="12.2" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output-and-errors-in-one-file"><i class="fa fa-check"></i><b>12.2</b> Logging Output and Errors in One File</a><ul>
 <li class="chapter" data-level="" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#exercise-logging-all-r-scripts"><i class="fa fa-check"></i>Exercise: Logging all R Scripts</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="12" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>12</b> Self Documenting Help</a><ul>
-<li class="chapter" data-level="12.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>12.1</b> Our Commenting Syle</a></li>
-<li class="chapter" data-level="12.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>12.2</b> Adding Further Comments</a><ul>
+<li class="chapter" data-level="13" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>13</b> Self Documenting Help</a><ul>
+<li class="chapter" data-level="13.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>13.1</b> Our Commenting Syle</a></li>
+<li class="chapter" data-level="13.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>13.2</b> Adding Further Comments</a><ul>
 <li class="chapter" data-level="" data-path="self-documenting-help.html"><a href="self-documenting-help.html#exercise-adding-comments"><i class="fa fa-check"></i>Exercise: Adding Comments</a></li>
 </ul></li>
-<li class="chapter" data-level="12.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>12.3</b> A <code>help</code> Rule</a><ul>
+<li class="chapter" data-level="13.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>13.3</b> A <code>help</code> Rule</a><ul>
 <li><a href="self-documenting-help.html#exercise-saving-help-output-to-file">Exercise: Saving <code>help</code> output to file</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>13</b> Config Files</a><ul>
-<li class="chapter" data-level="13.1" data-path="config-files.html"><a href="config-files.html#the-config.yaml-filepath"><i class="fa fa-check"></i><b>13.1</b> The <code>config.yaml</code> filepath</a></li>
-<li class="chapter" data-level="13.2" data-path="config-files.html"><a href="config-files.html#using-paths-from-the-config-file"><i class="fa fa-check"></i><b>13.2</b> Using paths from the config file</a><ul>
+<li class="chapter" data-level="14" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>14</b> Config Files</a><ul>
+<li class="chapter" data-level="14.1" data-path="config-files.html"><a href="config-files.html#the-config.yaml-filepath"><i class="fa fa-check"></i><b>14.1</b> The <code>config.yaml</code> filepath</a></li>
+<li class="chapter" data-level="14.2" data-path="config-files.html"><a href="config-files.html#using-paths-from-the-config-file"><i class="fa fa-check"></i><b>14.2</b> Using paths from the config file</a><ul>
 <li class="chapter" data-level="" data-path="config-files.html"><a href="config-files.html#exercise-using-config-files"><i class="fa fa-check"></i>Exercise: Using Config Files</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>14</b> Subworkflows: Divide and Conquer</a><ul>
-<li class="chapter" data-level="14.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>14.1</b> Subworkflow Basics</a></li>
-<li class="chapter" data-level="14.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>14.2</b> Subworkflow dependencies</a><ul>
+<li class="chapter" data-level="15" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>15</b> Subworkflows: Divide and Conquer</a><ul>
+<li class="chapter" data-level="15.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>15.1</b> Subworkflow Basics</a></li>
+<li class="chapter" data-level="15.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>15.2</b> Subworkflow dependencies</a><ul>
 <li class="chapter" data-level="" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#exercise-more-subworkflows"><i class="fa fa-check"></i>Exercise: More Subworkflows</a></li>
 <li><a href="subworkflows-divide-and-conquer.html#guided-exercise-help-rules-with-subworkflows">Guided Exercise: <code>help</code> rules with subworkflows</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="part-iii.html"><a href="part-iii.html"><i class="fa fa-check"></i>PART III</a></li>
-<li class="chapter" data-level="15" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>15</b> Reproducible Articles with Rmd</a></li>
-<li class="chapter" data-level="16" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>16</b> Reproducible Slides with Rmd</a></li>
-<li class="chapter" data-level="17" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>17</b> Package Dependencies with Packrat</a></li>
-<li class="chapter" data-level="18" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>18</b> Containers</a></li>
+<li class="chapter" data-level="16" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>16</b> Reproducible Articles with Rmd</a></li>
+<li class="chapter" data-level="17" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>17</b> Reproducible Slides with Rmd</a></li>
+<li class="chapter" data-level="18" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>18</b> Package Dependencies with Packrat</a></li>
+<li class="chapter" data-level="19" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>19</b> Containers</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -288,7 +296,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="building-all-outputs-at-once" class="section level1">
-<h1><span class="header-section-number">Chapter 9</span> Building all outputs at once</h1>
+<h1><span class="header-section-number">Chapter 10</span> Building all outputs at once</h1>
 <p>In our analysis pipeline that we have constructed so far,
 we need to make two calls to snakemake to run all of our analysis:</p>
 <ol style="list-style-type: decimal">
@@ -300,26 +308,26 @@ and have all our analysis in (1) and (2) be executed.
 That is our next goal.</p>
 <p>So that we are all starting from the same directory structure, let’s clean our output directory,
 removing all estimated models and figures:</p>
-<div class="sourceCode" id="cb126"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb126-1"><a href="building-all-outputs-at-once.html#cb126-1"></a>$ <span class="ex">snakemake</span> clean</span></code></pre></div>
+<div class="sourceCode" id="cb147"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb147-1"><a href="building-all-outputs-at-once.html#cb147-1"></a>$ <span class="ex">snakemake</span> clean</span></code></pre></div>
 <p>Now if we list the contents of the <code>out</code> directory and any potential subdirectories:</p>
-<div class="sourceCode" id="cb127"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb127-1"><a href="building-all-outputs-at-once.html#cb127-1"></a>$ <span class="fu">ls</span> -R out/</span></code></pre></div>
+<div class="sourceCode" id="cb148"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb148-1"><a href="building-all-outputs-at-once.html#cb148-1"></a>$ <span class="fu">ls</span> -R out/</span></code></pre></div>
 <p>we see that there are no contents remaining:</p>
 <pre class="out"><code>out/:</code></pre>
 <div id="creating-an-all-rule" class="section level2">
-<h2><span class="header-section-number">9.1</span> Creating an <code>all</code> rule</h2>
+<h2><span class="header-section-number">10.1</span> Creating an <code>all</code> rule</h2>
 <p>Out goal is to combine all the outputs from the <code>estimate_models</code> and <code>make_figs</code> rules.
 Let’s take a look at the structure of each of these rules so that we get a sense of what we might need to do.,
 Here is the <code>estimate_models</code> rule:</p>
-<div class="sourceCode" id="cb129"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb129-1"><a href="building-all-outputs-at-once.html#cb129-1"></a><span class="ex">rule</span> estimate_models:</span>
-<span id="cb129-2"><a href="building-all-outputs-at-once.html#cb129-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb129-3"><a href="building-all-outputs-at-once.html#cb129-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb129-4"><a href="building-all-outputs-at-once.html#cb129-4"></a>                    <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb129-5"><a href="building-all-outputs-at-once.html#cb129-5"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span></code></pre></div>
+<div class="sourceCode" id="cb150"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb150-1"><a href="building-all-outputs-at-once.html#cb150-1"></a><span class="ex">rule</span> estimate_models:</span>
+<span id="cb150-2"><a href="building-all-outputs-at-once.html#cb150-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb150-3"><a href="building-all-outputs-at-once.html#cb150-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb150-4"><a href="building-all-outputs-at-once.html#cb150-4"></a>                    <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb150-5"><a href="building-all-outputs-at-once.html#cb150-5"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span></code></pre></div>
 <p>And the <code>make_figs</code> rule:</p>
-<div class="sourceCode" id="cb130"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb130-1"><a href="building-all-outputs-at-once.html#cb130-1"></a><span class="ex">rule</span> make_figs:</span>
-<span id="cb130-2"><a href="building-all-outputs-at-once.html#cb130-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb130-3"><a href="building-all-outputs-at-once.html#cb130-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb130-4"><a href="building-all-outputs-at-once.html#cb130-4"></a>                <span class="ex">iFigure</span> = FIGURES)</span></code></pre></div>
+<div class="sourceCode" id="cb151"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb151-1"><a href="building-all-outputs-at-once.html#cb151-1"></a><span class="ex">rule</span> make_figs:</span>
+<span id="cb151-2"><a href="building-all-outputs-at-once.html#cb151-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb151-3"><a href="building-all-outputs-at-once.html#cb151-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb151-4"><a href="building-all-outputs-at-once.html#cb151-4"></a>                <span class="ex">iFigure</span> = FIGURES)</span></code></pre></div>
 <p>These rules have a common structure: both having only an <code>input</code>.
 From other rules that we have written, we know that a rule can have multiple inputs if we name them.
 This suggests a way forward.
@@ -332,15 +340,15 @@ combining the inputs from the separate rules:<a href="#fn12" class="footnote-ref
 <p>As ever, we will have to be mindful that if we have multiple inputs,
 have the trailing commas located wherever one input is followed by another.
 Let’s put this rule as the first in our Snakefile:</p>
-<div class="sourceCode" id="cb131"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb131-1"><a href="building-all-outputs-at-once.html#cb131-1"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb131-2"><a href="building-all-outputs-at-once.html#cb131-2"></a></span>
-<span id="cb131-3"><a href="building-all-outputs-at-once.html#cb131-3"></a><span class="ex">rule</span> all:</span>
-<span id="cb131-4"><a href="building-all-outputs-at-once.html#cb131-4"></a>    <span class="ex">input</span>:</span>
-<span id="cb131-5"><a href="building-all-outputs-at-once.html#cb131-5"></a>        <span class="ex">figs</span>   = expand(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb131-6"><a href="building-all-outputs-at-once.html#cb131-6"></a>                            <span class="ex">iFigure</span> = FIGURES),</span>
-<span id="cb131-7"><a href="building-all-outputs-at-once.html#cb131-7"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb131-8"><a href="building-all-outputs-at-once.html#cb131-8"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb131-9"><a href="building-all-outputs-at-once.html#cb131-9"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)</span></code></pre></div>
+<div class="sourceCode" id="cb152"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb152-1"><a href="building-all-outputs-at-once.html#cb152-1"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb152-2"><a href="building-all-outputs-at-once.html#cb152-2"></a></span>
+<span id="cb152-3"><a href="building-all-outputs-at-once.html#cb152-3"></a><span class="ex">rule</span> all:</span>
+<span id="cb152-4"><a href="building-all-outputs-at-once.html#cb152-4"></a>    <span class="ex">input</span>:</span>
+<span id="cb152-5"><a href="building-all-outputs-at-once.html#cb152-5"></a>        <span class="ex">figs</span>   = expand(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb152-6"><a href="building-all-outputs-at-once.html#cb152-6"></a>                            <span class="ex">iFigure</span> = FIGURES),</span>
+<span id="cb152-7"><a href="building-all-outputs-at-once.html#cb152-7"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb152-8"><a href="building-all-outputs-at-once.html#cb152-8"></a>                            <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb152-9"><a href="building-all-outputs-at-once.html#cb152-9"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)</span></code></pre></div>
 <p>Let’s check if this <code>all</code> rule does as desired - building all outputs.
 If we run <code>snakemake --dryrun all</code>, we get the following output:</p>
 <pre class="out"><code>Building DAG of jobs...
@@ -611,7 +619,7 @@ Notice that if you examine the order that Snakemake plans to execute the jobs th
 </ul></li>
 </ol>
 <p>Now we build our entire project<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>:</p>
-<div class="sourceCode" id="cb133"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb133-1"><a href="building-all-outputs-at-once.html#cb133-1"></a>$ <span class="ex">snakemake</span> all</span></code></pre></div>
+<div class="sourceCode" id="cb154"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb154-1"><a href="building-all-outputs-at-once.html#cb154-1"></a>$ <span class="ex">snakemake</span> all</span></code></pre></div>
 
 </div>
 </div>
@@ -631,7 +639,7 @@ so we could instead type only <code>snakemake</code> and get the same result.<a 
           </div>
         </div>
       </div>
-<a href="automating-list-construction-for-wildcard-expansion.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="make-tables.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="adding-parameters.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
