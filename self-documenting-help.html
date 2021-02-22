@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 13 Self Documenting Help | Reproducible Data Analytic Workflows with Snakemake and R</title>
+  <title>Chapter 15 Self Documenting Help | Reproducible Data Analytic Workflows with Snakemake and R</title>
   <meta name="description" content="In progress" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 13 Self Documenting Help | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta property="og:title" content="Chapter 15 Self Documenting Help | Reproducible Data Analytic Workflows with Snakemake and R" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="lachlandeer/snakemake-econ-r-tutorial" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 13 Self Documenting Help | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta name="twitter:title" content="Chapter 15 Self Documenting Help | Reproducible Data Analytic Workflows with Snakemake and R" />
   
   <meta name="twitter:description" content="In progress" />
   
@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="logging-output-and-errors.html"/>
-<link rel="next" href="config-files.html"/>
+<link rel="prev" href="config-files.html"/>
+<link rel="next" href="subworkflows-divide-and-conquer.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -151,7 +151,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#citation"><i class="fa fa-check"></i>Citation</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="part-i-preliminaries.html"><a href="part-i-preliminaries.html"><i class="fa fa-check"></i>PART I - Preliminaries</a></li>
+<li class="chapter" data-level="" data-path="part-0-preliminaries.html"><a href="part-0-preliminaries.html"><i class="fa fa-check"></i>PART 0 - Preliminaries</a></li>
 <li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Motivating &amp; Rationale</a><ul>
 <li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#a-case-for-reproducibility"><i class="fa fa-check"></i><b>1.1</b> A Case for Reproducibility</a><ul>
 <li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#how-far-to-go-in-the-quest-for-reproducibility"><i class="fa fa-check"></i><b>1.1.1</b> How far to go in the quest for reproducibility?</a></li>
@@ -172,6 +172,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="2.4" data-path="project-organization.html"><a href="project-organization.html#project-structure-iii-separating-input-parameters-from-code"><i class="fa fa-check"></i><b>2.4</b> Project Structure III: Separating Input Parameters from Code</a></li>
 </ul></li>
+<li class="chapter" data-level="" data-path="part-i-basic-snakemake-workflows.html"><a href="part-i-basic-snakemake-workflows.html"><i class="fa fa-check"></i>PART I - Basic Snakemake Workflows</a></li>
 <li class="chapter" data-level="3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html"><i class="fa fa-check"></i><b>3</b> Initial Steps with Snakemake</a><ul>
 <li class="chapter" data-level="3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#snakefile-writing-our-first-rule"><i class="fa fa-check"></i><b>3.1</b> Snakefile – Writing Our First Rule</a></li>
 <li class="chapter" data-level="3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-snakemake-command-executing-a-rule"><i class="fa fa-check"></i><b>3.2</b> The Snakemake Command – Executing a Rule</a></li>
@@ -201,6 +202,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="target-rules.html"><a href="target-rules.html#target-rules-can-do-more-for-us"><i class="fa fa-check"></i><b>5.4</b> Target rules can do more for us</a></li>
 </ul></li>
+<li class="chapter" data-level="" data-path="part-ii-minimizing-repetition-maximizing-generalizability.html"><a href="part-ii-minimizing-repetition-maximizing-generalizability.html"><i class="fa fa-check"></i>PART II - Minimizing Repetition, Maximizing Generalizability</a></li>
 <li class="chapter" data-level="6" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>6</b> Wildcards</a><ul>
 <li class="chapter" data-level="6.1" data-path="wildcards.html"><a href="wildcards.html#the-starting-point-of-our-snakefile"><i class="fa fa-check"></i><b>6.1</b> The starting point of our Snakefile</a></li>
 <li class="chapter" data-level="6.2" data-path="wildcards.html"><a href="wildcards.html#using-wildcards-to-tidy-up-our-code"><i class="fa fa-check"></i><b>6.2</b> Using wildcards to tidy up our code</a></li>
@@ -224,6 +226,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="8.4.1" data-path="automating-list-construction-for-wildcard-expansion.html"><a href="automating-list-construction-for-wildcard-expansion.html#solution-5"><i class="fa fa-check"></i><b>8.4.1</b> Solution</a></li>
 </ul></li>
 </ul></li>
+<li class="chapter" data-level="" data-path="part-iii-bringing-many-outputs-together.html"><a href="part-iii-bringing-many-outputs-together.html"><i class="fa fa-check"></i>PART III - Bringing Many Outputs Together</a></li>
 <li class="chapter" data-level="9" data-path="make-tables.html"><a href="make-tables.html"><i class="fa fa-check"></i><b>9</b> Make Tables</a><ul>
 <li class="chapter" data-level="9.1" data-path="make-tables.html"><a href="make-tables.html#the-state-of-the-snakefile"><i class="fa fa-check"></i><b>9.1</b> The State of the Snakefile</a></li>
 <li class="chapter" data-level="9.2" data-path="make-tables.html"><a href="make-tables.html#building-a-single-table"><i class="fa fa-check"></i><b>9.2</b> Building a single table</a></li>
@@ -237,26 +240,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10.2" data-path="one-rule-to-rule-them-all.html"><a href="one-rule-to-rule-them-all.html#creating-an-all-target-rule"><i class="fa fa-check"></i><b>10.2</b> Creating an <code>all</code> target rule</a></li>
 <li class="chapter" data-level="10.3" data-path="one-rule-to-rule-them-all.html"><a href="one-rule-to-rule-them-all.html#concluding-remarks"><i class="fa fa-check"></i><b>10.3</b> Concluding Remarks</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>11</b> Adding Parameters</a><ul>
-<li class="chapter" data-level="11.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>11.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
-<li class="chapter" data-level="11.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>11.2</b> Creating a Rule with <code>params</code></a><ul>
-<li class="chapter" data-level="" data-path="adding-parameters.html"><a href="adding-parameters.html#exercise-building-table-2"><i class="fa fa-check"></i>Exercise: Building Table 2</a></li>
-</ul></li>
-</ul></li>
-<li class="chapter" data-level="" data-path="part-ii.html"><a href="part-ii.html"><i class="fa fa-check"></i>PART II</a></li>
+<li class="chapter" data-level="11" data-path="adding-papers-and-slides-to-a-snakemake-workflow.html"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html"><i class="fa fa-check"></i><b>11</b> Adding Papers and Slides to a Snakemake Workflow</a></li>
+<li class="chapter" data-level="" data-path="part-iv-decorating-snakemake-workflows.html"><a href="part-iv-decorating-snakemake-workflows.html"><i class="fa fa-check"></i>PART IV - Decorating Snakemake Workflows</a></li>
 <li class="chapter" data-level="12" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>12</b> Logging Output and Errors</a><ul>
 <li class="chapter" data-level="12.1" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output"><i class="fa fa-check"></i><b>12.1</b> Logging Output</a></li>
 <li class="chapter" data-level="12.2" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output-and-errors-in-one-file"><i class="fa fa-check"></i><b>12.2</b> Logging Output and Errors in One File</a><ul>
 <li class="chapter" data-level="" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#exercise-logging-all-r-scripts"><i class="fa fa-check"></i>Exercise: Logging all R Scripts</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>13</b> Self Documenting Help</a><ul>
-<li class="chapter" data-level="13.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>13.1</b> Our Commenting Syle</a></li>
-<li class="chapter" data-level="13.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>13.2</b> Adding Further Comments</a><ul>
-<li class="chapter" data-level="" data-path="self-documenting-help.html"><a href="self-documenting-help.html#exercise-adding-comments"><i class="fa fa-check"></i>Exercise: Adding Comments</a></li>
-</ul></li>
-<li class="chapter" data-level="13.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>13.3</b> A <code>help</code> Rule</a><ul>
-<li><a href="self-documenting-help.html#exercise-saving-help-output-to-file">Exercise: Saving <code>help</code> output to file</a></li>
+<li class="chapter" data-level="13" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>13</b> Adding Parameters</a><ul>
+<li class="chapter" data-level="13.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>13.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
+<li class="chapter" data-level="13.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>13.2</b> Creating a Rule with <code>params</code></a><ul>
+<li class="chapter" data-level="" data-path="adding-parameters.html"><a href="adding-parameters.html#exercise-building-table-2"><i class="fa fa-check"></i>Exercise: Building Table 2</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="14" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>14</b> Config Files</a><ul>
@@ -265,18 +260,43 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="config-files.html"><a href="config-files.html#exercise-using-config-files"><i class="fa fa-check"></i>Exercise: Using Config Files</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="15" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>15</b> Subworkflows: Divide and Conquer</a><ul>
-<li class="chapter" data-level="15.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>15.1</b> Subworkflow Basics</a></li>
-<li class="chapter" data-level="15.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>15.2</b> Subworkflow dependencies</a><ul>
+<li class="chapter" data-level="15" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>15</b> Self Documenting Help</a><ul>
+<li class="chapter" data-level="15.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>15.1</b> Our Commenting Syle</a></li>
+<li class="chapter" data-level="15.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>15.2</b> Adding Further Comments</a><ul>
+<li class="chapter" data-level="" data-path="self-documenting-help.html"><a href="self-documenting-help.html#exercise-adding-comments"><i class="fa fa-check"></i>Exercise: Adding Comments</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>15.3</b> A <code>help</code> Rule</a><ul>
+<li><a href="self-documenting-help.html#exercise-saving-help-output-to-file">Exercise: Saving <code>help</code> output to file</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>16</b> Subworkflows: Divide and Conquer</a><ul>
+<li class="chapter" data-level="16.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>16.1</b> Subworkflow Basics</a></li>
+<li class="chapter" data-level="16.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>16.2</b> Subworkflow dependencies</a><ul>
 <li class="chapter" data-level="" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#exercise-more-subworkflows"><i class="fa fa-check"></i>Exercise: More Subworkflows</a></li>
 <li><a href="subworkflows-divide-and-conquer.html#guided-exercise-help-rules-with-subworkflows">Guided Exercise: <code>help</code> rules with subworkflows</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="part-iii.html"><a href="part-iii.html"><i class="fa fa-check"></i>PART III</a></li>
-<li class="chapter" data-level="16" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>16</b> Reproducible Articles with Rmd</a></li>
-<li class="chapter" data-level="17" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>17</b> Reproducible Slides with Rmd</a></li>
-<li class="chapter" data-level="18" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>18</b> Package Dependencies with Packrat</a></li>
-<li class="chapter" data-level="19" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>19</b> Containers</a></li>
+<li class="chapter" data-level="" data-path="part-iv-putting-workflows-in-a-box.html"><a href="part-iv-putting-workflows-in-a-box.html"><i class="fa fa-check"></i>PART IV - Putting Workflows in a Box</a></li>
+<li class="chapter" data-level="17" data-path="package-dependencies-with-renv.html"><a href="package-dependencies-with-renv.html"><i class="fa fa-check"></i><b>17</b> Package Dependencies with <code>renv</code></a></li>
+<li class="chapter" data-level="18" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>18</b> Containers</a></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="installation-guide.html"><a href="installation-guide.html"><i class="fa fa-check"></i><b>A</b> Installation Guide</a><ul>
+<li class="chapter" data-level="A.1" data-path="installation-guide.html"><a href="installation-guide.html#windows"><i class="fa fa-check"></i><b>A.1</b> Windows</a><ul>
+<li class="chapter" data-level="A.1.1" data-path="installation-guide.html"><a href="installation-guide.html#bash-terminal"><i class="fa fa-check"></i><b>A.1.1</b> Bash terminal</a></li>
+<li class="chapter" data-level="A.1.2" data-path="installation-guide.html"><a href="installation-guide.html#python"><i class="fa fa-check"></i><b>A.1.2</b> Python</a></li>
+<li class="chapter" data-level="" data-path="installation-guide.html"><a href="installation-guide.html#installing-snakemake"><i class="fa fa-check"></i>Installing Snakemake</a></li>
+</ul></li>
+<li class="chapter" data-level="A.2" data-path="installation-guide.html"><a href="installation-guide.html#mac"><i class="fa fa-check"></i><b>A.2</b> Mac</a><ul>
+<li class="chapter" data-level="A.2.1" data-path="installation-guide.html"><a href="installation-guide.html#bash-terminal-1"><i class="fa fa-check"></i><b>A.2.1</b> Bash terminal</a></li>
+<li class="chapter" data-level="A.2.2" data-path="installation-guide.html"><a href="installation-guide.html#python-1"><i class="fa fa-check"></i><b>A.2.2</b> Python</a></li>
+<li class="chapter" data-level="" data-path="installation-guide.html"><a href="installation-guide.html#installing-snakemake-1"><i class="fa fa-check"></i>Installing Snakemake</a></li>
+</ul></li>
+<li class="chapter" data-level="A.3" data-path="installation-guide.html"><a href="installation-guide.html#linux-ubuntu"><i class="fa fa-check"></i><b>A.3</b> Linux / Ubuntu</a><ul>
+<li class="chapter" data-level="A.3.1" data-path="installation-guide.html"><a href="installation-guide.html#bash-terminal-2"><i class="fa fa-check"></i><b>A.3.1</b> Bash terminal</a></li>
+<li class="chapter" data-level="A.3.2" data-path="installation-guide.html"><a href="installation-guide.html#python-2"><i class="fa fa-check"></i><b>A.3.2</b> Python</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -298,7 +318,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="self-documenting-help" class="section level1">
-<h1><span class="header-section-number">Chapter 13</span> Self Documenting Help</h1>
+<h1><span class="header-section-number">Chapter 15</span> Self Documenting Help</h1>
 <p>As we build up our Snakemake workflow the Snakefile becomes increasingly complex.
 It is easy to imagine that a future version of you,
 or a co-author,
@@ -306,7 +326,7 @@ might have difficulty understanding what each rule is doing.
 This chapter introduces an approach to add some comments to the Snakefile to make it easier to navigate.
 We also add a new <code>help</code> rule so that we can get a summary of the comments printed to screen.</p>
 <div id="our-commenting-syle" class="section level2">
-<h2><span class="header-section-number">13.1</span> Our Commenting Syle</h2>
+<h2><span class="header-section-number">15.1</span> Our Commenting Syle</h2>
 <p>If we look at the Snakefile in it’s current state, we see that there are a bare minimum amount of comments already integrated.
 Because Snakemake is a Python library all comments must begin with one <code>#</code>.
 We then added some additional formatting of comments to create two types.<a href="#fn14" class="footnote-ref" id="fnref14"><sup>14</sup></a>
@@ -320,7 +340,7 @@ For example, the head of the Snakefile contains information on the name of the w
 <p>Second, we have broken up the Snakefile somewhat into sections such as Dictionaries, Build Rules and Clean Rules using the <code># --- Something --- #</code> notation.</p>
 </div>
 <div id="adding-further-comments" class="section level2">
-<h2><span class="header-section-number">13.2</span> Adding Further Comments</h2>
+<h2><span class="header-section-number">15.2</span> Adding Further Comments</h2>
 <p>The information we have added in comments so far is not really enough to help us remember much.
 What we want is a simple one or two line summary of what each of our rules do so that we can look back at them in the future.
 We are going to make comments above each rule using the <code>##</code> notation.
@@ -349,7 +369,7 @@ For example, for the <code>textbook_solow</code> rule:</p>
 </div>
 </div>
 <div id="a-help-rule" class="section level2">
-<h2><span class="header-section-number">13.3</span> A <code>help</code> Rule</h2>
+<h2><span class="header-section-number">15.3</span> A <code>help</code> Rule</h2>
 <p>The Snakefile is now much easier to understand when reading through it.
 Future you will be grateful for the effort.
 We can go one step further: construct a rule that prints the output of these comments to the screen.
@@ -434,8 +454,8 @@ The only important thing is the line starts with one <code>#</code> so that Snak
           </div>
         </div>
       </div>
-<a href="logging-output-and-errors.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="config-files.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="config-files.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="subworkflows-divide-and-conquer.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -466,7 +486,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/19-documenting_help.Rmd",
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/44_help.Rmd",
 "text": "Edit"
 },
 "history": {

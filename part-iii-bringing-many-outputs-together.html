@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 4 Working With Multiple Rules | Reproducible Data Analytic Workflows with Snakemake and R</title>
+  <title>PART III - Bringing Many Outputs Together | Reproducible Data Analytic Workflows with Snakemake and R</title>
   <meta name="description" content="In progress" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 4 Working With Multiple Rules | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta property="og:title" content="PART III - Bringing Many Outputs Together | Reproducible Data Analytic Workflows with Snakemake and R" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="lachlandeer/snakemake-econ-r-tutorial" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 4 Working With Multiple Rules | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta name="twitter:title" content="PART III - Bringing Many Outputs Together | Reproducible Data Analytic Workflows with Snakemake and R" />
   
   <meta name="twitter:description" content="In progress" />
   
@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="initial-steps-with-snakemake.html"/>
-<link rel="next" href="target-rules.html"/>
+<link rel="prev" href="automating-list-construction-for-wildcard-expansion.html"/>
+<link rel="next" href="make-tables.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -317,239 +317,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="working-with-multiple-rules" class="section level1">
-<h1><span class="header-section-number">Chapter 4</span> Working With Multiple Rules</h1>
-<p>Learning goals</p>
-<ul>
-<li>How do we chain Snakemake rules together?</li>
-<li>How does Snakemake know in which order to execute rules?</li>
-<li>Practice writing Snakemake rules</li>
-<li>What are clean rules and how can they make our life easier?</li>
-</ul>
-<p>In the last chapter we have learned how to write and execute a single Snakemake rule.
-This is obviously not sufficient for a real world research workflow which requires many different operations to be executed sequentially.
-in this chapter we will therefore learn how to work with several rules and how they interact with each other.</p>
-<div id="creating-a-second-rule" class="section level2">
-<h2><span class="header-section-number">4.1</span> Creating a second rule</h2>
-<p>The second step in our data management is to create additional variables we will use in our regression analysis.
-The script <code>gen_reg_vars.R</code> in the <code>src/data-management</code> folder does this for us.
-We are going to build a rule called <code>gen_regression_vars</code> to do this from Snakemake.
-Let’s see what arguments the script expects to be passed:</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb41-1"><a href="working-with-multiple-rules.html#cb41-1"></a>$ <span class="ex">Rscript</span> src/data-management/gen_reg_vars.R --help</span></code></pre></div>
-<pre class="out"><code>Options:
-    -d CHARACTER, --data=CHARACTER
-        a csv file name
-
-    -p NUMERIC, --param=NUMERIC
-        Solow`s Constant, as a numeric [default = 0.05]
-
-    -o CHARACTER, --out=CHARACTER
-        output file name [default = out.csv]
-
-    -h, --help
-        Show this help message and exit</code></pre>
-<p>We see that script expects three arguments:</p>
-<ul>
-<li><code>--data</code>, the file path of the input file</li>
-<li><code>--out</code>, the file path of the output file</li>
-<li><code>--param</code>, Solow’s constant which defaults to 0.05, the parameter used in <span class="citation">Mankiw, Romer, and Weil (<a href="#ref-mrw" role="doc-biblioref">1992</a>)</span>. We can safely ignore this for now.</li>
-</ul>
-<p>To chain two rules together, the second one needs to use the output of the first rule as its input.
-This way the second script will receive all the changes the first script made so they are not lost.</p>
-<p>Let us incorporate this here and create a <code>gen_regression_vars</code> rule on top of the <code>rename_vars</code> rule.
-The rule takes two inputs:
-<code>{input.script}</code> will be <code>gen_reg_vars.R</code> and <code>{input.data}</code> will be the file defined as <code>{output.data}</code> in the <code>rename_vars</code> rule.
-Our new rule now should look something like this:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb43-1"><a href="working-with-multiple-rules.html#cb43-1"></a><span class="ex">rule</span> gen_regression_vars:</span>
-<span id="cb43-2"><a href="working-with-multiple-rules.html#cb43-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb43-3"><a href="working-with-multiple-rules.html#cb43-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
-<span id="cb43-4"><a href="working-with-multiple-rules.html#cb43-4"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span></code></pre></div>
-<p>Let us now add the filepath the output of the rule will be saved to.
-We will use a new filename in the <code>out/data</code> folder and choose <code>mrw_complete.csv</code> to indicate that this data set includes all data modifications the project requires:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb44-1"><a href="working-with-multiple-rules.html#cb44-1"></a><span class="ex">rule</span> gen_regression_vars:</span>
-<span id="cb44-2"><a href="working-with-multiple-rules.html#cb44-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb44-3"><a href="working-with-multiple-rules.html#cb44-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
-<span id="cb44-4"><a href="working-with-multiple-rules.html#cb44-4"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
-<span id="cb44-5"><a href="working-with-multiple-rules.html#cb44-5"></a>    <span class="ex">output</span>:</span>
-<span id="cb44-6"><a href="working-with-multiple-rules.html#cb44-6"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span></code></pre></div>
-<p>Finally, let us add the <code>shell</code> argument, which is identical to the one used in our first rule.
-Now, our rule is complete:</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb45-1"><a href="working-with-multiple-rules.html#cb45-1"></a><span class="ex">rule</span> gen_regression_vars:</span>
-<span id="cb45-2"><a href="working-with-multiple-rules.html#cb45-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb45-3"><a href="working-with-multiple-rules.html#cb45-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
-<span id="cb45-4"><a href="working-with-multiple-rules.html#cb45-4"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb45-5"><a href="working-with-multiple-rules.html#cb45-5"></a>    <span class="ex">output</span>:</span>
-<span id="cb45-6"><a href="working-with-multiple-rules.html#cb45-6"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
-<span id="cb45-7"><a href="working-with-multiple-rules.html#cb45-7"></a>    <span class="ex">shell</span>:</span>
-<span id="cb45-8"><a href="working-with-multiple-rules.html#cb45-8"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb45-9"><a href="working-with-multiple-rules.html#cb45-9"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb45-10"><a href="working-with-multiple-rules.html#cb45-10"></a><span class="st">            --out {output.data}&quot;</span></span></code></pre></div>
-<p>To find out how Snakemake perceives our projects, let’s use the summary option</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb46-1"><a href="working-with-multiple-rules.html#cb46-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
-<p>which yields the following console output:</p>
-<pre class="out"><code>Building DAG of jobs...
-output_file                    date                     rule                  version   log-file(s) status     plan
-out/data/mrw_complete.csv   -                           gen_regression_vars     -                   missing update pending
-out/data/mrw_renamed.csv    Fri Jan 11 13:40:07 2019    rename_vars             -                   ok          no update</code></pre>
-<p>Snakemake knows that the output of the <code>rename_vars</code> rule is up to date and therefore plans to only execute the <code>gen_regression_vars</code> rule as it’s output
-<code>out/data/mrw_complete.csv</code> does not yet exist.</p>
-<p>Let’s run snakemake to build our new file:</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb48-1"><a href="working-with-multiple-rules.html#cb48-1"></a>$ <span class="ex">snakemake</span> --cores 1</span></code></pre></div>
-<p>When we look at our output directory</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb49-1"><a href="working-with-multiple-rules.html#cb49-1"></a>$ <span class="fu">ls</span> out/data/</span></code></pre></div>
-<p>we see that the second output file has been created.</p>
-<pre class="out"><code>mrw_complete.csv  mrw_renamed.csv</code></pre>
-<div id="exercise-creating-rules" class="section level3 unnumbered exercise">
-<h3>Exercise: Creating Rules</h3>
-<p><span class="citation">Mankiw, Romer, and Weil (<a href="#ref-mrw" role="doc-biblioref">1992</a>)</span> estimate the Solow model for three subsets of data.
-The R script <code>src/analysis/estimate_ols.R</code> will estimate a OLS model for a given dataset when you provide the necessary inputs.</p>
-<ul>
-<li>The script expects an OLS specification.
-You can point to the basic OLS specification from <span class="citation">Mankiw, Romer, and Weil (<a href="#ref-mrw" role="doc-biblioref">1992</a>)</span> in <code>src/model-specs/model_solow.json</code>.</li>
-<li>You will find the necessary data subsetting conditions in <code>src/data-specs</code>.</li>
-</ul>
-<p>Write one rule for each subset of the data.</p>
-<ol style="list-style-type: decimal">
-<li>What inputs do you need to provide?</li>
-<li>What outputs will be produced?</li>
-<li>Write Snakemake rules to estimate the solow model for each subset of data.</li>
-</ol>
-</div>
-<div id="solution" class="section level3 unnumbered solution">
-<h3>Solution</h3>
-<ol style="list-style-type: decimal">
-<li>What inputs do you need to provide?</li>
-</ol>
-<ul>
-<li><code>--data</code> the file path of a csv dataset as an input. We use the output of our last rule: <code>out/data/mrw_complete.csv</code>.</li>
-<li><code>--model</code> the file path of a regression model. We follow the hint and use <code>src/model-specs/model_solow.json</code>.</li>
-<li><code>--subset</code> the file path of a sub setting condition. We will use one of the three files in <code>src/data-specs</code> for each rule respectively.</li>
-<li><code>--out</code> the file path for the output file.</li>
-</ul>
-<ol start="2" style="list-style-type: decimal">
-<li>What outputs will be produced?</li>
-</ol>
-<p>One <code>.rds</code> file for each ols model.
-This is a <code>R</code> data type appropriate for saving <code>R</code> objects.
-The rule therefore outputs one <code>R</code> object containing the regression results for each rule.
-Loading the <code>.rds</code> file in another script will allow us later to use the regression results to create regression tables and graphs.</p>
-<ol start="3" style="list-style-type: decimal">
-<li>Write Snakemake rules to estimate the solow model for each subset of data.</li>
-</ol>
-<p>Incorporating everything will give us three rules similar to these:</p>
-<pre class="out"><code>rule solow_intermediate:
-    input:
-        script   = &quot;src/analysis/estimate_ols_model.R&quot;,
-        data     = &quot;out/data/mrw_complete.csv&quot;,
-        model    = &quot;src/model-specs/model_solow.json&quot;,
-        subset   = &quot;src/data-specs/subset_intermediate.json&quot;
-    output:
-        estimate = &quot;out/analysis/model_solow_subset_intermediate.rds&quot;,
-    shell:
-        &quot;Rscript {input.script} \
-            --data {input.data} \
-            --model {input.model} \
-            --subset {input.subset} \
-            --out {output.estimate}&quot;
-
-rule solow_nonoil:
-    input:
-        script   = &quot;src/analysis/estimate_ols_model.R&quot;,
-        data     = &quot;out/data/mrw_complete.csv&quot;,
-        model    = &quot;src/model-specs/model_solow.json&quot;,
-        subset   = &quot;src/data-specs/subset_nonoil.json&quot;
-    output:
-        estimate = &quot;out/analysis/model_solow_subset_nonoil.rds&quot;,
-    shell:
-        &quot;Rscript {input.script} \
-            --data {input.data} \
-            --model {input.model} \
-            --subset {input.subset} \
-            --out {output.estimate}&quot;
-
-rule solow_oecd:
-    input:
-        script   = &quot;src/analysis/estimate_ols_model.R&quot;,
-        data     = &quot;out/data/mrw_complete.csv&quot;,
-        model    = &quot;src/model-specs/model_solow.json&quot;,
-        subset   = &quot;src/data-specs/subset_oecd.json&quot;
-    output:
-        estimate = &quot;out/analysis/model_solow_subset_oecd.rds&quot;,
-    shell:
-        &quot;Rscript {input.script} \
-            --data {input.data} \
-            --model {input.model} \
-            --subset {input.subset} \
-            --out {output.estimate}&quot;</code></pre>
-</div>
-</div>
-<div id="clean-rules" class="section level2">
-<h2><span class="header-section-number">4.2</span> Clean Rules</h2>
-<p>We want to end this chapter with a little extra rule which will make our life easier down the road.</p>
-<p>So far we have built rules to move our replication of <span class="citation">Mankiw, Romer, and Weil (<a href="#ref-mrw" role="doc-biblioref">1992</a>)</span> forward.
-As we continue to extend our Snakefile in the coming chapters we might want to be able to delete all of the produced outputs and make sure our projects builds cleanly from start to end.</p>
-<p>The manual way to do this is to go to our terminal window and enter the following command each time</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb52-1"><a href="working-with-multiple-rules.html#cb52-1"></a>$ <span class="fu">rm</span> -rf out/*</span></code></pre></div>
-<p>which deletes all contents of the <code>out</code> folder.</p>
-<p>To make this task a bit more comfortable, we write a clean rule which deletes all contents of the output folder.</p>
-<p>We can create a rule called <code>clean</code> at the bottom of our <code>Snakefile</code> that stores the shell command from above:</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb53-1"><a href="working-with-multiple-rules.html#cb53-1"></a><span class="ex">rule</span> clean:</span>
-<span id="cb53-2"><a href="working-with-multiple-rules.html#cb53-2"></a>    <span class="ex">shell</span>:</span>
-<span id="cb53-3"><a href="working-with-multiple-rules.html#cb53-3"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span></code></pre></div>
-<p>Note that this rule has no inputs or outputs.</p>
-<p>To use this rule, we enter the following into our terminal:</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb54-1"><a href="working-with-multiple-rules.html#cb54-1"></a>$ <span class="ex">snakemake</span> --cores 1 clean</span></code></pre></div>
-<p>Notice that to use the clean rule we had to call the rule name, <code>clean</code>, explicitly.
-This is necessary as the rule is at the bottom of our Snakefile.
-Snakemake the first rule it finds at the top of the file when not explicitly told otherwise.</p>
-<p>Now if we look out the output of running the summary call with snakemake, we see the following output:</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb55-1"><a href="working-with-multiple-rules.html#cb55-1"></a><span class="ex">snakemake</span> --summary</span></code></pre></div>
-<pre class="out"><code>Building DAG of jobs...
-output_file                                        date   rule  version log-file(s)     status  plan
-out/analysis/model_solow_subset_intermediate.rds    -     inter        -                missing update pending
-out/analysis/model_solow_subset_nonoil.rds          -     nonoil       -                missing update pending
-out/analysis/model_solow_subset_oecd.rds            -     oecd         -                missing update pending
-out/data/mrw_complete.csv                           -     gen_regression_vars           missing update pending
-out/data/mrw_renamed.csv                            -     rename_vars                   missing update pending</code></pre>
-<p>Which reveals snakemake’s plan the next time its run will be to build all outputs.</p>
-<div id="exercise-creating-cleaning-rules" class="section level3 unnumbered exercise">
-<h3>Exercise: Creating Cleaning Rules</h3>
-<p>So far we have written a cleaning rule that deletes everything in the <code>out/</code> directory.
-Construct rules that would separately clean the <code>out/data/</code> and <code>out/analysis</code> subdirectories.
-Why might we want to do this?</p>
-</div>
-<div id="solution-1" class="section level3 unnumbered solution">
-<h3>Solution</h3>
-<p>We only need to change the folders to delete in the shell command.
-A solution might look something like this:</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb57-1"><a href="working-with-multiple-rules.html#cb57-1"></a><span class="ex">rule</span> clean_data:</span>
-<span id="cb57-2"><a href="working-with-multiple-rules.html#cb57-2"></a>    <span class="ex">shell</span>:</span>
-<span id="cb57-3"><a href="working-with-multiple-rules.html#cb57-3"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
-<span id="cb57-4"><a href="working-with-multiple-rules.html#cb57-4"></a></span>
-<span id="cb57-5"><a href="working-with-multiple-rules.html#cb57-5"></a><span class="ex">rule</span> clean_analysis:</span>
-<span id="cb57-6"><a href="working-with-multiple-rules.html#cb57-6"></a>    <span class="ex">shell</span>:</span>
-<span id="cb57-7"><a href="working-with-multiple-rules.html#cb57-7"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
-<p>Splitting the clean rule gives us a bit more control on what we want to refresh.
-In practice, data cleaning and wrangling can be computationally very taxing.
-Especially later in a project’s life cycle these task seldomly change.
-It can therefore be beneficial and sufficient to only reset all other analysis via a clean rule that does not delete the transformed data.</p>
-
-</div>
-</div>
-</div>
-<h3><span class="header-section-number">B</span> References</h3>
-<div id="refs" class="references">
-<div id="ref-mrw">
-<p>Mankiw, N. Gregory, David Romer, and David N. Weil. 1992. “A Contribution to the Empirics of Economic Growth*.” <em>The Quarterly Journal of Economics</em> 107 (2): 407–37. <a href="https://doi.org/10.2307/2118477">https://doi.org/10.2307/2118477</a>.</p>
-</div>
+<div id="part-iii---bringing-many-outputs-together" class="section level1 unnumbered">
+<h1>PART III - Bringing Many Outputs Together</h1>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="initial-steps-with-snakemake.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="target-rules.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="automating-list-construction-for-wildcard-expansion.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="make-tables.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -580,7 +357,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/12-multiple_rules.Rmd",
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/31-tables.Rmd",
 "text": "Edit"
 },
 "history": {

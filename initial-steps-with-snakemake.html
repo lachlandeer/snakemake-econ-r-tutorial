@@ -32,7 +32,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="project-organization.html"/>
+<link rel="prev" href="part-i-basic-snakemake-workflows.html"/>
 <link rel="next" href="working-with-multiple-rules.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -151,7 +151,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#citation"><i class="fa fa-check"></i>Citation</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="part-i-preliminaries.html"><a href="part-i-preliminaries.html"><i class="fa fa-check"></i>PART I - Preliminaries</a></li>
+<li class="chapter" data-level="" data-path="part-0-preliminaries.html"><a href="part-0-preliminaries.html"><i class="fa fa-check"></i>PART 0 - Preliminaries</a></li>
 <li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Motivating &amp; Rationale</a><ul>
 <li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#a-case-for-reproducibility"><i class="fa fa-check"></i><b>1.1</b> A Case for Reproducibility</a><ul>
 <li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#how-far-to-go-in-the-quest-for-reproducibility"><i class="fa fa-check"></i><b>1.1.1</b> How far to go in the quest for reproducibility?</a></li>
@@ -172,6 +172,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="2.4" data-path="project-organization.html"><a href="project-organization.html#project-structure-iii-separating-input-parameters-from-code"><i class="fa fa-check"></i><b>2.4</b> Project Structure III: Separating Input Parameters from Code</a></li>
 </ul></li>
+<li class="chapter" data-level="" data-path="part-i-basic-snakemake-workflows.html"><a href="part-i-basic-snakemake-workflows.html"><i class="fa fa-check"></i>PART I - Basic Snakemake Workflows</a></li>
 <li class="chapter" data-level="3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html"><i class="fa fa-check"></i><b>3</b> Initial Steps with Snakemake</a><ul>
 <li class="chapter" data-level="3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#snakefile-writing-our-first-rule"><i class="fa fa-check"></i><b>3.1</b> Snakefile – Writing Our First Rule</a></li>
 <li class="chapter" data-level="3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-snakemake-command-executing-a-rule"><i class="fa fa-check"></i><b>3.2</b> The Snakemake Command – Executing a Rule</a></li>
@@ -201,6 +202,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="target-rules.html"><a href="target-rules.html#target-rules-can-do-more-for-us"><i class="fa fa-check"></i><b>5.4</b> Target rules can do more for us</a></li>
 </ul></li>
+<li class="chapter" data-level="" data-path="part-ii-minimizing-repetition-maximizing-generalizability.html"><a href="part-ii-minimizing-repetition-maximizing-generalizability.html"><i class="fa fa-check"></i>PART II - Minimizing Repetition, Maximizing Generalizability</a></li>
 <li class="chapter" data-level="6" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>6</b> Wildcards</a><ul>
 <li class="chapter" data-level="6.1" data-path="wildcards.html"><a href="wildcards.html#the-starting-point-of-our-snakefile"><i class="fa fa-check"></i><b>6.1</b> The starting point of our Snakefile</a></li>
 <li class="chapter" data-level="6.2" data-path="wildcards.html"><a href="wildcards.html#using-wildcards-to-tidy-up-our-code"><i class="fa fa-check"></i><b>6.2</b> Using wildcards to tidy up our code</a></li>
@@ -224,6 +226,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="8.4.1" data-path="automating-list-construction-for-wildcard-expansion.html"><a href="automating-list-construction-for-wildcard-expansion.html#solution-5"><i class="fa fa-check"></i><b>8.4.1</b> Solution</a></li>
 </ul></li>
 </ul></li>
+<li class="chapter" data-level="" data-path="part-iii-bringing-many-outputs-together.html"><a href="part-iii-bringing-many-outputs-together.html"><i class="fa fa-check"></i>PART III - Bringing Many Outputs Together</a></li>
 <li class="chapter" data-level="9" data-path="make-tables.html"><a href="make-tables.html"><i class="fa fa-check"></i><b>9</b> Make Tables</a><ul>
 <li class="chapter" data-level="9.1" data-path="make-tables.html"><a href="make-tables.html#the-state-of-the-snakefile"><i class="fa fa-check"></i><b>9.1</b> The State of the Snakefile</a></li>
 <li class="chapter" data-level="9.2" data-path="make-tables.html"><a href="make-tables.html#building-a-single-table"><i class="fa fa-check"></i><b>9.2</b> Building a single table</a></li>
@@ -237,26 +240,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10.2" data-path="one-rule-to-rule-them-all.html"><a href="one-rule-to-rule-them-all.html#creating-an-all-target-rule"><i class="fa fa-check"></i><b>10.2</b> Creating an <code>all</code> target rule</a></li>
 <li class="chapter" data-level="10.3" data-path="one-rule-to-rule-them-all.html"><a href="one-rule-to-rule-them-all.html#concluding-remarks"><i class="fa fa-check"></i><b>10.3</b> Concluding Remarks</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>11</b> Adding Parameters</a><ul>
-<li class="chapter" data-level="11.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>11.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
-<li class="chapter" data-level="11.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>11.2</b> Creating a Rule with <code>params</code></a><ul>
-<li class="chapter" data-level="" data-path="adding-parameters.html"><a href="adding-parameters.html#exercise-building-table-2"><i class="fa fa-check"></i>Exercise: Building Table 2</a></li>
-</ul></li>
-</ul></li>
-<li class="chapter" data-level="" data-path="part-ii.html"><a href="part-ii.html"><i class="fa fa-check"></i>PART II</a></li>
+<li class="chapter" data-level="11" data-path="adding-papers-and-slides-to-a-snakemake-workflow.html"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html"><i class="fa fa-check"></i><b>11</b> Adding Papers and Slides to a Snakemake Workflow</a></li>
+<li class="chapter" data-level="" data-path="part-iv-decorating-snakemake-workflows.html"><a href="part-iv-decorating-snakemake-workflows.html"><i class="fa fa-check"></i>PART IV - Decorating Snakemake Workflows</a></li>
 <li class="chapter" data-level="12" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>12</b> Logging Output and Errors</a><ul>
 <li class="chapter" data-level="12.1" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output"><i class="fa fa-check"></i><b>12.1</b> Logging Output</a></li>
 <li class="chapter" data-level="12.2" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output-and-errors-in-one-file"><i class="fa fa-check"></i><b>12.2</b> Logging Output and Errors in One File</a><ul>
 <li class="chapter" data-level="" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#exercise-logging-all-r-scripts"><i class="fa fa-check"></i>Exercise: Logging all R Scripts</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>13</b> Self Documenting Help</a><ul>
-<li class="chapter" data-level="13.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>13.1</b> Our Commenting Syle</a></li>
-<li class="chapter" data-level="13.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>13.2</b> Adding Further Comments</a><ul>
-<li class="chapter" data-level="" data-path="self-documenting-help.html"><a href="self-documenting-help.html#exercise-adding-comments"><i class="fa fa-check"></i>Exercise: Adding Comments</a></li>
-</ul></li>
-<li class="chapter" data-level="13.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>13.3</b> A <code>help</code> Rule</a><ul>
-<li><a href="self-documenting-help.html#exercise-saving-help-output-to-file">Exercise: Saving <code>help</code> output to file</a></li>
+<li class="chapter" data-level="13" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>13</b> Adding Parameters</a><ul>
+<li class="chapter" data-level="13.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>13.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
+<li class="chapter" data-level="13.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>13.2</b> Creating a Rule with <code>params</code></a><ul>
+<li class="chapter" data-level="" data-path="adding-parameters.html"><a href="adding-parameters.html#exercise-building-table-2"><i class="fa fa-check"></i>Exercise: Building Table 2</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="14" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>14</b> Config Files</a><ul>
@@ -265,18 +260,43 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="config-files.html"><a href="config-files.html#exercise-using-config-files"><i class="fa fa-check"></i>Exercise: Using Config Files</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="15" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>15</b> Subworkflows: Divide and Conquer</a><ul>
-<li class="chapter" data-level="15.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>15.1</b> Subworkflow Basics</a></li>
-<li class="chapter" data-level="15.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>15.2</b> Subworkflow dependencies</a><ul>
+<li class="chapter" data-level="15" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>15</b> Self Documenting Help</a><ul>
+<li class="chapter" data-level="15.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>15.1</b> Our Commenting Syle</a></li>
+<li class="chapter" data-level="15.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>15.2</b> Adding Further Comments</a><ul>
+<li class="chapter" data-level="" data-path="self-documenting-help.html"><a href="self-documenting-help.html#exercise-adding-comments"><i class="fa fa-check"></i>Exercise: Adding Comments</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>15.3</b> A <code>help</code> Rule</a><ul>
+<li><a href="self-documenting-help.html#exercise-saving-help-output-to-file">Exercise: Saving <code>help</code> output to file</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>16</b> Subworkflows: Divide and Conquer</a><ul>
+<li class="chapter" data-level="16.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>16.1</b> Subworkflow Basics</a></li>
+<li class="chapter" data-level="16.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>16.2</b> Subworkflow dependencies</a><ul>
 <li class="chapter" data-level="" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#exercise-more-subworkflows"><i class="fa fa-check"></i>Exercise: More Subworkflows</a></li>
 <li><a href="subworkflows-divide-and-conquer.html#guided-exercise-help-rules-with-subworkflows">Guided Exercise: <code>help</code> rules with subworkflows</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="part-iii.html"><a href="part-iii.html"><i class="fa fa-check"></i>PART III</a></li>
-<li class="chapter" data-level="16" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>16</b> Reproducible Articles with Rmd</a></li>
-<li class="chapter" data-level="17" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>17</b> Reproducible Slides with Rmd</a></li>
-<li class="chapter" data-level="18" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>18</b> Package Dependencies with Packrat</a></li>
-<li class="chapter" data-level="19" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>19</b> Containers</a></li>
+<li class="chapter" data-level="" data-path="part-iv-putting-workflows-in-a-box.html"><a href="part-iv-putting-workflows-in-a-box.html"><i class="fa fa-check"></i>PART IV - Putting Workflows in a Box</a></li>
+<li class="chapter" data-level="17" data-path="package-dependencies-with-renv.html"><a href="package-dependencies-with-renv.html"><i class="fa fa-check"></i><b>17</b> Package Dependencies with <code>renv</code></a></li>
+<li class="chapter" data-level="18" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>18</b> Containers</a></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="installation-guide.html"><a href="installation-guide.html"><i class="fa fa-check"></i><b>A</b> Installation Guide</a><ul>
+<li class="chapter" data-level="A.1" data-path="installation-guide.html"><a href="installation-guide.html#windows"><i class="fa fa-check"></i><b>A.1</b> Windows</a><ul>
+<li class="chapter" data-level="A.1.1" data-path="installation-guide.html"><a href="installation-guide.html#bash-terminal"><i class="fa fa-check"></i><b>A.1.1</b> Bash terminal</a></li>
+<li class="chapter" data-level="A.1.2" data-path="installation-guide.html"><a href="installation-guide.html#python"><i class="fa fa-check"></i><b>A.1.2</b> Python</a></li>
+<li class="chapter" data-level="" data-path="installation-guide.html"><a href="installation-guide.html#installing-snakemake"><i class="fa fa-check"></i>Installing Snakemake</a></li>
+</ul></li>
+<li class="chapter" data-level="A.2" data-path="installation-guide.html"><a href="installation-guide.html#mac"><i class="fa fa-check"></i><b>A.2</b> Mac</a><ul>
+<li class="chapter" data-level="A.2.1" data-path="installation-guide.html"><a href="installation-guide.html#bash-terminal-1"><i class="fa fa-check"></i><b>A.2.1</b> Bash terminal</a></li>
+<li class="chapter" data-level="A.2.2" data-path="installation-guide.html"><a href="installation-guide.html#python-1"><i class="fa fa-check"></i><b>A.2.2</b> Python</a></li>
+<li class="chapter" data-level="" data-path="installation-guide.html"><a href="installation-guide.html#installing-snakemake-1"><i class="fa fa-check"></i>Installing Snakemake</a></li>
+</ul></li>
+<li class="chapter" data-level="A.3" data-path="installation-guide.html"><a href="installation-guide.html#linux-ubuntu"><i class="fa fa-check"></i><b>A.3</b> Linux / Ubuntu</a><ul>
+<li class="chapter" data-level="A.3.1" data-path="installation-guide.html"><a href="installation-guide.html#bash-terminal-2"><i class="fa fa-check"></i><b>A.3.1</b> Bash terminal</a></li>
+<li class="chapter" data-level="A.3.2" data-path="installation-guide.html"><a href="installation-guide.html#python-2"><i class="fa fa-check"></i><b>A.3.2</b> Python</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -316,9 +336,9 @@ In the remainder of this tutorial we will fill the file together with a pipeline
 <h2><span class="header-section-number">3.1</span> Snakefile – Writing Our First Rule</h2>
 <p>By law any software tutorial is required to start with a hello world example, so we’ll follow court and do the same.
 To do so, we open <code>Snakefile</code> in a text editor of our choice and write the following text into the file:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="initial-steps-with-snakemake.html#cb25-1"></a><span class="ex">rule</span> hello_world:</span>
-<span id="cb25-2"><a href="initial-steps-with-snakemake.html#cb25-2"></a>  <span class="ex">shell</span>:</span>
-<span id="cb25-3"><a href="initial-steps-with-snakemake.html#cb25-3"></a>    <span class="st">&#39;echo &quot;Hello World!&quot;&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="initial-steps-with-snakemake.html#cb19-1"></a><span class="ex">rule</span> hello_world:</span>
+<span id="cb19-2"><a href="initial-steps-with-snakemake.html#cb19-2"></a>  <span class="ex">shell</span>:</span>
+<span id="cb19-3"><a href="initial-steps-with-snakemake.html#cb19-3"></a>    <span class="st">&#39;echo &quot;Hello World!&quot;&#39;</span></span></code></pre></div>
 <p>Snakemake instructions are written in Python 3 with a few extra objects and methods provided by Snakemake.
 The structure of our rule will look very familiar to anybody who has written Python functions before.
 This implies that indentation is interpreted by the language and that divinations from correct indentation will result in errors.
@@ -331,7 +351,7 @@ The part following <code>shell</code>: tells Snakemake that this rule executes a
 By default Snakemake will execute the first rule it encounters in a <code>Snakefile</code>.
 As our file only contains a single rule, it will execute the <code>hello_world</code> rule and print <code>Hello World!</code> to the console together with some additional information about the execution of the work flow.
 When a file contains more than a single rule, we often want to be more explicit and tell <code>Snakemake</code> to execute a particular rule like so:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="initial-steps-with-snakemake.html#cb26-1"></a>$ <span class="ex">snakemake</span> --cores 1 name_of_rule</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="initial-steps-with-snakemake.html#cb20-1"></a>$ <span class="ex">snakemake</span> --cores 1 name_of_rule</span></code></pre></div>
 <p>In our case <code>snakemake --cores 1 hello_world</code> will give the same output as the last execution.</p>
 <p>At this point you are probably correctly guessing that the long option <code>--cores #n</code> tell Snakemake how many CPU cores to use when executing a workflow.
 Running workflows in parallel can speed up complex workflows substantially.
@@ -351,23 +371,23 @@ In the next chapter, we will then add <code>gen_reg_vars.R</code>, which creates
 <p>We can run any R script with the <code>Rscript</code> shell command.
 The command expects the path to an <code>.R</code> script as the first argument.
 Simple R scripts that do not require additional options can be just run as such:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="initial-steps-with-snakemake.html#cb28-1"></a><span class="ex">Rscript</span> PATH/TO/SCRIPT.R</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="initial-steps-with-snakemake.html#cb22-1"></a><span class="ex">Rscript</span> PATH/TO/SCRIPT.R</span></code></pre></div>
 <p>Most scripts in this project have been written to require additional parameters.
 We can run any R script that requires parameters with the <code>--help</code> option to see a list of arguments.</p>
 <p>Let us apply this and execute the <code>rename_variables.R</code> script with the <code>--help</code> flag:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="initial-steps-with-snakemake.html#cb29-1"></a>$ <span class="ex">Rscript</span> src/data-management/rename_variables.R --help</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="initial-steps-with-snakemake.html#cb23-1"></a>$ <span class="ex">Rscript</span> src/data-management/rename_variables.R --help</span></code></pre></div>
 <p>This prints the following output to the console:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="initial-steps-with-snakemake.html#cb30-1"></a><span class="ex">Usage</span>: src/data-management/rename_variables.R [options]</span>
-<span id="cb30-2"><a href="initial-steps-with-snakemake.html#cb30-2"></a></span>
-<span id="cb30-3"><a href="initial-steps-with-snakemake.html#cb30-3"></a><span class="ex">Options</span>:</span>
-<span id="cb30-4"><a href="initial-steps-with-snakemake.html#cb30-4"></a>    <span class="ex">-d</span> CHARACTER, --data=CHARACTER</span>
-<span id="cb30-5"><a href="initial-steps-with-snakemake.html#cb30-5"></a>        <span class="ex">stata</span> dataset file name</span>
-<span id="cb30-6"><a href="initial-steps-with-snakemake.html#cb30-6"></a></span>
-<span id="cb30-7"><a href="initial-steps-with-snakemake.html#cb30-7"></a>    <span class="ex">-o</span> CHARACTER, --out=CHARACTER</span>
-<span id="cb30-8"><a href="initial-steps-with-snakemake.html#cb30-8"></a>        <span class="ex">output</span> file name [default = out.csv]</span>
-<span id="cb30-9"><a href="initial-steps-with-snakemake.html#cb30-9"></a></span>
-<span id="cb30-10"><a href="initial-steps-with-snakemake.html#cb30-10"></a>    <span class="ex">-h</span>, --help</span>
-<span id="cb30-11"><a href="initial-steps-with-snakemake.html#cb30-11"></a>        <span class="ex">Show</span> this help message and exit</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="initial-steps-with-snakemake.html#cb24-1"></a><span class="ex">Usage</span>: src/data-management/rename_variables.R [options]</span>
+<span id="cb24-2"><a href="initial-steps-with-snakemake.html#cb24-2"></a></span>
+<span id="cb24-3"><a href="initial-steps-with-snakemake.html#cb24-3"></a><span class="ex">Options</span>:</span>
+<span id="cb24-4"><a href="initial-steps-with-snakemake.html#cb24-4"></a>    <span class="ex">-d</span> CHARACTER, --data=CHARACTER</span>
+<span id="cb24-5"><a href="initial-steps-with-snakemake.html#cb24-5"></a>        <span class="ex">stata</span> dataset file name</span>
+<span id="cb24-6"><a href="initial-steps-with-snakemake.html#cb24-6"></a></span>
+<span id="cb24-7"><a href="initial-steps-with-snakemake.html#cb24-7"></a>    <span class="ex">-o</span> CHARACTER, --out=CHARACTER</span>
+<span id="cb24-8"><a href="initial-steps-with-snakemake.html#cb24-8"></a>        <span class="ex">output</span> file name [default = out.csv]</span>
+<span id="cb24-9"><a href="initial-steps-with-snakemake.html#cb24-9"></a></span>
+<span id="cb24-10"><a href="initial-steps-with-snakemake.html#cb24-10"></a>    <span class="ex">-h</span>, --help</span>
+<span id="cb24-11"><a href="initial-steps-with-snakemake.html#cb24-11"></a>        <span class="ex">Show</span> this help message and exit</span></code></pre></div>
 <p>This suggests the script expects</p>
 <ol style="list-style-type: decimal">
 <li>a <code>--data</code> option which defines the filepath to a stata data set. This is the input dataset which the script transforms.</li>
@@ -382,15 +402,15 @@ In a research workflow we typically want to interact with <strong>input</strong>
 A snakemake rule can be thought of as the recipe that combines the inputs to produce the outputs.</p>
 <p><code>Snakemake</code> expects these components to be provided in a particular way so that it knows what to do with the information we provide.
 We are going to specify rules in the following format:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb31-1"><a href="initial-steps-with-snakemake.html#cb31-1"></a><span class="ex">rule</span> rule_name:</span>
-<span id="cb31-2"><a href="initial-steps-with-snakemake.html#cb31-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb31-3"><a href="initial-steps-with-snakemake.html#cb31-3"></a>        <span class="ex">input_name1</span> = <span class="st">&quot;PATH/TO/input_one&quot;</span>,</span>
-<span id="cb31-4"><a href="initial-steps-with-snakemake.html#cb31-4"></a>        <span class="ex">input_name2</span> = <span class="st">&quot;PATH/TO/input_two&quot;</span></span>
-<span id="cb31-5"><a href="initial-steps-with-snakemake.html#cb31-5"></a>    <span class="ex">output</span>:</span>
-<span id="cb31-6"><a href="initial-steps-with-snakemake.html#cb31-6"></a>        <span class="ex">output_name1</span> = <span class="st">&quot;PATH/TO/SAVE/output_one&quot;</span>,</span>
-<span id="cb31-7"><a href="initial-steps-with-snakemake.html#cb31-7"></a>        <span class="ex">output_name2</span> = <span class="st">&quot;PATH/TO/SAVE/output_two&quot;</span></span>
-<span id="cb31-8"><a href="initial-steps-with-snakemake.html#cb31-8"></a>    <span class="ex">shell</span>:</span>
-<span id="cb31-9"><a href="initial-steps-with-snakemake.html#cb31-9"></a>        <span class="st">&quot;HOW TO MIX IT ALL TOGETHER&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="initial-steps-with-snakemake.html#cb25-1"></a><span class="ex">rule</span> rule_name:</span>
+<span id="cb25-2"><a href="initial-steps-with-snakemake.html#cb25-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb25-3"><a href="initial-steps-with-snakemake.html#cb25-3"></a>        <span class="ex">input_name1</span> = <span class="st">&quot;PATH/TO/input_one&quot;</span>,</span>
+<span id="cb25-4"><a href="initial-steps-with-snakemake.html#cb25-4"></a>        <span class="ex">input_name2</span> = <span class="st">&quot;PATH/TO/input_two&quot;</span></span>
+<span id="cb25-5"><a href="initial-steps-with-snakemake.html#cb25-5"></a>    <span class="ex">output</span>:</span>
+<span id="cb25-6"><a href="initial-steps-with-snakemake.html#cb25-6"></a>        <span class="ex">output_name1</span> = <span class="st">&quot;PATH/TO/SAVE/output_one&quot;</span>,</span>
+<span id="cb25-7"><a href="initial-steps-with-snakemake.html#cb25-7"></a>        <span class="ex">output_name2</span> = <span class="st">&quot;PATH/TO/SAVE/output_two&quot;</span></span>
+<span id="cb25-8"><a href="initial-steps-with-snakemake.html#cb25-8"></a>    <span class="ex">shell</span>:</span>
+<span id="cb25-9"><a href="initial-steps-with-snakemake.html#cb25-9"></a>        <span class="st">&quot;HOW TO MIX IT ALL TOGETHER&quot;</span></span></code></pre></div>
 <p>We can have as many inputs and outputs as the rule needs to function.
 Each input and each output are given names, for example <code>input_name1</code> which take the value to the file path and name of the file.
 It is important to wrap each of these paths into quotations, and to separate each of the multiple inputs and outputs with a comma.</p>
@@ -403,29 +423,29 @@ Let us also rename the rule to <code>rename_vars</code>.</p>
 <p>The rule will use the <code>rename_variables.R</code> script as a first input.
 Let us therefore rename the first input into <code>script</code> and replace the right hand side with the path to the <code>rename_variables.R</code> script which we have used above when we printed the script’s help function.</p>
 <p>Our <code>rename_vars</code> rule should now look something like this:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a href="initial-steps-with-snakemake.html#cb32-1"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb32-2"><a href="initial-steps-with-snakemake.html#cb32-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb32-3"><a href="initial-steps-with-snakemake.html#cb32-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb32-4"><a href="initial-steps-with-snakemake.html#cb32-4"></a>        <span class="ex">input_name2</span> = <span class="st">&quot;PATH/TO/input_two&quot;</span></span>
-<span id="cb32-5"><a href="initial-steps-with-snakemake.html#cb32-5"></a>    <span class="ex">output</span>:</span>
-<span id="cb32-6"><a href="initial-steps-with-snakemake.html#cb32-6"></a>        <span class="ex">output_name1</span> = <span class="st">&quot;PATH/TO/SAVE/output_one&quot;</span>,</span>
-<span id="cb32-7"><a href="initial-steps-with-snakemake.html#cb32-7"></a>        <span class="ex">output_name2</span> = <span class="st">&quot;PATH/TO/SAVE/output_two&quot;</span></span>
-<span id="cb32-8"><a href="initial-steps-with-snakemake.html#cb32-8"></a>    <span class="ex">shell</span>:</span>
-<span id="cb32-9"><a href="initial-steps-with-snakemake.html#cb32-9"></a>        <span class="st">&quot;HOW TO MIX IT ALL TOGETHER&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="initial-steps-with-snakemake.html#cb26-1"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb26-2"><a href="initial-steps-with-snakemake.html#cb26-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb26-3"><a href="initial-steps-with-snakemake.html#cb26-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb26-4"><a href="initial-steps-with-snakemake.html#cb26-4"></a>        <span class="ex">input_name2</span> = <span class="st">&quot;PATH/TO/input_two&quot;</span></span>
+<span id="cb26-5"><a href="initial-steps-with-snakemake.html#cb26-5"></a>    <span class="ex">output</span>:</span>
+<span id="cb26-6"><a href="initial-steps-with-snakemake.html#cb26-6"></a>        <span class="ex">output_name1</span> = <span class="st">&quot;PATH/TO/SAVE/output_one&quot;</span>,</span>
+<span id="cb26-7"><a href="initial-steps-with-snakemake.html#cb26-7"></a>        <span class="ex">output_name2</span> = <span class="st">&quot;PATH/TO/SAVE/output_two&quot;</span></span>
+<span id="cb26-8"><a href="initial-steps-with-snakemake.html#cb26-8"></a>    <span class="ex">shell</span>:</span>
+<span id="cb26-9"><a href="initial-steps-with-snakemake.html#cb26-9"></a>        <span class="st">&quot;HOW TO MIX IT ALL TOGETHER&quot;</span></span></code></pre></div>
 <p>Next, we want to add any additional inputs and also specify any outputs that the file produces.
 From the <code>help</code> output we know the script expects a stata dataset as an additional input which we can find in the <code>src/data/</code> folder.
 We rename the second input into <code>data</code> and replace the right hand side with the path to <span class="citation">Mankiw, Romer, and Weil (<a href="#ref-mrw" role="doc-biblioref">1992</a>)</span>’s stata dataset.
 Finally, we replace the first output name with <code>data</code> and define an appropriate output file path as the right hand side.
 This is the location our transformed data will be saved to.</p>
 <p>After these steps, our rule should look something like this:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a href="initial-steps-with-snakemake.html#cb33-1"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb33-2"><a href="initial-steps-with-snakemake.html#cb33-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb33-3"><a href="initial-steps-with-snakemake.html#cb33-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb33-4"><a href="initial-steps-with-snakemake.html#cb33-4"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
-<span id="cb33-5"><a href="initial-steps-with-snakemake.html#cb33-5"></a>    <span class="ex">output</span>:</span>
-<span id="cb33-6"><a href="initial-steps-with-snakemake.html#cb33-6"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb33-7"><a href="initial-steps-with-snakemake.html#cb33-7"></a>    <span class="ex">shell</span>:</span>
-<span id="cb33-8"><a href="initial-steps-with-snakemake.html#cb33-8"></a>        <span class="st">&quot;HOW TO MIX IT ALL TOGETHER&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="initial-steps-with-snakemake.html#cb27-1"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb27-2"><a href="initial-steps-with-snakemake.html#cb27-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb27-3"><a href="initial-steps-with-snakemake.html#cb27-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb27-4"><a href="initial-steps-with-snakemake.html#cb27-4"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb27-5"><a href="initial-steps-with-snakemake.html#cb27-5"></a>    <span class="ex">output</span>:</span>
+<span id="cb27-6"><a href="initial-steps-with-snakemake.html#cb27-6"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb27-7"><a href="initial-steps-with-snakemake.html#cb27-7"></a>    <span class="ex">shell</span>:</span>
+<span id="cb27-8"><a href="initial-steps-with-snakemake.html#cb27-8"></a>        <span class="st">&quot;HOW TO MIX IT ALL TOGETHER&quot;</span></span></code></pre></div>
 <p>Lastly, we need to edit the <code>shell</code> command to combine inputs and output.
 We know that we can execute the R script via the <code>Rscript</code> command with the path to the script as the first argument.
 Gladly, snakemake does not require it to write the full path out again.
@@ -433,27 +453,27 @@ We can instead refer to the input’s and output’s which we have defined via t
 Executing an R script can therefore be done via <code>Rscript {input.script}</code>.
 The dataset and the output location can be passed to our script as <code>--data</code> and <code>--out</code> arguments and we will pass it the input and output options which we have defined in our rule.</p>
 <p>Putting it all together will give us the following rule:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb34-1"><a href="initial-steps-with-snakemake.html#cb34-1"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb34-2"><a href="initial-steps-with-snakemake.html#cb34-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb34-3"><a href="initial-steps-with-snakemake.html#cb34-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb34-4"><a href="initial-steps-with-snakemake.html#cb34-4"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
-<span id="cb34-5"><a href="initial-steps-with-snakemake.html#cb34-5"></a>    <span class="ex">output</span>:</span>
-<span id="cb34-6"><a href="initial-steps-with-snakemake.html#cb34-6"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb34-7"><a href="initial-steps-with-snakemake.html#cb34-7"></a>    <span class="ex">shell</span>:</span>
-<span id="cb34-8"><a href="initial-steps-with-snakemake.html#cb34-8"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb34-9"><a href="initial-steps-with-snakemake.html#cb34-9"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb34-10"><a href="initial-steps-with-snakemake.html#cb34-10"></a><span class="st">            --out {output.data}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="initial-steps-with-snakemake.html#cb28-1"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb28-2"><a href="initial-steps-with-snakemake.html#cb28-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb28-3"><a href="initial-steps-with-snakemake.html#cb28-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb28-4"><a href="initial-steps-with-snakemake.html#cb28-4"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb28-5"><a href="initial-steps-with-snakemake.html#cb28-5"></a>    <span class="ex">output</span>:</span>
+<span id="cb28-6"><a href="initial-steps-with-snakemake.html#cb28-6"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb28-7"><a href="initial-steps-with-snakemake.html#cb28-7"></a>    <span class="ex">shell</span>:</span>
+<span id="cb28-8"><a href="initial-steps-with-snakemake.html#cb28-8"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb28-9"><a href="initial-steps-with-snakemake.html#cb28-9"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb28-10"><a href="initial-steps-with-snakemake.html#cb28-10"></a><span class="st">            --out {output.data}&quot;</span></span></code></pre></div>
 <p>Note that <code>\</code> in the shell command allows us to write the command over several lines for better readability.
 They can be omitted when we write the command in a single line.</p>
 <p>After saving we can execute our newly rule via:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb35-1"><a href="initial-steps-with-snakemake.html#cb35-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="initial-steps-with-snakemake.html#cb29-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
 <p>Snakemake will give us some console output informing us about the execution of our rule.
 A successful execution will be displayed through green text ending in</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a href="initial-steps-with-snakemake.html#cb36-1"></a><span class="ex">TODO</span>: Make green</span>
-<span id="cb36-2"><a href="initial-steps-with-snakemake.html#cb36-2"></a><span class="ex">Finished</span> job 0.</span>
-<span id="cb36-3"><a href="initial-steps-with-snakemake.html#cb36-3"></a><span class="ex">1</span> of 1 steps (100%) <span class="kw">done</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="initial-steps-with-snakemake.html#cb30-1"></a><span class="ex">TODO</span>: Make green</span>
+<span id="cb30-2"><a href="initial-steps-with-snakemake.html#cb30-2"></a><span class="ex">Finished</span> job 0.</span>
+<span id="cb30-3"><a href="initial-steps-with-snakemake.html#cb30-3"></a><span class="ex">1</span> of 1 steps (100%) <span class="kw">done</span></span></code></pre></div>
 <p>If the execution was successful, we can look into our output directory to see if anything has happened:</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb37-1"><a href="initial-steps-with-snakemake.html#cb37-1"></a>$ <span class="fu">ls</span> out/data/</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb31-1"><a href="initial-steps-with-snakemake.html#cb31-1"></a>$ <span class="fu">ls</span> out/data/</span></code></pre></div>
 <p>which yields</p>
 <pre class="out"><code>mrw_renamed.csv</code></pre>
 <p>Our file has been created as we expected.</p>
@@ -463,12 +483,12 @@ A successful execution will be displayed through green text ending in</p>
 <h2><span class="header-section-number">3.4</span> Redundant Executions – (Don’t) Run a Rule Repeatedly</h2>
 <p>What would happen if the run the rule a second time after it has been successfully completed before?
 Let us execute the <code>rename_vars</code> rule a second time:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb39-1"><a href="initial-steps-with-snakemake.html#cb39-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a href="initial-steps-with-snakemake.html#cb33-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
 <p>We see the following output:</p>
 <pre class="out"><code>Building DAG of jobs...
 Nothing to be done.</code></pre>
 <p>To understand the status of the project as seen by Snakemake, we can use the <strong>summary</strong> option as such:</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb41-1"><a href="initial-steps-with-snakemake.html#cb41-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb35-1"><a href="initial-steps-with-snakemake.html#cb35-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
 <p>In our case the output following output is printed to the console:</p>
 <pre class="out"><code>Building DAG of jobs...
 output_file                       date                    rule      version  log-file(s)    status  plan
@@ -477,9 +497,9 @@ out/data/mrw_renamed.csv    Thu Jan 10 20:31:08 2019    rename_vars    -        
 <p>Snakemake tells us the status of the output file of the <code>rename_vars</code> rule is <code>ok</code> and that it plans not to update the file.</p>
 <p>Now, let us what happens if we update one of the input files.
 The following command updates the time the <code>rename_variables.R</code> was last edited without changing the actual content of the file:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb43-1"><a href="initial-steps-with-snakemake.html#cb43-1"></a>$ <span class="fu">touch</span> src/data-management/rename_variables.R</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb37-1"><a href="initial-steps-with-snakemake.html#cb37-1"></a>$ <span class="fu">touch</span> src/data-management/rename_variables.R</span></code></pre></div>
 <p>Running the summary command again</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb44-1"><a href="initial-steps-with-snakemake.html#cb44-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb38-1"><a href="initial-steps-with-snakemake.html#cb38-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
 <p>yields the following output:</p>
 <pre class="out"><code>Building DAG of jobs...
 output_file                        date                    rule     version log-file(s)      status                plan
@@ -487,7 +507,7 @@ out/data/mrw_renamed.csv    Thu Jan 10 20:31:08 2019    rename_vars    -        
 <p>Snakemake has detected that one input file is more recent than the output file.
 It therefore will execute the rule when asked to do so.</p>
 <p>Running the rule again via</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb46-1"><a href="initial-steps-with-snakemake.html#cb46-1"></a><span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb40-1"><a href="initial-steps-with-snakemake.html#cb40-1"></a><span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
 <p>will execute the rule.</p>
 <p>We see one mayor advantage of Snakemake over simpler and very common alternatives to execute projects.
 Often researchers chain do files together in a linear and static way.
@@ -499,7 +519,7 @@ We will explain later in this tutorial how to write an <code>all</code> rule whi
 
 </div>
 </div>
-<h3> Containers</h3>
+<h3><span class="header-section-number">B</span> References</h3>
 <div id="refs" class="references">
 <div id="ref-mrw">
 <p>Mankiw, N. Gregory, David Romer, and David N. Weil. 1992. “A Contribution to the Empirics of Economic Growth*.” <em>The Quarterly Journal of Economics</em> 107 (2): 407–37. <a href="https://doi.org/10.2307/2118477">https://doi.org/10.2307/2118477</a>.</p>
@@ -510,7 +530,7 @@ We will explain later in this tutorial how to write an <code>all</code> rule whi
           </div>
         </div>
       </div>
-<a href="project-organization.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="part-i-basic-snakemake-workflows.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="working-with-multiple-rules.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
@@ -542,7 +562,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/03-inital_steps.Rmd",
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/11-initial_steps.Rmd",
 "text": "Edit"
 },
 "history": {

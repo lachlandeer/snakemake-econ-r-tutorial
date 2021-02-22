@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 11 Adding Parameters | Reproducible Data Analytic Workflows with Snakemake and R</title>
+  <title>Chapter 13 Adding Parameters | Reproducible Data Analytic Workflows with Snakemake and R</title>
   <meta name="description" content="In progress" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 11 Adding Parameters | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta property="og:title" content="Chapter 13 Adding Parameters | Reproducible Data Analytic Workflows with Snakemake and R" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="lachlandeer/snakemake-econ-r-tutorial" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 11 Adding Parameters | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta name="twitter:title" content="Chapter 13 Adding Parameters | Reproducible Data Analytic Workflows with Snakemake and R" />
   
   <meta name="twitter:description" content="In progress" />
   
@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="one-rule-to-rule-them-all.html"/>
-<link rel="next" href="part-ii.html"/>
+<link rel="prev" href="logging-output-and-errors.html"/>
+<link rel="next" href="config-files.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -151,7 +151,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#citation"><i class="fa fa-check"></i>Citation</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="part-i-preliminaries.html"><a href="part-i-preliminaries.html"><i class="fa fa-check"></i>PART I - Preliminaries</a></li>
+<li class="chapter" data-level="" data-path="part-0-preliminaries.html"><a href="part-0-preliminaries.html"><i class="fa fa-check"></i>PART 0 - Preliminaries</a></li>
 <li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Motivating &amp; Rationale</a><ul>
 <li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#a-case-for-reproducibility"><i class="fa fa-check"></i><b>1.1</b> A Case for Reproducibility</a><ul>
 <li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#how-far-to-go-in-the-quest-for-reproducibility"><i class="fa fa-check"></i><b>1.1.1</b> How far to go in the quest for reproducibility?</a></li>
@@ -172,6 +172,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="2.4" data-path="project-organization.html"><a href="project-organization.html#project-structure-iii-separating-input-parameters-from-code"><i class="fa fa-check"></i><b>2.4</b> Project Structure III: Separating Input Parameters from Code</a></li>
 </ul></li>
+<li class="chapter" data-level="" data-path="part-i-basic-snakemake-workflows.html"><a href="part-i-basic-snakemake-workflows.html"><i class="fa fa-check"></i>PART I - Basic Snakemake Workflows</a></li>
 <li class="chapter" data-level="3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html"><i class="fa fa-check"></i><b>3</b> Initial Steps with Snakemake</a><ul>
 <li class="chapter" data-level="3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#snakefile-writing-our-first-rule"><i class="fa fa-check"></i><b>3.1</b> Snakefile – Writing Our First Rule</a></li>
 <li class="chapter" data-level="3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-snakemake-command-executing-a-rule"><i class="fa fa-check"></i><b>3.2</b> The Snakemake Command – Executing a Rule</a></li>
@@ -201,6 +202,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="target-rules.html"><a href="target-rules.html#target-rules-can-do-more-for-us"><i class="fa fa-check"></i><b>5.4</b> Target rules can do more for us</a></li>
 </ul></li>
+<li class="chapter" data-level="" data-path="part-ii-minimizing-repetition-maximizing-generalizability.html"><a href="part-ii-minimizing-repetition-maximizing-generalizability.html"><i class="fa fa-check"></i>PART II - Minimizing Repetition, Maximizing Generalizability</a></li>
 <li class="chapter" data-level="6" data-path="wildcards.html"><a href="wildcards.html"><i class="fa fa-check"></i><b>6</b> Wildcards</a><ul>
 <li class="chapter" data-level="6.1" data-path="wildcards.html"><a href="wildcards.html#the-starting-point-of-our-snakefile"><i class="fa fa-check"></i><b>6.1</b> The starting point of our Snakefile</a></li>
 <li class="chapter" data-level="6.2" data-path="wildcards.html"><a href="wildcards.html#using-wildcards-to-tidy-up-our-code"><i class="fa fa-check"></i><b>6.2</b> Using wildcards to tidy up our code</a></li>
@@ -224,6 +226,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="8.4.1" data-path="automating-list-construction-for-wildcard-expansion.html"><a href="automating-list-construction-for-wildcard-expansion.html#solution-5"><i class="fa fa-check"></i><b>8.4.1</b> Solution</a></li>
 </ul></li>
 </ul></li>
+<li class="chapter" data-level="" data-path="part-iii-bringing-many-outputs-together.html"><a href="part-iii-bringing-many-outputs-together.html"><i class="fa fa-check"></i>PART III - Bringing Many Outputs Together</a></li>
 <li class="chapter" data-level="9" data-path="make-tables.html"><a href="make-tables.html"><i class="fa fa-check"></i><b>9</b> Make Tables</a><ul>
 <li class="chapter" data-level="9.1" data-path="make-tables.html"><a href="make-tables.html#the-state-of-the-snakefile"><i class="fa fa-check"></i><b>9.1</b> The State of the Snakefile</a></li>
 <li class="chapter" data-level="9.2" data-path="make-tables.html"><a href="make-tables.html#building-a-single-table"><i class="fa fa-check"></i><b>9.2</b> Building a single table</a></li>
@@ -237,26 +240,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10.2" data-path="one-rule-to-rule-them-all.html"><a href="one-rule-to-rule-them-all.html#creating-an-all-target-rule"><i class="fa fa-check"></i><b>10.2</b> Creating an <code>all</code> target rule</a></li>
 <li class="chapter" data-level="10.3" data-path="one-rule-to-rule-them-all.html"><a href="one-rule-to-rule-them-all.html#concluding-remarks"><i class="fa fa-check"></i><b>10.3</b> Concluding Remarks</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>11</b> Adding Parameters</a><ul>
-<li class="chapter" data-level="11.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>11.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
-<li class="chapter" data-level="11.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>11.2</b> Creating a Rule with <code>params</code></a><ul>
-<li class="chapter" data-level="" data-path="adding-parameters.html"><a href="adding-parameters.html#exercise-building-table-2"><i class="fa fa-check"></i>Exercise: Building Table 2</a></li>
-</ul></li>
-</ul></li>
-<li class="chapter" data-level="" data-path="part-ii.html"><a href="part-ii.html"><i class="fa fa-check"></i>PART II</a></li>
+<li class="chapter" data-level="11" data-path="adding-papers-and-slides-to-a-snakemake-workflow.html"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html"><i class="fa fa-check"></i><b>11</b> Adding Papers and Slides to a Snakemake Workflow</a></li>
+<li class="chapter" data-level="" data-path="part-iv-decorating-snakemake-workflows.html"><a href="part-iv-decorating-snakemake-workflows.html"><i class="fa fa-check"></i>PART IV - Decorating Snakemake Workflows</a></li>
 <li class="chapter" data-level="12" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html"><i class="fa fa-check"></i><b>12</b> Logging Output and Errors</a><ul>
 <li class="chapter" data-level="12.1" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output"><i class="fa fa-check"></i><b>12.1</b> Logging Output</a></li>
 <li class="chapter" data-level="12.2" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#logging-output-and-errors-in-one-file"><i class="fa fa-check"></i><b>12.2</b> Logging Output and Errors in One File</a><ul>
 <li class="chapter" data-level="" data-path="logging-output-and-errors.html"><a href="logging-output-and-errors.html#exercise-logging-all-r-scripts"><i class="fa fa-check"></i>Exercise: Logging all R Scripts</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>13</b> Self Documenting Help</a><ul>
-<li class="chapter" data-level="13.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>13.1</b> Our Commenting Syle</a></li>
-<li class="chapter" data-level="13.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>13.2</b> Adding Further Comments</a><ul>
-<li class="chapter" data-level="" data-path="self-documenting-help.html"><a href="self-documenting-help.html#exercise-adding-comments"><i class="fa fa-check"></i>Exercise: Adding Comments</a></li>
-</ul></li>
-<li class="chapter" data-level="13.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>13.3</b> A <code>help</code> Rule</a><ul>
-<li><a href="self-documenting-help.html#exercise-saving-help-output-to-file">Exercise: Saving <code>help</code> output to file</a></li>
+<li class="chapter" data-level="13" data-path="adding-parameters.html"><a href="adding-parameters.html"><i class="fa fa-check"></i><b>13</b> Adding Parameters</a><ul>
+<li class="chapter" data-level="13.1" data-path="adding-parameters.html"><a href="adding-parameters.html#motivating-example-constructing-a-regression-table-from-ols-results"><i class="fa fa-check"></i><b>13.1</b> Motivating Example: Constructing a Regression Table from OLS Results</a></li>
+<li class="chapter" data-level="13.2" data-path="adding-parameters.html"><a href="adding-parameters.html#creating-a-rule-with-params"><i class="fa fa-check"></i><b>13.2</b> Creating a Rule with <code>params</code></a><ul>
+<li class="chapter" data-level="" data-path="adding-parameters.html"><a href="adding-parameters.html#exercise-building-table-2"><i class="fa fa-check"></i>Exercise: Building Table 2</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="14" data-path="config-files.html"><a href="config-files.html"><i class="fa fa-check"></i><b>14</b> Config Files</a><ul>
@@ -265,18 +260,43 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="config-files.html"><a href="config-files.html#exercise-using-config-files"><i class="fa fa-check"></i>Exercise: Using Config Files</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="15" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>15</b> Subworkflows: Divide and Conquer</a><ul>
-<li class="chapter" data-level="15.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>15.1</b> Subworkflow Basics</a></li>
-<li class="chapter" data-level="15.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>15.2</b> Subworkflow dependencies</a><ul>
+<li class="chapter" data-level="15" data-path="self-documenting-help.html"><a href="self-documenting-help.html"><i class="fa fa-check"></i><b>15</b> Self Documenting Help</a><ul>
+<li class="chapter" data-level="15.1" data-path="self-documenting-help.html"><a href="self-documenting-help.html#our-commenting-syle"><i class="fa fa-check"></i><b>15.1</b> Our Commenting Syle</a></li>
+<li class="chapter" data-level="15.2" data-path="self-documenting-help.html"><a href="self-documenting-help.html#adding-further-comments"><i class="fa fa-check"></i><b>15.2</b> Adding Further Comments</a><ul>
+<li class="chapter" data-level="" data-path="self-documenting-help.html"><a href="self-documenting-help.html#exercise-adding-comments"><i class="fa fa-check"></i>Exercise: Adding Comments</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="self-documenting-help.html"><a href="self-documenting-help.html#a-help-rule"><i class="fa fa-check"></i><b>15.3</b> A <code>help</code> Rule</a><ul>
+<li><a href="self-documenting-help.html#exercise-saving-help-output-to-file">Exercise: Saving <code>help</code> output to file</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html"><i class="fa fa-check"></i><b>16</b> Subworkflows: Divide and Conquer</a><ul>
+<li class="chapter" data-level="16.1" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-basics"><i class="fa fa-check"></i><b>16.1</b> Subworkflow Basics</a></li>
+<li class="chapter" data-level="16.2" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#subworkflow-dependencies"><i class="fa fa-check"></i><b>16.2</b> Subworkflow dependencies</a><ul>
 <li class="chapter" data-level="" data-path="subworkflows-divide-and-conquer.html"><a href="subworkflows-divide-and-conquer.html#exercise-more-subworkflows"><i class="fa fa-check"></i>Exercise: More Subworkflows</a></li>
 <li><a href="subworkflows-divide-and-conquer.html#guided-exercise-help-rules-with-subworkflows">Guided Exercise: <code>help</code> rules with subworkflows</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="part-iii.html"><a href="part-iii.html"><i class="fa fa-check"></i>PART III</a></li>
-<li class="chapter" data-level="16" data-path="reproducible-articles-with-rmd.html"><a href="reproducible-articles-with-rmd.html"><i class="fa fa-check"></i><b>16</b> Reproducible Articles with Rmd</a></li>
-<li class="chapter" data-level="17" data-path="reproducible-slides-with-rmd.html"><a href="reproducible-slides-with-rmd.html"><i class="fa fa-check"></i><b>17</b> Reproducible Slides with Rmd</a></li>
-<li class="chapter" data-level="18" data-path="package-dependencies-with-packrat.html"><a href="package-dependencies-with-packrat.html"><i class="fa fa-check"></i><b>18</b> Package Dependencies with Packrat</a></li>
-<li class="chapter" data-level="19" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>19</b> Containers</a></li>
+<li class="chapter" data-level="" data-path="part-iv-putting-workflows-in-a-box.html"><a href="part-iv-putting-workflows-in-a-box.html"><i class="fa fa-check"></i>PART IV - Putting Workflows in a Box</a></li>
+<li class="chapter" data-level="17" data-path="package-dependencies-with-renv.html"><a href="package-dependencies-with-renv.html"><i class="fa fa-check"></i><b>17</b> Package Dependencies with <code>renv</code></a></li>
+<li class="chapter" data-level="18" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i><b>18</b> Containers</a></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="installation-guide.html"><a href="installation-guide.html"><i class="fa fa-check"></i><b>A</b> Installation Guide</a><ul>
+<li class="chapter" data-level="A.1" data-path="installation-guide.html"><a href="installation-guide.html#windows"><i class="fa fa-check"></i><b>A.1</b> Windows</a><ul>
+<li class="chapter" data-level="A.1.1" data-path="installation-guide.html"><a href="installation-guide.html#bash-terminal"><i class="fa fa-check"></i><b>A.1.1</b> Bash terminal</a></li>
+<li class="chapter" data-level="A.1.2" data-path="installation-guide.html"><a href="installation-guide.html#python"><i class="fa fa-check"></i><b>A.1.2</b> Python</a></li>
+<li class="chapter" data-level="" data-path="installation-guide.html"><a href="installation-guide.html#installing-snakemake"><i class="fa fa-check"></i>Installing Snakemake</a></li>
+</ul></li>
+<li class="chapter" data-level="A.2" data-path="installation-guide.html"><a href="installation-guide.html#mac"><i class="fa fa-check"></i><b>A.2</b> Mac</a><ul>
+<li class="chapter" data-level="A.2.1" data-path="installation-guide.html"><a href="installation-guide.html#bash-terminal-1"><i class="fa fa-check"></i><b>A.2.1</b> Bash terminal</a></li>
+<li class="chapter" data-level="A.2.2" data-path="installation-guide.html"><a href="installation-guide.html#python-1"><i class="fa fa-check"></i><b>A.2.2</b> Python</a></li>
+<li class="chapter" data-level="" data-path="installation-guide.html"><a href="installation-guide.html#installing-snakemake-1"><i class="fa fa-check"></i>Installing Snakemake</a></li>
+</ul></li>
+<li class="chapter" data-level="A.3" data-path="installation-guide.html"><a href="installation-guide.html#linux-ubuntu"><i class="fa fa-check"></i><b>A.3</b> Linux / Ubuntu</a><ul>
+<li class="chapter" data-level="A.3.1" data-path="installation-guide.html"><a href="installation-guide.html#bash-terminal-2"><i class="fa fa-check"></i><b>A.3.1</b> Bash terminal</a></li>
+<li class="chapter" data-level="A.3.2" data-path="installation-guide.html"><a href="installation-guide.html#python-2"><i class="fa fa-check"></i><b>A.3.2</b> Python</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -298,7 +318,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="adding-parameters" class="section level1">
-<h1><span class="header-section-number">Chapter 11</span> Adding Parameters</h1>
+<h1><span class="header-section-number">Chapter 13</span> Adding Parameters</h1>
 <p>In our analysis pipeline so far we have always passed files to our R scripts.
 While we promote this practice, and wrapping important information into .json files,
 sometimes it seems like overkill to write a new json file to contain one line of configuration.
@@ -307,11 +327,11 @@ An alternative to passing these json files is to use Snakemake’s built in
 to store information that we want to pass to our R Script.
 This goal of this chapter is to show how to use <code>params</code> to pass across a piece of information.</p>
 <div id="motivating-example-constructing-a-regression-table-from-ols-results" class="section level2">
-<h2><span class="header-section-number">11.1</span> Motivating Example: Constructing a Regression Table from OLS Results</h2>
+<h2><span class="header-section-number">13.1</span> Motivating Example: Constructing a Regression Table from OLS Results</h2>
 <p>So far, we have estimated a series of OLS regressions and stored there output inside the <code>out/analysis</code> directory.
 Typically once we have estimated one or more models, we want to format the output into a regression table that we can insert into a written document like a paper or set of presentation slides.
 In the folder <code>src/tables/</code> we can see that there are a series of R scripts:</p>
-<div class="sourceCode" id="cb154"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb154-1"><a href="adding-parameters.html#cb154-1"></a>$ <span class="fu">ls</span> src/tables/</span></code></pre></div>
+<div class="sourceCode" id="cb153"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb153-1"><a href="adding-parameters.html#cb153-1"></a>$ <span class="fu">ls</span> src/tables/</span></code></pre></div>
 <p>which prints to the screen:</p>
 <pre class="out"><code>tab01_textbook_solow.R  tab03_ucc_solow.R  tab05_cc_aug_solow.R
 tab02_augment_solow.R   tab04_cc_solow.R   tab06_cc_aug_solow_restr.R</code></pre>
@@ -319,7 +339,7 @@ tab02_augment_solow.R   tab04_cc_solow.R   tab06_cc_aug_solow_restr.R</code></pr
 Each table has it’s own script that constructs it.
 We will start by constructing Table 1, from <code>tab01_textbook_solow.R</code>
 Let’s have a look at what information this script expects us to pass using the help flag:</p>
-<div class="sourceCode" id="cb156"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb156-1"><a href="adding-parameters.html#cb156-1"></a><span class="ex">Rscript</span> src/tables/tab01_textbook_solow.R --help</span></code></pre></div>
+<div class="sourceCode" id="cb155"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb155-1"><a href="adding-parameters.html#cb155-1"></a><span class="ex">Rscript</span> src/tables/tab01_textbook_solow.R --help</span></code></pre></div>
 <pre class="out"><code>Usage: src/tables/tab01_textbook_solow.R [options]
 
 
@@ -344,23 +364,23 @@ Options:
 <p>Now we will work on constructing this rule.</p>
 </div>
 <div id="creating-a-rule-with-params" class="section level2">
-<h2><span class="header-section-number">11.2</span> Creating a Rule with <code>params</code></h2>
+<h2><span class="header-section-number">13.2</span> Creating a Rule with <code>params</code></h2>
 <p>We are going to use the <code>params</code> option to pass across the filepath and the models regular expression into R.
 A sketch of the rule we want to create is:</p>
-<div class="sourceCode" id="cb158"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb158-1"><a href="adding-parameters.html#cb158-1"></a><span class="ex">rule</span> textbook_solow:</span>
-<span id="cb158-2"><a href="adding-parameters.html#cb158-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb158-3"><a href="adding-parameters.html#cb158-3"></a>        <span class="ex">script</span> = ,</span>
-<span id="cb158-4"><a href="adding-parameters.html#cb158-4"></a>        <span class="ex">models</span> =</span>
-<span id="cb158-5"><a href="adding-parameters.html#cb158-5"></a>    <span class="ex">params</span>:</span>
-<span id="cb158-6"><a href="adding-parameters.html#cb158-6"></a>        <span class="ex">filepath</span>   = ,</span>
-<span id="cb158-7"><a href="adding-parameters.html#cb158-7"></a>        <span class="ex">model_expr</span> =</span>
-<span id="cb158-8"><a href="adding-parameters.html#cb158-8"></a>    <span class="ex">output</span>:</span>
-<span id="cb158-9"><a href="adding-parameters.html#cb158-9"></a>        <span class="ex">table</span> = ,</span>
-<span id="cb158-10"><a href="adding-parameters.html#cb158-10"></a>    <span class="ex">shell</span>:</span>
-<span id="cb158-11"><a href="adding-parameters.html#cb158-11"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb158-12"><a href="adding-parameters.html#cb158-12"></a><span class="st">            --filepath {params.filepath} \</span></span>
-<span id="cb158-13"><a href="adding-parameters.html#cb158-13"></a><span class="st">            --models {params.model_expr} \</span></span>
-<span id="cb158-14"><a href="adding-parameters.html#cb158-14"></a><span class="st">            --out {output.table}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb157"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb157-1"><a href="adding-parameters.html#cb157-1"></a><span class="ex">rule</span> textbook_solow:</span>
+<span id="cb157-2"><a href="adding-parameters.html#cb157-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb157-3"><a href="adding-parameters.html#cb157-3"></a>        <span class="ex">script</span> = ,</span>
+<span id="cb157-4"><a href="adding-parameters.html#cb157-4"></a>        <span class="ex">models</span> =</span>
+<span id="cb157-5"><a href="adding-parameters.html#cb157-5"></a>    <span class="ex">params</span>:</span>
+<span id="cb157-6"><a href="adding-parameters.html#cb157-6"></a>        <span class="ex">filepath</span>   = ,</span>
+<span id="cb157-7"><a href="adding-parameters.html#cb157-7"></a>        <span class="ex">model_expr</span> =</span>
+<span id="cb157-8"><a href="adding-parameters.html#cb157-8"></a>    <span class="ex">output</span>:</span>
+<span id="cb157-9"><a href="adding-parameters.html#cb157-9"></a>        <span class="ex">table</span> = ,</span>
+<span id="cb157-10"><a href="adding-parameters.html#cb157-10"></a>    <span class="ex">shell</span>:</span>
+<span id="cb157-11"><a href="adding-parameters.html#cb157-11"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb157-12"><a href="adding-parameters.html#cb157-12"></a><span class="st">            --filepath {params.filepath} \</span></span>
+<span id="cb157-13"><a href="adding-parameters.html#cb157-13"></a><span class="st">            --models {params.model_expr} \</span></span>
+<span id="cb157-14"><a href="adding-parameters.html#cb157-14"></a><span class="st">            --out {output.table}&quot;</span></span></code></pre></div>
 <p>There are two important points to notice about how we added params to our rules:</p>
 <ol style="list-style-type: decimal">
 <li><code>params</code> are added to the rule in a similar way to inputs and lists</li>
@@ -369,22 +389,22 @@ A sketch of the rule we want to create is:</p>
 <p>Now we need to decide what information needs to be entered into each line of our rule.
 EXPLAIN</p>
 <p>Our rule then becomes:</p>
-<div class="sourceCode" id="cb159"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb159-1"><a href="adding-parameters.html#cb159-1"></a><span class="ex">rule</span> textbook_solow:</span>
-<span id="cb159-2"><a href="adding-parameters.html#cb159-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb159-3"><a href="adding-parameters.html#cb159-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,</span>
-<span id="cb159-4"><a href="adding-parameters.html#cb159-4"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb159-5"><a href="adding-parameters.html#cb159-5"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb159-6"><a href="adding-parameters.html#cb159-6"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)),</span>
-<span id="cb159-7"><a href="adding-parameters.html#cb159-7"></a>    <span class="ex">params</span>:</span>
-<span id="cb159-8"><a href="adding-parameters.html#cb159-8"></a>        <span class="ex">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,</span>
-<span id="cb159-9"><a href="adding-parameters.html#cb159-9"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
-<span id="cb159-10"><a href="adding-parameters.html#cb159-10"></a>    <span class="ex">output</span>:</span>
-<span id="cb159-11"><a href="adding-parameters.html#cb159-11"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></span>
-<span id="cb159-12"><a href="adding-parameters.html#cb159-12"></a>    <span class="ex">shell</span>:</span>
-<span id="cb159-13"><a href="adding-parameters.html#cb159-13"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb159-14"><a href="adding-parameters.html#cb159-14"></a><span class="st">            --filepath {params.filepath} \</span></span>
-<span id="cb159-15"><a href="adding-parameters.html#cb159-15"></a><span class="st">            --models {params.model_expr} \</span></span>
-<span id="cb159-16"><a href="adding-parameters.html#cb159-16"></a><span class="st">            --out {output.table}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb158"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb158-1"><a href="adding-parameters.html#cb158-1"></a><span class="ex">rule</span> textbook_solow:</span>
+<span id="cb158-2"><a href="adding-parameters.html#cb158-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb158-3"><a href="adding-parameters.html#cb158-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/tab01_textbook_solow.R&quot;</span>,</span>
+<span id="cb158-4"><a href="adding-parameters.html#cb158-4"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb158-5"><a href="adding-parameters.html#cb158-5"></a>                            <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb158-6"><a href="adding-parameters.html#cb158-6"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)),</span>
+<span id="cb158-7"><a href="adding-parameters.html#cb158-7"></a>    <span class="ex">params</span>:</span>
+<span id="cb158-8"><a href="adding-parameters.html#cb158-8"></a>        <span class="ex">filepath</span>   = <span class="st">&quot;out/analysis/&quot;</span>,</span>
+<span id="cb158-9"><a href="adding-parameters.html#cb158-9"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
+<span id="cb158-10"><a href="adding-parameters.html#cb158-10"></a>    <span class="ex">output</span>:</span>
+<span id="cb158-11"><a href="adding-parameters.html#cb158-11"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></span>
+<span id="cb158-12"><a href="adding-parameters.html#cb158-12"></a>    <span class="ex">shell</span>:</span>
+<span id="cb158-13"><a href="adding-parameters.html#cb158-13"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb158-14"><a href="adding-parameters.html#cb158-14"></a><span class="st">            --filepath {params.filepath} \</span></span>
+<span id="cb158-15"><a href="adding-parameters.html#cb158-15"></a><span class="st">            --models {params.model_expr} \</span></span>
+<span id="cb158-16"><a href="adding-parameters.html#cb158-16"></a><span class="st">            --out {output.table}&quot;</span></span></code></pre></div>
 <p>There are two ways to run this rule:</p>
 <ol style="list-style-type: decimal">
 <li>Tell snakemake to run this rule explicitly, <code>snakemake textbook_solow</code>
@@ -398,15 +418,15 @@ EXPLAIN</p>
 </ol>
 <p>We prefer (2).
 Hence we also update the <code>all</code> rule as follows:</p>
-<div class="sourceCode" id="cb160"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb160-1"><a href="adding-parameters.html#cb160-1"></a><span class="ex">rule</span> all:</span>
-<span id="cb160-2"><a href="adding-parameters.html#cb160-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb160-3"><a href="adding-parameters.html#cb160-3"></a>        <span class="ex">figs</span>   = expand(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb160-4"><a href="adding-parameters.html#cb160-4"></a>                            <span class="ex">iFigure</span> = FIGURES),</span>
-<span id="cb160-5"><a href="adding-parameters.html#cb160-5"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb160-6"><a href="adding-parameters.html#cb160-6"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb160-7"><a href="adding-parameters.html#cb160-7"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET),</span>
-<span id="cb160-8"><a href="adding-parameters.html#cb160-8"></a>        <span class="ex">tab01</span>  = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></span></code></pre></div>
-<p>If we then do a dry run to see what Snakemake plans to do<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>:</p>
+<div class="sourceCode" id="cb159"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb159-1"><a href="adding-parameters.html#cb159-1"></a><span class="ex">rule</span> all:</span>
+<span id="cb159-2"><a href="adding-parameters.html#cb159-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb159-3"><a href="adding-parameters.html#cb159-3"></a>        <span class="ex">figs</span>   = expand(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb159-4"><a href="adding-parameters.html#cb159-4"></a>                            <span class="ex">iFigure</span> = FIGURES),</span>
+<span id="cb159-5"><a href="adding-parameters.html#cb159-5"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb159-6"><a href="adding-parameters.html#cb159-6"></a>                            <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb159-7"><a href="adding-parameters.html#cb159-7"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET),</span>
+<span id="cb159-8"><a href="adding-parameters.html#cb159-8"></a>        <span class="ex">tab01</span>  = <span class="st">&quot;out/tables/tab01_textbook_solow.tex&quot;</span></span></code></pre></div>
+<p>If we then do a dry run to see what Snakemake plans to do<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a>:</p>
 <pre class="out"><code>Building DAG of jobs...
 Job counts:
     count   jobs
@@ -433,9 +453,9 @@ Job counts:
     2</code></pre>
 <p>We see that snakemake only needs to create the table from our newly created rule.
 Now run snakemake to build the table:</p>
-<div class="sourceCode" id="cb162"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb162-1"><a href="adding-parameters.html#cb162-1"></a>$ <span class="ex">snakemake</span> all</span></code></pre></div>
+<div class="sourceCode" id="cb161"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb161-1"><a href="adding-parameters.html#cb161-1"></a>$ <span class="ex">snakemake</span> all</span></code></pre></div>
 <p>and when finished if we list the contents of <code>out/tables</code> we see our new regression table has been created:</p>
-<div class="sourceCode" id="cb163"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb163-1"><a href="adding-parameters.html#cb163-1"></a>$ <span class="fu">ls</span> out/tables/</span></code></pre></div>
+<div class="sourceCode" id="cb162"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb162-1"><a href="adding-parameters.html#cb162-1"></a>$ <span class="fu">ls</span> out/tables/</span></code></pre></div>
 <pre class="out"><code>tab01_textbook_solow.tex</code></pre>
 <div id="exercise-building-table-2" class="section level3 unnumbered exercise">
 <h3>Exercise: Building Table 2</h3>
@@ -446,9 +466,9 @@ Now run snakemake to build the table:</p>
 </div>
 <div class="footnotes">
 <hr />
-<ol start="12">
-<li id="fn12"><p>
-An alternative would be to run <code>snakemake --summary</code> and examine the output.<a href="adding-parameters.html#fnref12" class="footnote-back">↩︎</a></p></li>
+<ol start="13">
+<li id="fn13"><p>
+An alternative would be to run <code>snakemake --summary</code> and examine the output.<a href="adding-parameters.html#fnref13" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
             </section>
@@ -456,8 +476,8 @@ An alternative would be to run <code>snakemake --summary</code> and examine the 
           </div>
         </div>
       </div>
-<a href="one-rule-to-rule-them-all.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="part-ii.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="logging-output-and-errors.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="config-files.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -488,7 +508,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/17-params.Rmd",
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/42-params.Rmd",
 "text": "Edit"
 },
 "history": {
