@@ -1,5 +1,9 @@
 # Wildcards
 
+Learning Goals:
+
+- How to minimize repetition in the code
+
 Adding a target rule to execute all regressions at the same time is good progress to simplify the execution of our project.
 In this chapter we want to make our life easier to write and maintain our project.
 

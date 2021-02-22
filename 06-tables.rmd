@@ -1,0 +1,356 @@
+# Make Tables
+
+Now that we have learned how to make our code more concise, we want to move forward and apply the new concepts from the previous part to finish our replication.
+
+In this chapter we will create a rule which generates all the regression tables in @mrw.
+
+## The State of the Snakefile
+
+```{r, engine = 'bash', eval = FALSE}
+MODELS = glob_wildcards("src/model-specs/{fname}.json").fname 
+
+# note this filter is only needed coz we are running an older version of the src files, will be updated soon
+DATA_SUBSET = glob_wildcards("src/data-specs/{fname}.json").fname
+DATA_SUBSET = list(filter(lambda x: x.startswith("subset"), DATA_SUBSET))
+
+PLOTS = glob_wildcards("src/figures/{fname}.R").fname
+
+##############################################
+# OLS TARGET
+##############################################
+
+rule run_models:
+    input:
+        expand("out/analysis/{iModel}.{iSubset}.rds",
+                    iSubset = DATA_SUBSET,
+                    iModel = MODELS)
+
+##############################################
+# OLS RULES
+##############################################
+
+rule model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/{iModel}.json",
+        subset = "src/data-specs/{iSubset}.json"
+    output:
+        estimate = "out/analysis/{iModel}.{iSubset}.rds"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+
+##############################################
+# figs TARGET
+##############################################
+
+rule make_figures:
+    input:
+        expand("out/figures/{iFigure}.pdf",
+                    iFigure = PLOTS)
+
+##############################################
+# MAKING FIGS
+##############################################
+
+rule figure:
+    input:
+        script = "src/figures/{iFigure}.R",
+        data   = "out/data/mrw_complete.csv",
+        subset = "src/data-specs/subset_intermediate.json"
+    output:
+        fig = "out/figures/{iFigure}.pdf"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --subset {input.subset} \
+            --out {output.fig}"
+
+##############################################
+# DATA MANAGEMENT
+##############################################
+
+rule gen_regression_vars:
+    input:
+        script = "src/data-management/gen_reg_vars.R",
+        data   = "out/data/mrw_renamed.csv",
+        param  = "src/data-specs/param_solow.json"
+    output:
+        data   = "out/data/mrw_complete.csv"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --param {input.param} \
+            --out {output.data}"
+
+rule rename_vars:
+    input:
+        script = "src/data-management/rename_variables.R",
+        data   = "src/data/mrw.dta"
+    output:
+        data = "out/data/mrw_renamed.csv"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --out {output.data}"
+
+
+
+##############################################
+# CLEANING RULES
+##############################################
+
+rule clean:
+    shell:
+        "rm -rf out/*"
+
+rule clean_data:
+    shell:
+        "rm -rf out/data/*"
+
+rule clean_analysis:
+    shell:
+        "rm -rf out/analysis/*"
+```
+
+## Building a single table
+
+Let us first start by making a single, explicit rule to create our first table.
+
+You can find the R script which does this under `src/tables/regression_table.R`.
+As always, we start by using the help function to learn the necessary input parameters the script expects:
+
+```{r, engine = 'bash', eval = FALSE}
+Rscript src/table/regression_table.R --help
+```
+
+```{r, engine = 'bash', eval = FALSE}
+Usage: src/tables/regression_table.R [options]
+
+Options:
+        -s CHARACTER, --spec=CHARACTER
+                a json dictionary of table parameters
+
+        -o CHARACTER, --out=CHARACTER
+                output file name [default = out.tex]
+
+        -h, --help
+                Show this help message and exit
+```
+
+Our model expects two arguments:
+
+- `--spec`, a json dictionary with table parameters. This includes the models this tables contains as well as table specifications such as headers, column names etc.
+- `--out`, the output filename the LaTeX code will be saved to
+
+We will make the first table with `table_01.json` as the `spec` argument and an appropriate output filename:
+
+```{r, engine = 'bash', eval = FALSE}
+rule table:
+    input:
+        script = "src/tables/regression_table.R",
+        spec   = "src/table-specs/table_01.json"
+    output:
+        table = "out/tables/table_01.tex"
+    shell:
+        "Rscript {input.script} \
+            --spec {input.spec} \
+            --out {output.table}"           
+```
+
+If all model files have been created in the last chapter, then this rule should run through with a single executed task via
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 table
+```
+
+Additional to the usual Snakemake output, the LaTeX code of the table is printed to the screen.
+
+Let us check that the table has been successfully created in the `out/tables` folder:
+
+```{r, engine = 'bash', eval = FALSE}
+ls out/tables
+```
+
+```{r, engine = 'bash', eval = FALSE}
+table_01.tex
+```
+
+Nice, let us now clean our output folder and try to execute the table rule again.
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 clean
+snakemake --cores 1 table
+```
+
+```{r, engine = 'bash', eval = FALSE}
+[...]
+
+[Sat Feb 20 21:19:20 2021]
+rule table:
+    input: src/tables/regression_table.R, src/table-specs/table_01.json
+    output: out/tables/table_01.tex
+    jobid: 0
+
+[...]
+
+In gzfile(file, "rb") :  
+  cannot open compressed file '/Users/ubergm/Documents/projects/snakemake/snakemake-econ-r-learner/out/analysis/model_solow.subset_nonoil.rds',  
+  probable reason 'No such file or directory'  
+Execution stopped
+
+[Sat Feb 20 21:19:20 2021]
+Error in rule table:
+    jobid: 0
+    output: out/tables/table_01.tex
+    shell:
+        Rscript src/tables/regression_table.R  
+        --spec src/table-specs/table_01.json  
+        --out out/tables/table_01.tex  
+        (one of the commands exited with non-zero exit code;  
+        note that snakemake uses bash strict mode!)
+
+Shutting down, this might take some time.  
+Exiting because a job execution failed. Look above for error message  
+Complete log: /Users/ubergm/Documents/projects/snakemake/  
+snakemake-econ-r-learner/.snakemake/log/2021-02-20T211920.004018.snakemake.log
+```
+
+We got an error.
+Looking at the R output, we see that the file `out/analysis/model_solow.subset_nonoil.rds` could not be found.
+Why is this?
+
+The model specification includes the path to the necessary models featured in table 1.
+Therefore R is looking for them in the output folder of the model rules.
+However, we have not included the model outputs as necessary inputs to our table rule.
+Snakemake therefore does not check if they exist and will not build them either.
+
+This is easy to fix.
+We just need to include the model inputs from the `run_models` target rule from the previous chapter into our new rule.
+This tells Snakemake to create all models before creating the regression table.
+
+Copying this part and adding it as `{input.models}` makes our table rule a target for the model outputs.
+We should end up with a rule like this:
+
+```{r, engine = 'bash', eval = FALSE}
+rule table:
+    input:
+        script = "src/tables/regression_table.R",
+        spec   = "src/table-specs/table_01.json",
+        models = expand("out/analysis/{iModel}.{iSubset}.rds",
+                        iModel = MODELS,
+                        iSubset = DATA_SUBSET)        
+    output:
+        table = "out/tables/table_01.tex"
+    shell:
+        "Rscript {input.script} \
+            --spec {input.spec} \
+            --out {output.table}"           
+```
+
+Let us clean and rerun the rule:
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 clean
+snakemake --cores 1 table
+```
+
+Checking the output folder again, we see that all models
+
+```{r, engine = 'bash', eval = FALSE}
+ls out/analysis
+```
+
+```{r, engine = 'bash', eval = FALSE}
+model_aug_cc.subset_intermediate.rds	    model_aug_cc_restr.subset_nonoil.rds     model_aug_solow.subset_oecd.rds		    model_cc.subset_intermediate.rds	 model_solow.subset_nonoil.rds		    model_solow_restr.subset_oecd.rds
+model_aug_cc.subset_nonoil.rds		    model_aug_cc_restr.subset_oecd.rds	     model_aug_solow_restr.subset_intermediate.rds  model_cc.subset_nonoil.rds		 model_solow.subset_oecd.rds		    model_ucc.subset_intermediate.rds
+model_aug_cc.subset_oecd.rds		    model_aug_solow.subset_intermediate.rds  model_aug_solow_restr.subset_nonoil.rds	    model_cc.subset_oecd.rds		 model_solow_restr.subset_intermediate.rds  model_ucc.subset_nonoil.rds
+model_aug_cc_restr.subset_intermediate.rds  model_aug_solow.subset_nonoil.rds	     model_aug_solow_restr.subset_oecd.rds	    model_solow.subset_intermediate.rds  model_solow_restr.subset_nonoil.rds	    model_ucc.subset_oecd.rds
+```
+
+and the table
+
+```{r, engine = 'bash', eval = FALSE}
+ls out/tables
+```
+
+```{r, engine = 'bash', eval = FALSE}
+table_01.tex
+```
+
+have been successfully created.
+
+## Building all tables at once
+
+Being able to build a single table and all the models is of course nice but we want to build *all* six tables from @mrw with a single line of code.
+To do so elegantly, we will employ all tools we have learned in the last part.
+You will practice this in the following exercise.
+
+### Exercise {- .exercise}
+
+We want to generalize our table building script in this exercise to automatically create all six tables from @mrw.
+
+Follow these steps to accomplish this:
+
+1. Add a wildcard to the `table` rule which can take the varying part of the `{input.spec}` and `{output.table}` parts. To do so, replace `table_01` with `{iTable}` in both.
+2. Create a new target rule called `make_tables`. The rule expands the output argument of the `table` rule. It uses the `{iTable}` wildcard from a list called `TABLES`.
+3. Create the TABLES list using the `glob_wildcards function` which matches filenames without the file ending from the `src/table-spec` folder.
+4. Clean your output folder.
+5. Run the `make_tables` rule.
+6. Verify that all six tables have been created in the output folder.
+
+### Solution {- .solution}
+
+Putting Steps 1-3 together should give us these three new parts:
+
+```{r, engine = 'bash', eval = FALSE}
+TABLES = glob_wildcards("src/table-specs/{fname}.json").fname
+
+rule make_tables:
+    input:
+        expand("out/tables/{iTable}.tex",
+                iTable = TABLES)
+
+rule table:
+    input:
+        script = "src/tables/regression_table.R",
+        spec   = "src/table-specs/{iTable}.json",
+        models = expand("out/analysis/{iModel}.{iSubset}.rds",
+                        iModel = MODELS,
+                        iSubset = DATA_SUBSET),
+    output:
+        table = "out/tables/{iTable}.tex"
+    shell:
+        "Rscript {input.script} \
+            --spec {input.spec} \
+            --out {output.table}"
+[...]
+```
+
+4. Clean your output folder.
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 clean
+```
+
+5. Run the `make_tables` rule.
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 make_tables
+```
+
+6. Verify that all six tables have been created in the output folder.
+
+```{r, engine = 'bash', eval = FALSE}
+ls out/tables
+```
+
+The expected output are the six table \LaTeX files:
+
+```{r, engine = 'bash', eval = FALSE}
+table_01.tex  table_02.tex  table_03.tex  table_04.tex	table_05.tex  table_06.tex
+```
