@@ -1,349 +1,256 @@
-# Building all outputs at once
+# One rule to rule them all
 
-In our analysis pipeline that we have constructed so far,
-    we need to make two calls to snakemake to run all of our analysis:
+We have now officially replicated all the data analysis in @mrw.
+Our analysis pipeline runs via two simple commands, 
 
-1. `snakemake estimate_models` - to estimate OLS regressions
-2. `snakemake make_figs` - to construct the figures
+1. `snakemake make_tables` -- to construct the regression tables,
+2. `snakemake make_figures` -- to construct the figures
 
-Whilst this is not too time consuming, it would be desirable to only have to run Snakemake once
-    and have all our analysis in (1) and (2) be executed.
-That is our next goal.
+and executes also all necessary previous steps
 
-So that we are all starting from the same directory structure, let's clean our output directory,
-    removing all estimated models and figures:
+- two data management steps,
+- a total 24 different regressions for different subsets of the data and regression specifications.
+
+We will now create a last target rule to unify all our analysis under a *single rule to rule them all*.
+
+## The State of the Snakefile
+
 ```{r, engine = 'bash', eval = FALSE}
-$ snakemake clean
-```
-Now if we list the contents of the `out` directory and any potential subdirectories:
-```{r, engine = 'bash', eval = FALSE}
-$ ls -R out/
-```
-we see that there are no contents remaining:
-```{r, engine = 'out', eval = FALSE}
-out/:
-```
 
-## Creating an `all` rule
+##############################################
+# DICTIONARIES
+##############################################
 
-Out goal is to combine all the outputs from the `estimate_models` and `make_figs` rules.
-Let's take a look at the structure of each of these rules so that we get a sense of what we might need to do.,
-Here is the `estimate_models` rule:
-```{r, engine = 'bash', eval = FALSE}
-rule estimate_models:
+MODELS = glob_wildcards("src/model-specs/{fname}.json").fname 
+
+# note this filter is only needed coz we are running an older version of the src files, will be updated soon
+DATA_SUBSET = glob_wildcards("src/data-specs/{fname}.json").fname
+DATA_SUBSET = list(filter(lambda x: x.startswith("subset"), DATA_SUBSET))
+
+PLOTS = glob_wildcards("src/figures/{fname}.R").fname
+
+TABLES = glob_wildcards("src/table-specs/{fname}.json").fname
+
+
+##############################################
+# TARGETS
+##############################################
+
+rule make_tables:
     input:
-        expand("out/analysis/{iModel}_ols_{iSubset}.rds",
-                    iModel = MODELS,
-                    iSubset = DATA_SUBSET)
+        expand("out/tables/{iTable}.tex",
+                iTable = TABLES)
+
+rule run_models:
+    input:
+        expand("out/analysis/{iModel}.{iSubset}.rds",
+                    iSubset = DATA_SUBSET,
+                    iModel = MODELS)
+
+rule make_figures:
+    input:
+        expand("out/figures/{iFigure}.pdf",
+                    iFigure = PLOTS)
+
+
+##############################################
+# INTERMEDIATE RULES
+##############################################
+
+rule table:
+    input:
+        script = "src/tables/regression_table.R",
+        spec   = "src/table-specs/{iTable}.json",
+        models = expand("out/analysis/{iModel}.{iSubset}.rds",
+                        iModel = MODELS,
+                        iSubset = DATA_SUBSET),
+    output:
+        table = "out/tables/{iTable}.tex"
+    shell:
+        "Rscript {input.script} \
+            --spec {input.spec} \
+            --out {output.table}"
+
+rule model:
+    input:
+        script = "src/analysis/estimate_ols_model.R",
+        data   = "out/data/mrw_complete.csv",
+        model  = "src/model-specs/{iModel}.json",
+        subset = "src/data-specs/{iSubset}.json"
+    output:
+        estimate = "out/analysis/{iModel}.{iSubset}.rds"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}"
+
+rule figure:
+    input:
+        script = "src/figures/{iFigure}.R",
+        data   = "out/data/mrw_complete.csv",
+        subset = "src/data-specs/subset_intermediate.json"
+    output:
+        fig = "out/figures/{iFigure}.pdf"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --subset {input.subset} \
+            --out {output.fig}"
+
+rule gen_regression_vars:
+    input:
+        script = "src/data-management/gen_reg_vars.R",
+        data   = "out/data/mrw_renamed.csv",
+        param  = "src/data-specs/param_solow.json"
+    output:
+        data   = "out/data/mrw_complete.csv"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --param {input.param} \
+            --out {output.data}"
+
+rule rename_vars:
+    input:
+        script = "src/data-management/rename_variables.R",
+        data   = "src/data/mrw.dta"
+    output:
+        data = "out/data/mrw_renamed.csv"
+    shell:
+        "Rscript {input.script} \
+            --data {input.data} \
+            --out {output.data}"
+
+
+##############################################
+# CLEANING RULES
+##############################################
+
+rule clean:
+    shell:
+        "rm -rf out/*"
+
+rule clean_data:
+    shell:
+        "rm -rf out/data/*"
+
+rule clean_analysis:
+    shell:
+        "rm -rf out/analysis/*"
 ```
-And the `make_figs` rule:
+
+## Creating an `all` target  rule
+
+Our `all` rule unifies the `make_figures` and `make_tables` target rules.
+
+Let's take a look at the structure of each of these rules so that we get a sense of what we might need to do.
+
+Here is the `make_figures` rule:
 ```{r, engine = 'bash', eval = FALSE}
-rule make_figs:
+rule make_figures:
     input:
         expand("out/figures/{iFigure}.pdf",
                 iFigure = FIGURES)
 ```
 
-These rules have a common structure: both having only an `input`.
-From other rules that we have written, we know that a rule can have multiple inputs if we name them.
-This suggests a way forward.
-We are going to create a new rule called `all` that contains two inputs,
-    combining the inputs from the separate rules:^[
-    The name `all` is a convention, we could name it anything we please
-]:
-
-1. `figs`, which contains the inputs from our `make_figs` rule
-2. `models`, which contains the inputs from our `estimate_models` rule
-
-As ever, we will have to be mindful that if we have multiple inputs,
-    have the trailing commas located wherever one input is followed by another.
-Let's put this rule as the first in our Snakefile:
+And the `make_tables` rule:
 ```{r, engine = 'bash', eval = FALSE}
-# --- Build Rules --- #
-
-rule all:
+rule make_tables:
     input:
-        figs   = expand("out/figures/{iFigure}.pdf",
-                            iFigure = FIGURES),
-        models = expand("out/analysis/{iModel}_ols_{iSubset}.rds",
-                            iModel = MODELS,
-                            iSubset = DATA_SUBSET)
+        expand("out/tables/{iTable}.tex",
+                iTable = TABLES)
 ```
 
-Let's check if this `all` rule does as desired - building all outputs.
-If we run `snakemake --dryrun all`, we get the following output:
+Both rules only have expanded files as inputs.
+To unite both under a single rule, it therefore enough to add all figure and table inputs of these rules under our new rule.
 
-```{r, engine = 'out', eval = FALSE}
+This will give us something like this:
+
+```{r, engine = 'bash', eval = FALSE}
+rule all:
+    input:
+                expand("out/figures/{iFigure}.pdf",
+                    iFigure = PLOTS),
+                expand("out/tables/{iTable}.tex",
+                    iTable = TABLES)    
+```
+
+It is best to put this rule as the first rule into `Snakefile`.
+Making it the first rule in the `TARGET RULE` section above is a good place for this.
+
+Before continuing, let us clean our project folder once more via
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 clean
+```
+
+Having the `all` rule as the first rule in `Snakefile` allows us to execute our entire project implicitly via:
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1
+```
+
+```{r, engine = 'bash', eval = FALSE}
 Building DAG of jobs...
 Job counts:
 	count	jobs
 	1	all
-	3	figures
+	3	figure
 	1	gen_regression_vars
-	24	ols_model
+	24	model
 	1	rename_vars
-	30
+	6	table
+	36
 
-[Tue Feb  5 16:23:01 2019]
-rule rename_vars:
-    input: src/data-management/rename_variables.R, src/data/mrw.dta
-    output: out/data/mrw_renamed.csv
-    jobid: 29
+[...]
 
-
-[Tue Feb  5 16:23:01 2019]
-rule gen_regression_vars:
-    input: src/data-management/gen_reg_vars.R, out/data/mrw_renamed.csv, src/data-specs/param_solow.json
-    output: out/data/mrw_complete.csv
-    jobid: 28
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_aug_cc_ols_subset_oecd.rds
-    jobid: 1
-    wildcards: iModel=model_aug_cc, iSubset=subset_oecd
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_solow_ols_subset_oecd.rds
-    jobid: 2
-    wildcards: iModel=model_solow, iSubset=subset_oecd
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow_restr.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_solow_restr_ols_subset_oecd.rds
-    jobid: 4
-    wildcards: iModel=model_solow_restr, iSubset=subset_oecd
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_cc.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_cc_ols_subset_oecd.rds
-    jobid: 5
-    wildcards: iModel=model_cc, iSubset=subset_oecd
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc_restr.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_aug_cc_restr_ols_subset_intermediate.rds
-    jobid: 27
-    wildcards: iModel=model_aug_cc_restr, iSubset=subset_intermediate
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_aug_solow_ols_subset_intermediate.rds
-    jobid: 9
-    wildcards: iModel=model_aug_solow, iSubset=subset_intermediate
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_aug_solow_ols_subset_nonoil.rds
-    jobid: 13
-    wildcards: iModel=model_aug_solow, iSubset=subset_nonoil
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc_restr.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_aug_cc_restr_ols_subset_nonoil.rds
-    jobid: 15
-    wildcards: iModel=model_aug_cc_restr, iSubset=subset_nonoil
-
-
-[Tue Feb  5 16:23:01 2019]
-rule figures:
-    input: src/figures/aug_conditional_convergence.R, out/data/mrw_complete.csv, src/data-specs/subset_intermediate.json
-    output: out/figures/aug_conditional_convergence.pdf
-    jobid: 18
-    wildcards: iFigure=aug_conditional_convergence
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_ucc.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_ucc_ols_subset_oecd.rds
-    jobid: 25
-    wildcards: iModel=model_ucc, iSubset=subset_oecd
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow_restr.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_aug_solow_restr_ols_subset_oecd.rds
-    jobid: 26
-    wildcards: iModel=model_aug_solow_restr, iSubset=subset_oecd
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc_restr.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_aug_cc_restr_ols_subset_oecd.rds
-    jobid: 14
-    wildcards: iModel=model_aug_cc_restr, iSubset=subset_oecd
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_aug_solow_ols_subset_oecd.rds
-    jobid: 3
-    wildcards: iModel=model_aug_solow, iSubset=subset_oecd
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_solow_ols_subset_intermediate.rds
-    jobid: 7
-    wildcards: iModel=model_solow, iSubset=subset_intermediate
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_cc.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_cc_ols_subset_nonoil.rds
-    jobid: 23
-    wildcards: iModel=model_cc, iSubset=subset_nonoil
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow_restr.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_solow_restr_ols_subset_intermediate.rds
-    jobid: 10
-    wildcards: iModel=model_solow_restr, iSubset=subset_intermediate
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_aug_cc_ols_subset_intermediate.rds
-    jobid: 11
-    wildcards: iModel=model_aug_cc, iSubset=subset_intermediate
-
-
-[Tue Feb  5 16:23:01 2019]
-rule figures:
-    input: src/figures/unconditional_convergence.R, out/data/mrw_complete.csv, src/data-specs/subset_intermediate.json
-    output: out/figures/unconditional_convergence.pdf
-    jobid: 24
-    wildcards: iFigure=unconditional_convergence
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_cc.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_cc_ols_subset_intermediate.rds
-    jobid: 8
-    wildcards: iModel=model_cc, iSubset=subset_intermediate
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow_restr.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_solow_restr_ols_subset_nonoil.rds
-    jobid: 12
-    wildcards: iModel=model_solow_restr, iSubset=subset_nonoil
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_solow_ols_subset_nonoil.rds
-    jobid: 16
-    wildcards: iModel=model_solow, iSubset=subset_nonoil
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_aug_cc_ols_subset_nonoil.rds
-    jobid: 17
-    wildcards: iModel=model_aug_cc, iSubset=subset_nonoil
-
-
-[Tue Feb  5 16:23:01 2019]
-rule figures:
-    input: src/figures/conditional_convergence.R, out/data/mrw_complete.csv, src/data-specs/subset_intermediate.json
-    output: out/figures/conditional_convergence.pdf
-    jobid: 19
-    wildcards: iFigure=conditional_convergence
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_ucc.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_ucc_ols_subset_intermediate.rds
-    jobid: 20
-    wildcards: iModel=model_ucc, iSubset=subset_intermediate
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow_restr.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_aug_solow_restr_ols_subset_nonoil.rds
-    jobid: 21
-    wildcards: iModel=model_aug_solow_restr, iSubset=subset_nonoil
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_ucc.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_ucc_ols_subset_nonoil.rds
-    jobid: 22
-    wildcards: iModel=model_ucc, iSubset=subset_nonoil
-
-
-[Tue Feb  5 16:23:01 2019]
-rule ols_model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow_restr.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_aug_solow_restr_ols_subset_intermediate.rds
-    jobid: 6
-    wildcards: iModel=model_aug_solow_restr, iSubset=subset_intermediate
-
-
-[Tue Feb  5 16:23:01 2019]
+[Sun Feb 21 22:16:41 2021]
 localrule all:
-    input: out/figures/conditional_convergence.pdf, out/figures/unconditional_convergence.pdf, out/figures/aug_conditional_convergence.pdf, out/analysis/model_solow_ols_subset_oecd.rds, out/analysis/model_aug_cc_restr_ols_subset_oecd.rds, out/analysis/model_solow_restr_ols_subset_oecd.rds, out/analysis/model_cc_ols_subset_oecd.rds, out/analysis/model_ucc_ols_subset_oecd.rds, out/analysis/model_aug_solow_restr_ols_subset_oecd.rds, out/analysis/model_aug_cc_ols_subset_oecd.rds, out/analysis/model_aug_solow_ols_subset_oecd.rds, out/analysis/model_solow_ols_subset_nonoil.rds, out/analysis/model_aug_cc_restr_ols_subset_nonoil.rds, out/analysis/model_solow_restr_ols_subset_nonoil.rds, out/analysis/model_cc_ols_subset_nonoil.rds, out/analysis/model_ucc_ols_subset_nonoil.rds, out/analysis/model_aug_solow_restr_ols_subset_nonoil.rds, out/analysis/model_aug_cc_ols_subset_nonoil.rds, out/analysis/model_aug_solow_ols_subset_nonoil.rds, out/analysis/model_solow_ols_subset_intermediate.rds, out/analysis/model_aug_cc_restr_ols_subset_intermediate.rds, out/analysis/model_solow_restr_ols_subset_intermediate.rds, out/analysis/model_cc_ols_subset_intermediate.rds, out/analysis/model_ucc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_restr_ols_subset_intermediate.rds, out/analysis/model_aug_cc_ols_subset_intermediate.rds, out/analysis/model_aug_solow_ols_subset_intermediate.rds
+    input: out/figures/aug_conditional_convergence.pdf,  
+    out/figures/conditional_convergence.pdf, out/figures/  unconditional_convergence.pdf,  
+    out/tables/table_06.tex, out/tables/table_01.tex, out/tables/table_02.tex,  
+    out/tables/table_03.tex, out/tables/table_04.tex, out/tables/table_05.tex  
     jobid: 0
 
-Job counts:
-	count	jobs
-	1	all
-	3	figures
-	1	gen_regression_vars
-	24	ols_model
-	1	rename_vars
-	30
-
+[Sun Feb 21 22:16:41 2021]  
+Finished job 0.  
+36 of 36 steps (100%) done
 ```
 
-The output shows that we have achieved our desired goal.
-The `all` rule builds all outputs.
-Notice that if you examine the order that Snakemake plans to execute the jobs that:
+And that's it!
+Our rule has executed all 36 steps necessary to replicate the entire analysis of @mrw.
 
-1. First the data management steps are executed to prepare data
+If we examine the full Snakemake output which we omitted here, we see the order in which Snakemake executed the jobs:
+
+1. First the data management steps are executed to prepare the data
     * This is what we would expect, as we cannot do any analysis without cleaned data
-2. The order in which the figures and regressions are executed are mixed together
-    * This is because the figures and regression outputs do not depend on each other
+3. Then all figures are produced
+    * Figures are the first input to the `all` rule and therefore produced first.
+3. Next all tables are produced
+    * They are the final outputs to the `all` rule    
+4. Last the `all` rule is executed
+    * As a good target rule, this does nothing substantial.
 
-Now we build our entire project^[
-    Notice that we placed the `all` rule as the first rule in our Snakefile.
-    Snakemake's default behaviour is to build the first rule in the file,
-        so we could instead type only `snakemake` and get the same result.
-]:
-```{r, engine = 'bash', eval = FALSE}
-$ snakemake all
-```
+We note three more things:
+
+1. The `make_figures` and `make_tables` target rules are not executed. The `all` rule sits parallel to both (has the same inputs as them) and does not require their output (they do not produce any, after all).
+2. The order of jobs in the count statistic at the beginning of the output does not reflect the actual build order.
+3. Some R console outputs are mixed in between the Snakemake messages. Essentially this is caused by our terminal application being too slow in printing messages to keep up with all the computational steps in the background. This does not reflect the actual steps, which are of course aligned and can be safely ignored.
+
+## Concluding Remarks
+
+We have now created a fully reproducible replication workflow.
+With a single line of code we can execute the whole analysis of @mrw.
+
+It is now also a breeze to make modifications to the analysis.
+Snakemake and the `all` rule allow us to simply re-run all modified steps and all downstream operations that depend on them so that all results are updated accordingly.
+We can even add additional models, regression tables or figures without having to remember to account for them in our build script.
+Using `glob_wildcards` will always ensure that all additional analysis is performed.
+
+This state of our project is a natural end point for any researcher or research assistant who performs the data analysis in a project with colleagues who do not use Snakemake themselves.
+In such a workflow the data analysis and drafting stages of slides or a research paper are often separate processes.
+
+For a single researcher or a group of researchers, who all work jointly with Snakemake, we have created the next chapter.
+There we will also automate the generation of a research paper draft and presentation slides in a single workflow together with the data analysis.
