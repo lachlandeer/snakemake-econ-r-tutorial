@@ -1,5 +1,28 @@
 # PART 0 - Preliminaries {-}
 
+Here are all the boxes we are using for reference
+
+### Learning Objectives {- .objectives}
+
+1. Here is one
+2. and another
+
+
+### Solution {- .solution}
+
+1. Here is one
+2. and another
+
+```{r, class.source = "fold-hide", engine = 'bash', eval = FALSE}
+code 
+
+code 
+
+
+code 
+
+```
+
 # Motivating & Rationale {#intro}
 
 ## A Case for Reproducibility
