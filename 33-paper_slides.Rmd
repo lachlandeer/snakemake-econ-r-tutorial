@@ -395,6 +395,66 @@ Here's some thoughts on likely situations you could encounter and a possible sol
 * If the additional tables and figures are needed, but they aren't included in any of the final documents.
   One could leave the tables and figs as part of the `all` rule in addition to the paper.
 
+## Making `paper.pdf` Easier to Find
+
+So far we have used the `all` rule like any other target rule - 
+  we specify a set of inputs we want to have built.
+Our current `all` rule builds the final paper and any of its dependencies, 
+  but there is nothing stopping us from extending this rule to work more for us, by taking the inputs 
+  and doing something to them via shell command to create new outputs.
+What we have in mind is taking the paper located in `out/paper/paper.pdf` and copying it to the project's 
+  root directory so it is easy to find.
+
+Let's do this by adding some additional structure to the `all` rule:
+
+```{r, engine = 'bash', eval = FALSE}
+rule all:
+    input:
+        paper = "out/paper/paper.pdf"
+    output:
+        paper = 
+    shell:
+        "<MIX IT>"
+```
+
+We want to create a copy of the paper, and put it in the root directory, so we can create the output as "paper.pdf".^[
+  Note that by not putting any directory before `paper.pdf` it refers to the current directory (the project root) by default.
+]
+And then we can copy from one directory to another using the `cp` command.
+The first argument after `cp` is what we want to copy - in our case `{input.paper}`, 
+  and the last is where we want to copy the file to - which is `{output.paper}` for us.
+Let's make those changes:
+
+```{r, engine = 'bash', eval = FALSE}
+rule all:
+    input:
+        paper = "out/paper/paper.pdf"
+    output:
+        paper = "paper.pdf"
+    shell:
+        "cp {input.paper} {output.paper}"
+```
+
+Now run the `all` rule:
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 all
+```
+
+and then look at the contents of the project's root directory:
+
+```{r, engine = 'bash', eval = FALSE}
+ls . 
+```
+
+```{r, engine = 'out', eval = FALSE}
+find_r_packages.sh    out/       README.md         config.yaml          
+install_r_packages.R  paper.pdf  REQUIREMENTS.txt  sandbox/       Snakefile
+```
+
+And we can now see a copy of the paper located in the root directory, as desired.
+Now everytime we run `all`, the latest copy of the paper will be easily available in the root direcroty.
+
 ### Exercise: Adding a Slide Deck.
 
 (a) Create a rule `build_slides` that uses `src/lib/build_slides.Rmd` to produce a slide deck that is saved to `out/slides/slides.pdf`
