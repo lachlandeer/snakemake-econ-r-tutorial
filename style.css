@@ -14,15 +14,25 @@ pre code {
 }
 
 .exercise {
-  background-color: #DCDCDC;
-  padding:1em;
-  display:block;
-  min-height: 75px;
+  padding: 0.15em 1em 1em 4em;
+  margin-bottom: 10px;
+  background: #eec275;
+  position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
   box-shadow: 5px 5px 10px -2px rgba(33,33,33,.3);
   transform: rotate(1deg);
   transform: skew(-.05deg,.05deg);
+  border-radius: 25px
+}
+.exercise:before {
+  content: "\f14b";
+  font-family: FontAwesome;
+  left:10px;
+  right:10px;
+  position:absolute;
+  top:17px;
+  font-size: 45px;
 }
 
 .objectives {
@@ -61,6 +71,72 @@ pre code {
 }
 .solution:before {
   content: "\f13e";
+  font-family: FontAwesome;
+  left:10px;
+  right:10px;
+  position:absolute;
+  top:17px;
+  font-size: 45px;
+}
+
+.prereq {
+  padding: 0.15em 1em 1em 4em;
+  margin-bottom: 10px;
+  background: #9cd6dc;
+  position:relative;
+  margin: 0 1em 1em 1em;
+  background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
+  box-shadow: 5px 5px 10px -2px rgba(33,33,33,.3);
+  transform: rotate(1deg);
+  transform: skew(-.05deg,.05deg);
+  border-radius: 25px
+}
+.prereq:before {
+  content: "\f013";
+  font-family: FontAwesome;
+  left:10px;
+  right:10px;
+  position:absolute;
+  top:17px;
+  font-size: 45px;
+}
+
+.warning {
+  padding: 0.15em 1em 1em 4em;
+  margin-bottom: 10px;
+  background: #F5e74e;
+  position:relative;
+  margin: 0 1em 1em 1em;
+  background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
+  box-shadow: 5px 5px 10px -2px rgba(33,33,33,.3);
+  transform: rotate(1deg);
+  transform: skew(-.05deg,.05deg);
+  border-radius: 25px
+}
+.warning:before {
+  content: "\f071";
+  font-family: FontAwesome;
+  left:10px;
+  right:10px;
+  position:absolute;
+  top:17px;
+  font-size: 45px;
+}
+
+.tip {
+  padding: 0.15em 1em 1em 4em;
+  margin-bottom: 10px;
+  background: #84c77a;
+  position:relative;
+  margin: 0 1em 1em 1em;
+  background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
+  box-shadow: 5px 5px 10px -2px rgba(33,33,33,.3);
+  transform: rotate(1deg);
+  transform: skew(-.05deg,.05deg);
+  border-radius: 25px
+}
+.tip:before {
+  content: "\f164";
   font-family: FontAwesome;
   left:10px;
   right:10px;

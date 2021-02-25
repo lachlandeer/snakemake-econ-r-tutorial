@@ -13,7 +13,7 @@ Here are all the boxes we are using for reference
 1. Here is one
 2. and another
 
-```{r, class.source = "fold-hide", engine = 'bash', eval = FALSE}
+```{r, engine = 'bash', eval = FALSE}
 code 
 
 code 
@@ -22,6 +22,35 @@ code
 code 
 
 ```
+
+
+### Exercise {- .exercise}
+
+Heres an exercise
+
+
+### Prereq {- .prereq}
+
+but the state of snakefile here
+
+```{r, engine = 'bash', eval = FALSE}
+code 
+
+code 
+
+
+code 
+
+```
+
+### warning {- .warning}
+
+warning
+
+
+### tip {- .tip}
+
+tip tip
 
 # Motivating & Rationale {#intro}
 
