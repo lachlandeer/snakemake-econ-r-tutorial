@@ -312,7 +312,7 @@ To build the rule with Snakemake:
 snakemake --cores 1 build_paper
 ```
 
-And we see that the file `out/paper/paper.pdf` is produced.
+At the conclusion of the run, we see that the file `out/paper/paper.pdf` is produced.
 
 ```{r, engine = 'bash', eval = FALSE}
 ls out/paper
@@ -329,8 +329,73 @@ This can be useful when it's time to submit the final version of paper to a jour
 
 ## Integrating `build_paper` output into `all`
 
-## Exercise
+Let's compare the rules that need to be executed when we run 
+  `snakemake --cores 1 build_paper` and `snakemake --cores 1 all`:
 
-## Exercise Solution
+!! TODO add some space between, captions etc
+
+```{r, echo = FALSE, fig.show="hold", out.width="50%"}
+knitr::include_graphics(c("img/33-paper-slides/rulegraph-all.png",
+                          "img/33-paper-slides/rulegraph-build-paper.png")
+                          )
+```
+
+We see that they are the same.
+The reason is that the `build_paper` rule has all of the figures and tables included.^[
+ If we didn't include *all* the tables and figures in the `build_paper`, 
+Snakemake would only build the ones required by that rule.
+What we say below depends on all tables and figures being included.
+We will have a remark on what to do if this is not the case in due course.
+]
+This suggests we can update the `all` rule.
+We'll update it by removing the figures and tables as inputs, and replacing them with the paper we produced:
+
+```{r, engine = 'bash', eval = FALSE}
+rule all:
+    input:
+        paper = "out/paper/paper.pdf"
+```
+
+Now when we execute Snakemake with `snakemake --cores 1 all` it will run the full workflow including the paper build.
+That is, our rule graph becomes:
+
+```{r, fig.align="center", echo=FALSE}
+knitr::include_graphics("img/33-paper-slides/rulegraph-all-with-paper.png")
+```
+
+To see this in action, let's clean our output directory:
+
+```{bash, eval = FALSE}
+snakemake --cores 1 clean
+```
+
+```{bash, eval = FALSE}
+snakemake --cores 1 all
+```
+
+!! TO DO include snippet from snakemake output.
+
+The end OR beginning shows that the `all` rule now builds the paper after running all the data cleaning, 
+  model estimations, and the figure & table creation.
+
+!! TIP: What to do if paper doesn't include all tables and figs?
+
+Sometimes our final paper may not include all the tables and figures we have created.
+The question is then what do we want to do, and do we need to make all the additional tables and figures?
+
+Here's some thoughts on likely situations you could encounter and a possible solution:
+
+* If the additional tables and figures aren't needed for the project, we don't need to build them. 
+  Adjust the inputs to `build_paper` to only include what is needed, and don't build them all.
+
+* If the additional tables and figures are needed, but they aren't included in the final paper.
+  This means they are likely going to be part of a long web appendix. 
+  Create a rule to build the web appendix, and then add the final web appendix doc as a input to the `all` rule
+
+* If the additional tables and figures are needed, but they aren't included in any of the final documents.
+  One could leave the tables and figs as part of the `all` rule in addition to the paper.
+
+
+## Final Thoughts
 
 !! TODO: Box titled: When to Extend the Workflow to Paper and Slides?
