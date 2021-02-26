@@ -2,13 +2,16 @@
 
 # Initial Steps with Snakemake
 
-Learning goals
+:::{- .objectives}
+
+### Learning Objectives {-}
 
 - Where and how do we write Snakemake rules?
 - How do we execute a rule?
 - How can rules interact with input and output files?
 - How does Snakemake deal with redundant executions?
 
+:::
 
 Now that we know the structure of our project, we are ready to start building a fully reproducible pipeline.
 Snakemake expects instructions in a file called `Snakefile` in the current folder.
@@ -58,7 +61,7 @@ Like most research, our project starts with data management (also see Chapter XX
 The data management subdirectory, `src/data-management` contains two scripts
 
 ```{r, engine = 'out', eval = FALSE}
-rename_variables.R
+rename_variables.R  
 gen_reg_vars.R
 ```
 

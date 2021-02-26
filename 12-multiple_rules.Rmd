@@ -1,11 +1,15 @@
 # Working With Multiple Rules
 
-Learning goals
+:::{- .objectives}
+
+### Learning Objectives {-}
 
 - How do we chain Snakemake rules together?
 - How does Snakemake know in which order to execute rules?
 - Practice writing Snakemake rules
 - What are clean rules and how can they make our life easier?
+
+:::
 
 In the last chapter we have learned how to write and execute a single Snakemake rule.
 This is obviously not sufficient for a real world research workflow which requires many different operations to be executed sequentially.
@@ -124,6 +128,8 @@ mrw_complete.csv  mrw_renamed.csv
 ```
 
 ### Exercise: Creating Rules {- .exercise}
+
+
 @mrw estimate the Solow model for three subsets of data.
 The R script `src/analysis/estimate_ols.R` will estimate a OLS model for a given dataset when you provide the necessary inputs.
 
@@ -136,6 +142,7 @@ Write one rule for each subset of the data.
 1. What inputs do you need to provide?
 2. What outputs will be produced?
 3. Write Snakemake rules to estimate the solow model for each subset of data.
+
 
 ### Solution {- .solution}
 

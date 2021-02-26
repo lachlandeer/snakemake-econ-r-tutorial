@@ -1,8 +1,12 @@
 # Target Rules
 
-Learning Goals:
+:::{- .objectives}
+
+### Learning Objectives {-}
 
 - How to build several parallel tasks at once
+
+:::
 
 ## Where we are now?
 
