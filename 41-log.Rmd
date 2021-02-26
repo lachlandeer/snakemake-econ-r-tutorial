@@ -1,4 +1,4 @@
-# PART IV - Decorating Snakemake Workflows {-}
+# (PART) Decorating Snakemake Workflows {-}
 
 Some discussion before moving to the next chapter?
 

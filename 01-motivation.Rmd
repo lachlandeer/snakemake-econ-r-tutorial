@@ -1,4 +1,4 @@
-# PART 0 - Preliminaries {-}
+# (PART) Preliminaries {-}
 
 # Motivating & Rationale {#intro}
 

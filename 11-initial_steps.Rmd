@@ -1,4 +1,4 @@
-# PART I - Basic Snakemake Workflows {-}
+# (PART) Basic Snakemake Workflows {-}
 
 # Initial Steps with Snakemake
 
