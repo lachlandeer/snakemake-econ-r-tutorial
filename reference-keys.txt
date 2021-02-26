@@ -33,15 +33,15 @@ using-wildcards-to-tidy-up-our-code
 automatic-expansion-of-wildcards
 learning-goals
 the-expand-function
-solution-3
 solution-4
+solution-5
 expanding-multiple-wildcards
 automating-list-construction-for-wildcard-expansion
-learning-objectives-1
+learning-objectives-2
 state-of-the-snakefile
 the-glob_wildcards-function
 looking-at-the-dag-redux
-solution-5
+solution-6
 make-tables
 the-state-of-the-snakefile
 building-a-single-table
@@ -51,7 +51,7 @@ the-state-of-the-snakefile-1
 creating-an-all-target-rule
 concluding-remarks
 adding-papers-and-slides-to-a-snakemake-workflow
-learning-objectives-2
+learning-objectives-3
 state-of-our-snakefile
 where-we-are
 building-a-paper
