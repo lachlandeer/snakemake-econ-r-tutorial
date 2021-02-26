@@ -51,6 +51,15 @@ the-state-of-the-snakefile-1
 creating-an-all-target-rule
 concluding-remarks
 adding-papers-and-slides-to-a-snakemake-workflow
+learning-objectives-2
+state-of-our-snakefile
+where-we-are
+building-a-paper
+integrating-build_paper-output-into-all
+making-paper.pdf-easier-to-find
+exercise-adding-a-slide-deck.
+exercise-solution
+final-thoughts
 logging-output-and-errors
 logging-output
 logging-output-and-errors-in-one-file
