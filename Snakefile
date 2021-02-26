@@ -25,7 +25,7 @@ logAll = "2>&1"
 
 rule all:
     input:
-        pdf  = "_book/book.pdf",
+        #pdf  = "_book/book.pdf",
         html = "_book/index.html"
     # output:
     #     pdf  = "docs/" + PROJ_NAME + ".pdf",
