@@ -404,3 +404,23 @@ Snakemake's management of dependencies will turn out to be quite advantageous as
 No longer does one need to think about order of execution and when to re-run files.^[
   Or, when to comment out chunks of a large script because "we don't need to update that bit."
 ]
+
+## Our Workflow in Graphs
+
+Throughout Parts II to IV we are going to build up our workflow to reproduce MRW's analysis pipeline.
+In our motivation chapter we explained how our final workflow should be a connection between a set of rules,
+ which we depicted grahically as:
+
+```{r, fig.align="center", echo=FALSE}
+knitr::include_graphics("img/01-motivation/rulegraph.png")
+```
+
+So far, we have constructed the first of those blocks.
+That is, our set of rules in our current workflow looks like this:
+
+```{r, fig.align="center", echo=FALSE}
+knitr::include_graphics("img/11-initial-steps/rulegraph.png")
+```
+
+So we have made the first step in the data analysis pipeline.
+Let's continue creating new steps in the next chapter.
