@@ -29,8 +29,7 @@ The `Snakefile` contains a collection of rules that together define the order in
 
 We have added an empty `Snakefile` in the main project folder.
 You can edit this file in a text editor of your choice.
-In the remainder of this tutorial we will edit the file together, 
- gradually constructing the pipeline which reproduces the results from MRW.
+In the remainder of this tutorial we will edit the file together, gradually constructing the pipeline which reproduces the results from MRW.
 
 ## Writing Our First Rule
 
@@ -46,10 +45,10 @@ rule hello_world:
 The first line in our example defines the name of a *rule*, in this case `hello_world`.
 The part following `shell`: tells Snakemake that this rule executes a shell command, which in our case prints `Hello World!` to the console.
 
-The indendation here is important.
+The indentation here is important.
 We need the `shell` command to be indented in one `TAB` space from rule.
 Additionally we need the shell command `'echo "Hello World!"'` to be indented on `TAB` space further than `shell`.
-Snakemake uses the indendation to figure out different components of the each rule.
+Snakemake uses the indentation to figure out different components of the each rule.
 
 :::{- .tip}
 
@@ -57,7 +56,7 @@ Snakemake uses the indendation to figure out different components of the each ru
 
 Snakemake instructions are written in Python 3 with the addition of a a few extra objects and methods the Snakemake package provides.
 The structure of our rule will look very familiar to anybody who has written Python functions before.
-The fact that Snakemake is written in Python is why indendation matters.
+The fact that Snakemake is written in Python is why indentation matters.
 This implies that indentation is interpreted by the language and that deviations from correct indentation will result in errors.
 
 Throughout the rest of the tutorial, those familiar with Python will continue to see similarities to Python code.
@@ -103,11 +102,16 @@ $ snakemake --cores 1 name_of_rule
 
 In our case `snakemake --cores 1 hello_world` will give the same output as the last execution.
 
+:::{- .tip}
+
+### --cores
+
 At this point you are probably guessing that the long option `--cores SOME_NUMBER` tells Snakemake how many CPU cores to use when executing a workflow. 
 This is correct, and `snakemake --cores 1` tells Snakemake to use a single core of your computer when it runs.
 Running workflows in parallel, by specifying for example `snakemake --cores 4` can speed up complex workflows substantially when a workflow's rules can be easily parallelized.
 In this guide we will execute all workflows with a single core to make the code compatible with all computers.
 You are encouraged play around with the core count yourself to and see what effect this may have.
+:::
 
 :::{- .warning}
 
@@ -186,7 +190,7 @@ This suggests the script expects
    This is the input dataset which the script transforms.
    For us, this will be the file `src/data/mrw.dta`
 2. a `--out` option which defines the filepath the transformed data set will be saved.
-   For us, we will save the output to the file `out/data/mrw_renamed.csv`
+   We will save the output to the file `out/data/mrw_renamed.csv`
 
 Let's set up our first rule for the MRW pipeline using the structure we learned from the `hello_world` rule.
 We will name the rule `rename_vars` and place it at the top of our Snakefile:
@@ -215,7 +219,7 @@ This is true, but it can be even more powerful than that.
 ### The `input` and `output` arguments
 
 Our current `rename_vars` rule was simple - it specified one shell command.
-We can add some further structure to this rule, by specifying **input** and **output** files in a different manner.
+We can add some further structure to this rule by specifying **input** and **output** files in a different manner.
 We are going to specify rules in the following format:
 
 ```{r, engine = 'bash', eval = FALSE}
@@ -231,18 +235,18 @@ rule rule_name:
 ```
 
 In this format, a Snakemake rule can be thought of as the recipe that combines the inputs to produce the outputs. 
-We can think of the `input` as ingredients, the `output` as what comes out of the recipe and the `shell` part as the recipe itself.
+We can think of the `input` as ingredients, the `output` as the finished dish and the `shell` part as the recipe itself.
 `Snakemake` expects these components to be provided in a particular way so that it knows what to do with the information we provide.
 
 Snakemake rules can have as many inputs and outputs as the rule needs to function.
-Each input and each output are given names, for example `input_name1` which take the value to the file path and name of the file.
+Each input and each output are given names, for example `input_name1` which takes the value to the file path and name of the input file.
 It is important to wrap each of these paths into quotations, and to separate each of the multiple inputs and outputs with a comma, `,`.
 
 ### A rule to rename variables.
 
-Let's now update the `rename_vars` rule we created above using the input and output syntax from above.
+Let's now use the input and output syntax to update the `rename_vars` rule from above.
 The rule will use the `rename_variables.R` script as a first input.
-Let us therefore rename the first input into `script` and replace the right hand side with the path to the `rename_variables.R` script which we have used above when we printed the script's help function.
+Let us therefore rename the first input into `script` and replace the right hand side with the path to the `rename_variables.R` script which we have used before when we printed the script's help function.
 
 Our `rename_vars` rule should now look something like this:
 
@@ -261,8 +265,8 @@ rule rename_vars:
 ```
 
 Next, we want to add any additional inputs and also specify any outputs that the file produces.
-From the `help` output we know the script expects a stata dataset as an additional input which we can find in the `src/data/` folder.
-We rename the second input into `data` and replace the right hand side with the path to @mrw's stata dataset.
+From the `help` output we know the script expects a Stata dataset as an additional input, which we can find in the `src/data/` folder.
+We rename the second input into `data` and replace the right hand side with the path to @mrw's Stata dataset.
 Finally, we replace the first output name with `data` and define an appropriate output file path as the right hand side.
 This is the location our transformed data will be saved to.
 
@@ -281,7 +285,7 @@ rule rename_vars:
         --out out/data/mrw_renamed.csv"
 ```
 
-After saving we can execute our newly rule via:
+After saving we can execute our new rule via:
 
 ```{r, engine = 'bash', eval = FALSE}
 $ snakemake --cores 1 rename_vars
@@ -310,11 +314,13 @@ mrw_renamed.csv
 
 Our file has been created as we expected.
 
-Looking at our rule so far, there is a lot of repetition, we write in the names of all the files first in `input` and `output` before writing them again inside the `shell` command.
+Looking at our rule, there is a bit of repetition.
+In the `shell` section, we repeat the full filepath of all the files use before in the `input` and `output` sections.
 Snakemake does not require us to write these paths twice.
-We can refer to the inputs and outputs in the shell part of our rule via the names we assigned them.
+We can refer to the inputs and outputs in the shell part of our rule via the names we assigned to them.
 For example, we can refer to the script "src/data-management/rename_variables.R" as `{input.script}`,
 and the data which is the output as `{output.data}`
+
 Putting it all together will give us the following rule:
 
 ```{r, engine = 'bash', eval = FALSE}
@@ -348,13 +354,13 @@ It's time to think about why that could be the case.
 
 ## No Redundant Executions
 
-To understand the status of the project as seen by Snakemake, we can use the **summary** of Snakemake:
+To understand the status of the project as seen by Snakemake, we can use the **summary** option of Snakemake:
 
 ```{r, engine = 'bash', eval = FALSE}
 $ snakemake --summary
 ```
 
-In our case the output following output is printed to the console:
+In our case the following output is printed to the console:
 
 ```{r, engine = 'out', eval = FALSE}
 Building DAG of jobs...
@@ -365,7 +371,7 @@ out/data/mrw_renamed.csv	Thu Jan 10 20:31:08 2019	rename_vars	   -		            
 
 Snakemake tells us the status of the output file of the `rename_vars` rule is `ok` and that it plans not to update the file.
 
-Now, let us what happens if we update one of the input files.
+Now, let us see what happens if we update one of the input files.
 The following command updates the time that `rename_variables.R` was last edited without changing the actual content of the file: 
 
 ```{r, engine = 'bash', eval = FALSE}
@@ -398,29 +404,27 @@ snakemake --cores 1 rename_vars
 will execute the rule.
 
 We see one major advantage of Snakemake over alternative ways to execute projects.
-Snakemake keeps track of dependencies and updates to input files and only re-runs a rule if an input has changed.
-This means we the researcher no longer have to think about when we last ran a script and if we need to run it again.
-Snakemake's management of dependencies will turn out to be quite advantageous as you develop a larger projects.
-No longer does one need to think about order of execution and when to re-run files.^[
+Snakemake keeps track of updates to input files and dependencies between files.This allows Snakemake to only re-runs a rule if an input has changed.
+This means we no longer have to think about when we last ran a script and if we need to run it again.
+Snakemake's management of dependencies will turn out to be quite advantageous as we develop a larger project.
+No longer do we need to think about order of execution and when to re-run files.^[
   Or, when to comment out chunks of a large script because "we don't need to update that bit."
 ]
 
 ## Our Workflow in Graphs
 
 Throughout Parts II to IV we are going to build up our workflow to reproduce MRW's analysis pipeline.
-In our motivation chapter we explained how our final workflow should be a connection between a set of rules,
- which we depicted grahically as:
+In our motivation chapter we explained how our final workflow should be a connection between a set of rules,which we have depicted graphically as:
 
 ```{r, fig.align="center", echo=FALSE}
 knitr::include_graphics("img/01-motivation/rulegraph.png")
 ```
 
-So far, we have constructed the first of those blocks.
-That is, our set of rules in our current workflow looks like this:
+So far, we have constructed the first of those blocks an our set of rules in our current workflow looks like this:
 
 ```{r, fig.align="center", echo=FALSE}
 knitr::include_graphics("img/11-initial-steps/rulegraph.png")
 ```
 
-So we have made the first step in the data analysis pipeline.
+We have made the first step in the data analysis pipeline.
 Let's continue creating new steps in the next chapter.
