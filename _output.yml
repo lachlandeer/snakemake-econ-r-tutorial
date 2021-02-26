@@ -11,12 +11,13 @@ bookdown::gitbook:
     toc:
       collapse: section
       before: |
-        <li><a href="./index.html">Reproducible Data Analytic Workflows with Snakemake and `R`</a></li>
-      # before: |
-      #   <li class="toc-logo"><a href="./"><img src="images/logo/logo-rstudio4edu.png"></a></li>
+        <li class="toc-logo"><a href="./"><img src="img/logo.png"></a></li>
+        <div style="text-align:center">
+        <li><a href="./index.html">Reproducible Data Analytic <br /> Workflows with Snakemake and `R`</a></li>
+        </div>
       after: |
         <li><a href="https://github.comlachlandeer/snakemake-econ-r/" target="blank">Published with bookdown</a></li>
-    # download: ["rmd"]
+    download: ["rmd"]
     sharing:
       github: yes
       facebook: no
