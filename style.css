@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Abril+Fatface|Karla:400,400i,700,700i|Lora:400,400i,700,700i&display=swap');
+
 p.caption {
   color: #777;
   margin-top: 10px;
@@ -13,6 +15,158 @@ pre code {
   white-space: inherit;
 }
 
+/* ------------Links------------------ */
+
+.book .book-body .page-wrapper .page-inner section.normal a {
+  color: #157f8e;
+}
+
+
+/*------------- Body and header text---------------- */
+
+.book.font-family-1 {
+  font-family: 'Karla', arial, sans-serif;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Lora', arial, sans-serif;
+}
+
+
+.book .book-body .page-wrapper .page-inner section.normal h1, 
+.book .book-body .page-wrapper .page-inner section.normal h2, 
+.book .book-body .page-wrapper .page-inner section.normal h3, 
+.book .book-body .page-wrapper .page-inner section.normal h4, 
+.book .book-body .page-wrapper .page-inner section.normal h5, 
+.book .book-body .page-wrapper .page-inner section.normal h6 {
+    margin-top: 2.275em;
+    margin-bottom: 1em;
+}
+
+.title {
+  font-family: 'Lora';
+  font-size: 4em !important;
+  color: #3fb5bd;
+  margin-top: 0.275em !important;
+  margin-bottom: 0.35em !important;
+}
+
+.subtitle {
+  font-family: 'Lora';
+  color: #0b8d96;
+}
+  
+/*------------ TOC --------------*/
+
+.book .book-summary {
+  background: white;
+  border-right: none;
+}
+
+.summary{
+  font-family: 'Karla', sans-serif;
+}
+
+/* all TOC list items, basically */
+.book .book-summary ul.summary li a, 
+.book .book-summary ul.summary li span {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 15px;
+  padding-right: 15px;
+  color: #324748;
+}
+
+.summary a:hover {
+  color: #3ea2aad9 !important;
+} 
+
+.book .book-summary ul.summary li.active>a { /*active TOC links*/
+  color: #379fa7 !important;
+  border-left: solid 4px;
+  border-color: #379fa7;
+  padding-left: 11px !important;
+} 
+
+
+li.appendix span, li.part span { /* for TOC part names */
+  margin-top: 1em;
+  color: #000000;
+  opacity: .9 !important;
+  text-transform: uppercase;
+}
+
+.part + li[data-level=""] { /* grabs first .chapter immediately after .part...but only those ch without numbers */
+ text-transform: uppercase;
+}
+
+/* .book .book-body .page-wrapper .page-inner section.normal is needed
+   to override the styles produced by gitbook, which are ridiculously
+   overspecified. Goal of the selectors is to ensure internal "margins"
+   controlled only by padding of container */
+
+   .book .book-body .page-wrapper .page-inner section.normal div.rstudio-tip > :first-child,
+   .book .book-body .page-wrapper .page-inner section.normal div.tip > :first-child {
+     margin-top: 0;
+   }
+   
+   .book .book-body .page-wrapper .page-inner section.normal div.rstudio-tip > :last-child,
+   .book .book-body .page-wrapper .page-inner section.normal div.tip > :last-child {
+     margin-bottom: 0;
+   }
+   
+   iframe { 
+      -moz-transform-origin: top left; 
+      -webkit-transform-origin: top left; 
+      -o-transform-origin: top left; 
+      -ms-transform-origin: top left; 
+      transform-origin: top left; 
+   }
+   
+   .iframe-container {
+     overflow: auto;
+     -webkit-overflow-scrolling: touch;
+     border: #ddd 2px solid;
+     box-shadow: #888 0px 5px 8px;
+     margin-bottom: 1em;
+   }
+   
+   .iframe-container > iframe {
+     border: none;
+   }
+   
+   
+   /* -------Clipboard copy button --------- */
+   .copy {
+     width: inherit;
+     background-color: #e2e2e2 ;
+     border: none;
+     border-radius: 2px;
+     float: right;
+     font-size: 60%;
+     padding: 4px 4px 4px 4px;
+   }
+   
+   /* for new copy button */
+   
+   .hasCopyButton {
+     position: relative;
+   }
+   
+   .btn-copy-ex {
+     position: absolute;
+     right: 0;
+     top: 0;
+     visibility: hidden;
+   }
+   
+   .hasCopyButton:hover button.btn-copy-ex {
+     visibility: visible;
+   }
+   
+
+/* --- Boxes --- */
+
 .exercise {
   padding: 0.15em 1em 1em 4em;
   margin-bottom: 10px;
@@ -25,6 +179,7 @@ pre code {
   transform: skew(-.05deg,.05deg);
   border-radius: 25px
 }
+
 .exercise:before {
   content: "\f14b";
   font-family: FontAwesome;
@@ -47,6 +202,7 @@ pre code {
   transform: skew(-.05deg,.05deg);
   border-radius: 25px
 }
+
 .objectives:before {
   content: "\f002";
   font-family: FontAwesome;
@@ -69,6 +225,7 @@ pre code {
   transform: skew(-.05deg,.05deg);
   border-radius: 25px
 }
+
 .solution:before {
   content: "\f13e";
   font-family: FontAwesome;
@@ -91,6 +248,7 @@ pre code {
   transform: skew(-.05deg,.05deg);
   border-radius: 25px
 }
+
 .prereq:before {
   content: "\f013";
   font-family: FontAwesome;
@@ -113,6 +271,7 @@ pre code {
   transform: skew(-.05deg,.05deg);
   border-radius: 25px
 }
+
 .warning:before {
   content: "\f071";
   font-family: FontAwesome;
@@ -135,6 +294,7 @@ pre code {
   transform: skew(-.05deg,.05deg);
   border-radius: 25px
 }
+
 .tip:before {
   content: "\f164";
   font-family: FontAwesome;

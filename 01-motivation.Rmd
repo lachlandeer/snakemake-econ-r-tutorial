@@ -1,4 +1,4 @@
-# PART 0 - Preliminaries {-}
+# (PART) Preliminaries {-}
 
 Here are all the boxes we are using for reference
 

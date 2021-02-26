@@ -1,4 +1,4 @@
-# PART II - Minimizing Repetition, Maximizing Generalizability {-}
+# (PART) Minimizing Repetition, Maximizing Generalizability {-}
 
 
 # Wildcards

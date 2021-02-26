@@ -1,4 +1,4 @@
-# PART III - Bringing Many Outputs Together {-}
+# (PART) Bringing Many Outputs Together {-}
 
 # Make Tables
 
