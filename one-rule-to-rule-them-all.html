@@ -176,14 +176,15 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="part"><span><b>II Basic Snakemake Workflows</b></span></li>
 <li class="chapter" data-level="3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html"><i class="fa fa-check"></i><b>3</b> Initial Steps with Snakemake</a><ul>
-<li class="chapter" data-level="3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#snakefile-writing-our-first-rule"><i class="fa fa-check"></i><b>3.1</b> Snakefile – Writing Our First Rule</a></li>
-<li class="chapter" data-level="3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-snakemake-command-executing-a-rule"><i class="fa fa-check"></i><b>3.2</b> The Snakemake Command – Executing a Rule</a></li>
-<li class="chapter" data-level="3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#reading-and-writing-files-first-steps-in-a-data-science-pipeline"><i class="fa fa-check"></i><b>3.3</b> Reading and Writing Files – First Steps in a Data Science Pipeline</a><ul>
-<li class="chapter" data-level="3.3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#using-the-rscript-command-to-execute-r-scripts"><i class="fa fa-check"></i><b>3.3.1</b> Using the Rscript command to execute R scripts</a></li>
-<li class="chapter" data-level="3.3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-input-and-output-arguments"><i class="fa fa-check"></i><b>3.3.2</b> The input and output arguments</a></li>
+<li class="chapter" data-level="3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#writing-our-first-rule"><i class="fa fa-check"></i><b>3.1</b> Writing Our First Rule</a></li>
+<li class="chapter" data-level="3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#executing-a-rule"><i class="fa fa-check"></i><b>3.2</b> Executing a Rule</a></li>
+<li class="chapter" data-level="3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#first-steps-in-the-mrw-pipeline"><i class="fa fa-check"></i><b>3.3</b> First Steps in the MRW Pipeline</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#using-the-rscript-command-to-execute-r-scripts"><i class="fa fa-check"></i><b>3.3.1</b> Using the <code>Rscript</code> command to execute R scripts</a></li>
+<li class="chapter" data-level="3.3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-input-and-output-arguments"><i class="fa fa-check"></i><b>3.3.2</b> The <code>input</code> and <code>output</code> arguments</a></li>
 <li class="chapter" data-level="3.3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#a-rule-to-rename-variables."><i class="fa fa-check"></i><b>3.3.3</b> A rule to rename variables.</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#redundant-executions-dont-run-a-rule-repeatedly"><i class="fa fa-check"></i><b>3.4</b> Redundant Executions – (Don’t) Run a Rule Repeatedly</a></li>
+<li class="chapter" data-level="3.4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#no-redundant-executions"><i class="fa fa-check"></i><b>3.4</b> No Redundant Executions</a></li>
+<li class="chapter" data-level="3.5" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#our-workflow-in-graphs"><i class="fa fa-check"></i><b>3.5</b> Our Workflow in Graphs</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html"><i class="fa fa-check"></i><b>4</b> Working With Multiple Rules</a><ul>
 <li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a second rule</a><ul>
@@ -346,183 +347,183 @@ Our analysis pipeline runs via two simple commands,</p>
 <p>We will now create a last target rule to unify all our analysis under a <em>single rule to rule them all</em>.</p>
 <div id="the-state-of-the-snakefile-1" class="section level2">
 <h2><span class="header-section-number">10.1</span> The State of the Snakefile</h2>
-<div class="sourceCode" id="cb142"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb142-1"><a href="one-rule-to-rule-them-all.html#cb142-1"></a></span>
-<span id="cb142-2"><a href="one-rule-to-rule-them-all.html#cb142-2"></a><span class="co">##############################################</span></span>
-<span id="cb142-3"><a href="one-rule-to-rule-them-all.html#cb142-3"></a><span class="co"># DICTIONARIES</span></span>
-<span id="cb142-4"><a href="one-rule-to-rule-them-all.html#cb142-4"></a><span class="co">##############################################</span></span>
-<span id="cb142-5"><a href="one-rule-to-rule-them-all.html#cb142-5"></a></span>
-<span id="cb142-6"><a href="one-rule-to-rule-them-all.html#cb142-6"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span> </span>
-<span id="cb142-7"><a href="one-rule-to-rule-them-all.html#cb142-7"></a></span>
-<span id="cb142-8"><a href="one-rule-to-rule-them-all.html#cb142-8"></a><span class="co"># note this filter is only needed coz we are running an older version of the src files, will be updated soon</span></span>
-<span id="cb142-9"><a href="one-rule-to-rule-them-all.html#cb142-9"></a><span class="ex">DATA_SUBSET</span> = glob_wildcards(<span class="st">&quot;src/data-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb142-10"><a href="one-rule-to-rule-them-all.html#cb142-10"></a><span class="ex">DATA_SUBSET</span> = list(filter(lambda x: x.startswith(<span class="st">&quot;subset&quot;</span>), <span class="ex">DATA_SUBSET</span>))</span>
-<span id="cb142-11"><a href="one-rule-to-rule-them-all.html#cb142-11"></a></span>
-<span id="cb142-12"><a href="one-rule-to-rule-them-all.html#cb142-12"></a><span class="ex">PLOTS</span> = glob_wildcards(<span class="st">&quot;src/figures/{fname}.R&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb142-13"><a href="one-rule-to-rule-them-all.html#cb142-13"></a></span>
-<span id="cb142-14"><a href="one-rule-to-rule-them-all.html#cb142-14"></a><span class="ex">TABLES</span> = glob_wildcards(<span class="st">&quot;src/table-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb142-15"><a href="one-rule-to-rule-them-all.html#cb142-15"></a></span>
-<span id="cb142-16"><a href="one-rule-to-rule-them-all.html#cb142-16"></a></span>
-<span id="cb142-17"><a href="one-rule-to-rule-them-all.html#cb142-17"></a><span class="co">##############################################</span></span>
-<span id="cb142-18"><a href="one-rule-to-rule-them-all.html#cb142-18"></a><span class="co"># TARGETS</span></span>
-<span id="cb142-19"><a href="one-rule-to-rule-them-all.html#cb142-19"></a><span class="co">##############################################</span></span>
-<span id="cb142-20"><a href="one-rule-to-rule-them-all.html#cb142-20"></a></span>
-<span id="cb142-21"><a href="one-rule-to-rule-them-all.html#cb142-21"></a><span class="ex">rule</span> make_tables:</span>
-<span id="cb142-22"><a href="one-rule-to-rule-them-all.html#cb142-22"></a>    <span class="ex">input</span>:</span>
-<span id="cb142-23"><a href="one-rule-to-rule-them-all.html#cb142-23"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
-<span id="cb142-24"><a href="one-rule-to-rule-them-all.html#cb142-24"></a>                <span class="ex">iTable</span> = TABLES)</span>
-<span id="cb142-25"><a href="one-rule-to-rule-them-all.html#cb142-25"></a></span>
-<span id="cb142-26"><a href="one-rule-to-rule-them-all.html#cb142-26"></a><span class="ex">rule</span> run_models:</span>
-<span id="cb142-27"><a href="one-rule-to-rule-them-all.html#cb142-27"></a>    <span class="ex">input</span>:</span>
-<span id="cb142-28"><a href="one-rule-to-rule-them-all.html#cb142-28"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
-<span id="cb142-29"><a href="one-rule-to-rule-them-all.html#cb142-29"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
-<span id="cb142-30"><a href="one-rule-to-rule-them-all.html#cb142-30"></a>                    <span class="ex">iModel</span> = MODELS)</span>
-<span id="cb142-31"><a href="one-rule-to-rule-them-all.html#cb142-31"></a></span>
-<span id="cb142-32"><a href="one-rule-to-rule-them-all.html#cb142-32"></a><span class="ex">rule</span> make_figures:</span>
-<span id="cb142-33"><a href="one-rule-to-rule-them-all.html#cb142-33"></a>    <span class="ex">input</span>:</span>
-<span id="cb142-34"><a href="one-rule-to-rule-them-all.html#cb142-34"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb142-35"><a href="one-rule-to-rule-them-all.html#cb142-35"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
-<span id="cb142-36"><a href="one-rule-to-rule-them-all.html#cb142-36"></a></span>
-<span id="cb142-37"><a href="one-rule-to-rule-them-all.html#cb142-37"></a></span>
-<span id="cb142-38"><a href="one-rule-to-rule-them-all.html#cb142-38"></a><span class="co">##############################################</span></span>
-<span id="cb142-39"><a href="one-rule-to-rule-them-all.html#cb142-39"></a><span class="co"># INTERMEDIATE RULES</span></span>
-<span id="cb142-40"><a href="one-rule-to-rule-them-all.html#cb142-40"></a><span class="co">##############################################</span></span>
-<span id="cb142-41"><a href="one-rule-to-rule-them-all.html#cb142-41"></a></span>
-<span id="cb142-42"><a href="one-rule-to-rule-them-all.html#cb142-42"></a><span class="ex">rule</span> table:</span>
-<span id="cb142-43"><a href="one-rule-to-rule-them-all.html#cb142-43"></a>    <span class="ex">input</span>:</span>
-<span id="cb142-44"><a href="one-rule-to-rule-them-all.html#cb142-44"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/regression_table.R&quot;</span>,</span>
-<span id="cb142-45"><a href="one-rule-to-rule-them-all.html#cb142-45"></a>        <span class="ex">spec</span>   = <span class="st">&quot;src/table-specs/{iTable}.json&quot;</span>,</span>
-<span id="cb142-46"><a href="one-rule-to-rule-them-all.html#cb142-46"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
-<span id="cb142-47"><a href="one-rule-to-rule-them-all.html#cb142-47"></a>                        <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb142-48"><a href="one-rule-to-rule-them-all.html#cb142-48"></a>                        <span class="ex">iSubset</span> = DATA_SUBSET),</span>
-<span id="cb142-49"><a href="one-rule-to-rule-them-all.html#cb142-49"></a>    <span class="ex">output</span>:</span>
-<span id="cb142-50"><a href="one-rule-to-rule-them-all.html#cb142-50"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/{iTable}.tex&quot;</span></span>
-<span id="cb142-51"><a href="one-rule-to-rule-them-all.html#cb142-51"></a>    <span class="ex">shell</span>:</span>
-<span id="cb142-52"><a href="one-rule-to-rule-them-all.html#cb142-52"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb142-53"><a href="one-rule-to-rule-them-all.html#cb142-53"></a><span class="st">            --spec {input.spec} \</span></span>
-<span id="cb142-54"><a href="one-rule-to-rule-them-all.html#cb142-54"></a><span class="st">            --out {output.table}&quot;</span></span>
-<span id="cb142-55"><a href="one-rule-to-rule-them-all.html#cb142-55"></a></span>
-<span id="cb142-56"><a href="one-rule-to-rule-them-all.html#cb142-56"></a><span class="ex">rule</span> model:</span>
-<span id="cb142-57"><a href="one-rule-to-rule-them-all.html#cb142-57"></a>    <span class="ex">input</span>:</span>
-<span id="cb142-58"><a href="one-rule-to-rule-them-all.html#cb142-58"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
-<span id="cb142-59"><a href="one-rule-to-rule-them-all.html#cb142-59"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb142-60"><a href="one-rule-to-rule-them-all.html#cb142-60"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
-<span id="cb142-61"><a href="one-rule-to-rule-them-all.html#cb142-61"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
-<span id="cb142-62"><a href="one-rule-to-rule-them-all.html#cb142-62"></a>    <span class="ex">output</span>:</span>
-<span id="cb142-63"><a href="one-rule-to-rule-them-all.html#cb142-63"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
-<span id="cb142-64"><a href="one-rule-to-rule-them-all.html#cb142-64"></a>    <span class="ex">shell</span>:</span>
-<span id="cb142-65"><a href="one-rule-to-rule-them-all.html#cb142-65"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb142-66"><a href="one-rule-to-rule-them-all.html#cb142-66"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb142-67"><a href="one-rule-to-rule-them-all.html#cb142-67"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb142-68"><a href="one-rule-to-rule-them-all.html#cb142-68"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb142-69"><a href="one-rule-to-rule-them-all.html#cb142-69"></a><span class="st">            --out {output.estimate}&quot;</span></span>
-<span id="cb142-70"><a href="one-rule-to-rule-them-all.html#cb142-70"></a></span>
-<span id="cb142-71"><a href="one-rule-to-rule-them-all.html#cb142-71"></a><span class="ex">rule</span> figure:</span>
-<span id="cb142-72"><a href="one-rule-to-rule-them-all.html#cb142-72"></a>    <span class="ex">input</span>:</span>
-<span id="cb142-73"><a href="one-rule-to-rule-them-all.html#cb142-73"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
-<span id="cb142-74"><a href="one-rule-to-rule-them-all.html#cb142-74"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb142-75"><a href="one-rule-to-rule-them-all.html#cb142-75"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
-<span id="cb142-76"><a href="one-rule-to-rule-them-all.html#cb142-76"></a>    <span class="ex">output</span>:</span>
-<span id="cb142-77"><a href="one-rule-to-rule-them-all.html#cb142-77"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
-<span id="cb142-78"><a href="one-rule-to-rule-them-all.html#cb142-78"></a>    <span class="ex">shell</span>:</span>
-<span id="cb142-79"><a href="one-rule-to-rule-them-all.html#cb142-79"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb142-80"><a href="one-rule-to-rule-them-all.html#cb142-80"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb142-81"><a href="one-rule-to-rule-them-all.html#cb142-81"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb142-82"><a href="one-rule-to-rule-them-all.html#cb142-82"></a><span class="st">            --out {output.fig}&quot;</span></span>
-<span id="cb142-83"><a href="one-rule-to-rule-them-all.html#cb142-83"></a></span>
-<span id="cb142-84"><a href="one-rule-to-rule-them-all.html#cb142-84"></a><span class="ex">rule</span> gen_regression_vars:</span>
-<span id="cb142-85"><a href="one-rule-to-rule-them-all.html#cb142-85"></a>    <span class="ex">input</span>:</span>
-<span id="cb142-86"><a href="one-rule-to-rule-them-all.html#cb142-86"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
-<span id="cb142-87"><a href="one-rule-to-rule-them-all.html#cb142-87"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
-<span id="cb142-88"><a href="one-rule-to-rule-them-all.html#cb142-88"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
-<span id="cb142-89"><a href="one-rule-to-rule-them-all.html#cb142-89"></a>    <span class="ex">output</span>:</span>
-<span id="cb142-90"><a href="one-rule-to-rule-them-all.html#cb142-90"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
-<span id="cb142-91"><a href="one-rule-to-rule-them-all.html#cb142-91"></a>    <span class="ex">shell</span>:</span>
-<span id="cb142-92"><a href="one-rule-to-rule-them-all.html#cb142-92"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb142-93"><a href="one-rule-to-rule-them-all.html#cb142-93"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb142-94"><a href="one-rule-to-rule-them-all.html#cb142-94"></a><span class="st">            --param {input.param} \</span></span>
-<span id="cb142-95"><a href="one-rule-to-rule-them-all.html#cb142-95"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb142-96"><a href="one-rule-to-rule-them-all.html#cb142-96"></a></span>
-<span id="cb142-97"><a href="one-rule-to-rule-them-all.html#cb142-97"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb142-98"><a href="one-rule-to-rule-them-all.html#cb142-98"></a>    <span class="ex">input</span>:</span>
-<span id="cb142-99"><a href="one-rule-to-rule-them-all.html#cb142-99"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb142-100"><a href="one-rule-to-rule-them-all.html#cb142-100"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
-<span id="cb142-101"><a href="one-rule-to-rule-them-all.html#cb142-101"></a>    <span class="ex">output</span>:</span>
-<span id="cb142-102"><a href="one-rule-to-rule-them-all.html#cb142-102"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb142-103"><a href="one-rule-to-rule-them-all.html#cb142-103"></a>    <span class="ex">shell</span>:</span>
-<span id="cb142-104"><a href="one-rule-to-rule-them-all.html#cb142-104"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb142-105"><a href="one-rule-to-rule-them-all.html#cb142-105"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb142-106"><a href="one-rule-to-rule-them-all.html#cb142-106"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb142-107"><a href="one-rule-to-rule-them-all.html#cb142-107"></a></span>
-<span id="cb142-108"><a href="one-rule-to-rule-them-all.html#cb142-108"></a></span>
-<span id="cb142-109"><a href="one-rule-to-rule-them-all.html#cb142-109"></a><span class="co">##############################################</span></span>
-<span id="cb142-110"><a href="one-rule-to-rule-them-all.html#cb142-110"></a><span class="co"># CLEANING RULES</span></span>
-<span id="cb142-111"><a href="one-rule-to-rule-them-all.html#cb142-111"></a><span class="co">##############################################</span></span>
-<span id="cb142-112"><a href="one-rule-to-rule-them-all.html#cb142-112"></a></span>
-<span id="cb142-113"><a href="one-rule-to-rule-them-all.html#cb142-113"></a><span class="ex">rule</span> clean:</span>
-<span id="cb142-114"><a href="one-rule-to-rule-them-all.html#cb142-114"></a>    <span class="ex">shell</span>:</span>
-<span id="cb142-115"><a href="one-rule-to-rule-them-all.html#cb142-115"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
-<span id="cb142-116"><a href="one-rule-to-rule-them-all.html#cb142-116"></a></span>
-<span id="cb142-117"><a href="one-rule-to-rule-them-all.html#cb142-117"></a><span class="ex">rule</span> clean_data:</span>
-<span id="cb142-118"><a href="one-rule-to-rule-them-all.html#cb142-118"></a>    <span class="ex">shell</span>:</span>
-<span id="cb142-119"><a href="one-rule-to-rule-them-all.html#cb142-119"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
-<span id="cb142-120"><a href="one-rule-to-rule-them-all.html#cb142-120"></a></span>
-<span id="cb142-121"><a href="one-rule-to-rule-them-all.html#cb142-121"></a><span class="ex">rule</span> clean_analysis:</span>
-<span id="cb142-122"><a href="one-rule-to-rule-them-all.html#cb142-122"></a>    <span class="ex">shell</span>:</span>
-<span id="cb142-123"><a href="one-rule-to-rule-them-all.html#cb142-123"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb148"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb148-1"><a href="one-rule-to-rule-them-all.html#cb148-1"></a></span>
+<span id="cb148-2"><a href="one-rule-to-rule-them-all.html#cb148-2"></a><span class="co">##############################################</span></span>
+<span id="cb148-3"><a href="one-rule-to-rule-them-all.html#cb148-3"></a><span class="co"># DICTIONARIES</span></span>
+<span id="cb148-4"><a href="one-rule-to-rule-them-all.html#cb148-4"></a><span class="co">##############################################</span></span>
+<span id="cb148-5"><a href="one-rule-to-rule-them-all.html#cb148-5"></a></span>
+<span id="cb148-6"><a href="one-rule-to-rule-them-all.html#cb148-6"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span> </span>
+<span id="cb148-7"><a href="one-rule-to-rule-them-all.html#cb148-7"></a></span>
+<span id="cb148-8"><a href="one-rule-to-rule-them-all.html#cb148-8"></a><span class="co"># note this filter is only needed coz we are running an older version of the src files, will be updated soon</span></span>
+<span id="cb148-9"><a href="one-rule-to-rule-them-all.html#cb148-9"></a><span class="ex">DATA_SUBSET</span> = glob_wildcards(<span class="st">&quot;src/data-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb148-10"><a href="one-rule-to-rule-them-all.html#cb148-10"></a><span class="ex">DATA_SUBSET</span> = list(filter(lambda x: x.startswith(<span class="st">&quot;subset&quot;</span>), <span class="ex">DATA_SUBSET</span>))</span>
+<span id="cb148-11"><a href="one-rule-to-rule-them-all.html#cb148-11"></a></span>
+<span id="cb148-12"><a href="one-rule-to-rule-them-all.html#cb148-12"></a><span class="ex">PLOTS</span> = glob_wildcards(<span class="st">&quot;src/figures/{fname}.R&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb148-13"><a href="one-rule-to-rule-them-all.html#cb148-13"></a></span>
+<span id="cb148-14"><a href="one-rule-to-rule-them-all.html#cb148-14"></a><span class="ex">TABLES</span> = glob_wildcards(<span class="st">&quot;src/table-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb148-15"><a href="one-rule-to-rule-them-all.html#cb148-15"></a></span>
+<span id="cb148-16"><a href="one-rule-to-rule-them-all.html#cb148-16"></a></span>
+<span id="cb148-17"><a href="one-rule-to-rule-them-all.html#cb148-17"></a><span class="co">##############################################</span></span>
+<span id="cb148-18"><a href="one-rule-to-rule-them-all.html#cb148-18"></a><span class="co"># TARGETS</span></span>
+<span id="cb148-19"><a href="one-rule-to-rule-them-all.html#cb148-19"></a><span class="co">##############################################</span></span>
+<span id="cb148-20"><a href="one-rule-to-rule-them-all.html#cb148-20"></a></span>
+<span id="cb148-21"><a href="one-rule-to-rule-them-all.html#cb148-21"></a><span class="ex">rule</span> make_tables:</span>
+<span id="cb148-22"><a href="one-rule-to-rule-them-all.html#cb148-22"></a>    <span class="ex">input</span>:</span>
+<span id="cb148-23"><a href="one-rule-to-rule-them-all.html#cb148-23"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
+<span id="cb148-24"><a href="one-rule-to-rule-them-all.html#cb148-24"></a>                <span class="ex">iTable</span> = TABLES)</span>
+<span id="cb148-25"><a href="one-rule-to-rule-them-all.html#cb148-25"></a></span>
+<span id="cb148-26"><a href="one-rule-to-rule-them-all.html#cb148-26"></a><span class="ex">rule</span> run_models:</span>
+<span id="cb148-27"><a href="one-rule-to-rule-them-all.html#cb148-27"></a>    <span class="ex">input</span>:</span>
+<span id="cb148-28"><a href="one-rule-to-rule-them-all.html#cb148-28"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
+<span id="cb148-29"><a href="one-rule-to-rule-them-all.html#cb148-29"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
+<span id="cb148-30"><a href="one-rule-to-rule-them-all.html#cb148-30"></a>                    <span class="ex">iModel</span> = MODELS)</span>
+<span id="cb148-31"><a href="one-rule-to-rule-them-all.html#cb148-31"></a></span>
+<span id="cb148-32"><a href="one-rule-to-rule-them-all.html#cb148-32"></a><span class="ex">rule</span> make_figures:</span>
+<span id="cb148-33"><a href="one-rule-to-rule-them-all.html#cb148-33"></a>    <span class="ex">input</span>:</span>
+<span id="cb148-34"><a href="one-rule-to-rule-them-all.html#cb148-34"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb148-35"><a href="one-rule-to-rule-them-all.html#cb148-35"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
+<span id="cb148-36"><a href="one-rule-to-rule-them-all.html#cb148-36"></a></span>
+<span id="cb148-37"><a href="one-rule-to-rule-them-all.html#cb148-37"></a></span>
+<span id="cb148-38"><a href="one-rule-to-rule-them-all.html#cb148-38"></a><span class="co">##############################################</span></span>
+<span id="cb148-39"><a href="one-rule-to-rule-them-all.html#cb148-39"></a><span class="co"># INTERMEDIATE RULES</span></span>
+<span id="cb148-40"><a href="one-rule-to-rule-them-all.html#cb148-40"></a><span class="co">##############################################</span></span>
+<span id="cb148-41"><a href="one-rule-to-rule-them-all.html#cb148-41"></a></span>
+<span id="cb148-42"><a href="one-rule-to-rule-them-all.html#cb148-42"></a><span class="ex">rule</span> table:</span>
+<span id="cb148-43"><a href="one-rule-to-rule-them-all.html#cb148-43"></a>    <span class="ex">input</span>:</span>
+<span id="cb148-44"><a href="one-rule-to-rule-them-all.html#cb148-44"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/regression_table.R&quot;</span>,</span>
+<span id="cb148-45"><a href="one-rule-to-rule-them-all.html#cb148-45"></a>        <span class="ex">spec</span>   = <span class="st">&quot;src/table-specs/{iTable}.json&quot;</span>,</span>
+<span id="cb148-46"><a href="one-rule-to-rule-them-all.html#cb148-46"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
+<span id="cb148-47"><a href="one-rule-to-rule-them-all.html#cb148-47"></a>                        <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb148-48"><a href="one-rule-to-rule-them-all.html#cb148-48"></a>                        <span class="ex">iSubset</span> = DATA_SUBSET),</span>
+<span id="cb148-49"><a href="one-rule-to-rule-them-all.html#cb148-49"></a>    <span class="ex">output</span>:</span>
+<span id="cb148-50"><a href="one-rule-to-rule-them-all.html#cb148-50"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/{iTable}.tex&quot;</span></span>
+<span id="cb148-51"><a href="one-rule-to-rule-them-all.html#cb148-51"></a>    <span class="ex">shell</span>:</span>
+<span id="cb148-52"><a href="one-rule-to-rule-them-all.html#cb148-52"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb148-53"><a href="one-rule-to-rule-them-all.html#cb148-53"></a><span class="st">            --spec {input.spec} \</span></span>
+<span id="cb148-54"><a href="one-rule-to-rule-them-all.html#cb148-54"></a><span class="st">            --out {output.table}&quot;</span></span>
+<span id="cb148-55"><a href="one-rule-to-rule-them-all.html#cb148-55"></a></span>
+<span id="cb148-56"><a href="one-rule-to-rule-them-all.html#cb148-56"></a><span class="ex">rule</span> model:</span>
+<span id="cb148-57"><a href="one-rule-to-rule-them-all.html#cb148-57"></a>    <span class="ex">input</span>:</span>
+<span id="cb148-58"><a href="one-rule-to-rule-them-all.html#cb148-58"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb148-59"><a href="one-rule-to-rule-them-all.html#cb148-59"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb148-60"><a href="one-rule-to-rule-them-all.html#cb148-60"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
+<span id="cb148-61"><a href="one-rule-to-rule-them-all.html#cb148-61"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb148-62"><a href="one-rule-to-rule-them-all.html#cb148-62"></a>    <span class="ex">output</span>:</span>
+<span id="cb148-63"><a href="one-rule-to-rule-them-all.html#cb148-63"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
+<span id="cb148-64"><a href="one-rule-to-rule-them-all.html#cb148-64"></a>    <span class="ex">shell</span>:</span>
+<span id="cb148-65"><a href="one-rule-to-rule-them-all.html#cb148-65"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb148-66"><a href="one-rule-to-rule-them-all.html#cb148-66"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb148-67"><a href="one-rule-to-rule-them-all.html#cb148-67"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb148-68"><a href="one-rule-to-rule-them-all.html#cb148-68"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb148-69"><a href="one-rule-to-rule-them-all.html#cb148-69"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb148-70"><a href="one-rule-to-rule-them-all.html#cb148-70"></a></span>
+<span id="cb148-71"><a href="one-rule-to-rule-them-all.html#cb148-71"></a><span class="ex">rule</span> figure:</span>
+<span id="cb148-72"><a href="one-rule-to-rule-them-all.html#cb148-72"></a>    <span class="ex">input</span>:</span>
+<span id="cb148-73"><a href="one-rule-to-rule-them-all.html#cb148-73"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
+<span id="cb148-74"><a href="one-rule-to-rule-them-all.html#cb148-74"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb148-75"><a href="one-rule-to-rule-them-all.html#cb148-75"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
+<span id="cb148-76"><a href="one-rule-to-rule-them-all.html#cb148-76"></a>    <span class="ex">output</span>:</span>
+<span id="cb148-77"><a href="one-rule-to-rule-them-all.html#cb148-77"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
+<span id="cb148-78"><a href="one-rule-to-rule-them-all.html#cb148-78"></a>    <span class="ex">shell</span>:</span>
+<span id="cb148-79"><a href="one-rule-to-rule-them-all.html#cb148-79"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb148-80"><a href="one-rule-to-rule-them-all.html#cb148-80"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb148-81"><a href="one-rule-to-rule-them-all.html#cb148-81"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb148-82"><a href="one-rule-to-rule-them-all.html#cb148-82"></a><span class="st">            --out {output.fig}&quot;</span></span>
+<span id="cb148-83"><a href="one-rule-to-rule-them-all.html#cb148-83"></a></span>
+<span id="cb148-84"><a href="one-rule-to-rule-them-all.html#cb148-84"></a><span class="ex">rule</span> gen_regression_vars:</span>
+<span id="cb148-85"><a href="one-rule-to-rule-them-all.html#cb148-85"></a>    <span class="ex">input</span>:</span>
+<span id="cb148-86"><a href="one-rule-to-rule-them-all.html#cb148-86"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
+<span id="cb148-87"><a href="one-rule-to-rule-them-all.html#cb148-87"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
+<span id="cb148-88"><a href="one-rule-to-rule-them-all.html#cb148-88"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
+<span id="cb148-89"><a href="one-rule-to-rule-them-all.html#cb148-89"></a>    <span class="ex">output</span>:</span>
+<span id="cb148-90"><a href="one-rule-to-rule-them-all.html#cb148-90"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
+<span id="cb148-91"><a href="one-rule-to-rule-them-all.html#cb148-91"></a>    <span class="ex">shell</span>:</span>
+<span id="cb148-92"><a href="one-rule-to-rule-them-all.html#cb148-92"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb148-93"><a href="one-rule-to-rule-them-all.html#cb148-93"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb148-94"><a href="one-rule-to-rule-them-all.html#cb148-94"></a><span class="st">            --param {input.param} \</span></span>
+<span id="cb148-95"><a href="one-rule-to-rule-them-all.html#cb148-95"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb148-96"><a href="one-rule-to-rule-them-all.html#cb148-96"></a></span>
+<span id="cb148-97"><a href="one-rule-to-rule-them-all.html#cb148-97"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb148-98"><a href="one-rule-to-rule-them-all.html#cb148-98"></a>    <span class="ex">input</span>:</span>
+<span id="cb148-99"><a href="one-rule-to-rule-them-all.html#cb148-99"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb148-100"><a href="one-rule-to-rule-them-all.html#cb148-100"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb148-101"><a href="one-rule-to-rule-them-all.html#cb148-101"></a>    <span class="ex">output</span>:</span>
+<span id="cb148-102"><a href="one-rule-to-rule-them-all.html#cb148-102"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb148-103"><a href="one-rule-to-rule-them-all.html#cb148-103"></a>    <span class="ex">shell</span>:</span>
+<span id="cb148-104"><a href="one-rule-to-rule-them-all.html#cb148-104"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb148-105"><a href="one-rule-to-rule-them-all.html#cb148-105"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb148-106"><a href="one-rule-to-rule-them-all.html#cb148-106"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb148-107"><a href="one-rule-to-rule-them-all.html#cb148-107"></a></span>
+<span id="cb148-108"><a href="one-rule-to-rule-them-all.html#cb148-108"></a></span>
+<span id="cb148-109"><a href="one-rule-to-rule-them-all.html#cb148-109"></a><span class="co">##############################################</span></span>
+<span id="cb148-110"><a href="one-rule-to-rule-them-all.html#cb148-110"></a><span class="co"># CLEANING RULES</span></span>
+<span id="cb148-111"><a href="one-rule-to-rule-them-all.html#cb148-111"></a><span class="co">##############################################</span></span>
+<span id="cb148-112"><a href="one-rule-to-rule-them-all.html#cb148-112"></a></span>
+<span id="cb148-113"><a href="one-rule-to-rule-them-all.html#cb148-113"></a><span class="ex">rule</span> clean:</span>
+<span id="cb148-114"><a href="one-rule-to-rule-them-all.html#cb148-114"></a>    <span class="ex">shell</span>:</span>
+<span id="cb148-115"><a href="one-rule-to-rule-them-all.html#cb148-115"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
+<span id="cb148-116"><a href="one-rule-to-rule-them-all.html#cb148-116"></a></span>
+<span id="cb148-117"><a href="one-rule-to-rule-them-all.html#cb148-117"></a><span class="ex">rule</span> clean_data:</span>
+<span id="cb148-118"><a href="one-rule-to-rule-them-all.html#cb148-118"></a>    <span class="ex">shell</span>:</span>
+<span id="cb148-119"><a href="one-rule-to-rule-them-all.html#cb148-119"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
+<span id="cb148-120"><a href="one-rule-to-rule-them-all.html#cb148-120"></a></span>
+<span id="cb148-121"><a href="one-rule-to-rule-them-all.html#cb148-121"></a><span class="ex">rule</span> clean_analysis:</span>
+<span id="cb148-122"><a href="one-rule-to-rule-them-all.html#cb148-122"></a>    <span class="ex">shell</span>:</span>
+<span id="cb148-123"><a href="one-rule-to-rule-them-all.html#cb148-123"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
 </div>
 <div id="creating-an-all-target-rule" class="section level2">
 <h2><span class="header-section-number">10.2</span> Creating an <code>all</code> target rule</h2>
 <p>Our <code>all</code> rule unifies the <code>make_figures</code> and <code>make_tables</code> target rules.</p>
 <p>Let’s take a look at the structure of each of these rules so that we get a sense of what we might need to do.</p>
 <p>Here is the <code>make_figures</code> rule:</p>
-<div class="sourceCode" id="cb143"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb143-1"><a href="one-rule-to-rule-them-all.html#cb143-1"></a><span class="ex">rule</span> make_figures:</span>
-<span id="cb143-2"><a href="one-rule-to-rule-them-all.html#cb143-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb143-3"><a href="one-rule-to-rule-them-all.html#cb143-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb143-4"><a href="one-rule-to-rule-them-all.html#cb143-4"></a>                <span class="ex">iFigure</span> = FIGURES)</span></code></pre></div>
+<div class="sourceCode" id="cb149"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb149-1"><a href="one-rule-to-rule-them-all.html#cb149-1"></a><span class="ex">rule</span> make_figures:</span>
+<span id="cb149-2"><a href="one-rule-to-rule-them-all.html#cb149-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb149-3"><a href="one-rule-to-rule-them-all.html#cb149-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb149-4"><a href="one-rule-to-rule-them-all.html#cb149-4"></a>                <span class="ex">iFigure</span> = FIGURES)</span></code></pre></div>
 <p>And the <code>make_tables</code> rule:</p>
-<div class="sourceCode" id="cb144"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb144-1"><a href="one-rule-to-rule-them-all.html#cb144-1"></a><span class="ex">rule</span> make_tables:</span>
-<span id="cb144-2"><a href="one-rule-to-rule-them-all.html#cb144-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb144-3"><a href="one-rule-to-rule-them-all.html#cb144-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
-<span id="cb144-4"><a href="one-rule-to-rule-them-all.html#cb144-4"></a>                <span class="ex">iTable</span> = TABLES)</span></code></pre></div>
+<div class="sourceCode" id="cb150"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb150-1"><a href="one-rule-to-rule-them-all.html#cb150-1"></a><span class="ex">rule</span> make_tables:</span>
+<span id="cb150-2"><a href="one-rule-to-rule-them-all.html#cb150-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb150-3"><a href="one-rule-to-rule-them-all.html#cb150-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
+<span id="cb150-4"><a href="one-rule-to-rule-them-all.html#cb150-4"></a>                <span class="ex">iTable</span> = TABLES)</span></code></pre></div>
 <p>Both rules only have expanded files as inputs.
 To unite both under a single rule, it therefore enough to add all figure and table inputs of these rules under our new rule.</p>
 <p>This will give us something like this:</p>
-<div class="sourceCode" id="cb145"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb145-1"><a href="one-rule-to-rule-them-all.html#cb145-1"></a><span class="ex">rule</span> all:</span>
-<span id="cb145-2"><a href="one-rule-to-rule-them-all.html#cb145-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb145-3"><a href="one-rule-to-rule-them-all.html#cb145-3"></a>                <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb145-4"><a href="one-rule-to-rule-them-all.html#cb145-4"></a>                    <span class="ex">iFigure</span> = PLOTS),</span>
-<span id="cb145-5"><a href="one-rule-to-rule-them-all.html#cb145-5"></a>                <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
-<span id="cb145-6"><a href="one-rule-to-rule-them-all.html#cb145-6"></a>                    <span class="ex">iTable</span> = TABLES)    </span></code></pre></div>
+<div class="sourceCode" id="cb151"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb151-1"><a href="one-rule-to-rule-them-all.html#cb151-1"></a><span class="ex">rule</span> all:</span>
+<span id="cb151-2"><a href="one-rule-to-rule-them-all.html#cb151-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb151-3"><a href="one-rule-to-rule-them-all.html#cb151-3"></a>                <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb151-4"><a href="one-rule-to-rule-them-all.html#cb151-4"></a>                    <span class="ex">iFigure</span> = PLOTS),</span>
+<span id="cb151-5"><a href="one-rule-to-rule-them-all.html#cb151-5"></a>                <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
+<span id="cb151-6"><a href="one-rule-to-rule-them-all.html#cb151-6"></a>                    <span class="ex">iTable</span> = TABLES)    </span></code></pre></div>
 <p>It is best to put this rule as the first rule into <code>Snakefile</code>.
 Making it the first rule in the <code>TARGET RULE</code> section above is a good place for this.</p>
 <p>Before continuing, let us clean our project folder once more via</p>
-<div class="sourceCode" id="cb146"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb146-1"><a href="one-rule-to-rule-them-all.html#cb146-1"></a><span class="ex">snakemake</span> --cores 1 clean</span></code></pre></div>
+<div class="sourceCode" id="cb152"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb152-1"><a href="one-rule-to-rule-them-all.html#cb152-1"></a><span class="ex">snakemake</span> --cores 1 clean</span></code></pre></div>
 <p>Having the <code>all</code> rule as the first rule in <code>Snakefile</code> allows us to execute our entire project implicitly via:</p>
-<div class="sourceCode" id="cb147"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb147-1"><a href="one-rule-to-rule-them-all.html#cb147-1"></a><span class="ex">snakemake</span> --cores 1</span></code></pre></div>
-<div class="sourceCode" id="cb148"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb148-1"><a href="one-rule-to-rule-them-all.html#cb148-1"></a><span class="ex">Building</span> DAG of jobs...</span>
-<span id="cb148-2"><a href="one-rule-to-rule-them-all.html#cb148-2"></a><span class="ex">Job</span> counts:</span>
-<span id="cb148-3"><a href="one-rule-to-rule-them-all.html#cb148-3"></a>    <span class="ex">count</span>   jobs</span>
-<span id="cb148-4"><a href="one-rule-to-rule-them-all.html#cb148-4"></a>    <span class="ex">1</span>   all</span>
-<span id="cb148-5"><a href="one-rule-to-rule-them-all.html#cb148-5"></a>    <span class="ex">3</span>   figure</span>
-<span id="cb148-6"><a href="one-rule-to-rule-them-all.html#cb148-6"></a>    <span class="ex">1</span>   gen_regression_vars</span>
-<span id="cb148-7"><a href="one-rule-to-rule-them-all.html#cb148-7"></a>    <span class="ex">24</span>  model</span>
-<span id="cb148-8"><a href="one-rule-to-rule-them-all.html#cb148-8"></a>    <span class="ex">1</span>   rename_vars</span>
-<span id="cb148-9"><a href="one-rule-to-rule-them-all.html#cb148-9"></a>    <span class="ex">6</span>   table</span>
-<span id="cb148-10"><a href="one-rule-to-rule-them-all.html#cb148-10"></a>    <span class="ex">36</span></span>
-<span id="cb148-11"><a href="one-rule-to-rule-them-all.html#cb148-11"></a></span>
-<span id="cb148-12"><a href="one-rule-to-rule-them-all.html#cb148-12"></a>[<span class="ex">...</span>]</span>
-<span id="cb148-13"><a href="one-rule-to-rule-them-all.html#cb148-13"></a></span>
-<span id="cb148-14"><a href="one-rule-to-rule-them-all.html#cb148-14"></a>[<span class="ex">Sun</span> Feb 21 22:16:41 2021]</span>
-<span id="cb148-15"><a href="one-rule-to-rule-them-all.html#cb148-15"></a><span class="ex">localrule</span> all:</span>
-<span id="cb148-16"><a href="one-rule-to-rule-them-all.html#cb148-16"></a>    <span class="ex">input</span>: out/figures/aug_conditional_convergence.pdf,  </span>
-<span id="cb148-17"><a href="one-rule-to-rule-them-all.html#cb148-17"></a>    <span class="ex">out/figures</span>/<span class="ex">conditional_convergence.pdf</span>, out/figures/  unconditional_convergence.pdf,  </span>
-<span id="cb148-18"><a href="one-rule-to-rule-them-all.html#cb148-18"></a>    <span class="ex">out/tables</span>/<span class="ex">table_06.tex</span>, out/tables/table_01.tex, out/tables/table_02.tex,  </span>
-<span id="cb148-19"><a href="one-rule-to-rule-them-all.html#cb148-19"></a>    <span class="ex">out/tables</span>/<span class="ex">table_03.tex</span>, out/tables/table_04.tex, out/tables/table_05.tex  </span>
-<span id="cb148-20"><a href="one-rule-to-rule-them-all.html#cb148-20"></a>    <span class="ex">jobid</span>: 0</span>
-<span id="cb148-21"><a href="one-rule-to-rule-them-all.html#cb148-21"></a></span>
-<span id="cb148-22"><a href="one-rule-to-rule-them-all.html#cb148-22"></a>[<span class="ex">Sun</span> Feb 21 22:16:41 2021]  </span>
-<span id="cb148-23"><a href="one-rule-to-rule-them-all.html#cb148-23"></a><span class="ex">Finished</span> job 0.  </span>
-<span id="cb148-24"><a href="one-rule-to-rule-them-all.html#cb148-24"></a><span class="ex">36</span> of 36 steps (100%) <span class="kw">done</span></span></code></pre></div>
+<div class="sourceCode" id="cb153"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb153-1"><a href="one-rule-to-rule-them-all.html#cb153-1"></a><span class="ex">snakemake</span> --cores 1</span></code></pre></div>
+<div class="sourceCode" id="cb154"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb154-1"><a href="one-rule-to-rule-them-all.html#cb154-1"></a><span class="ex">Building</span> DAG of jobs...</span>
+<span id="cb154-2"><a href="one-rule-to-rule-them-all.html#cb154-2"></a><span class="ex">Job</span> counts:</span>
+<span id="cb154-3"><a href="one-rule-to-rule-them-all.html#cb154-3"></a>    <span class="ex">count</span>   jobs</span>
+<span id="cb154-4"><a href="one-rule-to-rule-them-all.html#cb154-4"></a>    <span class="ex">1</span>   all</span>
+<span id="cb154-5"><a href="one-rule-to-rule-them-all.html#cb154-5"></a>    <span class="ex">3</span>   figure</span>
+<span id="cb154-6"><a href="one-rule-to-rule-them-all.html#cb154-6"></a>    <span class="ex">1</span>   gen_regression_vars</span>
+<span id="cb154-7"><a href="one-rule-to-rule-them-all.html#cb154-7"></a>    <span class="ex">24</span>  model</span>
+<span id="cb154-8"><a href="one-rule-to-rule-them-all.html#cb154-8"></a>    <span class="ex">1</span>   rename_vars</span>
+<span id="cb154-9"><a href="one-rule-to-rule-them-all.html#cb154-9"></a>    <span class="ex">6</span>   table</span>
+<span id="cb154-10"><a href="one-rule-to-rule-them-all.html#cb154-10"></a>    <span class="ex">36</span></span>
+<span id="cb154-11"><a href="one-rule-to-rule-them-all.html#cb154-11"></a></span>
+<span id="cb154-12"><a href="one-rule-to-rule-them-all.html#cb154-12"></a>[<span class="ex">...</span>]</span>
+<span id="cb154-13"><a href="one-rule-to-rule-them-all.html#cb154-13"></a></span>
+<span id="cb154-14"><a href="one-rule-to-rule-them-all.html#cb154-14"></a>[<span class="ex">Sun</span> Feb 21 22:16:41 2021]</span>
+<span id="cb154-15"><a href="one-rule-to-rule-them-all.html#cb154-15"></a><span class="ex">localrule</span> all:</span>
+<span id="cb154-16"><a href="one-rule-to-rule-them-all.html#cb154-16"></a>    <span class="ex">input</span>: out/figures/aug_conditional_convergence.pdf,  </span>
+<span id="cb154-17"><a href="one-rule-to-rule-them-all.html#cb154-17"></a>    <span class="ex">out/figures</span>/<span class="ex">conditional_convergence.pdf</span>, out/figures/  unconditional_convergence.pdf,  </span>
+<span id="cb154-18"><a href="one-rule-to-rule-them-all.html#cb154-18"></a>    <span class="ex">out/tables</span>/<span class="ex">table_06.tex</span>, out/tables/table_01.tex, out/tables/table_02.tex,  </span>
+<span id="cb154-19"><a href="one-rule-to-rule-them-all.html#cb154-19"></a>    <span class="ex">out/tables</span>/<span class="ex">table_03.tex</span>, out/tables/table_04.tex, out/tables/table_05.tex  </span>
+<span id="cb154-20"><a href="one-rule-to-rule-them-all.html#cb154-20"></a>    <span class="ex">jobid</span>: 0</span>
+<span id="cb154-21"><a href="one-rule-to-rule-them-all.html#cb154-21"></a></span>
+<span id="cb154-22"><a href="one-rule-to-rule-them-all.html#cb154-22"></a>[<span class="ex">Sun</span> Feb 21 22:16:41 2021]  </span>
+<span id="cb154-23"><a href="one-rule-to-rule-them-all.html#cb154-23"></a><span class="ex">Finished</span> job 0.  </span>
+<span id="cb154-24"><a href="one-rule-to-rule-them-all.html#cb154-24"></a><span class="ex">36</span> of 36 steps (100%) <span class="kw">done</span></span></code></pre></div>
 <p>And that’s it!
 Our rule has executed all 36 steps necessary to replicate the entire analysis of <span class="citation">Mankiw, Romer, and Weil (<a href="#ref-mrw" role="doc-biblioref">1992</a>)</span>.</p>
 <p>If we examine the full Snakemake output which we omitted here, we see the order in which Snakemake executed the jobs:</p>

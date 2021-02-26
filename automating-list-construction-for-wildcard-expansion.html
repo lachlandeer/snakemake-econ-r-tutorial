@@ -176,14 +176,15 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="part"><span><b>II Basic Snakemake Workflows</b></span></li>
 <li class="chapter" data-level="3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html"><i class="fa fa-check"></i><b>3</b> Initial Steps with Snakemake</a><ul>
-<li class="chapter" data-level="3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#snakefile-writing-our-first-rule"><i class="fa fa-check"></i><b>3.1</b> Snakefile – Writing Our First Rule</a></li>
-<li class="chapter" data-level="3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-snakemake-command-executing-a-rule"><i class="fa fa-check"></i><b>3.2</b> The Snakemake Command – Executing a Rule</a></li>
-<li class="chapter" data-level="3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#reading-and-writing-files-first-steps-in-a-data-science-pipeline"><i class="fa fa-check"></i><b>3.3</b> Reading and Writing Files – First Steps in a Data Science Pipeline</a><ul>
-<li class="chapter" data-level="3.3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#using-the-rscript-command-to-execute-r-scripts"><i class="fa fa-check"></i><b>3.3.1</b> Using the Rscript command to execute R scripts</a></li>
-<li class="chapter" data-level="3.3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-input-and-output-arguments"><i class="fa fa-check"></i><b>3.3.2</b> The input and output arguments</a></li>
+<li class="chapter" data-level="3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#writing-our-first-rule"><i class="fa fa-check"></i><b>3.1</b> Writing Our First Rule</a></li>
+<li class="chapter" data-level="3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#executing-a-rule"><i class="fa fa-check"></i><b>3.2</b> Executing a Rule</a></li>
+<li class="chapter" data-level="3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#first-steps-in-the-mrw-pipeline"><i class="fa fa-check"></i><b>3.3</b> First Steps in the MRW Pipeline</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#using-the-rscript-command-to-execute-r-scripts"><i class="fa fa-check"></i><b>3.3.1</b> Using the <code>Rscript</code> command to execute R scripts</a></li>
+<li class="chapter" data-level="3.3.2" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#the-input-and-output-arguments"><i class="fa fa-check"></i><b>3.3.2</b> The <code>input</code> and <code>output</code> arguments</a></li>
 <li class="chapter" data-level="3.3.3" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#a-rule-to-rename-variables."><i class="fa fa-check"></i><b>3.3.3</b> A rule to rename variables.</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#redundant-executions-dont-run-a-rule-repeatedly"><i class="fa fa-check"></i><b>3.4</b> Redundant Executions – (Don’t) Run a Rule Repeatedly</a></li>
+<li class="chapter" data-level="3.4" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#no-redundant-executions"><i class="fa fa-check"></i><b>3.4</b> No Redundant Executions</a></li>
+<li class="chapter" data-level="3.5" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#our-workflow-in-graphs"><i class="fa fa-check"></i><b>3.5</b> Our Workflow in Graphs</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html"><i class="fa fa-check"></i><b>4</b> Working With Multiple Rules</a><ul>
 <li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a second rule</a><ul>
@@ -340,122 +341,122 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">8.2</span> State of the Snakefile</h2>
 <p>TODO: Make this a box + code fold</p>
 <p>To proceed with this chapter, we expect you Snakefile to look as follows:</p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb107-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-1"></a><span class="co"># --- Dictionaries --- #</span></span>
-<span id="cb107-2"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-2"></a></span>
-<span id="cb107-3"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-3"></a><span class="ex">MODELS</span> = [</span>
-<span id="cb107-4"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-4"></a>          <span class="st">&quot;model_solow&quot;</span>,</span>
-<span id="cb107-5"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-5"></a>          <span class="st">&quot;model_aug_solow&quot;</span></span>
-<span id="cb107-6"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-6"></a>          ]</span>
-<span id="cb107-7"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-7"></a></span>
-<span id="cb107-8"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-8"></a><span class="ex">DATA_SUBSET</span> = [</span>
-<span id="cb107-9"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-9"></a>                <span class="st">&quot;subset_oecd&quot;</span>,</span>
-<span id="cb107-10"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-10"></a>                <span class="st">&quot;subset_intermediate&quot;</span>,</span>
-<span id="cb107-11"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-11"></a>                <span class="st">&quot;subset_nonoil&quot;</span></span>
-<span id="cb107-12"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-12"></a>                ]</span>
-<span id="cb107-13"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-13"></a></span>
-<span id="cb107-14"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-14"></a><span class="ex">PLOTS</span> = [</span>
-<span id="cb107-15"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-15"></a>    <span class="st">&quot;aug_conditional_convergence&quot;</span>,</span>
-<span id="cb107-16"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-16"></a>    <span class="st">&quot;conditional_convergence&quot;</span>,</span>
-<span id="cb107-17"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-17"></a>    <span class="st">&quot;unconditional_convergence&quot;</span></span>
-<span id="cb107-18"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-18"></a>]</span>
-<span id="cb107-19"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-19"></a></span>
-<span id="cb107-20"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-20"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb107-21"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-21"></a></span>
-<span id="cb107-22"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-22"></a><span class="ex">rule</span> run_models:</span>
-<span id="cb107-23"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-23"></a>    <span class="ex">input</span>:</span>
-<span id="cb107-24"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-24"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
-<span id="cb107-25"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-25"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
-<span id="cb107-26"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-26"></a>                    <span class="ex">iModel</span> = MODELS)</span>
-<span id="cb107-27"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-27"></a></span>
-<span id="cb107-28"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-28"></a><span class="ex">rule</span> model:</span>
-<span id="cb107-29"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-29"></a>    <span class="ex">input</span>:</span>
-<span id="cb107-30"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-30"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
-<span id="cb107-31"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-31"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb107-32"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-32"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
-<span id="cb107-33"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-33"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
-<span id="cb107-34"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-34"></a>    <span class="ex">output</span>:</span>
-<span id="cb107-35"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-35"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
-<span id="cb107-36"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-36"></a>    <span class="ex">shell</span>:</span>
-<span id="cb107-37"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-37"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb107-38"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-38"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb107-39"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-39"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb107-40"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-40"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb107-41"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-41"></a><span class="st">            --out {output.estimate}&quot;</span></span>
-<span id="cb107-42"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-42"></a></span>
-<span id="cb107-43"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-43"></a><span class="ex">rule</span> make_figures:</span>
-<span id="cb107-44"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-44"></a>    <span class="ex">input</span>:</span>
-<span id="cb107-45"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-45"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb107-46"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-46"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
-<span id="cb107-47"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-47"></a></span>
-<span id="cb107-48"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-48"></a></span>
-<span id="cb107-49"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-49"></a><span class="ex">rule</span> figure:</span>
-<span id="cb107-50"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-50"></a>    <span class="ex">input</span>:</span>
-<span id="cb107-51"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-51"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
-<span id="cb107-52"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-52"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb107-53"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-53"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
-<span id="cb107-54"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-54"></a>    <span class="ex">output</span>:</span>
-<span id="cb107-55"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-55"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
-<span id="cb107-56"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-56"></a>    <span class="ex">shell</span>:</span>
-<span id="cb107-57"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-57"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb107-58"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-58"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb107-59"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-59"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb107-60"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-60"></a><span class="st">            --out {output.fig}&quot;</span></span>
-<span id="cb107-61"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-61"></a></span>
-<span id="cb107-62"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-62"></a></span>
-<span id="cb107-63"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-63"></a><span class="ex">rule</span> gen_regression_vars:</span>
-<span id="cb107-64"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-64"></a>    <span class="ex">input</span>:</span>
-<span id="cb107-65"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-65"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
-<span id="cb107-66"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-66"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
-<span id="cb107-67"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-67"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
-<span id="cb107-68"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-68"></a>    <span class="ex">output</span>:</span>
-<span id="cb107-69"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-69"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
-<span id="cb107-70"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-70"></a>    <span class="ex">shell</span>:</span>
-<span id="cb107-71"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-71"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb107-72"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-72"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb107-73"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-73"></a><span class="st">            --param {input.param} \</span></span>
-<span id="cb107-74"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-74"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb107-75"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-75"></a></span>
-<span id="cb107-76"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-76"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb107-77"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-77"></a>    <span class="ex">input</span>:</span>
-<span id="cb107-78"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-78"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb107-79"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-79"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
-<span id="cb107-80"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-80"></a>    <span class="ex">output</span>:</span>
-<span id="cb107-81"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-81"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb107-82"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-82"></a>    <span class="ex">shell</span>:</span>
-<span id="cb107-83"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-83"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb107-84"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-84"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb107-85"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-85"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb107-86"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-86"></a></span>
-<span id="cb107-87"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-87"></a></span>
-<span id="cb107-88"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-88"></a><span class="ex">rule</span> clean:</span>
-<span id="cb107-89"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-89"></a>    <span class="ex">shell</span>:</span>
-<span id="cb107-90"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-90"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
-<span id="cb107-91"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-91"></a></span>
-<span id="cb107-92"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-92"></a><span class="ex">rule</span> clean_data:</span>
-<span id="cb107-93"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-93"></a>    <span class="ex">shell</span>:</span>
-<span id="cb107-94"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-94"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
-<span id="cb107-95"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-95"></a></span>
-<span id="cb107-96"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-96"></a><span class="ex">rule</span> clean_analysis:</span>
-<span id="cb107-97"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-97"></a>    <span class="ex">shell</span>:</span>
-<span id="cb107-98"><a href="automating-list-construction-for-wildcard-expansion.html#cb107-98"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb113"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb113-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-1"></a><span class="co"># --- Dictionaries --- #</span></span>
+<span id="cb113-2"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-2"></a></span>
+<span id="cb113-3"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-3"></a><span class="ex">MODELS</span> = [</span>
+<span id="cb113-4"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-4"></a>          <span class="st">&quot;model_solow&quot;</span>,</span>
+<span id="cb113-5"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-5"></a>          <span class="st">&quot;model_aug_solow&quot;</span></span>
+<span id="cb113-6"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-6"></a>          ]</span>
+<span id="cb113-7"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-7"></a></span>
+<span id="cb113-8"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-8"></a><span class="ex">DATA_SUBSET</span> = [</span>
+<span id="cb113-9"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-9"></a>                <span class="st">&quot;subset_oecd&quot;</span>,</span>
+<span id="cb113-10"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-10"></a>                <span class="st">&quot;subset_intermediate&quot;</span>,</span>
+<span id="cb113-11"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-11"></a>                <span class="st">&quot;subset_nonoil&quot;</span></span>
+<span id="cb113-12"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-12"></a>                ]</span>
+<span id="cb113-13"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-13"></a></span>
+<span id="cb113-14"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-14"></a><span class="ex">PLOTS</span> = [</span>
+<span id="cb113-15"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-15"></a>    <span class="st">&quot;aug_conditional_convergence&quot;</span>,</span>
+<span id="cb113-16"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-16"></a>    <span class="st">&quot;conditional_convergence&quot;</span>,</span>
+<span id="cb113-17"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-17"></a>    <span class="st">&quot;unconditional_convergence&quot;</span></span>
+<span id="cb113-18"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-18"></a>]</span>
+<span id="cb113-19"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-19"></a></span>
+<span id="cb113-20"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-20"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb113-21"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-21"></a></span>
+<span id="cb113-22"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-22"></a><span class="ex">rule</span> run_models:</span>
+<span id="cb113-23"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-23"></a>    <span class="ex">input</span>:</span>
+<span id="cb113-24"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-24"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
+<span id="cb113-25"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-25"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
+<span id="cb113-26"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-26"></a>                    <span class="ex">iModel</span> = MODELS)</span>
+<span id="cb113-27"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-27"></a></span>
+<span id="cb113-28"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-28"></a><span class="ex">rule</span> model:</span>
+<span id="cb113-29"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-29"></a>    <span class="ex">input</span>:</span>
+<span id="cb113-30"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-30"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb113-31"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-31"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb113-32"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-32"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
+<span id="cb113-33"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-33"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb113-34"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-34"></a>    <span class="ex">output</span>:</span>
+<span id="cb113-35"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-35"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
+<span id="cb113-36"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-36"></a>    <span class="ex">shell</span>:</span>
+<span id="cb113-37"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-37"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb113-38"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-38"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb113-39"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-39"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb113-40"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-40"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb113-41"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-41"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb113-42"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-42"></a></span>
+<span id="cb113-43"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-43"></a><span class="ex">rule</span> make_figures:</span>
+<span id="cb113-44"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-44"></a>    <span class="ex">input</span>:</span>
+<span id="cb113-45"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-45"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb113-46"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-46"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
+<span id="cb113-47"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-47"></a></span>
+<span id="cb113-48"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-48"></a></span>
+<span id="cb113-49"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-49"></a><span class="ex">rule</span> figure:</span>
+<span id="cb113-50"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-50"></a>    <span class="ex">input</span>:</span>
+<span id="cb113-51"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-51"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
+<span id="cb113-52"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-52"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb113-53"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-53"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
+<span id="cb113-54"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-54"></a>    <span class="ex">output</span>:</span>
+<span id="cb113-55"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-55"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
+<span id="cb113-56"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-56"></a>    <span class="ex">shell</span>:</span>
+<span id="cb113-57"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-57"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb113-58"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-58"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb113-59"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-59"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb113-60"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-60"></a><span class="st">            --out {output.fig}&quot;</span></span>
+<span id="cb113-61"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-61"></a></span>
+<span id="cb113-62"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-62"></a></span>
+<span id="cb113-63"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-63"></a><span class="ex">rule</span> gen_regression_vars:</span>
+<span id="cb113-64"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-64"></a>    <span class="ex">input</span>:</span>
+<span id="cb113-65"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-65"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
+<span id="cb113-66"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-66"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
+<span id="cb113-67"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-67"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
+<span id="cb113-68"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-68"></a>    <span class="ex">output</span>:</span>
+<span id="cb113-69"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-69"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
+<span id="cb113-70"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-70"></a>    <span class="ex">shell</span>:</span>
+<span id="cb113-71"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-71"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb113-72"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-72"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb113-73"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-73"></a><span class="st">            --param {input.param} \</span></span>
+<span id="cb113-74"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-74"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb113-75"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-75"></a></span>
+<span id="cb113-76"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-76"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb113-77"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-77"></a>    <span class="ex">input</span>:</span>
+<span id="cb113-78"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-78"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb113-79"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-79"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb113-80"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-80"></a>    <span class="ex">output</span>:</span>
+<span id="cb113-81"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-81"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb113-82"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-82"></a>    <span class="ex">shell</span>:</span>
+<span id="cb113-83"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-83"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb113-84"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-84"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb113-85"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-85"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb113-86"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-86"></a></span>
+<span id="cb113-87"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-87"></a></span>
+<span id="cb113-88"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-88"></a><span class="ex">rule</span> clean:</span>
+<span id="cb113-89"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-89"></a>    <span class="ex">shell</span>:</span>
+<span id="cb113-90"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-90"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
+<span id="cb113-91"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-91"></a></span>
+<span id="cb113-92"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-92"></a><span class="ex">rule</span> clean_data:</span>
+<span id="cb113-93"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-93"></a>    <span class="ex">shell</span>:</span>
+<span id="cb113-94"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-94"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
+<span id="cb113-95"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-95"></a></span>
+<span id="cb113-96"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-96"></a><span class="ex">rule</span> clean_analysis:</span>
+<span id="cb113-97"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-97"></a>    <span class="ex">shell</span>:</span>
+<span id="cb113-98"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-98"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
 <p>In the previous chapter when we wanted to expand a wildcard we manually specified the valued we wanted them to take by constructing a list.
 By doing so, the beginning of our Snakefile looks like this:</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb108-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-1"></a><span class="ex">MODELS</span> = [</span>
-<span id="cb108-2"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-2"></a>          <span class="st">&quot;model_solow&quot;</span>,</span>
-<span id="cb108-3"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-3"></a>          <span class="st">&quot;model_aug_solow&quot;</span></span>
-<span id="cb108-4"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-4"></a>          ]</span>
-<span id="cb108-5"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-5"></a></span>
-<span id="cb108-6"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-6"></a><span class="ex">DATA_SUBSET</span> = [</span>
-<span id="cb108-7"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-7"></a>                <span class="st">&quot;subset_oecd&quot;</span>,</span>
-<span id="cb108-8"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-8"></a>                <span class="st">&quot;subset_intermediate&quot;</span>,</span>
-<span id="cb108-9"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-9"></a>                <span class="st">&quot;subset_nonoil&quot;</span></span>
-<span id="cb108-10"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-10"></a>                ]</span>
-<span id="cb108-11"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-11"></a></span>
-<span id="cb108-12"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-12"></a><span class="ex">FIGURES</span> = [</span>
-<span id="cb108-13"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-13"></a>            <span class="st">&quot;aug_conditional_convergence&quot;</span>,</span>
-<span id="cb108-14"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-14"></a>            <span class="st">&quot;conditional_convergence&quot;</span>,</span>
-<span id="cb108-15"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-15"></a>            <span class="st">&quot;unconditional_convergence&quot;</span></span>
-<span id="cb108-16"><a href="automating-list-construction-for-wildcard-expansion.html#cb108-16"></a>            ]</span></code></pre></div>
+<div class="sourceCode" id="cb114"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb114-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-1"></a><span class="ex">MODELS</span> = [</span>
+<span id="cb114-2"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-2"></a>          <span class="st">&quot;model_solow&quot;</span>,</span>
+<span id="cb114-3"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-3"></a>          <span class="st">&quot;model_aug_solow&quot;</span></span>
+<span id="cb114-4"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-4"></a>          ]</span>
+<span id="cb114-5"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-5"></a></span>
+<span id="cb114-6"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-6"></a><span class="ex">DATA_SUBSET</span> = [</span>
+<span id="cb114-7"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-7"></a>                <span class="st">&quot;subset_oecd&quot;</span>,</span>
+<span id="cb114-8"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-8"></a>                <span class="st">&quot;subset_intermediate&quot;</span>,</span>
+<span id="cb114-9"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-9"></a>                <span class="st">&quot;subset_nonoil&quot;</span></span>
+<span id="cb114-10"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-10"></a>                ]</span>
+<span id="cb114-11"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-11"></a></span>
+<span id="cb114-12"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-12"></a><span class="ex">FIGURES</span> = [</span>
+<span id="cb114-13"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-13"></a>            <span class="st">&quot;aug_conditional_convergence&quot;</span>,</span>
+<span id="cb114-14"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-14"></a>            <span class="st">&quot;conditional_convergence&quot;</span>,</span>
+<span id="cb114-15"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-15"></a>            <span class="st">&quot;unconditional_convergence&quot;</span></span>
+<span id="cb114-16"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-16"></a>            ]</span></code></pre></div>
 <p>This is not too problematic when we only have a few values that we want the wildcard to take,
 but manually specifying long lists can get tedious and is prone to error.
 Snakemake has a built in function, <code>glob_wildcards</code> that will help us to remove the manual listing of values that we had to do so far.</p>
@@ -467,17 +468,17 @@ The <code>glob_wildcards()</code> function takes one input - the path of the fil
 It then looks to find anything that along the specidied path, collecting what it finds along the way.</p>
 <p>Let’s look at <code>glob_wildcards</code> in action to get a sense of what will happen.
 Replace our manually specified <code>MODELS</code> list with the following code:</p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb109-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb109-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb115"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb115-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb115-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}&quot;</span>)</span></code></pre></div>
 <p>This says look inside the <code>src/model-specs/</code> folder, and return any files we find there.
 <code>{fname}</code> is the name of the wildcard we use to tell snakemake we want the filenames from inside the folder.
 The name <code>fname</code> itself doesn’t matter, we could use whatever we liked, but we decided <code>{fname}</code> is suggestive we want filenames so it helps us to understand what the code is doing.</p>
 <p>Next, we want to look at what is now stored in <code>MODELS</code>.
 This is a litle tricker than it should be, but if we add a <code>print(MODELS)</code> command in our Snakefile we can get the value printed to screen.
 Let’s do that, and then do a dry run.</p>
-<div class="sourceCode" id="cb110"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb110-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb110-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}&quot;</span>)</span>
-<span id="cb110-2"><a href="automating-list-construction-for-wildcard-expansion.html#cb110-2"></a><span class="ex">print</span>(MODELS)</span></code></pre></div>
+<div class="sourceCode" id="cb116"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb116-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb116-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}&quot;</span>)</span>
+<span id="cb116-2"><a href="automating-list-construction-for-wildcard-expansion.html#cb116-2"></a><span class="ex">print</span>(MODELS)</span></code></pre></div>
 <p>then:</p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb111-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb111-1"></a>$ <span class="ex">snakemake</span> --dryrun</span></code></pre></div>
+<div class="sourceCode" id="cb117"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb117-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb117-1"></a>$ <span class="ex">snakemake</span> --dryrun</span></code></pre></div>
 <p>What we are interested in is the first printed lines (in white text):</p>
 <pre class="out"><code>Wildcards(fname=[&#39;.gitkeep&#39;, &#39;model_solow.json&#39;, &#39;model_aug_cc_restr.json&#39;,
                 &#39;model_solow_restr.json&#39;, &#39;model_cc.json&#39;, &#39;model_ucc.json&#39;,
@@ -496,27 +497,27 @@ We can remove the .gitkeep file <em>and</em> the .json file endings from the lis
 telling the <code>glob_wildcards()</code> function to only return the part of the filename that comes before the .json.</li>
 </ol>
 <p>We do this by updating our <code>glob_wildcards()</code> call as follows;</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb113-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)</span>
-<span id="cb113-2"><a href="automating-list-construction-for-wildcard-expansion.html#cb113-2"></a><span class="ex">print</span>(MODELS)</span></code></pre></div>
+<div class="sourceCode" id="cb119"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb119-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb119-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)</span>
+<span id="cb119-2"><a href="automating-list-construction-for-wildcard-expansion.html#cb119-2"></a><span class="ex">print</span>(MODELS)</span></code></pre></div>
 <p>This says store in the list <code>MODELS</code> the part of the filename that comes before <code>.json</code> for all files in <code>src/model-specs</code>.
 The .gitkeep will also not be not returned, because this file does not have a .json ending:</p>
 <p>Now let’s try the dry run again:</p>
-<div class="sourceCode" id="cb114"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb114-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb114-1"></a>$ <span class="ex">snakemake</span> --dryrun</span></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb120-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb120-1"></a>$ <span class="ex">snakemake</span> --dryrun</span></code></pre></div>
 <p>Now the first line is:</p>
 <pre class="out"><code>Wildcards(fname=[&#39;model_solow&#39;, &#39;model_aug_cc_restr&#39;,
                 &#39;model_solow_restr&#39;, &#39;model_cc&#39;, &#39;model_ucc&#39;,
                 &#39;model_aug_solow_restr&#39;, &#39;model_aug_cc&#39;, &#39;model_aug_solow&#39;])</code></pre>
 <p>That’s definitely an improvement.
 We note that the dry-run command is still giving us an error though, complaining about missing input files.
-That is because currently <code>MODELS</code> is not yet the the list that is was when we manually specified it.<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a>
+That is because currently <code>MODELS</code> is not yet the the list that is was when we manually specified it.<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a>
 The list we want is inside the <code>Wildcards()</code> class, and we can see it has the name <code>fname</code> which is the name of the wildcard we assigned ourselves.</p>
 <p>Our final step is to extract this list so that we can use it like our old <code>MODELS</code> list.</p>
 <p>We do this as follows:</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb116-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb116-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb116-2"><a href="automating-list-construction-for-wildcard-expansion.html#cb116-2"></a><span class="ex">print</span>(MODELS)</span></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb122-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb122-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb122-2"><a href="automating-list-construction-for-wildcard-expansion.html#cb122-2"></a><span class="ex">print</span>(MODELS)</span></code></pre></div>
 <p>Read this as “get the list called <code>fname</code> from inside the Wildcards() object &amp; assign it to the name <code>MODELS</code>”.
 Now if we do a dry-run:</p>
-<div class="sourceCode" id="cb117"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb117-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb117-1"></a>$ <span class="ex">snakemake</span> --dryrun</span></code></pre></div>
+<div class="sourceCode" id="cb123"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb123-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb123-1"></a>$ <span class="ex">snakemake</span> --dryrun</span></code></pre></div>
 <p>We are returned the following lines at the beginning of the output:</p>
 <pre class="out"><code>[&#39;model_solow&#39;, &#39;model_aug_cc_restr&#39;, &#39;model_solow_restr&#39;,
  &#39;model_cc&#39;, &#39;model_ucc&#39;, &#39;model_aug_solow_restr&#39;,
@@ -692,7 +693,7 @@ Job counts:
         19
 This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.</code></pre>
 <p>Let’s run Snakemake to get all of the estimates.</p>
-<div class="sourceCode" id="cb120"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb120-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb120-1"></a>$ <span class="ex">snakemake</span></span></code></pre></div>
+<div class="sourceCode" id="cb126"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb126-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb126-1"></a>$ <span class="ex">snakemake</span></span></code></pre></div>
 <p>The power of using <code>glob_wildcards()</code> is clear.
 It’s a relatively easy way to construct a list to iterate over as part of a wildcard expansion based on the names of files.</p>
 </div>
@@ -726,90 +727,90 @@ Chapter YY will show us how to get all the outputs build with one run of Snakema
 <div id="solution-5" class="section level3">
 <h3><span class="header-section-number">8.4.1</span> Solution</h3>
 <p>Will need to run Snakemake twice <code>snakemake --cores 1 run_models</code> and <code>snakemake --cores 1 make_figures</code>.</p>
-<div class="sourceCode" id="cb121"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb121-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-1"></a><span class="co"># --- Dictionaries --- #</span></span>
-<span id="cb121-2"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-2"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span> </span>
-<span id="cb121-3"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-3"></a><span class="ex">DATA_SUBSET</span> = glob_wildcards(<span class="st">&quot;src/data-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb121-4"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-4"></a><span class="ex">PLOTS</span> = glob_wildcards(<span class="st">&quot;src/figures/{fname}.R&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb121-5"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-5"></a></span>
-<span id="cb121-6"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-6"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb121-7"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-7"></a></span>
-<span id="cb121-8"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-8"></a><span class="ex">rule</span> run_models:</span>
-<span id="cb121-9"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-9"></a>    <span class="ex">input</span>:</span>
-<span id="cb121-10"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-10"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
-<span id="cb121-11"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-11"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
-<span id="cb121-12"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-12"></a>                    <span class="ex">iModel</span> = MODELS)</span>
-<span id="cb121-13"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-13"></a></span>
-<span id="cb121-14"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-14"></a><span class="ex">rule</span> model:</span>
-<span id="cb121-15"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-15"></a>    <span class="ex">input</span>:</span>
-<span id="cb121-16"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-16"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
-<span id="cb121-17"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-17"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb121-18"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-18"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
-<span id="cb121-19"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-19"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
-<span id="cb121-20"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-20"></a>    <span class="ex">output</span>:</span>
-<span id="cb121-21"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-21"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
-<span id="cb121-22"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-22"></a>    <span class="ex">shell</span>:</span>
-<span id="cb121-23"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-23"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb121-24"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-24"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb121-25"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-25"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb121-26"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-26"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb121-27"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-27"></a><span class="st">            --out {output.estimate}&quot;</span></span>
-<span id="cb121-28"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-28"></a></span>
-<span id="cb121-29"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-29"></a><span class="ex">rule</span> make_figures:</span>
-<span id="cb121-30"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-30"></a>    <span class="ex">input</span>:</span>
-<span id="cb121-31"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-31"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb121-32"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-32"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
-<span id="cb121-33"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-33"></a></span>
-<span id="cb121-34"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-34"></a></span>
-<span id="cb121-35"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-35"></a><span class="ex">rule</span> figure:</span>
-<span id="cb121-36"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-36"></a>    <span class="ex">input</span>:</span>
-<span id="cb121-37"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-37"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
-<span id="cb121-38"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-38"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb121-39"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-39"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
-<span id="cb121-40"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-40"></a>    <span class="ex">output</span>:</span>
-<span id="cb121-41"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-41"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
-<span id="cb121-42"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-42"></a>    <span class="ex">shell</span>:</span>
-<span id="cb121-43"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-43"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb121-44"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-44"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb121-45"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-45"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb121-46"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-46"></a><span class="st">            --out {output.fig}&quot;</span></span>
-<span id="cb121-47"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-47"></a></span>
-<span id="cb121-48"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-48"></a></span>
-<span id="cb121-49"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-49"></a><span class="ex">rule</span> gen_regression_vars:</span>
-<span id="cb121-50"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-50"></a>    <span class="ex">input</span>:</span>
-<span id="cb121-51"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-51"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
-<span id="cb121-52"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-52"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
-<span id="cb121-53"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-53"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
-<span id="cb121-54"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-54"></a>    <span class="ex">output</span>:</span>
-<span id="cb121-55"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-55"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
-<span id="cb121-56"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-56"></a>    <span class="ex">shell</span>:</span>
-<span id="cb121-57"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-57"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb121-58"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-58"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb121-59"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-59"></a><span class="st">            --param {input.param} \</span></span>
-<span id="cb121-60"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-60"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb121-61"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-61"></a></span>
-<span id="cb121-62"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-62"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb121-63"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-63"></a>    <span class="ex">input</span>:</span>
-<span id="cb121-64"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-64"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb121-65"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-65"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
-<span id="cb121-66"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-66"></a>    <span class="ex">output</span>:</span>
-<span id="cb121-67"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-67"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb121-68"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-68"></a>    <span class="ex">shell</span>:</span>
-<span id="cb121-69"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-69"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb121-70"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-70"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb121-71"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-71"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb121-72"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-72"></a></span>
-<span id="cb121-73"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-73"></a></span>
-<span id="cb121-74"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-74"></a><span class="ex">rule</span> clean:</span>
-<span id="cb121-75"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-75"></a>    <span class="ex">shell</span>:</span>
-<span id="cb121-76"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-76"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
-<span id="cb121-77"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-77"></a></span>
-<span id="cb121-78"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-78"></a><span class="ex">rule</span> clean_data:</span>
-<span id="cb121-79"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-79"></a>    <span class="ex">shell</span>:</span>
-<span id="cb121-80"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-80"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
-<span id="cb121-81"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-81"></a></span>
-<span id="cb121-82"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-82"></a><span class="ex">rule</span> clean_analysis:</span>
-<span id="cb121-83"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-83"></a>    <span class="ex">shell</span>:</span>
-<span id="cb121-84"><a href="automating-list-construction-for-wildcard-expansion.html#cb121-84"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb127"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb127-1"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-1"></a><span class="co"># --- Dictionaries --- #</span></span>
+<span id="cb127-2"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-2"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span> </span>
+<span id="cb127-3"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-3"></a><span class="ex">DATA_SUBSET</span> = glob_wildcards(<span class="st">&quot;src/data-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb127-4"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-4"></a><span class="ex">PLOTS</span> = glob_wildcards(<span class="st">&quot;src/figures/{fname}.R&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb127-5"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-5"></a></span>
+<span id="cb127-6"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-6"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb127-7"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-7"></a></span>
+<span id="cb127-8"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-8"></a><span class="ex">rule</span> run_models:</span>
+<span id="cb127-9"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-9"></a>    <span class="ex">input</span>:</span>
+<span id="cb127-10"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-10"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
+<span id="cb127-11"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-11"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
+<span id="cb127-12"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-12"></a>                    <span class="ex">iModel</span> = MODELS)</span>
+<span id="cb127-13"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-13"></a></span>
+<span id="cb127-14"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-14"></a><span class="ex">rule</span> model:</span>
+<span id="cb127-15"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-15"></a>    <span class="ex">input</span>:</span>
+<span id="cb127-16"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-16"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb127-17"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-17"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb127-18"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-18"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
+<span id="cb127-19"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-19"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb127-20"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-20"></a>    <span class="ex">output</span>:</span>
+<span id="cb127-21"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-21"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
+<span id="cb127-22"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-22"></a>    <span class="ex">shell</span>:</span>
+<span id="cb127-23"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-23"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb127-24"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-24"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb127-25"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-25"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb127-26"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-26"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb127-27"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-27"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb127-28"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-28"></a></span>
+<span id="cb127-29"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-29"></a><span class="ex">rule</span> make_figures:</span>
+<span id="cb127-30"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-30"></a>    <span class="ex">input</span>:</span>
+<span id="cb127-31"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-31"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb127-32"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-32"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
+<span id="cb127-33"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-33"></a></span>
+<span id="cb127-34"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-34"></a></span>
+<span id="cb127-35"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-35"></a><span class="ex">rule</span> figure:</span>
+<span id="cb127-36"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-36"></a>    <span class="ex">input</span>:</span>
+<span id="cb127-37"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-37"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
+<span id="cb127-38"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-38"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb127-39"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-39"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
+<span id="cb127-40"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-40"></a>    <span class="ex">output</span>:</span>
+<span id="cb127-41"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-41"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
+<span id="cb127-42"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-42"></a>    <span class="ex">shell</span>:</span>
+<span id="cb127-43"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-43"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb127-44"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-44"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb127-45"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-45"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb127-46"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-46"></a><span class="st">            --out {output.fig}&quot;</span></span>
+<span id="cb127-47"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-47"></a></span>
+<span id="cb127-48"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-48"></a></span>
+<span id="cb127-49"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-49"></a><span class="ex">rule</span> gen_regression_vars:</span>
+<span id="cb127-50"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-50"></a>    <span class="ex">input</span>:</span>
+<span id="cb127-51"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-51"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
+<span id="cb127-52"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-52"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
+<span id="cb127-53"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-53"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
+<span id="cb127-54"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-54"></a>    <span class="ex">output</span>:</span>
+<span id="cb127-55"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-55"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
+<span id="cb127-56"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-56"></a>    <span class="ex">shell</span>:</span>
+<span id="cb127-57"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-57"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb127-58"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-58"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb127-59"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-59"></a><span class="st">            --param {input.param} \</span></span>
+<span id="cb127-60"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-60"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb127-61"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-61"></a></span>
+<span id="cb127-62"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-62"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb127-63"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-63"></a>    <span class="ex">input</span>:</span>
+<span id="cb127-64"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-64"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb127-65"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-65"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb127-66"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-66"></a>    <span class="ex">output</span>:</span>
+<span id="cb127-67"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-67"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb127-68"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-68"></a>    <span class="ex">shell</span>:</span>
+<span id="cb127-69"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-69"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb127-70"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-70"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb127-71"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-71"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb127-72"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-72"></a></span>
+<span id="cb127-73"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-73"></a></span>
+<span id="cb127-74"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-74"></a><span class="ex">rule</span> clean:</span>
+<span id="cb127-75"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-75"></a>    <span class="ex">shell</span>:</span>
+<span id="cb127-76"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-76"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
+<span id="cb127-77"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-77"></a></span>
+<span id="cb127-78"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-78"></a><span class="ex">rule</span> clean_data:</span>
+<span id="cb127-79"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-79"></a>    <span class="ex">shell</span>:</span>
+<span id="cb127-80"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-80"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
+<span id="cb127-81"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-81"></a></span>
+<span id="cb127-82"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-82"></a><span class="ex">rule</span> clean_analysis:</span>
+<span id="cb127-83"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-83"></a>    <span class="ex">shell</span>:</span>
+<span id="cb127-84"><a href="automating-list-construction-for-wildcard-expansion.html#cb127-84"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
 
 </div>
 </div>
@@ -819,11 +820,11 @@ Chapter YY will show us how to get all the outputs build with one run of Snakema
 
 <div class="footnotes">
 <hr />
-<ol start="11">
-<li id="fn11"><p>
+<ol start="12">
+<li id="fn12"><p>
 If one replaces <code>print(MODELS)</code> with <code>print(type(MODELS))</code> we learn that <code>MODELS</code> is currently a <code>class</code> object rather than a list.
 It remains unclear to us as authors why this is what the Snakemake designers made this decision, but we have learned to embrace it.
-We hope you do too.<a href="automating-list-construction-for-wildcard-expansion.html#fnref11" class="footnote-back">↩︎</a></p></li>
+We hope you do too.<a href="automating-list-construction-for-wildcard-expansion.html#fnref12" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
             </section>
