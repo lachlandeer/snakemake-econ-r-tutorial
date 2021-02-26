@@ -480,3 +480,34 @@ It can therefore be beneficial and sufficient to only reset only the analysis vi
 :::
 
 ## Our Workflow in Graphs
+
+In this chapter we created four additional steps, creating the following rules:
+
+1. `gen_regression_vars`
+2. `solow_nonoil`
+3. `solow_oecd`
+4. `solow_intermediate`
+
+The rules `rename_vars` and `gen_regression vars` are dependencies of the three solow rules.
+But each of the solow rules are currently separate worklows.
+This means we have three parallel workflows, as illustrated below:
+
+```{r, echo = FALSE, fig.show="hold", out.width="33%"}
+knitr::include_graphics(c("img/12-multiple-rules/rulegraph-nonoil.png",
+                          "img/12-multiple-rules/rulegraph-oecd.png",
+                          "img/12-multiple-rules/rulegraph-intermediate.png")
+                          )
+```
+
+Each of these workflows, that produce one regression each are very similar.
+We can see this by looking at the files that each rule uses:
+
+```{r, echo = FALSE, fig.show="hold", out.width="33%"}
+knitr::include_graphics(c("img/12-multiple-rules/filegraph-nonoil.png",
+                          "img/12-multiple-rules/filegraph-oecd.png",
+                          "img/12-multiple-rules/filegraph-intermediate.png")
+                          )
+```
+
+The only difference is the `model-specs` file and the name of the output file.
+We will look to exploit this similarity in the next chapter to make our Snakefile look simpler.
