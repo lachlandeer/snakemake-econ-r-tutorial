@@ -104,7 +104,7 @@ In our case `snakemake --cores 1 hello_world` will give the same output as the l
 
 :::{- .tip}
 
-### --cores
+### `--cores`
 
 At this point you are probably guessing that the long option `--cores SOME_NUMBER` tells Snakemake how many CPU cores to use when executing a workflow. 
 This is correct, and `snakemake --cores 1` tells Snakemake to use a single core of your computer when it runs.
