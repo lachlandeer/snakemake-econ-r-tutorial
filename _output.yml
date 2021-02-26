@@ -1,17 +1,24 @@
 bookdown::gitbook:
   css: style.css
+  # includes:
+  #   before_body: assets/big-image.html
+  #   after_body: assets/footer.html
+  highlight: tango
   config:
+    edit:
+      link: https://github.com/lachlandeer/snakemake-econ-r/edit/master/%s
+      text: "Edit"
     toc:
+      collapse: section
       before: |
         <li><a href="./index.html">Reproducible Data Analytic Workflows with Snakemake and `R`</a></li>
+      # before: |
+      #   <li class="toc-logo"><a href="./"><img src="images/logo/logo-rstudio4edu.png"></a></li>
       after: |
-        <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
-    edit: https://github.com/rstudio/bookdown-demo/edit/master/%s
-    download: ["pdf"]
-bookdown::pdf_book:
-  includes:
-    in_header: preamble.tex
-  latex_engine: xelatex
-  citation_package: natbib
-  keep_tex: yes
-bookdown::epub_book: default
+        <li><a href="https://github.comlachlandeer/snakemake-econ-r/" target="blank">Published with bookdown</a></li>
+    # download: ["rmd"]
+    sharing:
+      github: yes
+      facebook: no
+      twitter: yes
+      all: no
