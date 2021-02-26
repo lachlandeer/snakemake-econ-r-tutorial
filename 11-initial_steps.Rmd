@@ -147,7 +147,7 @@ gen_reg_vars.R
 
 which need to be executed sequentially.
 In this chapter, we want to run the script `rename_variables.R` to tidy up the variable names in our data set.
-In the next chapter, we will then add `gen_reg_vars.R`, which creates additional variables to be used in subsequant steps.
+In the next chapter, we will then add `gen_reg_vars.R`, which creates additional variables to be used in subsequent steps.
 
 ### Using the `Rscript` command to execute R scripts
 
@@ -186,7 +186,7 @@ Options:
 
 This suggests the script expects
 
-1. a `--data` option which defines the filepath to a stata data set. 
+1. a `--data` option which defines the filepath to a Stata data set. 
    This is the input dataset which the script transforms.
    For us, this will be the file `src/data/mrw.dta`
 2. a `--out` option which defines the filepath the transformed data set will be saved.
