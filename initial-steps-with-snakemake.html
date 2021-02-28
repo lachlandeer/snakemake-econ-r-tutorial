@@ -53,6 +53,742 @@
 
 <script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
 
+<script>
+    /* ========================================================================
+     * Bootstrap: transition.js v3.3.7
+     * http://getbootstrap.com/javascript/#transitions
+     * ========================================================================
+     * Copyright 2011-2016 Twitter, Inc.
+     * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+     * ======================================================================== */
+    
+    
+    +function ($) {
+      'use strict';
+    
+      // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+      // ============================================================
+    
+      function transitionEnd() {
+        var el = document.createElement('bootstrap')
+    
+        var transEndEventNames = {
+          WebkitTransition : 'webkitTransitionEnd',
+          MozTransition    : 'transitionend',
+          OTransition      : 'oTransitionEnd otransitionend',
+          transition       : 'transitionend'
+        }
+    
+        for (var name in transEndEventNames) {
+          if (el.style[name] !== undefined) {
+            return { end: transEndEventNames[name] }
+          }
+        }
+    
+        return false // explicit for ie8 (  ._.)
+      }
+    
+      // http://blog.alexmaccaw.com/css-transitions
+      $.fn.emulateTransitionEnd = function (duration) {
+        var called = false
+        var $el = this
+        $(this).one('bsTransitionEnd', function () { called = true })
+        var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+        setTimeout(callback, duration)
+        return this
+      }
+    
+      $(function () {
+        $.support.transition = transitionEnd()
+    
+        if (!$.support.transition) return
+    
+        $.event.special.bsTransitionEnd = {
+          bindType: $.support.transition.end,
+          delegateType: $.support.transition.end,
+          handle: function (e) {
+            if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+          }
+        }
+      })
+    
+    }(jQuery);
+    </script>
+    <script>
+    /* ========================================================================
+     * Bootstrap: collapse.js v3.3.7
+     * http://getbootstrap.com/javascript/#collapse
+     * ========================================================================
+     * Copyright 2011-2016 Twitter, Inc.
+     * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+     * ======================================================================== */
+    
+    /* jshint latedef: false */
+    
+    +function ($) {
+      'use strict';
+    
+      // COLLAPSE PUBLIC CLASS DEFINITION
+      // ================================
+    
+      var Collapse = function (element, options) {
+        this.$element      = $(element)
+        this.options       = $.extend({}, Collapse.DEFAULTS, options)
+        this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                               '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+        this.transitioning = null
+    
+        if (this.options.parent) {
+          this.$parent = this.getParent()
+        } else {
+          this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+        }
+    
+        if (this.options.toggle) this.toggle()
+      }
+    
+      Collapse.VERSION  = '3.3.7'
+    
+      Collapse.TRANSITION_DURATION = 350
+    
+      Collapse.DEFAULTS = {
+        toggle: true
+      }
+    
+      Collapse.prototype.dimension = function () {
+        var hasWidth = this.$element.hasClass('width')
+        return hasWidth ? 'width' : 'height'
+      }
+    
+      Collapse.prototype.show = function () {
+        if (this.transitioning || this.$element.hasClass('in')) return
+    
+        var activesData
+        var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+    
+        if (actives && actives.length) {
+          activesData = actives.data('bs.collapse')
+          if (activesData && activesData.transitioning) return
+        }
+    
+        var startEvent = $.Event('show.bs.collapse')
+        this.$element.trigger(startEvent)
+        if (startEvent.isDefaultPrevented()) return
+    
+        if (actives && actives.length) {
+          Plugin.call(actives, 'hide')
+          activesData || actives.data('bs.collapse', null)
+        }
+    
+        var dimension = this.dimension()
+    
+        this.$element
+          .removeClass('collapse')
+          .addClass('collapsing')[dimension](0)
+          .attr('aria-expanded', true)
+    
+        this.$trigger
+          .removeClass('collapsed')
+          .attr('aria-expanded', true)
+    
+        this.transitioning = 1
+    
+        var complete = function () {
+          this.$element
+            .removeClass('collapsing')
+            .addClass('collapse in')[dimension]('')
+          this.transitioning = 0
+          this.$element
+            .trigger('shown.bs.collapse')
+        }
+    
+        if (!$.support.transition) return complete.call(this)
+    
+        var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+    
+        this.$element
+          .one('bsTransitionEnd', $.proxy(complete, this))
+          .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+      }
+    
+      Collapse.prototype.hide = function () {
+        if (this.transitioning || !this.$element.hasClass('in')) return
+    
+        var startEvent = $.Event('hide.bs.collapse')
+        this.$element.trigger(startEvent)
+        if (startEvent.isDefaultPrevented()) return
+    
+        var dimension = this.dimension()
+    
+        this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+    
+        this.$element
+          .addClass('collapsing')
+          .removeClass('collapse in')
+          .attr('aria-expanded', false)
+    
+        this.$trigger
+          .addClass('collapsed')
+          .attr('aria-expanded', false)
+    
+        this.transitioning = 1
+    
+        var complete = function () {
+          this.transitioning = 0
+          this.$element
+            .removeClass('collapsing')
+            .addClass('collapse')
+            .trigger('hidden.bs.collapse')
+        }
+    
+        if (!$.support.transition) return complete.call(this)
+    
+        this.$element
+          [dimension](0)
+          .one('bsTransitionEnd', $.proxy(complete, this))
+          .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+      }
+    
+      Collapse.prototype.toggle = function () {
+        this[this.$element.hasClass('in') ? 'hide' : 'show']()
+      }
+    
+      Collapse.prototype.getParent = function () {
+        return $(this.options.parent)
+          .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+          .each($.proxy(function (i, element) {
+            var $element = $(element)
+            this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+          }, this))
+          .end()
+      }
+    
+      Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+        var isOpen = $element.hasClass('in')
+    
+        $element.attr('aria-expanded', isOpen)
+        $trigger
+          .toggleClass('collapsed', !isOpen)
+          .attr('aria-expanded', isOpen)
+      }
+    
+      function getTargetFromTrigger($trigger) {
+        var href
+        var target = $trigger.attr('data-target')
+          || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+    
+        return $(target)
+      }
+    
+    
+      // COLLAPSE PLUGIN DEFINITION
+      // ==========================
+    
+      function Plugin(option) {
+        return this.each(function () {
+          var $this   = $(this)
+          var data    = $this.data('bs.collapse')
+          var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+    
+          if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+          if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+          if (typeof option == 'string') data[option]()
+        })
+      }
+    
+      var old = $.fn.collapse
+    
+      $.fn.collapse             = Plugin
+      $.fn.collapse.Constructor = Collapse
+    
+    
+      // COLLAPSE NO CONFLICT
+      // ====================
+    
+      $.fn.collapse.noConflict = function () {
+        $.fn.collapse = old
+        return this
+      }
+    
+    
+      // COLLAPSE DATA-API
+      // =================
+    
+      $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+        var $this   = $(this)
+    
+        if (!$this.attr('data-target')) e.preventDefault()
+    
+        var $target = getTargetFromTrigger($this)
+        var data    = $target.data('bs.collapse')
+        var option  = data ? 'toggle' : $this.data()
+    
+        Plugin.call($target, option)
+      })
+    
+    }(jQuery);
+    </script>
+    <script>
+    window.initializeCodeFolding = function(show) {
+    
+      // handlers for show-all and hide all
+      $("#rmd-show-all-code").click(function() {
+        // close the dropdown menu when an option is clicked
+        $("#allCodeButton").dropdown("toggle");
+        $('div.r-code-collapse').each(function() {
+          $(this).collapse('show');
+        });
+      });
+      $("#rmd-hide-all-code").click(function() {
+        // close the dropdown menu when an option is clicked
+        $("#allCodeButton").dropdown("toggle");
+        $('div.r-code-collapse').each(function() {
+          $(this).collapse('hide');
+        });
+      });
+    
+      // index for unique code element ids
+      var currentIndex = 1;
+    
+      // select all R code blocks
+      var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+      rCodeBlocks.each(function() {
+    
+        // if code block has been labeled with class `fold-show`, show the code on init!
+        var classList = $(this).attr('class').split(/\s+/);
+        for (var i = 0; i < classList.length; i++) {
+        if (classList[i] === 'fold-show') {
+            show = true;
+          }
+        }
+    
+        // create a collapsable div to wrap the code in
+        var div = $('<div class="collapse r-code-collapse"></div>');
+        if (show)
+          div.addClass('in');
+        var id = 'rcode-643E0F36' + currentIndex++;
+        div.attr('id', id);
+        $(this).before(div);
+        $(this).detach().appendTo(div);
+    
+        // add a show code button right above
+        var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+        var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+        showCodeButton.append(showCodeText);
+        showCodeButton
+            .attr('data-toggle', 'collapse')
+            .attr('data-target', '#' + id)
+            .attr('aria-expanded', show)
+            .attr('aria-controls', id);
+    
+        var buttonRow = $('<div class="row"></div>');
+        var buttonCol = $('<div class="col-md-12"></div>');
+    
+        buttonCol.append(showCodeButton);
+        buttonRow.append(buttonCol);
+    
+        div.before(buttonRow);
+    
+        // hack: return show to false, otherwise all next codeBlocks will be shown!
+        show = false;
+    
+        // update state of button on show/hide
+        div.on('hidden.bs.collapse', function () {
+          showCodeText.text('Code');
+        });
+        div.on('show.bs.collapse', function () {
+          showCodeText.text('Hide');
+        });
+      });
+    
+    }
+    </script>
+    <script>
+    /* ========================================================================
+     * Bootstrap: dropdown.js v3.3.7
+     * http://getbootstrap.com/javascript/#dropdowns
+     * ========================================================================
+     * Copyright 2011-2016 Twitter, Inc.
+     * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+     * ======================================================================== */
+    
+    
+    +function ($) {
+      'use strict';
+    
+      // DROPDOWN CLASS DEFINITION
+      // =========================
+    
+      var backdrop = '.dropdown-backdrop'
+      var toggle   = '[data-toggle="dropdown"]'
+      var Dropdown = function (element) {
+        $(element).on('click.bs.dropdown', this.toggle)
+      }
+    
+      Dropdown.VERSION = '3.3.7'
+    
+      function getParent($this) {
+        var selector = $this.attr('data-target')
+    
+        if (!selector) {
+          selector = $this.attr('href')
+          selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+        }
+    
+        var $parent = selector && $(selector)
+    
+        return $parent && $parent.length ? $parent : $this.parent()
+      }
+    
+      function clearMenus(e) {
+        if (e && e.which === 3) return
+        $(backdrop).remove()
+        $(toggle).each(function () {
+          var $this         = $(this)
+          var $parent       = getParent($this)
+          var relatedTarget = { relatedTarget: this }
+    
+          if (!$parent.hasClass('open')) return
+    
+          if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+    
+          $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+    
+          if (e.isDefaultPrevented()) return
+    
+          $this.attr('aria-expanded', 'false')
+          $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+        })
+      }
+    
+      Dropdown.prototype.toggle = function (e) {
+        var $this = $(this)
+    
+        if ($this.is('.disabled, :disabled')) return
+    
+        var $parent  = getParent($this)
+        var isActive = $parent.hasClass('open')
+    
+        clearMenus()
+    
+        if (!isActive) {
+          if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+            // if mobile we use a backdrop because click events don't delegate
+            $(document.createElement('div'))
+              .addClass('dropdown-backdrop')
+              .insertAfter($(this))
+              .on('click', clearMenus)
+          }
+    
+          var relatedTarget = { relatedTarget: this }
+          $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+    
+          if (e.isDefaultPrevented()) return
+    
+          $this
+            .trigger('focus')
+            .attr('aria-expanded', 'true')
+    
+          $parent
+            .toggleClass('open')
+            .trigger($.Event('shown.bs.dropdown', relatedTarget))
+        }
+    
+        return false
+      }
+    
+      Dropdown.prototype.keydown = function (e) {
+        if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+    
+        var $this = $(this)
+    
+        e.preventDefault()
+        e.stopPropagation()
+    
+        if ($this.is('.disabled, :disabled')) return
+    
+        var $parent  = getParent($this)
+        var isActive = $parent.hasClass('open')
+    
+        if (!isActive && e.which != 27 || isActive && e.which == 27) {
+          if (e.which == 27) $parent.find(toggle).trigger('focus')
+          return $this.trigger('click')
+        }
+    
+        var desc = ' li:not(.disabled):visible a'
+        var $items = $parent.find('.dropdown-menu' + desc)
+    
+        if (!$items.length) return
+    
+        var index = $items.index(e.target)
+    
+        if (e.which == 38 && index > 0)                 index--         // up
+        if (e.which == 40 && index < $items.length - 1) index++         // down
+        if (!~index)                                    index = 0
+    
+        $items.eq(index).trigger('focus')
+      }
+    
+    
+      // DROPDOWN PLUGIN DEFINITION
+      // ==========================
+    
+      function Plugin(option) {
+        return this.each(function () {
+          var $this = $(this)
+          var data  = $this.data('bs.dropdown')
+    
+          if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+          if (typeof option == 'string') data[option].call($this)
+        })
+      }
+    
+      var old = $.fn.dropdown
+    
+      $.fn.dropdown             = Plugin
+      $.fn.dropdown.Constructor = Dropdown
+    
+    
+      // DROPDOWN NO CONFLICT
+      // ====================
+    
+      $.fn.dropdown.noConflict = function () {
+        $.fn.dropdown = old
+        return this
+      }
+    
+    
+      // APPLY TO STANDARD DROPDOWN ELEMENTS
+      // ===================================
+    
+      $(document)
+        .on('click.bs.dropdown.data-api', clearMenus)
+        .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+        .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+        .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+        .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+    
+    }(jQuery);
+    </script>
+    <style type="text/css">
+    .code-folding-btn {
+      margin-bottom: 4px;
+    }
+    
+    .row { display: flex; }
+    .collapse { display: none; }
+    .in { display:block }
+    .pull-right > .dropdown-menu {
+        right: 0;
+        left: auto;
+    }
+    
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        display: none;
+        float: left;
+        min-width: 160px;
+        padding: 5px 0;
+        margin: 2px 0 0;
+        font-size: 14px;
+        text-align: left;
+        list-style: none;
+        background-color: #fff;
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0,0,0,.15);
+        border-radius: 4px;
+        -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+        box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    }
+    
+    .open > .dropdown-menu {
+        display: block;
+        color: #ffffff;
+        background-color: #ffffff;
+        background-image: none;
+        border-color: #92897e;
+    }
+    
+    .dropdown-menu > li > a {
+      display: block;
+      padding: 3px 20px;
+      clear: both;
+      font-weight: 400;
+      line-height: 1.42857143;
+      color: #000000;
+      white-space: nowrap;
+    }
+    
+    .dropdown-menu > li > a:hover,
+    .dropdown-menu > li > a:focus {
+      color: #ffffff;
+      text-decoration: none;
+      background-color: #e95420;
+    }
+    
+    .dropdown-menu > .active > a,
+    .dropdown-menu > .active > a:hover,
+    .dropdown-menu > .active > a:focus {
+      color: #ffffff;
+      text-decoration: none;
+      background-color: #e95420;
+      outline: 0;
+    }
+    .dropdown-menu > .disabled > a,
+    .dropdown-menu > .disabled > a:hover,
+    .dropdown-menu > .disabled > a:focus {
+      color: #aea79f;
+    }
+    
+    .dropdown-menu > .disabled > a:hover,
+    .dropdown-menu > .disabled > a:focus {
+      text-decoration: none;
+      cursor: not-allowed;
+      background-color: transparent;
+      background-image: none;
+      filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+    }
+    
+    .btn {
+      display: inline-block;
+      margin-bottom: 1;
+      font-weight: normal;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      -ms-touch-action: manipulation;
+          touch-action: manipulation;
+      cursor: pointer;
+      background-image: none;
+      border: 1px solid transparent;
+      padding: 4px 8px;
+      font-size: 14px;
+      line-height: 1.42857143;
+      border-radius: 4px;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    .btn:focus,
+    .btn:active:focus,
+    .btn.active:focus,
+    .btn.focus,
+    .btn:active.focus,
+    .btn.active.focus {
+      outline: 5px auto -webkit-focus-ring-color;
+      outline-offset: -2px;
+    }
+    .btn:hover,
+    .btn:focus,
+    .btn.focus {
+      color: #ffffff;
+      text-decoration: none;
+    }
+    .btn:active,
+    .btn.active {
+      background-image: none;
+      outline: 0;
+      box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    }
+    .btn.disabled,
+    .btn[disabled],
+    fieldset[disabled] .btn {
+      cursor: not-allowed;
+      filter: alpha(opacity=65);
+      opacity: 0.65;
+      box-shadow: none;
+    }
+    a.btn.disabled,
+    fieldset[disabled] a.btn {
+      pointer-events: none;
+    }
+    .btn-default {
+      color: #ffffff;
+      background-color: #aea79f; #important
+      border-color: #aea79f;
+    }
+    
+    .btn-default:focus,
+    .btn-default.focus {
+      color: #ffffff;
+      background-color: #978e83;
+      border-color: #6f675e;
+    }
+    
+    .btn-default:hover {
+      color: #ffffff;
+      background-color: #978e83;
+      border-color: #92897e;
+    }
+    .btn-default:active,
+    .btn-default.active,
+    .btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
+      border-radius: 0;
+    }
+    .btn-group > .btn:first-child {
+      margin-left: 0;
+    }
+    .btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    .btn-group > .btn:last-child:not(:first-child),
+    .btn-group > .dropdown-toggle:not(:first-child) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    .btn-group > .btn-group {
+      float: left;
+    }
+    .btn-group > .btn-group:not(:first-child):not(:last-child) > .btn {
+      border-radius: 0;
+    }
+    .btn-group > .btn-group:first-child:not(:last-child) > .btn:last-child,
+    .btn-group > .btn-group:first-child:not(:last-child) > .dropdown-toggle {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    .btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    .btn-group .dropdown-toggle:active,
+    .btn-group.open .dropdown-toggle {
+      outline: 0;
+    }
+    .btn-group > .btn + .dropdown-toggle {
+      padding-right: 8px;
+      padding-left: 8px;
+    }
+    .btn-group > .btn-lg + .dropdown-toggle {
+      padding-right: 12px;
+      padding-left: 12px;
+    }
+    .btn-group.open .dropdown-toggle {
+      box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    }
+    .btn-group.open .dropdown-toggle.btn-link {
+      box-shadow: none;
+    }
+    
+    </style>
+    <script>
+    var str = '<div class="btn-group pull-right" style="position: fixed; right: 50px; top: 10px; z-index: 200"><button type="button" class="btn btn-default btn-xs dropdown-toggle" id="allCodeButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast=""><span>Code</span> <span class="caret"></span></button><ul class="dropdown-menu" style="min-width: 50px;"><li><a id="rmd-show-all-code" href="#">Show All Code</a></li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li></ul></div>';
+    document.write(str);
+    </script>
+    <script>
+    $(document).ready(function () {
+      window.initializeCodeFolding("show" === "hide");
+    });
+    </script>
+
 
 <style type="text/css">
 code.sourceCode > span { display: inline-block; line-height: 1.25; }
@@ -358,7 +1094,7 @@ In the remainder of this tutorial we will edit the file together, gradually cons
 <h2><span class="header-section-number">3.1</span> Writing Our First Rule</h2>
 <p>All good software tutorial seem to start with a hello world example, so we’ll follow suit and do the same.
 To do so, we open <code>Snakefile</code> in a text editor of our choice and write the following text into the file:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="initial-steps-with-snakemake.html#cb20-1"></a><span class="ex">rule</span> hello_world:</span>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb20-1"><a href="initial-steps-with-snakemake.html#cb20-1"></a><span class="ex">rule</span> hello_world:</span>
 <span id="cb20-2"><a href="initial-steps-with-snakemake.html#cb20-2"></a>  <span class="ex">shell</span>:</span>
 <span id="cb20-3"><a href="initial-steps-with-snakemake.html#cb20-3"></a>    <span class="st">&#39;echo &quot;Hello World!&quot;&#39;</span></span></code></pre></div>
 <p>The first line in our example defines the name of a <em>rule</em>, in this case <code>hello_world</code>.
@@ -380,7 +1116,7 @@ If you do not know Python, there’s no need to worry - our explanations and wha
 <div id="executing-a-rule" class="section level2">
 <h2><span class="header-section-number">3.2</span> Executing a Rule</h2>
 <p>After saving our changes to <code>Snakefile</code>, we can execute the newly created rule by navigating to the project’s main folder and by typing <code>Snakemake --cores 1</code> into the terminal and then hitting <code>RETURN</code>.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="initial-steps-with-snakemake.html#cb21-1"></a>$ <span class="ex">snakemake</span> --cores 1</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb21-1"><a href="initial-steps-with-snakemake.html#cb21-1"></a>$ <span class="ex">snakemake</span> --cores 1</span></code></pre></div>
 <p>By default Snakemake will execute the first rule it encounters in a <code>Snakefile</code>.
 As our file only contains a single rule, it will execute the <code>hello_world</code> rule and print <code>Hello World!</code> to the console together with some additional information about the execution of the work flow:</p>
 <pre class="out"><code>Building DAG of jobs...
@@ -401,7 +1137,7 @@ Hello World!
 Finished job 0.
 1 of 1 steps (100%) done</code></pre>
 <p>When a file contains more than a single rule, we often want to be more explicit and tell <code>Snakemake</code> to execute a particular rule like so:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="initial-steps-with-snakemake.html#cb23-1"></a>$ <span class="ex">snakemake</span> --cores 1 name_of_rule</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb23-1"><a href="initial-steps-with-snakemake.html#cb23-1"></a>$ <span class="ex">snakemake</span> --cores 1 name_of_rule</span></code></pre></div>
 <p>In our case <code>snakemake --cores 1 hello_world</code> will give the same output as the last execution.</p>
 <div class="unnumbered tip">
 <h3 id="cores"><span class="header-section-number">3.2</span> <code>--cores</code></h3>
@@ -417,7 +1153,7 @@ You are encouraged play around with the core count yourself to and see what effe
 However, if we call it something else, we will need to tell Snakemake where to find the set of rules.</p>
 <p>We can do this with the <code>-s</code> flag.
 For example, if our Snakefile is names <code>SomeSnakefile</code>:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="initial-steps-with-snakemake.html#cb24-1"></a>$ <span class="ex">snakemake</span> -s SomeSnakefile --cores 1 name_of_rule</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb24-1"><a href="initial-steps-with-snakemake.html#cb24-1"></a>$ <span class="ex">snakemake</span> -s SomeSnakefile --cores 1 name_of_rule</span></code></pre></div>
 <p>Sometimes the suffix <code>.smk</code> is used by researchers to identify Snakefiles not called <code>Snakefile</code>,
 for example <code>install.smk</code></p>
 </div>
@@ -426,8 +1162,8 @@ for example <code>install.smk</code></p>
 <h2><span class="header-section-number">3.3</span> First Steps in the MRW Pipeline</h2>
 <p>Like most empirical research, our project starts with data management and data cleaning steps.
 The data management subdirectory, <code>src/data-management</code> contains two scripts:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="initial-steps-with-snakemake.html#cb25-1"></a><span class="fu">ls</span> src/data-management</span></code></pre></div>
-<pre class="out"><code>rename_variables.R
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb25-1"><a href="initial-steps-with-snakemake.html#cb25-1"></a><span class="fu">ls</span> src/data-management</span></code></pre></div>
+<pre class="out fold-show"><code>rename_variables.R
 gen_reg_vars.R</code></pre>
 <p>which need to be executed sequentially.
 In this chapter, we want to run the script <code>rename_variables.R</code> to tidy up the variable names in our data set.
@@ -437,13 +1173,13 @@ In the next chapter, we will then add <code>gen_reg_vars.R</code>, which creates
 <p>We can run any R script with the <code>Rscript</code> shell command.
 The command expects the path to an <code>.R</code> script as the first argument.
 Simple R scripts that do not require additional options can be run as:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="initial-steps-with-snakemake.html#cb27-1"></a><span class="ex">Rscript</span> PATH/TO/SCRIPT.R</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb27-1"><a href="initial-steps-with-snakemake.html#cb27-1"></a><span class="ex">Rscript</span> PATH/TO/SCRIPT.R</span></code></pre></div>
 <p>Most scripts in this project have been written to require additional parameters.
 To see what additional parameters are needed, we can run the R script with the <code>--help</code> option.</p>
 <p>Let’s apply this and execute the <code>rename_variables.R</code> script with the <code>--help</code> flag:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="initial-steps-with-snakemake.html#cb28-1"></a>$ <span class="ex">Rscript</span> src/data-management/rename_variables.R --help</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb28-1"><a href="initial-steps-with-snakemake.html#cb28-1"></a>$ <span class="ex">Rscript</span> src/data-management/rename_variables.R --help</span></code></pre></div>
 <p>This prints the following output to the console:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="initial-steps-with-snakemake.html#cb29-1"></a><span class="ex">Usage</span>: src/data-management/rename_variables.R [options]</span>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb29-1"><a href="initial-steps-with-snakemake.html#cb29-1"></a><span class="ex">Usage</span>: src/data-management/rename_variables.R [options]</span>
 <span id="cb29-2"><a href="initial-steps-with-snakemake.html#cb29-2"></a></span>
 <span id="cb29-3"><a href="initial-steps-with-snakemake.html#cb29-3"></a><span class="ex">Options</span>:</span>
 <span id="cb29-4"><a href="initial-steps-with-snakemake.html#cb29-4"></a>    <span class="ex">-d</span> CHARACTER, --data=CHARACTER</span>
@@ -472,7 +1208,7 @@ We will name the rule <code>rename_vars</code> and place it at the top of our Sn
 <p>Note that <code>\</code> in the shell command allows us to write the command over several lines for better readability.
 They can be omitted when we write the command in a single line.</p>
 <p>Now if we run Snakemake:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb31-1"><a href="initial-steps-with-snakemake.html#cb31-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb31-1"><a href="initial-steps-with-snakemake.html#cb31-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
 <p>We see that Snakemake executes the script for us, printing output to screen and saving the output file as expected.
 Used this way, we can see that a Snakemake rule is an instruction on how to execute part of a project’s code.
 This is true, but it can be even more powerful than that.</p>
@@ -482,7 +1218,7 @@ This is true, but it can be even more powerful than that.</p>
 <p>Our current <code>rename_vars</code> rule was simple - it specified one shell command.
 We can add some further structure to this rule by specifying <strong>input</strong> and <strong>output</strong> files in a different manner.
 We are going to specify rules in the following format:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a href="initial-steps-with-snakemake.html#cb32-1"></a><span class="ex">rule</span> rule_name:</span>
+<div class="sourceCode" id="cb32"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb32-1"><a href="initial-steps-with-snakemake.html#cb32-1"></a><span class="ex">rule</span> rule_name:</span>
 <span id="cb32-2"><a href="initial-steps-with-snakemake.html#cb32-2"></a>    <span class="ex">input</span>:</span>
 <span id="cb32-3"><a href="initial-steps-with-snakemake.html#cb32-3"></a>        <span class="ex">input_name1</span> = <span class="st">&quot;PATH/TO/input_one&quot;</span>,</span>
 <span id="cb32-4"><a href="initial-steps-with-snakemake.html#cb32-4"></a>        <span class="ex">input_name2</span> = <span class="st">&quot;PATH/TO/input_two&quot;</span></span>
@@ -504,7 +1240,7 @@ It is important to wrap each of these paths into quotations, and to separate eac
 The rule will use the <code>rename_variables.R</code> script as a first input.
 Let us therefore rename the first input into <code>script</code> and replace the right hand side with the path to the <code>rename_variables.R</code> script which we have used before when we printed the script’s help function.</p>
 <p>Our <code>rename_vars</code> rule should now look something like this:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a href="initial-steps-with-snakemake.html#cb33-1"></a><span class="ex">rule</span> rename_vars:</span>
+<div class="sourceCode" id="cb33"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb33-1"><a href="initial-steps-with-snakemake.html#cb33-1"></a><span class="ex">rule</span> rename_vars:</span>
 <span id="cb33-2"><a href="initial-steps-with-snakemake.html#cb33-2"></a>    <span class="ex">input</span>:</span>
 <span id="cb33-3"><a href="initial-steps-with-snakemake.html#cb33-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
 <span id="cb33-4"><a href="initial-steps-with-snakemake.html#cb33-4"></a>        <span class="ex">input_name2</span> = <span class="st">&quot;PATH/TO/input_two&quot;</span></span>
@@ -521,7 +1257,7 @@ We rename the second input into <code>data</code> and replace the right hand sid
 Finally, we replace the first output name with <code>data</code> and define an appropriate output file path as the right hand side.
 This is the location our transformed data will be saved to.</p>
 <p>After these steps, our rule should look something like this:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb34-1"><a href="initial-steps-with-snakemake.html#cb34-1"></a><span class="ex">rule</span> rename_vars:</span>
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb34-1"><a href="initial-steps-with-snakemake.html#cb34-1"></a><span class="ex">rule</span> rename_vars:</span>
 <span id="cb34-2"><a href="initial-steps-with-snakemake.html#cb34-2"></a>    <span class="ex">input</span>:</span>
 <span id="cb34-3"><a href="initial-steps-with-snakemake.html#cb34-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
 <span id="cb34-4"><a href="initial-steps-with-snakemake.html#cb34-4"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
@@ -532,16 +1268,16 @@ This is the location our transformed data will be saved to.</p>
 <span id="cb34-9"><a href="initial-steps-with-snakemake.html#cb34-9"></a><span class="st">        --data src/data/mrw.dta \</span></span>
 <span id="cb34-10"><a href="initial-steps-with-snakemake.html#cb34-10"></a><span class="st">        --out out/data/mrw_renamed.csv&quot;</span></span></code></pre></div>
 <p>After saving we can execute our new rule via:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb35-1"><a href="initial-steps-with-snakemake.html#cb35-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb35-1"><a href="initial-steps-with-snakemake.html#cb35-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
 <p>Snakemake will give us some console output informing us about the execution of our rule.
 A successful execution will be displayed through green text ending in</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a href="initial-steps-with-snakemake.html#cb36-1"></a><span class="ex">TODO</span>: Make green</span>
+<div class="sourceCode" id="cb36"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb36-1"><a href="initial-steps-with-snakemake.html#cb36-1"></a><span class="ex">TODO</span>: Make green</span>
 <span id="cb36-2"><a href="initial-steps-with-snakemake.html#cb36-2"></a><span class="ex">Finished</span> job 0.</span>
 <span id="cb36-3"><a href="initial-steps-with-snakemake.html#cb36-3"></a><span class="ex">1</span> of 1 steps (100%) <span class="kw">done</span></span></code></pre></div>
 <p>If the execution was successful, we can look into our output directory to see if anything has happened:</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb37-1"><a href="initial-steps-with-snakemake.html#cb37-1"></a>$ <span class="fu">ls</span> out/data/</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb37-1"><a href="initial-steps-with-snakemake.html#cb37-1"></a>$ <span class="fu">ls</span> out/data/</span></code></pre></div>
 <p>which yields</p>
-<pre class="out"><code>mrw_renamed.csv</code></pre>
+<pre class="out fold-show"><code>mrw_renamed.csv</code></pre>
 <p>Our file has been created as we expected.</p>
 <p>Looking at our rule, there is a bit of repetition.
 In the <code>shell</code> section, we repeat the full filepath of all the files use before in the <code>input</code> and <code>output</code> sections.
@@ -550,7 +1286,7 @@ We can refer to the inputs and outputs in the shell part of our rule via the nam
 For example, we can refer to the script “src/data-management/rename_variables.R” as <code>{input.script}</code>,
 and the data which is the output as <code>{output.data}</code></p>
 <p>Putting it all together will give us the following rule:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb39-1"><a href="initial-steps-with-snakemake.html#cb39-1"></a><span class="ex">rule</span> rename_vars:</span>
+<div class="sourceCode" id="cb39"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb39-1"><a href="initial-steps-with-snakemake.html#cb39-1"></a><span class="ex">rule</span> rename_vars:</span>
 <span id="cb39-2"><a href="initial-steps-with-snakemake.html#cb39-2"></a>    <span class="ex">input</span>:</span>
 <span id="cb39-3"><a href="initial-steps-with-snakemake.html#cb39-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
 <span id="cb39-4"><a href="initial-steps-with-snakemake.html#cb39-4"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
@@ -561,9 +1297,9 @@ and the data which is the output as <code>{output.data}</code></p>
 <span id="cb39-9"><a href="initial-steps-with-snakemake.html#cb39-9"></a><span class="st">            --data {input.data} \</span></span>
 <span id="cb39-10"><a href="initial-steps-with-snakemake.html#cb39-10"></a><span class="st">            --out {output.data}&quot;</span></span></code></pre></div>
 <p>Now let’s run the rule once more:</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb40-1"><a href="initial-steps-with-snakemake.html#cb40-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb40-1"><a href="initial-steps-with-snakemake.html#cb40-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
 <p>We see the following output:</p>
-<pre class="out"><code>Building DAG of jobs...
+<pre class="out fold-show"><code>Building DAG of jobs...
 Nothing to be done.</code></pre>
 <p>This is not an error, it simply says that Snakemake doesn’t need to run the rule again.
 It’s time to think about why that could be the case.</p>
@@ -572,26 +1308,26 @@ It’s time to think about why that could be the case.</p>
 <div id="no-redundant-executions" class="section level2">
 <h2><span class="header-section-number">3.4</span> No Redundant Executions</h2>
 <p>To understand the status of the project as seen by Snakemake, we can use the <strong>summary</strong> option of Snakemake:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb42-1"><a href="initial-steps-with-snakemake.html#cb42-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb42-1"><a href="initial-steps-with-snakemake.html#cb42-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
 <p>In our case the following output is printed to the console:</p>
-<pre class="out"><code>Building DAG of jobs...
+<pre class="out fold-show"><code>Building DAG of jobs...
 output_file                       date                    rule      version  log-file(s)    status  plan
 out/data/mrw_renamed.csv    Thu Jan 10 20:31:08 2019    rename_vars    -                     ok     no update
 </code></pre>
 <p>Snakemake tells us the status of the output file of the <code>rename_vars</code> rule is <code>ok</code> and that it plans not to update the file.</p>
 <p>Now, let us see what happens if we update one of the input files.
 The following command updates the time that <code>rename_variables.R</code> was last edited without changing the actual content of the file:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb44-1"><a href="initial-steps-with-snakemake.html#cb44-1"></a>$ <span class="fu">touch</span> src/data-management/rename_variables.R</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb44-1"><a href="initial-steps-with-snakemake.html#cb44-1"></a>$ <span class="fu">touch</span> src/data-management/rename_variables.R</span></code></pre></div>
 <p>Running the summary command again</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb45-1"><a href="initial-steps-with-snakemake.html#cb45-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb45-1"><a href="initial-steps-with-snakemake.html#cb45-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
 <p>yields the following output:</p>
-<pre class="out"><code>Building DAG of jobs...
+<pre class="out fold-show"><code>Building DAG of jobs...
 output_file                        date                    rule     version log-file(s)      status                plan
 out/data/mrw_renamed.csv    Thu Jan 10 20:31:08 2019    rename_vars    -                updated input files update pending</code></pre>
 <p>Snakemake has detected that one input file is more recent than the output file.
 It therefore will execute the rule when asked to do so.</p>
 <p>Running the rule again via:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb47-1"><a href="initial-steps-with-snakemake.html#cb47-1"></a><span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb47-1"><a href="initial-steps-with-snakemake.html#cb47-1"></a><span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
 <p>will execute the rule.</p>
 <p>We see one major advantage of Snakemake over alternative ways to execute projects.
 Snakemake keeps track of updates to input files and dependencies between files.This allows Snakemake to only re-runs a rule if an input has changed.
