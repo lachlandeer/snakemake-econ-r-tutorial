@@ -34,12 +34,16 @@ h1, h2, h3, h4 {
 
 
 .book .book-body .page-wrapper .page-inner section.normal h1, 
-.book .book-body .page-wrapper .page-inner section.normal h2, 
+.book .book-body .page-wrapper .page-inner section.normal h2 {
+    margin-top: 2.275em;
+    margin-bottom: 1em;
+}
+
 .book .book-body .page-wrapper .page-inner section.normal h3, 
 .book .book-body .page-wrapper .page-inner section.normal h4, 
 .book .book-body .page-wrapper .page-inner section.normal h5, 
 .book .book-body .page-wrapper .page-inner section.normal h6 {
-    margin-top: 2.275em;
+    margin-top: 1em;
     margin-bottom: 1em;
 }
 
@@ -170,7 +174,7 @@ li.appendix span, li.part span { /* for TOC part names */
 .challenge {
   padding: 1em 1em 1em 4em;
   margin-bottom: 10px;
-  background: #eec275;
+  background: #e8f1f7;
   position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
@@ -186,14 +190,14 @@ li.appendix span, li.part span { /* for TOC part names */
   left:10px;
   right:10px;
   position:absolute;
-  top:17px;
+  top:20px;
   font-size: 45px;
 }
 
 .objectives {
   padding: 1em 1em 1em 4em;
   margin-bottom: 10px;
-  background: #daee84;
+  background: #e7f8fa;
   position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
@@ -209,14 +213,14 @@ li.appendix span, li.part span { /* for TOC part names */
   left:10px;
   right:10px;
   position:absolute;
-  top:17px;
+  top:20px;
   font-size: 45px;
 }
 
 .answer {
   padding: 1em 1em 1em 4em;
   margin-bottom: 10px;
-  background: #D7C9AA;
+  background: #f4eff8;
   position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
@@ -232,14 +236,14 @@ li.appendix span, li.part span { /* for TOC part names */
   left:10px;
   right:10px;
   position:absolute;
-  top:17px;
+  top:20px;
   font-size: 45px;
 }
 
 .prereq {
   padding: 1em 1em 1em 4em;
   margin-bottom: 10px;
-  background: #9cd6dc;
+  background: #f1f1f1;
   position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
@@ -255,14 +259,14 @@ li.appendix span, li.part span { /* for TOC part names */
   left:10px;
   right:10px;
   position:absolute;
-  top:17px;
+  top:20px;
   font-size: 45px;
 }
 
 .warning {
   padding: 1em 1em 1em 4em;
   margin-bottom: 10px;
-  background: #F5e74e;
+  background: #fff1e6;
   position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
@@ -278,14 +282,14 @@ li.appendix span, li.part span { /* for TOC part names */
   left:10px;
   right:10px;
   position:absolute;
-  top:25px;
+  top:20px;
   font-size: 45px;
 }
 
 .tip {
   padding: 1em 1em 1em 4em;
   margin-bottom: 10px;
-  background: #84c77a;
+  background: #e9f5e9;
   position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
@@ -301,6 +305,6 @@ li.appendix span, li.part span { /* for TOC part names */
   left:10px;
   right:10px;
   position:absolute;
-  top:5px;
+  top: 0px;
   font-size: 45px;
 }

@@ -35,7 +35,7 @@ In the remainder of this tutorial we will edit the file together, gradually cons
 All good software tutorial seem to start with a hello world example, so we'll follow suit and do the same.
 To do so, we open `Snakefile` in a text editor of our choice and write the following text into the file:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 rule hello_world:
   shell:
     'echo "Hello World!"'
@@ -66,7 +66,7 @@ If you do not know Python, there's no need to worry - our explanations and what 
 
 After saving our changes to `Snakefile`, we can execute the newly created rule by navigating to the project's main folder and by typing `Snakemake --cores 1` into the terminal and then hitting `RETURN`.
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 $ snakemake --cores 1
 ```
 
@@ -95,7 +95,7 @@ Finished job 0.
 
 When a file contains more than a single rule, we often want to be more explicit and tell `Snakemake` to execute a particular rule like so:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 $ snakemake --cores 1 name_of_rule
 ```
 
@@ -122,7 +122,7 @@ However, if we call it something else, we will need to tell Snakemake where to f
 We can do this with the `-s` flag.
 For example, if our Snakefile is names `SomeSnakefile`:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 $ snakemake -s SomeSnakefile --cores 1 name_of_rule
 ```
 
@@ -135,12 +135,12 @@ Sometimes the suffix `.smk` is used by researchers to identify Snakefiles not ca
 Like most empirical research, our project starts with data management and data cleaning steps.
 The data management subdirectory, `src/data-management` contains two scripts:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 ls src/data-management
 ```
 
-```{r, engine = 'out', eval = FALSE}
-rename_variables.R  
+```{r class.source = 'fold-show', engine = 'out', eval = FALSE}
+rename_variables.R
 gen_reg_vars.R
 ```
 
@@ -154,7 +154,7 @@ We can run any R script with the `Rscript` shell command.
 The command expects the path to an `.R` script as the first argument.
 Simple R scripts that do not require additional options can be run as:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 Rscript PATH/TO/SCRIPT.R
 ```
 
@@ -163,13 +163,13 @@ To see what additional parameters are needed, we can run the R script with the `
 
 Let's apply this and execute the `rename_variables.R` script with the `--help` flag:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 $ Rscript src/data-management/rename_variables.R --help
 ```
 
 This prints the following output to the console:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 Usage: src/data-management/rename_variables.R [options]
 
 Options:
@@ -207,7 +207,7 @@ They can be omitted when we write the command in a single line.
 
 Now if we run Snakemake: 
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 $ snakemake --cores 1 rename_vars
 ```
 
@@ -221,7 +221,7 @@ Our current `rename_vars` rule was simple - it specified one shell command.
 We can add some further structure to this rule by specifying **input** and **output** files in a different manner.
 We are going to specify rules in the following format:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 rule rule_name:
     input:
         input_name1 = "PATH/TO/input_one",
@@ -249,7 +249,7 @@ Let us therefore rename the first input into `script` and replace the right hand
 
 Our `rename_vars` rule should now look something like this:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 rule rename_vars:
     input:
         script = "src/data-management/rename_variables.R",
@@ -271,7 +271,7 @@ This is the location our transformed data will be saved to.
 
 After these steps, our rule should look something like this:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 rule rename_vars:
     input:
         script = "src/data-management/rename_variables.R",
@@ -286,14 +286,14 @@ rule rename_vars:
 
 After saving we can execute our new rule via:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 $ snakemake --cores 1 rename_vars
 ```
 
 Snakemake will give us some console output informing us about the execution of our rule. 
 A successful execution will be displayed through green text ending in 
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 TODO: Make green
 Finished job 0.
 1 of 1 steps (100%) done
@@ -301,13 +301,13 @@ Finished job 0.
 
 If the execution was successful, we can look into our output directory to see if anything has happened:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 $ ls out/data/
 ```
 
 which yields
 
-```{r, engine = 'out', eval=FALSE}
+```{r class.source = 'fold-show', engine = 'out', eval=FALSE}
 mrw_renamed.csv
 ```
 
@@ -322,7 +322,7 @@ and the data which is the output as `{output.data}`
 
 Putting it all together will give us the following rule:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 rule rename_vars:
     input:
         script = "src/data-management/rename_variables.R",
@@ -337,13 +337,13 @@ rule rename_vars:
 
 Now let's run the rule once more:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 $ snakemake --cores 1 rename_vars
 ```
 
 We see the following output:
 
-```{r, engine = 'out', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'out', eval = FALSE}
 Building DAG of jobs...
 Nothing to be done.
 ```
@@ -355,13 +355,13 @@ It's time to think about why that could be the case.
 
 To understand the status of the project as seen by Snakemake, we can use the **summary** option of Snakemake:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 $ snakemake --summary
 ```
 
 In our case the following output is printed to the console:
 
-```{r, engine = 'out', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'out', eval = FALSE}
 Building DAG of jobs...
 output_file	                      date	                  rule	    version	 log-file(s)	status	plan
 out/data/mrw_renamed.csv	Thu Jan 10 20:31:08 2019	rename_vars	   -		             ok	    no update
@@ -373,19 +373,19 @@ Snakemake tells us the status of the output file of the `rename_vars` rule is `o
 Now, let us see what happens if we update one of the input files.
 The following command updates the time that `rename_variables.R` was last edited without changing the actual content of the file: 
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 $ touch src/data-management/rename_variables.R
 ```
 
 Running the summary command again
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 $ snakemake --summary
 ```
 
 yields the following output:
 
-```{r, engine = 'out', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'out', eval = FALSE}
 Building DAG of jobs...
 output_file	                       date	                   rule	    version	log-file(s)	     status	               plan
 out/data/mrw_renamed.csv	Thu Jan 10 20:31:08 2019	rename_vars	   -		        updated input files	update pending
@@ -396,7 +396,7 @@ It therefore will execute the rule when asked to do so.
 
 Running the rule again via:
 
-```{r, engine = 'bash', eval = FALSE}
+```{r class.source = 'fold-show', engine = 'bash', eval = FALSE}
 snakemake --cores 1 rename_vars
 ```
 
@@ -415,7 +415,7 @@ No longer do we need to think about order of execution and when to re-run files.
 Throughout Parts II to IV we are going to build up our workflow to reproduce MRW's analysis pipeline.
 In our motivation chapter we explained how our final workflow should be a connection between a set of rules,which we have depicted graphically as:
 
-```{r, fig.align="center", echo=FALSE}
+```{r , fig.align="center", echo=FALSE}
 knitr::include_graphics("img/01-motivation/rulegraph.png")
 ```
 

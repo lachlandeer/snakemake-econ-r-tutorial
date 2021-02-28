@@ -1,5 +1,7 @@
 bookdown::gitbook:
   css: style.css
+  includes:
+    in_header: js/hide_code.html
   # includes:
   #   before_body: assets/big-image.html
   #   after_body: assets/footer.html
