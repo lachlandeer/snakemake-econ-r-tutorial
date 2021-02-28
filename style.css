@@ -170,7 +170,7 @@ li.appendix span, li.part span { /* for TOC part names */
 .challenge {
   padding: 1em 1em 1em 4em;
   margin-bottom: 10px;
-  background: #eec275;
+  background: #e8f1f7;
   position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
@@ -193,7 +193,7 @@ li.appendix span, li.part span { /* for TOC part names */
 .objectives {
   padding: 1em 1em 1em 4em;
   margin-bottom: 10px;
-  background: #daee84;
+  background: #e7f8fa;
   position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
@@ -216,7 +216,7 @@ li.appendix span, li.part span { /* for TOC part names */
 .answer {
   padding: 1em 1em 1em 4em;
   margin-bottom: 10px;
-  background: #D7C9AA;
+  background: #f4eff8;
   position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
@@ -239,7 +239,7 @@ li.appendix span, li.part span { /* for TOC part names */
 .prereq {
   padding: 1em 1em 1em 4em;
   margin-bottom: 10px;
-  background: #9cd6dc;
+  background: #f1f1f1;
   position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
@@ -262,7 +262,7 @@ li.appendix span, li.part span { /* for TOC part names */
 .warning {
   padding: 1em 1em 1em 4em;
   margin-bottom: 10px;
-  background: #F5e74e;
+  background: #fff1e6;
   position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
@@ -285,7 +285,7 @@ li.appendix span, li.part span { /* for TOC part names */
 .tip {
   padding: 1em 1em 1em 4em;
   margin-bottom: 10px;
-  background: #84c77a;
+  background: #e9f5e9;
   position:relative;
   margin: 0 1em 1em 1em;
   background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25));
