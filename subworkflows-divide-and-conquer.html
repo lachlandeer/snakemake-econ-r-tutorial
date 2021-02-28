@@ -187,14 +187,11 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.5" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#our-workflow-in-graphs"><i class="fa fa-check"></i><b>3.5</b> Our Workflow in Graphs</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html"><i class="fa fa-check"></i><b>4</b> Working With Multiple Rules</a><ul>
-<li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a second rule</a><ul>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-rules"><i class="fa fa-check"></i>Exercise: Creating Rules</a></li>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution"><i class="fa fa-check"></i>Solution</a></li>
-</ul></li>
-<li class="chapter" data-level="4.2" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#clean-rules"><i class="fa fa-check"></i><b>4.2</b> Clean Rules</a><ul>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-cleaning-rules"><i class="fa fa-check"></i>Exercise: Creating Cleaning Rules</a></li>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution-1"><i class="fa fa-check"></i>Solution</a></li>
-</ul></li>
+<li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a Second Rule</a></li>
+<li class="chapter" data-level="4.2" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#rule-order-matters"><i class="fa fa-check"></i><b>4.2</b> Rule Order Matters</a></li>
+<li class="chapter" data-level="4.3" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#dependencies-between-rules"><i class="fa fa-check"></i><b>4.3</b> Dependencies Between Rules</a></li>
+<li class="chapter" data-level="4.4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#clean-rules"><i class="fa fa-check"></i><b>4.4</b> Clean Rules</a></li>
+<li class="chapter" data-level="4.5" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#our-workflow-in-graphs-1"><i class="fa fa-check"></i><b>4.5</b> Our Workflow in Graphs</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="target-rules.html"><a href="target-rules.html"><i class="fa fa-check"></i><b>5</b> Target Rules</a><ul>
 <li class="chapter" data-level="5.1" data-path="target-rules.html"><a href="target-rules.html#where-we-are-now"><i class="fa fa-check"></i><b>5.1</b> Where we are now?</a></li>
@@ -338,180 +335,180 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">16.1</span> Subworkflow Basics</h2>
 <p>Create a Subworkflow in <code>data-management</code> directory.</p>
 <p>Start with empty file:</p>
-<div class="sourceCode" id="cb204"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb204-1"><a href="subworkflows-divide-and-conquer.html#cb204-1"></a>$ <span class="fu">touch</span> src/data-management/Snakefile</span></code></pre></div>
+<div class="sourceCode" id="cb216"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb216-1"><a href="subworkflows-divide-and-conquer.html#cb216-1"></a>$ <span class="fu">touch</span> src/data-management/Snakefile</span></code></pre></div>
 <p>Add the following info to <code>src/data-management/Snakefile</code>:</p>
-<div class="sourceCode" id="cb205"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb205-1"><a href="subworkflows-divide-and-conquer.html#cb205-1"></a><span class="co"># subworkflow - data-management</span></span>
-<span id="cb205-2"><a href="subworkflows-divide-and-conquer.html#cb205-2"></a><span class="co">#</span></span>
-<span id="cb205-3"><a href="subworkflows-divide-and-conquer.html#cb205-3"></a><span class="co"># @yourname</span></span>
-<span id="cb205-4"><a href="subworkflows-divide-and-conquer.html#cb205-4"></a><span class="co">#</span></span>
-<span id="cb205-5"><a href="subworkflows-divide-and-conquer.html#cb205-5"></a></span>
-<span id="cb205-6"><a href="subworkflows-divide-and-conquer.html#cb205-6"></a><span class="co"># --- Importing Configuration Files --- #</span></span>
-<span id="cb205-7"><a href="subworkflows-divide-and-conquer.html#cb205-7"></a></span>
-<span id="cb205-8"><a href="subworkflows-divide-and-conquer.html#cb205-8"></a><span class="ex">configfile</span>: <span class="st">&quot;config.yaml&quot;</span></span>
-<span id="cb205-9"><a href="subworkflows-divide-and-conquer.html#cb205-9"></a></span>
-<span id="cb205-10"><a href="subworkflows-divide-and-conquer.html#cb205-10"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb205-11"><a href="subworkflows-divide-and-conquer.html#cb205-11"></a></span>
-<span id="cb205-12"><a href="subworkflows-divide-and-conquer.html#cb205-12"></a><span class="co">## gen_regression_vars: creates variables needed to estimate a regression</span></span>
-<span id="cb205-13"><a href="subworkflows-divide-and-conquer.html#cb205-13"></a><span class="ex">rule</span> gen_regression_vars:</span>
-<span id="cb205-14"><a href="subworkflows-divide-and-conquer.html#cb205-14"></a>    <span class="ex">input</span>:</span>
-<span id="cb205-15"><a href="subworkflows-divide-and-conquer.html#cb205-15"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;gen_reg_vars.R&quot;</span>,</span>
-<span id="cb205-16"><a href="subworkflows-divide-and-conquer.html#cb205-16"></a>        <span class="ex">data</span>   = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
-<span id="cb205-17"><a href="subworkflows-divide-and-conquer.html#cb205-17"></a>        <span class="ex">params</span> = config[<span class="st">&quot;src_data_specs&quot;</span>] + <span class="st">&quot;param_solow.json&quot;</span>,</span>
-<span id="cb205-18"><a href="subworkflows-divide-and-conquer.html#cb205-18"></a>    <span class="ex">output</span>:</span>
-<span id="cb205-19"><a href="subworkflows-divide-and-conquer.html#cb205-19"></a>        <span class="ex">data</span> = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span></span>
-<span id="cb205-20"><a href="subworkflows-divide-and-conquer.html#cb205-20"></a>    <span class="ex">log</span>:</span>
-<span id="cb205-21"><a href="subworkflows-divide-and-conquer.html#cb205-21"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;data-mgt/gen_reg_vars.Rout&quot;</span></span>
-<span id="cb205-22"><a href="subworkflows-divide-and-conquer.html#cb205-22"></a>    <span class="ex">shell</span>:</span>
-<span id="cb205-23"><a href="subworkflows-divide-and-conquer.html#cb205-23"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb205-24"><a href="subworkflows-divide-and-conquer.html#cb205-24"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb205-25"><a href="subworkflows-divide-and-conquer.html#cb205-25"></a><span class="st">            --param {input.params} \</span></span>
-<span id="cb205-26"><a href="subworkflows-divide-and-conquer.html#cb205-26"></a><span class="st">            --out {output.data} \</span></span>
-<span id="cb205-27"><a href="subworkflows-divide-and-conquer.html#cb205-27"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
-<span id="cb205-28"><a href="subworkflows-divide-and-conquer.html#cb205-28"></a></span>
-<span id="cb205-29"><a href="subworkflows-divide-and-conquer.html#cb205-29"></a><span class="co">## rename_vars        : creates meaningful variable names</span></span>
-<span id="cb205-30"><a href="subworkflows-divide-and-conquer.html#cb205-30"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb205-31"><a href="subworkflows-divide-and-conquer.html#cb205-31"></a>    <span class="ex">input</span>:</span>
-<span id="cb205-32"><a href="subworkflows-divide-and-conquer.html#cb205-32"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;rename_variables.R&quot;</span>,</span>
-<span id="cb205-33"><a href="subworkflows-divide-and-conquer.html#cb205-33"></a>        <span class="ex">data</span>   = config[<span class="st">&quot;src_data&quot;</span>] + <span class="st">&quot;mrw.dta&quot;</span></span>
-<span id="cb205-34"><a href="subworkflows-divide-and-conquer.html#cb205-34"></a>    <span class="ex">output</span>:</span>
-<span id="cb205-35"><a href="subworkflows-divide-and-conquer.html#cb205-35"></a>        <span class="ex">data</span> = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_renamed.csv&quot;</span></span>
-<span id="cb205-36"><a href="subworkflows-divide-and-conquer.html#cb205-36"></a>    <span class="ex">log</span>:</span>
-<span id="cb205-37"><a href="subworkflows-divide-and-conquer.html#cb205-37"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;data-mgt/rename_variables.Rout&quot;</span></span>
-<span id="cb205-38"><a href="subworkflows-divide-and-conquer.html#cb205-38"></a>    <span class="ex">shell</span>:</span>
-<span id="cb205-39"><a href="subworkflows-divide-and-conquer.html#cb205-39"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb205-40"><a href="subworkflows-divide-and-conquer.html#cb205-40"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb205-41"><a href="subworkflows-divide-and-conquer.html#cb205-41"></a><span class="st">            --out {output.data} \</span></span>
-<span id="cb205-42"><a href="subworkflows-divide-and-conquer.html#cb205-42"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb217"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb217-1"><a href="subworkflows-divide-and-conquer.html#cb217-1"></a><span class="co"># subworkflow - data-management</span></span>
+<span id="cb217-2"><a href="subworkflows-divide-and-conquer.html#cb217-2"></a><span class="co">#</span></span>
+<span id="cb217-3"><a href="subworkflows-divide-and-conquer.html#cb217-3"></a><span class="co"># @yourname</span></span>
+<span id="cb217-4"><a href="subworkflows-divide-and-conquer.html#cb217-4"></a><span class="co">#</span></span>
+<span id="cb217-5"><a href="subworkflows-divide-and-conquer.html#cb217-5"></a></span>
+<span id="cb217-6"><a href="subworkflows-divide-and-conquer.html#cb217-6"></a><span class="co"># --- Importing Configuration Files --- #</span></span>
+<span id="cb217-7"><a href="subworkflows-divide-and-conquer.html#cb217-7"></a></span>
+<span id="cb217-8"><a href="subworkflows-divide-and-conquer.html#cb217-8"></a><span class="ex">configfile</span>: <span class="st">&quot;config.yaml&quot;</span></span>
+<span id="cb217-9"><a href="subworkflows-divide-and-conquer.html#cb217-9"></a></span>
+<span id="cb217-10"><a href="subworkflows-divide-and-conquer.html#cb217-10"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb217-11"><a href="subworkflows-divide-and-conquer.html#cb217-11"></a></span>
+<span id="cb217-12"><a href="subworkflows-divide-and-conquer.html#cb217-12"></a><span class="co">## gen_regression_vars: creates variables needed to estimate a regression</span></span>
+<span id="cb217-13"><a href="subworkflows-divide-and-conquer.html#cb217-13"></a><span class="ex">rule</span> gen_regression_vars:</span>
+<span id="cb217-14"><a href="subworkflows-divide-and-conquer.html#cb217-14"></a>    <span class="ex">input</span>:</span>
+<span id="cb217-15"><a href="subworkflows-divide-and-conquer.html#cb217-15"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;gen_reg_vars.R&quot;</span>,</span>
+<span id="cb217-16"><a href="subworkflows-divide-and-conquer.html#cb217-16"></a>        <span class="ex">data</span>   = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
+<span id="cb217-17"><a href="subworkflows-divide-and-conquer.html#cb217-17"></a>        <span class="ex">params</span> = config[<span class="st">&quot;src_data_specs&quot;</span>] + <span class="st">&quot;param_solow.json&quot;</span>,</span>
+<span id="cb217-18"><a href="subworkflows-divide-and-conquer.html#cb217-18"></a>    <span class="ex">output</span>:</span>
+<span id="cb217-19"><a href="subworkflows-divide-and-conquer.html#cb217-19"></a>        <span class="ex">data</span> = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span></span>
+<span id="cb217-20"><a href="subworkflows-divide-and-conquer.html#cb217-20"></a>    <span class="ex">log</span>:</span>
+<span id="cb217-21"><a href="subworkflows-divide-and-conquer.html#cb217-21"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;data-mgt/gen_reg_vars.Rout&quot;</span></span>
+<span id="cb217-22"><a href="subworkflows-divide-and-conquer.html#cb217-22"></a>    <span class="ex">shell</span>:</span>
+<span id="cb217-23"><a href="subworkflows-divide-and-conquer.html#cb217-23"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb217-24"><a href="subworkflows-divide-and-conquer.html#cb217-24"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb217-25"><a href="subworkflows-divide-and-conquer.html#cb217-25"></a><span class="st">            --param {input.params} \</span></span>
+<span id="cb217-26"><a href="subworkflows-divide-and-conquer.html#cb217-26"></a><span class="st">            --out {output.data} \</span></span>
+<span id="cb217-27"><a href="subworkflows-divide-and-conquer.html#cb217-27"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
+<span id="cb217-28"><a href="subworkflows-divide-and-conquer.html#cb217-28"></a></span>
+<span id="cb217-29"><a href="subworkflows-divide-and-conquer.html#cb217-29"></a><span class="co">## rename_vars        : creates meaningful variable names</span></span>
+<span id="cb217-30"><a href="subworkflows-divide-and-conquer.html#cb217-30"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb217-31"><a href="subworkflows-divide-and-conquer.html#cb217-31"></a>    <span class="ex">input</span>:</span>
+<span id="cb217-32"><a href="subworkflows-divide-and-conquer.html#cb217-32"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;rename_variables.R&quot;</span>,</span>
+<span id="cb217-33"><a href="subworkflows-divide-and-conquer.html#cb217-33"></a>        <span class="ex">data</span>   = config[<span class="st">&quot;src_data&quot;</span>] + <span class="st">&quot;mrw.dta&quot;</span></span>
+<span id="cb217-34"><a href="subworkflows-divide-and-conquer.html#cb217-34"></a>    <span class="ex">output</span>:</span>
+<span id="cb217-35"><a href="subworkflows-divide-and-conquer.html#cb217-35"></a>        <span class="ex">data</span> = config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_renamed.csv&quot;</span></span>
+<span id="cb217-36"><a href="subworkflows-divide-and-conquer.html#cb217-36"></a>    <span class="ex">log</span>:</span>
+<span id="cb217-37"><a href="subworkflows-divide-and-conquer.html#cb217-37"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;data-mgt/rename_variables.Rout&quot;</span></span>
+<span id="cb217-38"><a href="subworkflows-divide-and-conquer.html#cb217-38"></a>    <span class="ex">shell</span>:</span>
+<span id="cb217-39"><a href="subworkflows-divide-and-conquer.html#cb217-39"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb217-40"><a href="subworkflows-divide-and-conquer.html#cb217-40"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb217-41"><a href="subworkflows-divide-and-conquer.html#cb217-41"></a><span class="st">            --out {output.data} \</span></span>
+<span id="cb217-42"><a href="subworkflows-divide-and-conquer.html#cb217-42"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
 <p>Can remove these rules from Snakefile in root directory.</p>
 <p>Snakefile in root needs to know there’s another Snakefile that creates outputs that rules in
 it depend on:</p>
-<div class="sourceCode" id="cb206"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb206-1"><a href="subworkflows-divide-and-conquer.html#cb206-1"></a><span class="co"># --- Dictionaries --- #</span></span>
-<span id="cb206-2"><a href="subworkflows-divide-and-conquer.html#cb206-2"></a></span>
-<span id="cb206-3"><a href="subworkflows-divide-and-conquer.html#cb206-3"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span>
-<span id="cb206-4"><a href="subworkflows-divide-and-conquer.html#cb206-4"></a></span>
-<span id="cb206-5"><a href="subworkflows-divide-and-conquer.html#cb206-5"></a><span class="co"># --- Sub Workflows --- #</span></span>
-<span id="cb206-6"><a href="subworkflows-divide-and-conquer.html#cb206-6"></a><span class="co"># only need the final outputs here</span></span>
-<span id="cb206-7"><a href="subworkflows-divide-and-conquer.html#cb206-7"></a><span class="ex">subworkflow</span> data_mgt:</span>
-<span id="cb206-8"><a href="subworkflows-divide-and-conquer.html#cb206-8"></a>   <span class="ex">workdir</span>: config[<span class="st">&quot;ROOT&quot;</span>]</span>
-<span id="cb206-9"><a href="subworkflows-divide-and-conquer.html#cb206-9"></a>   <span class="ex">snakefile</span>:  config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span></span>
-<span id="cb206-10"><a href="subworkflows-divide-and-conquer.html#cb206-10"></a></span>
-<span id="cb206-11"><a href="subworkflows-divide-and-conquer.html#cb206-11"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb206-12"><a href="subworkflows-divide-and-conquer.html#cb206-12"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb218"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb218-1"><a href="subworkflows-divide-and-conquer.html#cb218-1"></a><span class="co"># --- Dictionaries --- #</span></span>
+<span id="cb218-2"><a href="subworkflows-divide-and-conquer.html#cb218-2"></a></span>
+<span id="cb218-3"><a href="subworkflows-divide-and-conquer.html#cb218-3"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span>
+<span id="cb218-4"><a href="subworkflows-divide-and-conquer.html#cb218-4"></a></span>
+<span id="cb218-5"><a href="subworkflows-divide-and-conquer.html#cb218-5"></a><span class="co"># --- Sub Workflows --- #</span></span>
+<span id="cb218-6"><a href="subworkflows-divide-and-conquer.html#cb218-6"></a><span class="co"># only need the final outputs here</span></span>
+<span id="cb218-7"><a href="subworkflows-divide-and-conquer.html#cb218-7"></a><span class="ex">subworkflow</span> data_mgt:</span>
+<span id="cb218-8"><a href="subworkflows-divide-and-conquer.html#cb218-8"></a>   <span class="ex">workdir</span>: config[<span class="st">&quot;ROOT&quot;</span>]</span>
+<span id="cb218-9"><a href="subworkflows-divide-and-conquer.html#cb218-9"></a>   <span class="ex">snakefile</span>:  config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span></span>
+<span id="cb218-10"><a href="subworkflows-divide-and-conquer.html#cb218-10"></a></span>
+<span id="cb218-11"><a href="subworkflows-divide-and-conquer.html#cb218-11"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb218-12"><a href="subworkflows-divide-and-conquer.html#cb218-12"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span></code></pre></div>
 <p>And we need to tell it when an input in one of our rules is created from a subworkflow.
 Do this by, in this case, wrapping the output with <code>data_mgt(output_name)</code>
 Then the build rules section of our root directory Snakefile becomes:</p>
-<div class="sourceCode" id="cb207"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb207-1"><a href="subworkflows-divide-and-conquer.html#cb207-1"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span>
-<span id="cb207-2"><a href="subworkflows-divide-and-conquer.html#cb207-2"></a></span>
-<span id="cb207-3"><a href="subworkflows-divide-and-conquer.html#cb207-3"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb207-4"><a href="subworkflows-divide-and-conquer.html#cb207-4"></a></span>
-<span id="cb207-5"><a href="subworkflows-divide-and-conquer.html#cb207-5"></a><span class="co">## all                : builds all final outputs</span></span>
-<span id="cb207-6"><a href="subworkflows-divide-and-conquer.html#cb207-6"></a><span class="ex">rule</span> all:</span>
-<span id="cb207-7"><a href="subworkflows-divide-and-conquer.html#cb207-7"></a>    <span class="ex">input</span>:</span>
-<span id="cb207-8"><a href="subworkflows-divide-and-conquer.html#cb207-8"></a>        <span class="ex">figs</span>   = expand(config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>,</span>
-<span id="cb207-9"><a href="subworkflows-divide-and-conquer.html#cb207-9"></a>                            <span class="ex">iFigure</span> = FIGURES),</span>
-<span id="cb207-10"><a href="subworkflows-divide-and-conquer.html#cb207-10"></a>        <span class="ex">models</span> = expand(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb207-11"><a href="subworkflows-divide-and-conquer.html#cb207-11"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb207-12"><a href="subworkflows-divide-and-conquer.html#cb207-12"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET),</span>
-<span id="cb207-13"><a href="subworkflows-divide-and-conquer.html#cb207-13"></a>        <span class="ex">tables</span>  = expand(config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;{iTable}.tex&quot;</span>,</span>
-<span id="cb207-14"><a href="subworkflows-divide-and-conquer.html#cb207-14"></a>                            <span class="ex">iTable</span> = TABLES)</span>
-<span id="cb207-15"><a href="subworkflows-divide-and-conquer.html#cb207-15"></a></span>
-<span id="cb207-16"><a href="subworkflows-divide-and-conquer.html#cb207-16"></a><span class="co">## augment_solow      : construct a table of estimates for augmented solow model</span></span>
-<span id="cb207-17"><a href="subworkflows-divide-and-conquer.html#cb207-17"></a><span class="ex">rule</span> augment_solow:</span>
-<span id="cb207-18"><a href="subworkflows-divide-and-conquer.html#cb207-18"></a>    <span class="ex">input</span>:</span>
-<span id="cb207-19"><a href="subworkflows-divide-and-conquer.html#cb207-19"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_tables&quot;</span>] + <span class="st">&quot;tab02_augment_solow.R&quot;</span>,</span>
-<span id="cb207-20"><a href="subworkflows-divide-and-conquer.html#cb207-20"></a>        <span class="ex">models</span> = expand(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb207-21"><a href="subworkflows-divide-and-conquer.html#cb207-21"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb207-22"><a href="subworkflows-divide-and-conquer.html#cb207-22"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET),</span>
-<span id="cb207-23"><a href="subworkflows-divide-and-conquer.html#cb207-23"></a>    <span class="ex">params</span>:</span>
-<span id="cb207-24"><a href="subworkflows-divide-and-conquer.html#cb207-24"></a>        <span class="ex">filepath</span>   = config[<span class="st">&quot;out_analysis&quot;</span>],</span>
-<span id="cb207-25"><a href="subworkflows-divide-and-conquer.html#cb207-25"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_aug_solow*.rds&quot;</span></span>
-<span id="cb207-26"><a href="subworkflows-divide-and-conquer.html#cb207-26"></a>    <span class="ex">output</span>:</span>
-<span id="cb207-27"><a href="subworkflows-divide-and-conquer.html#cb207-27"></a>        <span class="ex">table</span> = config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;tab02_augment_solow.tex&quot;</span>,</span>
-<span id="cb207-28"><a href="subworkflows-divide-and-conquer.html#cb207-28"></a>    <span class="ex">log</span>:</span>
-<span id="cb207-29"><a href="subworkflows-divide-and-conquer.html#cb207-29"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;tables/tab02_augment_solow.Rout&quot;</span></span>
-<span id="cb207-30"><a href="subworkflows-divide-and-conquer.html#cb207-30"></a>    <span class="ex">shell</span>:</span>
-<span id="cb207-31"><a href="subworkflows-divide-and-conquer.html#cb207-31"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb207-32"><a href="subworkflows-divide-and-conquer.html#cb207-32"></a><span class="st">            --filepath {params.filepath} \</span></span>
-<span id="cb207-33"><a href="subworkflows-divide-and-conquer.html#cb207-33"></a><span class="st">            --models {params.model_expr} \</span></span>
-<span id="cb207-34"><a href="subworkflows-divide-and-conquer.html#cb207-34"></a><span class="st">            --out {output.table} \</span></span>
-<span id="cb207-35"><a href="subworkflows-divide-and-conquer.html#cb207-35"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
-<span id="cb207-36"><a href="subworkflows-divide-and-conquer.html#cb207-36"></a></span>
-<span id="cb207-37"><a href="subworkflows-divide-and-conquer.html#cb207-37"></a><span class="co">## textbook_solow     : construct a table of regression estimates for textbook solow model</span></span>
-<span id="cb207-38"><a href="subworkflows-divide-and-conquer.html#cb207-38"></a><span class="ex">rule</span> textbook_solow:</span>
-<span id="cb207-39"><a href="subworkflows-divide-and-conquer.html#cb207-39"></a>    <span class="ex">input</span>:</span>
-<span id="cb207-40"><a href="subworkflows-divide-and-conquer.html#cb207-40"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_tables&quot;</span>] + <span class="st">&quot;tab01_textbook_solow.R&quot;</span>,</span>
-<span id="cb207-41"><a href="subworkflows-divide-and-conquer.html#cb207-41"></a>        <span class="ex">models</span> = expand(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb207-42"><a href="subworkflows-divide-and-conquer.html#cb207-42"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb207-43"><a href="subworkflows-divide-and-conquer.html#cb207-43"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET),</span>
-<span id="cb207-44"><a href="subworkflows-divide-and-conquer.html#cb207-44"></a>    <span class="ex">params</span>:</span>
-<span id="cb207-45"><a href="subworkflows-divide-and-conquer.html#cb207-45"></a>        <span class="ex">filepath</span>   = config[<span class="st">&quot;out_analysis&quot;</span>],</span>
-<span id="cb207-46"><a href="subworkflows-divide-and-conquer.html#cb207-46"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
-<span id="cb207-47"><a href="subworkflows-divide-and-conquer.html#cb207-47"></a>    <span class="ex">output</span>:</span>
-<span id="cb207-48"><a href="subworkflows-divide-and-conquer.html#cb207-48"></a>        <span class="ex">table</span> = config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;tab01_textbook_solow.tex&quot;</span></span>
-<span id="cb207-49"><a href="subworkflows-divide-and-conquer.html#cb207-49"></a>    <span class="ex">log</span>:</span>
-<span id="cb207-50"><a href="subworkflows-divide-and-conquer.html#cb207-50"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;tables/tab01_textbook_solow.Rout&quot;</span></span>
-<span id="cb207-51"><a href="subworkflows-divide-and-conquer.html#cb207-51"></a>    <span class="ex">shell</span>:</span>
-<span id="cb207-52"><a href="subworkflows-divide-and-conquer.html#cb207-52"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb207-53"><a href="subworkflows-divide-and-conquer.html#cb207-53"></a><span class="st">            --filepath {params.filepath} \</span></span>
-<span id="cb207-54"><a href="subworkflows-divide-and-conquer.html#cb207-54"></a><span class="st">            --models {params.model_expr} \</span></span>
-<span id="cb207-55"><a href="subworkflows-divide-and-conquer.html#cb207-55"></a><span class="st">            --out {output.table} \</span></span>
-<span id="cb207-56"><a href="subworkflows-divide-and-conquer.html#cb207-56"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
-<span id="cb207-57"><a href="subworkflows-divide-and-conquer.html#cb207-57"></a></span>
-<span id="cb207-58"><a href="subworkflows-divide-and-conquer.html#cb207-58"></a><span class="co">## make_figs          : builds all figures</span></span>
-<span id="cb207-59"><a href="subworkflows-divide-and-conquer.html#cb207-59"></a><span class="ex">rule</span> make_figs:</span>
-<span id="cb207-60"><a href="subworkflows-divide-and-conquer.html#cb207-60"></a>    <span class="ex">input</span>:</span>
-<span id="cb207-61"><a href="subworkflows-divide-and-conquer.html#cb207-61"></a>        <span class="ex">expand</span>(config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>,</span>
-<span id="cb207-62"><a href="subworkflows-divide-and-conquer.html#cb207-62"></a>                <span class="ex">iFigure</span> = FIGURES)</span>
-<span id="cb207-63"><a href="subworkflows-divide-and-conquer.html#cb207-63"></a></span>
-<span id="cb207-64"><a href="subworkflows-divide-and-conquer.html#cb207-64"></a><span class="co">## figures            : recipe for constructing a figure (cannot be called)</span></span>
-<span id="cb207-65"><a href="subworkflows-divide-and-conquer.html#cb207-65"></a><span class="ex">rule</span> figures:</span>
-<span id="cb207-66"><a href="subworkflows-divide-and-conquer.html#cb207-66"></a>    <span class="ex">input</span>:</span>
-<span id="cb207-67"><a href="subworkflows-divide-and-conquer.html#cb207-67"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_figures&quot;</span>] + <span class="st">&quot;{iFigure}.R&quot;</span>,</span>
-<span id="cb207-68"><a href="subworkflows-divide-and-conquer.html#cb207-68"></a>        <span class="ex">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),</span>
-<span id="cb207-69"><a href="subworkflows-divide-and-conquer.html#cb207-69"></a>        <span class="ex">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>] + <span class="st">&quot;subset_intermediate.json&quot;</span></span>
-<span id="cb207-70"><a href="subworkflows-divide-and-conquer.html#cb207-70"></a>    <span class="ex">output</span>:</span>
-<span id="cb207-71"><a href="subworkflows-divide-and-conquer.html#cb207-71"></a>        <span class="ex">fig</span> = config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span></span>
-<span id="cb207-72"><a href="subworkflows-divide-and-conquer.html#cb207-72"></a>    <span class="ex">log</span>:</span>
-<span id="cb207-73"><a href="subworkflows-divide-and-conquer.html#cb207-73"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>]+ <span class="st">&quot;figures/{iFigure}.Rout&quot;</span></span>
-<span id="cb207-74"><a href="subworkflows-divide-and-conquer.html#cb207-74"></a>    <span class="ex">shell</span>:</span>
-<span id="cb207-75"><a href="subworkflows-divide-and-conquer.html#cb207-75"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb207-76"><a href="subworkflows-divide-and-conquer.html#cb207-76"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb207-77"><a href="subworkflows-divide-and-conquer.html#cb207-77"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb207-78"><a href="subworkflows-divide-and-conquer.html#cb207-78"></a><span class="st">            --out {output.fig} \</span></span>
-<span id="cb207-79"><a href="subworkflows-divide-and-conquer.html#cb207-79"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
-<span id="cb207-80"><a href="subworkflows-divide-and-conquer.html#cb207-80"></a></span>
-<span id="cb207-81"><a href="subworkflows-divide-and-conquer.html#cb207-81"></a><span class="co">## estimate_models    : estimates all regressions</span></span>
-<span id="cb207-82"><a href="subworkflows-divide-and-conquer.html#cb207-82"></a><span class="ex">rule</span> estimate_models:</span>
-<span id="cb207-83"><a href="subworkflows-divide-and-conquer.html#cb207-83"></a>    <span class="ex">input</span>:</span>
-<span id="cb207-84"><a href="subworkflows-divide-and-conquer.html#cb207-84"></a>        <span class="ex">expand</span>(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb207-85"><a href="subworkflows-divide-and-conquer.html#cb207-85"></a>                    <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb207-86"><a href="subworkflows-divide-and-conquer.html#cb207-86"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
-<span id="cb207-87"><a href="subworkflows-divide-and-conquer.html#cb207-87"></a></span>
-<span id="cb207-88"><a href="subworkflows-divide-and-conquer.html#cb207-88"></a><span class="co">## ols_models         : recipe for estimating a single regression (cannot be called)</span></span>
-<span id="cb207-89"><a href="subworkflows-divide-and-conquer.html#cb207-89"></a><span class="ex">rule</span> ols_model:</span>
-<span id="cb207-90"><a href="subworkflows-divide-and-conquer.html#cb207-90"></a>    <span class="ex">input</span>:</span>
-<span id="cb207-91"><a href="subworkflows-divide-and-conquer.html#cb207-91"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;estimate_ols_model.R&quot;</span>,</span>
-<span id="cb207-92"><a href="subworkflows-divide-and-conquer.html#cb207-92"></a>        <span class="ex">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),</span>
-<span id="cb207-93"><a href="subworkflows-divide-and-conquer.html#cb207-93"></a>        <span class="ex">model</span>  = config[<span class="st">&quot;src_model_specs&quot;</span>] + <span class="st">&quot;{iModel}.json&quot;</span>,</span>
-<span id="cb207-94"><a href="subworkflows-divide-and-conquer.html#cb207-94"></a>        <span class="ex">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>]  + <span class="st">&quot;{iSubset}.json&quot;</span></span>
-<span id="cb207-95"><a href="subworkflows-divide-and-conquer.html#cb207-95"></a>    <span class="ex">output</span>:</span>
-<span id="cb207-96"><a href="subworkflows-divide-and-conquer.html#cb207-96"></a>        <span class="ex">model_est</span> = config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb207-97"><a href="subworkflows-divide-and-conquer.html#cb207-97"></a>    <span class="ex">log</span>:</span>
-<span id="cb207-98"><a href="subworkflows-divide-and-conquer.html#cb207-98"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;analysis/{iModel}_ols_{iSubset}.Rout&quot;</span></span>
-<span id="cb207-99"><a href="subworkflows-divide-and-conquer.html#cb207-99"></a>    <span class="ex">shell</span>:</span>
-<span id="cb207-100"><a href="subworkflows-divide-and-conquer.html#cb207-100"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb207-101"><a href="subworkflows-divide-and-conquer.html#cb207-101"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb207-102"><a href="subworkflows-divide-and-conquer.html#cb207-102"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb207-103"><a href="subworkflows-divide-and-conquer.html#cb207-103"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb207-104"><a href="subworkflows-divide-and-conquer.html#cb207-104"></a><span class="st">            --out {output.model_est} \</span></span>
-<span id="cb207-105"><a href="subworkflows-divide-and-conquer.html#cb207-105"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
-<span id="cb207-106"><a href="subworkflows-divide-and-conquer.html#cb207-106"></a></span>
-<span id="cb207-107"><a href="subworkflows-divide-and-conquer.html#cb207-107"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb219"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb219-1"><a href="subworkflows-divide-and-conquer.html#cb219-1"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span>
+<span id="cb219-2"><a href="subworkflows-divide-and-conquer.html#cb219-2"></a></span>
+<span id="cb219-3"><a href="subworkflows-divide-and-conquer.html#cb219-3"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb219-4"><a href="subworkflows-divide-and-conquer.html#cb219-4"></a></span>
+<span id="cb219-5"><a href="subworkflows-divide-and-conquer.html#cb219-5"></a><span class="co">## all                : builds all final outputs</span></span>
+<span id="cb219-6"><a href="subworkflows-divide-and-conquer.html#cb219-6"></a><span class="ex">rule</span> all:</span>
+<span id="cb219-7"><a href="subworkflows-divide-and-conquer.html#cb219-7"></a>    <span class="ex">input</span>:</span>
+<span id="cb219-8"><a href="subworkflows-divide-and-conquer.html#cb219-8"></a>        <span class="ex">figs</span>   = expand(config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>,</span>
+<span id="cb219-9"><a href="subworkflows-divide-and-conquer.html#cb219-9"></a>                            <span class="ex">iFigure</span> = FIGURES),</span>
+<span id="cb219-10"><a href="subworkflows-divide-and-conquer.html#cb219-10"></a>        <span class="ex">models</span> = expand(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb219-11"><a href="subworkflows-divide-and-conquer.html#cb219-11"></a>                            <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb219-12"><a href="subworkflows-divide-and-conquer.html#cb219-12"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET),</span>
+<span id="cb219-13"><a href="subworkflows-divide-and-conquer.html#cb219-13"></a>        <span class="ex">tables</span>  = expand(config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;{iTable}.tex&quot;</span>,</span>
+<span id="cb219-14"><a href="subworkflows-divide-and-conquer.html#cb219-14"></a>                            <span class="ex">iTable</span> = TABLES)</span>
+<span id="cb219-15"><a href="subworkflows-divide-and-conquer.html#cb219-15"></a></span>
+<span id="cb219-16"><a href="subworkflows-divide-and-conquer.html#cb219-16"></a><span class="co">## augment_solow      : construct a table of estimates for augmented solow model</span></span>
+<span id="cb219-17"><a href="subworkflows-divide-and-conquer.html#cb219-17"></a><span class="ex">rule</span> augment_solow:</span>
+<span id="cb219-18"><a href="subworkflows-divide-and-conquer.html#cb219-18"></a>    <span class="ex">input</span>:</span>
+<span id="cb219-19"><a href="subworkflows-divide-and-conquer.html#cb219-19"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_tables&quot;</span>] + <span class="st">&quot;tab02_augment_solow.R&quot;</span>,</span>
+<span id="cb219-20"><a href="subworkflows-divide-and-conquer.html#cb219-20"></a>        <span class="ex">models</span> = expand(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb219-21"><a href="subworkflows-divide-and-conquer.html#cb219-21"></a>                            <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb219-22"><a href="subworkflows-divide-and-conquer.html#cb219-22"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET),</span>
+<span id="cb219-23"><a href="subworkflows-divide-and-conquer.html#cb219-23"></a>    <span class="ex">params</span>:</span>
+<span id="cb219-24"><a href="subworkflows-divide-and-conquer.html#cb219-24"></a>        <span class="ex">filepath</span>   = config[<span class="st">&quot;out_analysis&quot;</span>],</span>
+<span id="cb219-25"><a href="subworkflows-divide-and-conquer.html#cb219-25"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_aug_solow*.rds&quot;</span></span>
+<span id="cb219-26"><a href="subworkflows-divide-and-conquer.html#cb219-26"></a>    <span class="ex">output</span>:</span>
+<span id="cb219-27"><a href="subworkflows-divide-and-conquer.html#cb219-27"></a>        <span class="ex">table</span> = config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;tab02_augment_solow.tex&quot;</span>,</span>
+<span id="cb219-28"><a href="subworkflows-divide-and-conquer.html#cb219-28"></a>    <span class="ex">log</span>:</span>
+<span id="cb219-29"><a href="subworkflows-divide-and-conquer.html#cb219-29"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;tables/tab02_augment_solow.Rout&quot;</span></span>
+<span id="cb219-30"><a href="subworkflows-divide-and-conquer.html#cb219-30"></a>    <span class="ex">shell</span>:</span>
+<span id="cb219-31"><a href="subworkflows-divide-and-conquer.html#cb219-31"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb219-32"><a href="subworkflows-divide-and-conquer.html#cb219-32"></a><span class="st">            --filepath {params.filepath} \</span></span>
+<span id="cb219-33"><a href="subworkflows-divide-and-conquer.html#cb219-33"></a><span class="st">            --models {params.model_expr} \</span></span>
+<span id="cb219-34"><a href="subworkflows-divide-and-conquer.html#cb219-34"></a><span class="st">            --out {output.table} \</span></span>
+<span id="cb219-35"><a href="subworkflows-divide-and-conquer.html#cb219-35"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
+<span id="cb219-36"><a href="subworkflows-divide-and-conquer.html#cb219-36"></a></span>
+<span id="cb219-37"><a href="subworkflows-divide-and-conquer.html#cb219-37"></a><span class="co">## textbook_solow     : construct a table of regression estimates for textbook solow model</span></span>
+<span id="cb219-38"><a href="subworkflows-divide-and-conquer.html#cb219-38"></a><span class="ex">rule</span> textbook_solow:</span>
+<span id="cb219-39"><a href="subworkflows-divide-and-conquer.html#cb219-39"></a>    <span class="ex">input</span>:</span>
+<span id="cb219-40"><a href="subworkflows-divide-and-conquer.html#cb219-40"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_tables&quot;</span>] + <span class="st">&quot;tab01_textbook_solow.R&quot;</span>,</span>
+<span id="cb219-41"><a href="subworkflows-divide-and-conquer.html#cb219-41"></a>        <span class="ex">models</span> = expand(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb219-42"><a href="subworkflows-divide-and-conquer.html#cb219-42"></a>                            <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb219-43"><a href="subworkflows-divide-and-conquer.html#cb219-43"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET),</span>
+<span id="cb219-44"><a href="subworkflows-divide-and-conquer.html#cb219-44"></a>    <span class="ex">params</span>:</span>
+<span id="cb219-45"><a href="subworkflows-divide-and-conquer.html#cb219-45"></a>        <span class="ex">filepath</span>   = config[<span class="st">&quot;out_analysis&quot;</span>],</span>
+<span id="cb219-46"><a href="subworkflows-divide-and-conquer.html#cb219-46"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
+<span id="cb219-47"><a href="subworkflows-divide-and-conquer.html#cb219-47"></a>    <span class="ex">output</span>:</span>
+<span id="cb219-48"><a href="subworkflows-divide-and-conquer.html#cb219-48"></a>        <span class="ex">table</span> = config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;tab01_textbook_solow.tex&quot;</span></span>
+<span id="cb219-49"><a href="subworkflows-divide-and-conquer.html#cb219-49"></a>    <span class="ex">log</span>:</span>
+<span id="cb219-50"><a href="subworkflows-divide-and-conquer.html#cb219-50"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;tables/tab01_textbook_solow.Rout&quot;</span></span>
+<span id="cb219-51"><a href="subworkflows-divide-and-conquer.html#cb219-51"></a>    <span class="ex">shell</span>:</span>
+<span id="cb219-52"><a href="subworkflows-divide-and-conquer.html#cb219-52"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb219-53"><a href="subworkflows-divide-and-conquer.html#cb219-53"></a><span class="st">            --filepath {params.filepath} \</span></span>
+<span id="cb219-54"><a href="subworkflows-divide-and-conquer.html#cb219-54"></a><span class="st">            --models {params.model_expr} \</span></span>
+<span id="cb219-55"><a href="subworkflows-divide-and-conquer.html#cb219-55"></a><span class="st">            --out {output.table} \</span></span>
+<span id="cb219-56"><a href="subworkflows-divide-and-conquer.html#cb219-56"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
+<span id="cb219-57"><a href="subworkflows-divide-and-conquer.html#cb219-57"></a></span>
+<span id="cb219-58"><a href="subworkflows-divide-and-conquer.html#cb219-58"></a><span class="co">## make_figs          : builds all figures</span></span>
+<span id="cb219-59"><a href="subworkflows-divide-and-conquer.html#cb219-59"></a><span class="ex">rule</span> make_figs:</span>
+<span id="cb219-60"><a href="subworkflows-divide-and-conquer.html#cb219-60"></a>    <span class="ex">input</span>:</span>
+<span id="cb219-61"><a href="subworkflows-divide-and-conquer.html#cb219-61"></a>        <span class="ex">expand</span>(config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>,</span>
+<span id="cb219-62"><a href="subworkflows-divide-and-conquer.html#cb219-62"></a>                <span class="ex">iFigure</span> = FIGURES)</span>
+<span id="cb219-63"><a href="subworkflows-divide-and-conquer.html#cb219-63"></a></span>
+<span id="cb219-64"><a href="subworkflows-divide-and-conquer.html#cb219-64"></a><span class="co">## figures            : recipe for constructing a figure (cannot be called)</span></span>
+<span id="cb219-65"><a href="subworkflows-divide-and-conquer.html#cb219-65"></a><span class="ex">rule</span> figures:</span>
+<span id="cb219-66"><a href="subworkflows-divide-and-conquer.html#cb219-66"></a>    <span class="ex">input</span>:</span>
+<span id="cb219-67"><a href="subworkflows-divide-and-conquer.html#cb219-67"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_figures&quot;</span>] + <span class="st">&quot;{iFigure}.R&quot;</span>,</span>
+<span id="cb219-68"><a href="subworkflows-divide-and-conquer.html#cb219-68"></a>        <span class="ex">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),</span>
+<span id="cb219-69"><a href="subworkflows-divide-and-conquer.html#cb219-69"></a>        <span class="ex">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>] + <span class="st">&quot;subset_intermediate.json&quot;</span></span>
+<span id="cb219-70"><a href="subworkflows-divide-and-conquer.html#cb219-70"></a>    <span class="ex">output</span>:</span>
+<span id="cb219-71"><a href="subworkflows-divide-and-conquer.html#cb219-71"></a>        <span class="ex">fig</span> = config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span></span>
+<span id="cb219-72"><a href="subworkflows-divide-and-conquer.html#cb219-72"></a>    <span class="ex">log</span>:</span>
+<span id="cb219-73"><a href="subworkflows-divide-and-conquer.html#cb219-73"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>]+ <span class="st">&quot;figures/{iFigure}.Rout&quot;</span></span>
+<span id="cb219-74"><a href="subworkflows-divide-and-conquer.html#cb219-74"></a>    <span class="ex">shell</span>:</span>
+<span id="cb219-75"><a href="subworkflows-divide-and-conquer.html#cb219-75"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb219-76"><a href="subworkflows-divide-and-conquer.html#cb219-76"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb219-77"><a href="subworkflows-divide-and-conquer.html#cb219-77"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb219-78"><a href="subworkflows-divide-and-conquer.html#cb219-78"></a><span class="st">            --out {output.fig} \</span></span>
+<span id="cb219-79"><a href="subworkflows-divide-and-conquer.html#cb219-79"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
+<span id="cb219-80"><a href="subworkflows-divide-and-conquer.html#cb219-80"></a></span>
+<span id="cb219-81"><a href="subworkflows-divide-and-conquer.html#cb219-81"></a><span class="co">## estimate_models    : estimates all regressions</span></span>
+<span id="cb219-82"><a href="subworkflows-divide-and-conquer.html#cb219-82"></a><span class="ex">rule</span> estimate_models:</span>
+<span id="cb219-83"><a href="subworkflows-divide-and-conquer.html#cb219-83"></a>    <span class="ex">input</span>:</span>
+<span id="cb219-84"><a href="subworkflows-divide-and-conquer.html#cb219-84"></a>        <span class="ex">expand</span>(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb219-85"><a href="subworkflows-divide-and-conquer.html#cb219-85"></a>                    <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb219-86"><a href="subworkflows-divide-and-conquer.html#cb219-86"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb219-87"><a href="subworkflows-divide-and-conquer.html#cb219-87"></a></span>
+<span id="cb219-88"><a href="subworkflows-divide-and-conquer.html#cb219-88"></a><span class="co">## ols_models         : recipe for estimating a single regression (cannot be called)</span></span>
+<span id="cb219-89"><a href="subworkflows-divide-and-conquer.html#cb219-89"></a><span class="ex">rule</span> ols_model:</span>
+<span id="cb219-90"><a href="subworkflows-divide-and-conquer.html#cb219-90"></a>    <span class="ex">input</span>:</span>
+<span id="cb219-91"><a href="subworkflows-divide-and-conquer.html#cb219-91"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;estimate_ols_model.R&quot;</span>,</span>
+<span id="cb219-92"><a href="subworkflows-divide-and-conquer.html#cb219-92"></a>        <span class="ex">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),</span>
+<span id="cb219-93"><a href="subworkflows-divide-and-conquer.html#cb219-93"></a>        <span class="ex">model</span>  = config[<span class="st">&quot;src_model_specs&quot;</span>] + <span class="st">&quot;{iModel}.json&quot;</span>,</span>
+<span id="cb219-94"><a href="subworkflows-divide-and-conquer.html#cb219-94"></a>        <span class="ex">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>]  + <span class="st">&quot;{iSubset}.json&quot;</span></span>
+<span id="cb219-95"><a href="subworkflows-divide-and-conquer.html#cb219-95"></a>    <span class="ex">output</span>:</span>
+<span id="cb219-96"><a href="subworkflows-divide-and-conquer.html#cb219-96"></a>        <span class="ex">model_est</span> = config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb219-97"><a href="subworkflows-divide-and-conquer.html#cb219-97"></a>    <span class="ex">log</span>:</span>
+<span id="cb219-98"><a href="subworkflows-divide-and-conquer.html#cb219-98"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;analysis/{iModel}_ols_{iSubset}.Rout&quot;</span></span>
+<span id="cb219-99"><a href="subworkflows-divide-and-conquer.html#cb219-99"></a>    <span class="ex">shell</span>:</span>
+<span id="cb219-100"><a href="subworkflows-divide-and-conquer.html#cb219-100"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb219-101"><a href="subworkflows-divide-and-conquer.html#cb219-101"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb219-102"><a href="subworkflows-divide-and-conquer.html#cb219-102"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb219-103"><a href="subworkflows-divide-and-conquer.html#cb219-103"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb219-104"><a href="subworkflows-divide-and-conquer.html#cb219-104"></a><span class="st">            --out {output.model_est} \</span></span>
+<span id="cb219-105"><a href="subworkflows-divide-and-conquer.html#cb219-105"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
+<span id="cb219-106"><a href="subworkflows-divide-and-conquer.html#cb219-106"></a></span>
+<span id="cb219-107"><a href="subworkflows-divide-and-conquer.html#cb219-107"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span></code></pre></div>
 <p>Let’s examine what happens with this new Workflow.
 Start with a clean output directory:</p>
-<div class="sourceCode" id="cb208"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb208-1"><a href="subworkflows-divide-and-conquer.html#cb208-1"></a>$ <span class="ex">snakemake</span> clean</span></code></pre></div>
+<div class="sourceCode" id="cb220"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb220-1"><a href="subworkflows-divide-and-conquer.html#cb220-1"></a>$ <span class="ex">snakemake</span> clean</span></code></pre></div>
 <p>Now do a dry run.</p>
-<div class="sourceCode" id="cb209"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb209-1"><a href="subworkflows-divide-and-conquer.html#cb209-1"></a>$ <span class="ex">snakemake</span> --dryrun</span></code></pre></div>
+<div class="sourceCode" id="cb221"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb221-1"><a href="subworkflows-divide-and-conquer.html#cb221-1"></a>$ <span class="ex">snakemake</span> --dryrun</span></code></pre></div>
 <p>The beginning of the output looks like:</p>
 <pre class="out"><code>Building DAG of jobs...
 Executing subworkflow data_mgt.
@@ -558,43 +555,43 @@ Job counts:
 <p>We want to go further….</p>
 <p>So create a subworkflow for analysis too, containing all rules that estimate models.
 Create an empty Snakefile:</p>
-<div class="sourceCode" id="cb211"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb211-1"><a href="subworkflows-divide-and-conquer.html#cb211-1"></a>$ <span class="fu">touch</span> src/analysis/Snakefile</span></code></pre></div>
+<div class="sourceCode" id="cb223"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb223-1"><a href="subworkflows-divide-and-conquer.html#cb223-1"></a>$ <span class="fu">touch</span> src/analysis/Snakefile</span></code></pre></div>
 <p>Move analysis rules across to <code>src/analysis/Snakefile</code>:</p>
-<div class="sourceCode" id="cb212"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb212-1"><a href="subworkflows-divide-and-conquer.html#cb212-1"></a><span class="co"># subworkflow - analysis</span></span>
-<span id="cb212-2"><a href="subworkflows-divide-and-conquer.html#cb212-2"></a><span class="co">#</span></span>
-<span id="cb212-3"><a href="subworkflows-divide-and-conquer.html#cb212-3"></a><span class="co"># @yourname</span></span>
-<span id="cb212-4"><a href="subworkflows-divide-and-conquer.html#cb212-4"></a><span class="co">#</span></span>
-<span id="cb212-5"><a href="subworkflows-divide-and-conquer.html#cb212-5"></a></span>
-<span id="cb212-6"><a href="subworkflows-divide-and-conquer.html#cb212-6"></a><span class="co"># --- Importing Configuration Files --- #</span></span>
-<span id="cb212-7"><a href="subworkflows-divide-and-conquer.html#cb212-7"></a></span>
-<span id="cb212-8"><a href="subworkflows-divide-and-conquer.html#cb212-8"></a><span class="ex">configfile</span>: <span class="st">&quot;config.yaml&quot;</span></span>
-<span id="cb212-9"><a href="subworkflows-divide-and-conquer.html#cb212-9"></a></span>
-<span id="cb212-10"><a href="subworkflows-divide-and-conquer.html#cb212-10"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb212-11"><a href="subworkflows-divide-and-conquer.html#cb212-11"></a><span class="co">## estimate_models    : estimates all regressions</span></span>
-<span id="cb212-12"><a href="subworkflows-divide-and-conquer.html#cb212-12"></a><span class="ex">rule</span> estimate_models:</span>
-<span id="cb212-13"><a href="subworkflows-divide-and-conquer.html#cb212-13"></a>    <span class="ex">input</span>:</span>
-<span id="cb212-14"><a href="subworkflows-divide-and-conquer.html#cb212-14"></a>        <span class="ex">expand</span>(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb212-15"><a href="subworkflows-divide-and-conquer.html#cb212-15"></a>                    <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb212-16"><a href="subworkflows-divide-and-conquer.html#cb212-16"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
-<span id="cb212-17"><a href="subworkflows-divide-and-conquer.html#cb212-17"></a></span>
-<span id="cb212-18"><a href="subworkflows-divide-and-conquer.html#cb212-18"></a><span class="co">## ols_models         : recipe for estimating a single regression (cannot be called)</span></span>
-<span id="cb212-19"><a href="subworkflows-divide-and-conquer.html#cb212-19"></a><span class="ex">rule</span> ols_model:</span>
-<span id="cb212-20"><a href="subworkflows-divide-and-conquer.html#cb212-20"></a>    <span class="ex">input</span>:</span>
-<span id="cb212-21"><a href="subworkflows-divide-and-conquer.html#cb212-21"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;estimate_ols_model.R&quot;</span>,</span>
-<span id="cb212-22"><a href="subworkflows-divide-and-conquer.html#cb212-22"></a>        <span class="ex">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),</span>
-<span id="cb212-23"><a href="subworkflows-divide-and-conquer.html#cb212-23"></a>        <span class="ex">model</span>  = config[<span class="st">&quot;src_model_specs&quot;</span>] + <span class="st">&quot;{iModel}.json&quot;</span>,</span>
-<span id="cb212-24"><a href="subworkflows-divide-and-conquer.html#cb212-24"></a>        <span class="ex">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>]  + <span class="st">&quot;{iSubset}.json&quot;</span></span>
-<span id="cb212-25"><a href="subworkflows-divide-and-conquer.html#cb212-25"></a>    <span class="ex">output</span>:</span>
-<span id="cb212-26"><a href="subworkflows-divide-and-conquer.html#cb212-26"></a>        <span class="ex">model_est</span> = config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb212-27"><a href="subworkflows-divide-and-conquer.html#cb212-27"></a>    <span class="ex">log</span>:</span>
-<span id="cb212-28"><a href="subworkflows-divide-and-conquer.html#cb212-28"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;analysis/{iModel}_ols_{iSubset}.Rout&quot;</span></span>
-<span id="cb212-29"><a href="subworkflows-divide-and-conquer.html#cb212-29"></a>    <span class="ex">shell</span>:</span>
-<span id="cb212-30"><a href="subworkflows-divide-and-conquer.html#cb212-30"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb212-31"><a href="subworkflows-divide-and-conquer.html#cb212-31"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb212-32"><a href="subworkflows-divide-and-conquer.html#cb212-32"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb212-33"><a href="subworkflows-divide-and-conquer.html#cb212-33"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb212-34"><a href="subworkflows-divide-and-conquer.html#cb212-34"></a><span class="st">            --out {output.model_est} \</span></span>
-<span id="cb212-35"><a href="subworkflows-divide-and-conquer.html#cb212-35"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb224"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb224-1"><a href="subworkflows-divide-and-conquer.html#cb224-1"></a><span class="co"># subworkflow - analysis</span></span>
+<span id="cb224-2"><a href="subworkflows-divide-and-conquer.html#cb224-2"></a><span class="co">#</span></span>
+<span id="cb224-3"><a href="subworkflows-divide-and-conquer.html#cb224-3"></a><span class="co"># @yourname</span></span>
+<span id="cb224-4"><a href="subworkflows-divide-and-conquer.html#cb224-4"></a><span class="co">#</span></span>
+<span id="cb224-5"><a href="subworkflows-divide-and-conquer.html#cb224-5"></a></span>
+<span id="cb224-6"><a href="subworkflows-divide-and-conquer.html#cb224-6"></a><span class="co"># --- Importing Configuration Files --- #</span></span>
+<span id="cb224-7"><a href="subworkflows-divide-and-conquer.html#cb224-7"></a></span>
+<span id="cb224-8"><a href="subworkflows-divide-and-conquer.html#cb224-8"></a><span class="ex">configfile</span>: <span class="st">&quot;config.yaml&quot;</span></span>
+<span id="cb224-9"><a href="subworkflows-divide-and-conquer.html#cb224-9"></a></span>
+<span id="cb224-10"><a href="subworkflows-divide-and-conquer.html#cb224-10"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb224-11"><a href="subworkflows-divide-and-conquer.html#cb224-11"></a><span class="co">## estimate_models    : estimates all regressions</span></span>
+<span id="cb224-12"><a href="subworkflows-divide-and-conquer.html#cb224-12"></a><span class="ex">rule</span> estimate_models:</span>
+<span id="cb224-13"><a href="subworkflows-divide-and-conquer.html#cb224-13"></a>    <span class="ex">input</span>:</span>
+<span id="cb224-14"><a href="subworkflows-divide-and-conquer.html#cb224-14"></a>        <span class="ex">expand</span>(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb224-15"><a href="subworkflows-divide-and-conquer.html#cb224-15"></a>                    <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb224-16"><a href="subworkflows-divide-and-conquer.html#cb224-16"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb224-17"><a href="subworkflows-divide-and-conquer.html#cb224-17"></a></span>
+<span id="cb224-18"><a href="subworkflows-divide-and-conquer.html#cb224-18"></a><span class="co">## ols_models         : recipe for estimating a single regression (cannot be called)</span></span>
+<span id="cb224-19"><a href="subworkflows-divide-and-conquer.html#cb224-19"></a><span class="ex">rule</span> ols_model:</span>
+<span id="cb224-20"><a href="subworkflows-divide-and-conquer.html#cb224-20"></a>    <span class="ex">input</span>:</span>
+<span id="cb224-21"><a href="subworkflows-divide-and-conquer.html#cb224-21"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;estimate_ols_model.R&quot;</span>,</span>
+<span id="cb224-22"><a href="subworkflows-divide-and-conquer.html#cb224-22"></a>        <span class="ex">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),</span>
+<span id="cb224-23"><a href="subworkflows-divide-and-conquer.html#cb224-23"></a>        <span class="ex">model</span>  = config[<span class="st">&quot;src_model_specs&quot;</span>] + <span class="st">&quot;{iModel}.json&quot;</span>,</span>
+<span id="cb224-24"><a href="subworkflows-divide-and-conquer.html#cb224-24"></a>        <span class="ex">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>]  + <span class="st">&quot;{iSubset}.json&quot;</span></span>
+<span id="cb224-25"><a href="subworkflows-divide-and-conquer.html#cb224-25"></a>    <span class="ex">output</span>:</span>
+<span id="cb224-26"><a href="subworkflows-divide-and-conquer.html#cb224-26"></a>        <span class="ex">model_est</span> = config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb224-27"><a href="subworkflows-divide-and-conquer.html#cb224-27"></a>    <span class="ex">log</span>:</span>
+<span id="cb224-28"><a href="subworkflows-divide-and-conquer.html#cb224-28"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;analysis/{iModel}_ols_{iSubset}.Rout&quot;</span></span>
+<span id="cb224-29"><a href="subworkflows-divide-and-conquer.html#cb224-29"></a>    <span class="ex">shell</span>:</span>
+<span id="cb224-30"><a href="subworkflows-divide-and-conquer.html#cb224-30"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb224-31"><a href="subworkflows-divide-and-conquer.html#cb224-31"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb224-32"><a href="subworkflows-divide-and-conquer.html#cb224-32"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb224-33"><a href="subworkflows-divide-and-conquer.html#cb224-33"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb224-34"><a href="subworkflows-divide-and-conquer.html#cb224-34"></a><span class="st">            --out {output.model_est} \</span></span>
+<span id="cb224-35"><a href="subworkflows-divide-and-conquer.html#cb224-35"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
 <p>Following the logic in 11.1, we then update the snakefile in root by:</p>
 <ol style="list-style-type: decimal">
 <li>removing the rules we copied over</li>
@@ -605,100 +602,100 @@ wrap them in <code>analysis(output)</code></li>
 <p>Doing (1)-(3) in our main Snakefile, suggests we update the following:</p>
 <p>(list)</p>
 <p>Let’s do it:</p>
-<div class="sourceCode" id="cb213"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb213-1"><a href="subworkflows-divide-and-conquer.html#cb213-1"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span>
-<span id="cb213-2"><a href="subworkflows-divide-and-conquer.html#cb213-2"></a><span class="co"># --- Sub Workflows --- #</span></span>
-<span id="cb213-3"><a href="subworkflows-divide-and-conquer.html#cb213-3"></a><span class="ex">subworkflow</span> data_mgt:</span>
-<span id="cb213-4"><a href="subworkflows-divide-and-conquer.html#cb213-4"></a>   <span class="ex">workdir</span>: config[<span class="st">&quot;ROOT&quot;</span>]</span>
-<span id="cb213-5"><a href="subworkflows-divide-and-conquer.html#cb213-5"></a>   <span class="ex">snakefile</span>:  config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span></span>
-<span id="cb213-6"><a href="subworkflows-divide-and-conquer.html#cb213-6"></a></span>
-<span id="cb213-7"><a href="subworkflows-divide-and-conquer.html#cb213-7"></a><span class="ex">subworkflow</span> analysis:</span>
-<span id="cb213-8"><a href="subworkflows-divide-and-conquer.html#cb213-8"></a>   <span class="ex">workdir</span>: config[<span class="st">&quot;ROOT&quot;</span>]</span>
-<span id="cb213-9"><a href="subworkflows-divide-and-conquer.html#cb213-9"></a>   <span class="ex">snakefile</span>:  config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span></span>
-<span id="cb213-10"><a href="subworkflows-divide-and-conquer.html#cb213-10"></a></span>
-<span id="cb213-11"><a href="subworkflows-divide-and-conquer.html#cb213-11"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb213-12"><a href="subworkflows-divide-and-conquer.html#cb213-12"></a></span>
-<span id="cb213-13"><a href="subworkflows-divide-and-conquer.html#cb213-13"></a><span class="co">## all                : builds all final outputs</span></span>
-<span id="cb213-14"><a href="subworkflows-divide-and-conquer.html#cb213-14"></a><span class="ex">rule</span> all:</span>
-<span id="cb213-15"><a href="subworkflows-divide-and-conquer.html#cb213-15"></a>    <span class="ex">input</span>:</span>
-<span id="cb213-16"><a href="subworkflows-divide-and-conquer.html#cb213-16"></a>        <span class="ex">figs</span>   = expand(config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>,</span>
-<span id="cb213-17"><a href="subworkflows-divide-and-conquer.html#cb213-17"></a>                            <span class="ex">iFigure</span> = FIGURES),</span>
-<span id="cb213-18"><a href="subworkflows-divide-and-conquer.html#cb213-18"></a>        <span class="ex">models</span> = analysis(expand(config[<span class="st">&quot;out_analysis&quot;</span>] +</span>
-<span id="cb213-19"><a href="subworkflows-divide-and-conquer.html#cb213-19"></a>                            <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb213-20"><a href="subworkflows-divide-and-conquer.html#cb213-20"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb213-21"><a href="subworkflows-divide-and-conquer.html#cb213-21"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)</span>
-<span id="cb213-22"><a href="subworkflows-divide-and-conquer.html#cb213-22"></a>                            ),</span>
-<span id="cb213-23"><a href="subworkflows-divide-and-conquer.html#cb213-23"></a>        <span class="ex">tables</span>  = expand(config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;{iTable}.tex&quot;</span>,</span>
-<span id="cb213-24"><a href="subworkflows-divide-and-conquer.html#cb213-24"></a>                            <span class="ex">iTable</span> = TABLES)</span>
-<span id="cb213-25"><a href="subworkflows-divide-and-conquer.html#cb213-25"></a></span>
-<span id="cb213-26"><a href="subworkflows-divide-and-conquer.html#cb213-26"></a><span class="co">## augment_solow      : construct a table of estimates for augmented solow model</span></span>
-<span id="cb213-27"><a href="subworkflows-divide-and-conquer.html#cb213-27"></a><span class="ex">rule</span> augment_solow:</span>
-<span id="cb213-28"><a href="subworkflows-divide-and-conquer.html#cb213-28"></a>    <span class="ex">input</span>:</span>
-<span id="cb213-29"><a href="subworkflows-divide-and-conquer.html#cb213-29"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_tables&quot;</span>] + <span class="st">&quot;tab02_augment_solow.R&quot;</span>,</span>
-<span id="cb213-30"><a href="subworkflows-divide-and-conquer.html#cb213-30"></a>        <span class="ex">models</span> = analysis(expand(config[<span class="st">&quot;out_analysis&quot;</span>] +</span>
-<span id="cb213-31"><a href="subworkflows-divide-and-conquer.html#cb213-31"></a>                            <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb213-32"><a href="subworkflows-divide-and-conquer.html#cb213-32"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb213-33"><a href="subworkflows-divide-and-conquer.html#cb213-33"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)</span>
-<span id="cb213-34"><a href="subworkflows-divide-and-conquer.html#cb213-34"></a>                            ),</span>
-<span id="cb213-35"><a href="subworkflows-divide-and-conquer.html#cb213-35"></a>    <span class="ex">params</span>:</span>
-<span id="cb213-36"><a href="subworkflows-divide-and-conquer.html#cb213-36"></a>        <span class="ex">filepath</span>   = config[<span class="st">&quot;out_analysis&quot;</span>],</span>
-<span id="cb213-37"><a href="subworkflows-divide-and-conquer.html#cb213-37"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_aug_solow*.rds&quot;</span></span>
-<span id="cb213-38"><a href="subworkflows-divide-and-conquer.html#cb213-38"></a>    <span class="ex">output</span>:</span>
-<span id="cb213-39"><a href="subworkflows-divide-and-conquer.html#cb213-39"></a>        <span class="ex">table</span> = config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;tab02_augment_solow.tex&quot;</span>,</span>
-<span id="cb213-40"><a href="subworkflows-divide-and-conquer.html#cb213-40"></a>    <span class="ex">log</span>:</span>
-<span id="cb213-41"><a href="subworkflows-divide-and-conquer.html#cb213-41"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;tables/tab02_augment_solow.Rout&quot;</span></span>
-<span id="cb213-42"><a href="subworkflows-divide-and-conquer.html#cb213-42"></a>    <span class="ex">shell</span>:</span>
-<span id="cb213-43"><a href="subworkflows-divide-and-conquer.html#cb213-43"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb213-44"><a href="subworkflows-divide-and-conquer.html#cb213-44"></a><span class="st">            --filepath {params.filepath} \</span></span>
-<span id="cb213-45"><a href="subworkflows-divide-and-conquer.html#cb213-45"></a><span class="st">            --models {params.model_expr} \</span></span>
-<span id="cb213-46"><a href="subworkflows-divide-and-conquer.html#cb213-46"></a><span class="st">            --out {output.table} \</span></span>
-<span id="cb213-47"><a href="subworkflows-divide-and-conquer.html#cb213-47"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
-<span id="cb213-48"><a href="subworkflows-divide-and-conquer.html#cb213-48"></a></span>
-<span id="cb213-49"><a href="subworkflows-divide-and-conquer.html#cb213-49"></a><span class="co">## textbook_solow     : construct a table of regression estimates for textbook solow model</span></span>
-<span id="cb213-50"><a href="subworkflows-divide-and-conquer.html#cb213-50"></a><span class="ex">rule</span> textbook_solow:</span>
-<span id="cb213-51"><a href="subworkflows-divide-and-conquer.html#cb213-51"></a>    <span class="ex">input</span>:</span>
-<span id="cb213-52"><a href="subworkflows-divide-and-conquer.html#cb213-52"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_tables&quot;</span>] + <span class="st">&quot;tab01_textbook_solow.R&quot;</span>,</span>
-<span id="cb213-53"><a href="subworkflows-divide-and-conquer.html#cb213-53"></a>        <span class="ex">models</span> = analysis(expand(config[<span class="st">&quot;out_analysis&quot;</span>] +</span>
-<span id="cb213-54"><a href="subworkflows-divide-and-conquer.html#cb213-54"></a>                            <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb213-55"><a href="subworkflows-divide-and-conquer.html#cb213-55"></a>                            <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb213-56"><a href="subworkflows-divide-and-conquer.html#cb213-56"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)</span>
-<span id="cb213-57"><a href="subworkflows-divide-and-conquer.html#cb213-57"></a>                            ),</span>
-<span id="cb213-58"><a href="subworkflows-divide-and-conquer.html#cb213-58"></a>    <span class="ex">params</span>:</span>
-<span id="cb213-59"><a href="subworkflows-divide-and-conquer.html#cb213-59"></a>        <span class="ex">filepath</span>   = config[<span class="st">&quot;out_analysis&quot;</span>],</span>
-<span id="cb213-60"><a href="subworkflows-divide-and-conquer.html#cb213-60"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
-<span id="cb213-61"><a href="subworkflows-divide-and-conquer.html#cb213-61"></a>    <span class="ex">output</span>:</span>
-<span id="cb213-62"><a href="subworkflows-divide-and-conquer.html#cb213-62"></a>        <span class="ex">table</span> = config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;tab01_textbook_solow.tex&quot;</span></span>
-<span id="cb213-63"><a href="subworkflows-divide-and-conquer.html#cb213-63"></a>    <span class="ex">log</span>:</span>
-<span id="cb213-64"><a href="subworkflows-divide-and-conquer.html#cb213-64"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;tables/tab01_textbook_solow.Rout&quot;</span></span>
-<span id="cb213-65"><a href="subworkflows-divide-and-conquer.html#cb213-65"></a>    <span class="ex">shell</span>:</span>
-<span id="cb213-66"><a href="subworkflows-divide-and-conquer.html#cb213-66"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb213-67"><a href="subworkflows-divide-and-conquer.html#cb213-67"></a><span class="st">            --filepath {params.filepath} \</span></span>
-<span id="cb213-68"><a href="subworkflows-divide-and-conquer.html#cb213-68"></a><span class="st">            --models {params.model_expr} \</span></span>
-<span id="cb213-69"><a href="subworkflows-divide-and-conquer.html#cb213-69"></a><span class="st">            --out {output.table} \</span></span>
-<span id="cb213-70"><a href="subworkflows-divide-and-conquer.html#cb213-70"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
-<span id="cb213-71"><a href="subworkflows-divide-and-conquer.html#cb213-71"></a></span>
-<span id="cb213-72"><a href="subworkflows-divide-and-conquer.html#cb213-72"></a><span class="co">## make_figs          : builds all figures</span></span>
-<span id="cb213-73"><a href="subworkflows-divide-and-conquer.html#cb213-73"></a><span class="ex">rule</span> make_figs:</span>
-<span id="cb213-74"><a href="subworkflows-divide-and-conquer.html#cb213-74"></a>    <span class="ex">input</span>:</span>
-<span id="cb213-75"><a href="subworkflows-divide-and-conquer.html#cb213-75"></a>        <span class="ex">expand</span>(config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>,</span>
-<span id="cb213-76"><a href="subworkflows-divide-and-conquer.html#cb213-76"></a>                <span class="ex">iFigure</span> = FIGURES)</span>
-<span id="cb213-77"><a href="subworkflows-divide-and-conquer.html#cb213-77"></a></span>
-<span id="cb213-78"><a href="subworkflows-divide-and-conquer.html#cb213-78"></a><span class="co">## figures            : recipe for constructing a figure (cannot be called)</span></span>
-<span id="cb213-79"><a href="subworkflows-divide-and-conquer.html#cb213-79"></a><span class="ex">rule</span> figures:</span>
-<span id="cb213-80"><a href="subworkflows-divide-and-conquer.html#cb213-80"></a>    <span class="ex">input</span>:</span>
-<span id="cb213-81"><a href="subworkflows-divide-and-conquer.html#cb213-81"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_figures&quot;</span>] + <span class="st">&quot;{iFigure}.R&quot;</span>,</span>
-<span id="cb213-82"><a href="subworkflows-divide-and-conquer.html#cb213-82"></a>        <span class="ex">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),</span>
-<span id="cb213-83"><a href="subworkflows-divide-and-conquer.html#cb213-83"></a>        <span class="ex">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>] + <span class="st">&quot;subset_intermediate.json&quot;</span></span>
-<span id="cb213-84"><a href="subworkflows-divide-and-conquer.html#cb213-84"></a>    <span class="ex">output</span>:</span>
-<span id="cb213-85"><a href="subworkflows-divide-and-conquer.html#cb213-85"></a>        <span class="ex">fig</span> = config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span></span>
-<span id="cb213-86"><a href="subworkflows-divide-and-conquer.html#cb213-86"></a>    <span class="ex">log</span>:</span>
-<span id="cb213-87"><a href="subworkflows-divide-and-conquer.html#cb213-87"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>]+ <span class="st">&quot;figures/{iFigure}.Rout&quot;</span></span>
-<span id="cb213-88"><a href="subworkflows-divide-and-conquer.html#cb213-88"></a>    <span class="ex">shell</span>:</span>
-<span id="cb213-89"><a href="subworkflows-divide-and-conquer.html#cb213-89"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb213-90"><a href="subworkflows-divide-and-conquer.html#cb213-90"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb213-91"><a href="subworkflows-divide-and-conquer.html#cb213-91"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb213-92"><a href="subworkflows-divide-and-conquer.html#cb213-92"></a><span class="st">            --out {output.fig} \</span></span>
-<span id="cb213-93"><a href="subworkflows-divide-and-conquer.html#cb213-93"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
-<span id="cb213-94"><a href="subworkflows-divide-and-conquer.html#cb213-94"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb225"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb225-1"><a href="subworkflows-divide-and-conquer.html#cb225-1"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span>
+<span id="cb225-2"><a href="subworkflows-divide-and-conquer.html#cb225-2"></a><span class="co"># --- Sub Workflows --- #</span></span>
+<span id="cb225-3"><a href="subworkflows-divide-and-conquer.html#cb225-3"></a><span class="ex">subworkflow</span> data_mgt:</span>
+<span id="cb225-4"><a href="subworkflows-divide-and-conquer.html#cb225-4"></a>   <span class="ex">workdir</span>: config[<span class="st">&quot;ROOT&quot;</span>]</span>
+<span id="cb225-5"><a href="subworkflows-divide-and-conquer.html#cb225-5"></a>   <span class="ex">snakefile</span>:  config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span></span>
+<span id="cb225-6"><a href="subworkflows-divide-and-conquer.html#cb225-6"></a></span>
+<span id="cb225-7"><a href="subworkflows-divide-and-conquer.html#cb225-7"></a><span class="ex">subworkflow</span> analysis:</span>
+<span id="cb225-8"><a href="subworkflows-divide-and-conquer.html#cb225-8"></a>   <span class="ex">workdir</span>: config[<span class="st">&quot;ROOT&quot;</span>]</span>
+<span id="cb225-9"><a href="subworkflows-divide-and-conquer.html#cb225-9"></a>   <span class="ex">snakefile</span>:  config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span></span>
+<span id="cb225-10"><a href="subworkflows-divide-and-conquer.html#cb225-10"></a></span>
+<span id="cb225-11"><a href="subworkflows-divide-and-conquer.html#cb225-11"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb225-12"><a href="subworkflows-divide-and-conquer.html#cb225-12"></a></span>
+<span id="cb225-13"><a href="subworkflows-divide-and-conquer.html#cb225-13"></a><span class="co">## all                : builds all final outputs</span></span>
+<span id="cb225-14"><a href="subworkflows-divide-and-conquer.html#cb225-14"></a><span class="ex">rule</span> all:</span>
+<span id="cb225-15"><a href="subworkflows-divide-and-conquer.html#cb225-15"></a>    <span class="ex">input</span>:</span>
+<span id="cb225-16"><a href="subworkflows-divide-and-conquer.html#cb225-16"></a>        <span class="ex">figs</span>   = expand(config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>,</span>
+<span id="cb225-17"><a href="subworkflows-divide-and-conquer.html#cb225-17"></a>                            <span class="ex">iFigure</span> = FIGURES),</span>
+<span id="cb225-18"><a href="subworkflows-divide-and-conquer.html#cb225-18"></a>        <span class="ex">models</span> = analysis(expand(config[<span class="st">&quot;out_analysis&quot;</span>] +</span>
+<span id="cb225-19"><a href="subworkflows-divide-and-conquer.html#cb225-19"></a>                            <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb225-20"><a href="subworkflows-divide-and-conquer.html#cb225-20"></a>                            <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb225-21"><a href="subworkflows-divide-and-conquer.html#cb225-21"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb225-22"><a href="subworkflows-divide-and-conquer.html#cb225-22"></a>                            ),</span>
+<span id="cb225-23"><a href="subworkflows-divide-and-conquer.html#cb225-23"></a>        <span class="ex">tables</span>  = expand(config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;{iTable}.tex&quot;</span>,</span>
+<span id="cb225-24"><a href="subworkflows-divide-and-conquer.html#cb225-24"></a>                            <span class="ex">iTable</span> = TABLES)</span>
+<span id="cb225-25"><a href="subworkflows-divide-and-conquer.html#cb225-25"></a></span>
+<span id="cb225-26"><a href="subworkflows-divide-and-conquer.html#cb225-26"></a><span class="co">## augment_solow      : construct a table of estimates for augmented solow model</span></span>
+<span id="cb225-27"><a href="subworkflows-divide-and-conquer.html#cb225-27"></a><span class="ex">rule</span> augment_solow:</span>
+<span id="cb225-28"><a href="subworkflows-divide-and-conquer.html#cb225-28"></a>    <span class="ex">input</span>:</span>
+<span id="cb225-29"><a href="subworkflows-divide-and-conquer.html#cb225-29"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_tables&quot;</span>] + <span class="st">&quot;tab02_augment_solow.R&quot;</span>,</span>
+<span id="cb225-30"><a href="subworkflows-divide-and-conquer.html#cb225-30"></a>        <span class="ex">models</span> = analysis(expand(config[<span class="st">&quot;out_analysis&quot;</span>] +</span>
+<span id="cb225-31"><a href="subworkflows-divide-and-conquer.html#cb225-31"></a>                            <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb225-32"><a href="subworkflows-divide-and-conquer.html#cb225-32"></a>                            <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb225-33"><a href="subworkflows-divide-and-conquer.html#cb225-33"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb225-34"><a href="subworkflows-divide-and-conquer.html#cb225-34"></a>                            ),</span>
+<span id="cb225-35"><a href="subworkflows-divide-and-conquer.html#cb225-35"></a>    <span class="ex">params</span>:</span>
+<span id="cb225-36"><a href="subworkflows-divide-and-conquer.html#cb225-36"></a>        <span class="ex">filepath</span>   = config[<span class="st">&quot;out_analysis&quot;</span>],</span>
+<span id="cb225-37"><a href="subworkflows-divide-and-conquer.html#cb225-37"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_aug_solow*.rds&quot;</span></span>
+<span id="cb225-38"><a href="subworkflows-divide-and-conquer.html#cb225-38"></a>    <span class="ex">output</span>:</span>
+<span id="cb225-39"><a href="subworkflows-divide-and-conquer.html#cb225-39"></a>        <span class="ex">table</span> = config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;tab02_augment_solow.tex&quot;</span>,</span>
+<span id="cb225-40"><a href="subworkflows-divide-and-conquer.html#cb225-40"></a>    <span class="ex">log</span>:</span>
+<span id="cb225-41"><a href="subworkflows-divide-and-conquer.html#cb225-41"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;tables/tab02_augment_solow.Rout&quot;</span></span>
+<span id="cb225-42"><a href="subworkflows-divide-and-conquer.html#cb225-42"></a>    <span class="ex">shell</span>:</span>
+<span id="cb225-43"><a href="subworkflows-divide-and-conquer.html#cb225-43"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb225-44"><a href="subworkflows-divide-and-conquer.html#cb225-44"></a><span class="st">            --filepath {params.filepath} \</span></span>
+<span id="cb225-45"><a href="subworkflows-divide-and-conquer.html#cb225-45"></a><span class="st">            --models {params.model_expr} \</span></span>
+<span id="cb225-46"><a href="subworkflows-divide-and-conquer.html#cb225-46"></a><span class="st">            --out {output.table} \</span></span>
+<span id="cb225-47"><a href="subworkflows-divide-and-conquer.html#cb225-47"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
+<span id="cb225-48"><a href="subworkflows-divide-and-conquer.html#cb225-48"></a></span>
+<span id="cb225-49"><a href="subworkflows-divide-and-conquer.html#cb225-49"></a><span class="co">## textbook_solow     : construct a table of regression estimates for textbook solow model</span></span>
+<span id="cb225-50"><a href="subworkflows-divide-and-conquer.html#cb225-50"></a><span class="ex">rule</span> textbook_solow:</span>
+<span id="cb225-51"><a href="subworkflows-divide-and-conquer.html#cb225-51"></a>    <span class="ex">input</span>:</span>
+<span id="cb225-52"><a href="subworkflows-divide-and-conquer.html#cb225-52"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_tables&quot;</span>] + <span class="st">&quot;tab01_textbook_solow.R&quot;</span>,</span>
+<span id="cb225-53"><a href="subworkflows-divide-and-conquer.html#cb225-53"></a>        <span class="ex">models</span> = analysis(expand(config[<span class="st">&quot;out_analysis&quot;</span>] +</span>
+<span id="cb225-54"><a href="subworkflows-divide-and-conquer.html#cb225-54"></a>                            <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb225-55"><a href="subworkflows-divide-and-conquer.html#cb225-55"></a>                            <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb225-56"><a href="subworkflows-divide-and-conquer.html#cb225-56"></a>                            <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb225-57"><a href="subworkflows-divide-and-conquer.html#cb225-57"></a>                            ),</span>
+<span id="cb225-58"><a href="subworkflows-divide-and-conquer.html#cb225-58"></a>    <span class="ex">params</span>:</span>
+<span id="cb225-59"><a href="subworkflows-divide-and-conquer.html#cb225-59"></a>        <span class="ex">filepath</span>   = config[<span class="st">&quot;out_analysis&quot;</span>],</span>
+<span id="cb225-60"><a href="subworkflows-divide-and-conquer.html#cb225-60"></a>        <span class="ex">model_expr</span> = <span class="st">&quot;model_solow*.rds&quot;</span></span>
+<span id="cb225-61"><a href="subworkflows-divide-and-conquer.html#cb225-61"></a>    <span class="ex">output</span>:</span>
+<span id="cb225-62"><a href="subworkflows-divide-and-conquer.html#cb225-62"></a>        <span class="ex">table</span> = config[<span class="st">&quot;out_tables&quot;</span>] + <span class="st">&quot;tab01_textbook_solow.tex&quot;</span></span>
+<span id="cb225-63"><a href="subworkflows-divide-and-conquer.html#cb225-63"></a>    <span class="ex">log</span>:</span>
+<span id="cb225-64"><a href="subworkflows-divide-and-conquer.html#cb225-64"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;tables/tab01_textbook_solow.Rout&quot;</span></span>
+<span id="cb225-65"><a href="subworkflows-divide-and-conquer.html#cb225-65"></a>    <span class="ex">shell</span>:</span>
+<span id="cb225-66"><a href="subworkflows-divide-and-conquer.html#cb225-66"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb225-67"><a href="subworkflows-divide-and-conquer.html#cb225-67"></a><span class="st">            --filepath {params.filepath} \</span></span>
+<span id="cb225-68"><a href="subworkflows-divide-and-conquer.html#cb225-68"></a><span class="st">            --models {params.model_expr} \</span></span>
+<span id="cb225-69"><a href="subworkflows-divide-and-conquer.html#cb225-69"></a><span class="st">            --out {output.table} \</span></span>
+<span id="cb225-70"><a href="subworkflows-divide-and-conquer.html#cb225-70"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
+<span id="cb225-71"><a href="subworkflows-divide-and-conquer.html#cb225-71"></a></span>
+<span id="cb225-72"><a href="subworkflows-divide-and-conquer.html#cb225-72"></a><span class="co">## make_figs          : builds all figures</span></span>
+<span id="cb225-73"><a href="subworkflows-divide-and-conquer.html#cb225-73"></a><span class="ex">rule</span> make_figs:</span>
+<span id="cb225-74"><a href="subworkflows-divide-and-conquer.html#cb225-74"></a>    <span class="ex">input</span>:</span>
+<span id="cb225-75"><a href="subworkflows-divide-and-conquer.html#cb225-75"></a>        <span class="ex">expand</span>(config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span>,</span>
+<span id="cb225-76"><a href="subworkflows-divide-and-conquer.html#cb225-76"></a>                <span class="ex">iFigure</span> = FIGURES)</span>
+<span id="cb225-77"><a href="subworkflows-divide-and-conquer.html#cb225-77"></a></span>
+<span id="cb225-78"><a href="subworkflows-divide-and-conquer.html#cb225-78"></a><span class="co">## figures            : recipe for constructing a figure (cannot be called)</span></span>
+<span id="cb225-79"><a href="subworkflows-divide-and-conquer.html#cb225-79"></a><span class="ex">rule</span> figures:</span>
+<span id="cb225-80"><a href="subworkflows-divide-and-conquer.html#cb225-80"></a>    <span class="ex">input</span>:</span>
+<span id="cb225-81"><a href="subworkflows-divide-and-conquer.html#cb225-81"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_figures&quot;</span>] + <span class="st">&quot;{iFigure}.R&quot;</span>,</span>
+<span id="cb225-82"><a href="subworkflows-divide-and-conquer.html#cb225-82"></a>        <span class="ex">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),</span>
+<span id="cb225-83"><a href="subworkflows-divide-and-conquer.html#cb225-83"></a>        <span class="ex">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>] + <span class="st">&quot;subset_intermediate.json&quot;</span></span>
+<span id="cb225-84"><a href="subworkflows-divide-and-conquer.html#cb225-84"></a>    <span class="ex">output</span>:</span>
+<span id="cb225-85"><a href="subworkflows-divide-and-conquer.html#cb225-85"></a>        <span class="ex">fig</span> = config[<span class="st">&quot;out_figures&quot;</span>] + <span class="st">&quot;{iFigure}.pdf&quot;</span></span>
+<span id="cb225-86"><a href="subworkflows-divide-and-conquer.html#cb225-86"></a>    <span class="ex">log</span>:</span>
+<span id="cb225-87"><a href="subworkflows-divide-and-conquer.html#cb225-87"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>]+ <span class="st">&quot;figures/{iFigure}.Rout&quot;</span></span>
+<span id="cb225-88"><a href="subworkflows-divide-and-conquer.html#cb225-88"></a>    <span class="ex">shell</span>:</span>
+<span id="cb225-89"><a href="subworkflows-divide-and-conquer.html#cb225-89"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb225-90"><a href="subworkflows-divide-and-conquer.html#cb225-90"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb225-91"><a href="subworkflows-divide-and-conquer.html#cb225-91"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb225-92"><a href="subworkflows-divide-and-conquer.html#cb225-92"></a><span class="st">            --out {output.fig} \</span></span>
+<span id="cb225-93"><a href="subworkflows-divide-and-conquer.html#cb225-93"></a><span class="st">            &gt;&amp; {log}&quot;</span></span>
+<span id="cb225-94"><a href="subworkflows-divide-and-conquer.html#cb225-94"></a><span class="op">&lt;</span><span class="ex">...</span><span class="op">&gt;</span></span></code></pre></div>
 <p>Remark about dictionaries not having to be moved…</p>
 <p>Now if we again do a dry run with Snakemake let’s see what happens:</p>
 <pre class="out"><code>Executing subworkflow analysis.
@@ -732,7 +729,7 @@ However, if we look at the order of execution:</p>
 <p>it wants to run <code>analysis</code> workflow before <code>data-mgt</code>.
 This should be a problem.
 If we try and run snakemake and execute the workflow:</p>
-<div class="sourceCode" id="cb215"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb215-1"><a href="subworkflows-divide-and-conquer.html#cb215-1"></a>$ <span class="ex">snakemake</span></span></code></pre></div>
+<div class="sourceCode" id="cb227"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb227-1"><a href="subworkflows-divide-and-conquer.html#cb227-1"></a>$ <span class="ex">snakemake</span></span></code></pre></div>
 <p>We do get the expected error:</p>
 <pre class="out"><code>Building DAG of jobs...
 Executing subworkflow analysis.
@@ -777,48 +774,48 @@ FileNotFoundError: [Errno 2] No such file or directory: &#39;/home/lachlan/teach
 We need to specify that the <code>analysis</code> subworkflow itself has a subworkflow, <code>data_mgt</code>,
 that needs to run before <code>analysis</code>.
 So we add the subworkflow <code>data_mgt</code> to the Snakefile in <code>src/analysis</code>:</p>
-<div class="sourceCode" id="cb217"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb217-1"><a href="subworkflows-divide-and-conquer.html#cb217-1"></a><span class="co"># subworkflow - analysis</span></span>
-<span id="cb217-2"><a href="subworkflows-divide-and-conquer.html#cb217-2"></a><span class="co">#</span></span>
-<span id="cb217-3"><a href="subworkflows-divide-and-conquer.html#cb217-3"></a><span class="co"># @yourname</span></span>
-<span id="cb217-4"><a href="subworkflows-divide-and-conquer.html#cb217-4"></a><span class="co">#</span></span>
-<span id="cb217-5"><a href="subworkflows-divide-and-conquer.html#cb217-5"></a></span>
-<span id="cb217-6"><a href="subworkflows-divide-and-conquer.html#cb217-6"></a><span class="co"># --- Importing Configuration Files --- #</span></span>
-<span id="cb217-7"><a href="subworkflows-divide-and-conquer.html#cb217-7"></a></span>
-<span id="cb217-8"><a href="subworkflows-divide-and-conquer.html#cb217-8"></a><span class="ex">configfile</span>: <span class="st">&quot;config.yaml&quot;</span></span>
-<span id="cb217-9"><a href="subworkflows-divide-and-conquer.html#cb217-9"></a></span>
-<span id="cb217-10"><a href="subworkflows-divide-and-conquer.html#cb217-10"></a><span class="co"># --- Sub Workflows --- #</span></span>
-<span id="cb217-11"><a href="subworkflows-divide-and-conquer.html#cb217-11"></a><span class="ex">subworkflow</span> data_mgt:</span>
-<span id="cb217-12"><a href="subworkflows-divide-and-conquer.html#cb217-12"></a>   <span class="ex">workdir</span>: config[<span class="st">&quot;ROOT&quot;</span>]</span>
-<span id="cb217-13"><a href="subworkflows-divide-and-conquer.html#cb217-13"></a>   <span class="ex">snakefile</span>:  config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span></span>
-<span id="cb217-14"><a href="subworkflows-divide-and-conquer.html#cb217-14"></a></span>
-<span id="cb217-15"><a href="subworkflows-divide-and-conquer.html#cb217-15"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb217-16"><a href="subworkflows-divide-and-conquer.html#cb217-16"></a><span class="co">## estimate_models    : estimates all regressions</span></span>
-<span id="cb217-17"><a href="subworkflows-divide-and-conquer.html#cb217-17"></a><span class="ex">rule</span> estimate_models:</span>
-<span id="cb217-18"><a href="subworkflows-divide-and-conquer.html#cb217-18"></a>    <span class="ex">input</span>:</span>
-<span id="cb217-19"><a href="subworkflows-divide-and-conquer.html#cb217-19"></a>        <span class="ex">expand</span>(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb217-20"><a href="subworkflows-divide-and-conquer.html#cb217-20"></a>                    <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb217-21"><a href="subworkflows-divide-and-conquer.html#cb217-21"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
-<span id="cb217-22"><a href="subworkflows-divide-and-conquer.html#cb217-22"></a></span>
-<span id="cb217-23"><a href="subworkflows-divide-and-conquer.html#cb217-23"></a><span class="co">## ols_models         : recipe for estimating a single regression (cannot be called)</span></span>
-<span id="cb217-24"><a href="subworkflows-divide-and-conquer.html#cb217-24"></a><span class="ex">rule</span> ols_model:</span>
-<span id="cb217-25"><a href="subworkflows-divide-and-conquer.html#cb217-25"></a>    <span class="ex">input</span>:</span>
-<span id="cb217-26"><a href="subworkflows-divide-and-conquer.html#cb217-26"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;estimate_ols_model.R&quot;</span>,</span>
-<span id="cb217-27"><a href="subworkflows-divide-and-conquer.html#cb217-27"></a>        <span class="ex">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),</span>
-<span id="cb217-28"><a href="subworkflows-divide-and-conquer.html#cb217-28"></a>        <span class="ex">model</span>  = config[<span class="st">&quot;src_model_specs&quot;</span>] + <span class="st">&quot;{iModel}.json&quot;</span>,</span>
-<span id="cb217-29"><a href="subworkflows-divide-and-conquer.html#cb217-29"></a>        <span class="ex">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>]  + <span class="st">&quot;{iSubset}.json&quot;</span></span>
-<span id="cb217-30"><a href="subworkflows-divide-and-conquer.html#cb217-30"></a>    <span class="ex">output</span>:</span>
-<span id="cb217-31"><a href="subworkflows-divide-and-conquer.html#cb217-31"></a>        <span class="ex">model_est</span> = config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb217-32"><a href="subworkflows-divide-and-conquer.html#cb217-32"></a>    <span class="ex">log</span>:</span>
-<span id="cb217-33"><a href="subworkflows-divide-and-conquer.html#cb217-33"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;analysis/{iModel}_ols_{iSubset}.Rout&quot;</span></span>
-<span id="cb217-34"><a href="subworkflows-divide-and-conquer.html#cb217-34"></a>    <span class="ex">shell</span>:</span>
-<span id="cb217-35"><a href="subworkflows-divide-and-conquer.html#cb217-35"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb217-36"><a href="subworkflows-divide-and-conquer.html#cb217-36"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb217-37"><a href="subworkflows-divide-and-conquer.html#cb217-37"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb217-38"><a href="subworkflows-divide-and-conquer.html#cb217-38"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb217-39"><a href="subworkflows-divide-and-conquer.html#cb217-39"></a><span class="st">            --out {output.model_est} \</span></span>
-<span id="cb217-40"><a href="subworkflows-divide-and-conquer.html#cb217-40"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb229"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb229-1"><a href="subworkflows-divide-and-conquer.html#cb229-1"></a><span class="co"># subworkflow - analysis</span></span>
+<span id="cb229-2"><a href="subworkflows-divide-and-conquer.html#cb229-2"></a><span class="co">#</span></span>
+<span id="cb229-3"><a href="subworkflows-divide-and-conquer.html#cb229-3"></a><span class="co"># @yourname</span></span>
+<span id="cb229-4"><a href="subworkflows-divide-and-conquer.html#cb229-4"></a><span class="co">#</span></span>
+<span id="cb229-5"><a href="subworkflows-divide-and-conquer.html#cb229-5"></a></span>
+<span id="cb229-6"><a href="subworkflows-divide-and-conquer.html#cb229-6"></a><span class="co"># --- Importing Configuration Files --- #</span></span>
+<span id="cb229-7"><a href="subworkflows-divide-and-conquer.html#cb229-7"></a></span>
+<span id="cb229-8"><a href="subworkflows-divide-and-conquer.html#cb229-8"></a><span class="ex">configfile</span>: <span class="st">&quot;config.yaml&quot;</span></span>
+<span id="cb229-9"><a href="subworkflows-divide-and-conquer.html#cb229-9"></a></span>
+<span id="cb229-10"><a href="subworkflows-divide-and-conquer.html#cb229-10"></a><span class="co"># --- Sub Workflows --- #</span></span>
+<span id="cb229-11"><a href="subworkflows-divide-and-conquer.html#cb229-11"></a><span class="ex">subworkflow</span> data_mgt:</span>
+<span id="cb229-12"><a href="subworkflows-divide-and-conquer.html#cb229-12"></a>   <span class="ex">workdir</span>: config[<span class="st">&quot;ROOT&quot;</span>]</span>
+<span id="cb229-13"><a href="subworkflows-divide-and-conquer.html#cb229-13"></a>   <span class="ex">snakefile</span>:  config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span></span>
+<span id="cb229-14"><a href="subworkflows-divide-and-conquer.html#cb229-14"></a></span>
+<span id="cb229-15"><a href="subworkflows-divide-and-conquer.html#cb229-15"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb229-16"><a href="subworkflows-divide-and-conquer.html#cb229-16"></a><span class="co">## estimate_models    : estimates all regressions</span></span>
+<span id="cb229-17"><a href="subworkflows-divide-and-conquer.html#cb229-17"></a><span class="ex">rule</span> estimate_models:</span>
+<span id="cb229-18"><a href="subworkflows-divide-and-conquer.html#cb229-18"></a>    <span class="ex">input</span>:</span>
+<span id="cb229-19"><a href="subworkflows-divide-and-conquer.html#cb229-19"></a>        <span class="ex">expand</span>(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb229-20"><a href="subworkflows-divide-and-conquer.html#cb229-20"></a>                    <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb229-21"><a href="subworkflows-divide-and-conquer.html#cb229-21"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb229-22"><a href="subworkflows-divide-and-conquer.html#cb229-22"></a></span>
+<span id="cb229-23"><a href="subworkflows-divide-and-conquer.html#cb229-23"></a><span class="co">## ols_models         : recipe for estimating a single regression (cannot be called)</span></span>
+<span id="cb229-24"><a href="subworkflows-divide-and-conquer.html#cb229-24"></a><span class="ex">rule</span> ols_model:</span>
+<span id="cb229-25"><a href="subworkflows-divide-and-conquer.html#cb229-25"></a>    <span class="ex">input</span>:</span>
+<span id="cb229-26"><a href="subworkflows-divide-and-conquer.html#cb229-26"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;estimate_ols_model.R&quot;</span>,</span>
+<span id="cb229-27"><a href="subworkflows-divide-and-conquer.html#cb229-27"></a>        <span class="ex">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),</span>
+<span id="cb229-28"><a href="subworkflows-divide-and-conquer.html#cb229-28"></a>        <span class="ex">model</span>  = config[<span class="st">&quot;src_model_specs&quot;</span>] + <span class="st">&quot;{iModel}.json&quot;</span>,</span>
+<span id="cb229-29"><a href="subworkflows-divide-and-conquer.html#cb229-29"></a>        <span class="ex">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>]  + <span class="st">&quot;{iSubset}.json&quot;</span></span>
+<span id="cb229-30"><a href="subworkflows-divide-and-conquer.html#cb229-30"></a>    <span class="ex">output</span>:</span>
+<span id="cb229-31"><a href="subworkflows-divide-and-conquer.html#cb229-31"></a>        <span class="ex">model_est</span> = config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb229-32"><a href="subworkflows-divide-and-conquer.html#cb229-32"></a>    <span class="ex">log</span>:</span>
+<span id="cb229-33"><a href="subworkflows-divide-and-conquer.html#cb229-33"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;analysis/{iModel}_ols_{iSubset}.Rout&quot;</span></span>
+<span id="cb229-34"><a href="subworkflows-divide-and-conquer.html#cb229-34"></a>    <span class="ex">shell</span>:</span>
+<span id="cb229-35"><a href="subworkflows-divide-and-conquer.html#cb229-35"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb229-36"><a href="subworkflows-divide-and-conquer.html#cb229-36"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb229-37"><a href="subworkflows-divide-and-conquer.html#cb229-37"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb229-38"><a href="subworkflows-divide-and-conquer.html#cb229-38"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb229-39"><a href="subworkflows-divide-and-conquer.html#cb229-39"></a><span class="st">            --out {output.model_est} \</span></span>
+<span id="cb229-40"><a href="subworkflows-divide-and-conquer.html#cb229-40"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
 <p>And we try again:</p>
-<div class="sourceCode" id="cb218"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb218-1"><a href="subworkflows-divide-and-conquer.html#cb218-1"></a>$ <span class="ex">snakemake</span></span></code></pre></div>
+<div class="sourceCode" id="cb230"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb230-1"><a href="subworkflows-divide-and-conquer.html#cb230-1"></a>$ <span class="ex">snakemake</span></span></code></pre></div>
 <pre class="out"><code>Building DAG of jobs...
 Executing subworkflow data_mgt.
 Building DAG of jobs...
@@ -860,48 +857,48 @@ Error: Snakefile &quot;/home/lachlan/teaching/snakemake-econ-r-learner/src/analy
 <p>What has happened this time?
 its about the path</p>
 <p>explain why this fix works:</p>
-<div class="sourceCode" id="cb220"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb220-1"><a href="subworkflows-divide-and-conquer.html#cb220-1"></a><span class="co"># subworkflow - analysis</span></span>
-<span id="cb220-2"><a href="subworkflows-divide-and-conquer.html#cb220-2"></a><span class="co">#</span></span>
-<span id="cb220-3"><a href="subworkflows-divide-and-conquer.html#cb220-3"></a><span class="co"># @yourname</span></span>
-<span id="cb220-4"><a href="subworkflows-divide-and-conquer.html#cb220-4"></a><span class="co">#</span></span>
-<span id="cb220-5"><a href="subworkflows-divide-and-conquer.html#cb220-5"></a></span>
-<span id="cb220-6"><a href="subworkflows-divide-and-conquer.html#cb220-6"></a><span class="co"># --- Importing Configuration Files --- #</span></span>
-<span id="cb220-7"><a href="subworkflows-divide-and-conquer.html#cb220-7"></a></span>
-<span id="cb220-8"><a href="subworkflows-divide-and-conquer.html#cb220-8"></a><span class="ex">configfile</span>: <span class="st">&quot;config.yaml&quot;</span></span>
-<span id="cb220-9"><a href="subworkflows-divide-and-conquer.html#cb220-9"></a></span>
-<span id="cb220-10"><a href="subworkflows-divide-and-conquer.html#cb220-10"></a><span class="co"># --- Sub Workflows --- #</span></span>
-<span id="cb220-11"><a href="subworkflows-divide-and-conquer.html#cb220-11"></a><span class="ex">subworkflow</span> data_mgt:</span>
-<span id="cb220-12"><a href="subworkflows-divide-and-conquer.html#cb220-12"></a>   <span class="ex">workdir</span>: config[<span class="st">&quot;sub2root&quot;</span>] + config[<span class="st">&quot;ROOT&quot;</span>]</span>
-<span id="cb220-13"><a href="subworkflows-divide-and-conquer.html#cb220-13"></a>   <span class="ex">snakefile</span>:  config[<span class="st">&quot;sub2root&quot;</span>]+ config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span></span>
-<span id="cb220-14"><a href="subworkflows-divide-and-conquer.html#cb220-14"></a></span>
-<span id="cb220-15"><a href="subworkflows-divide-and-conquer.html#cb220-15"></a><span class="co"># --- Build Rules --- #</span></span>
-<span id="cb220-16"><a href="subworkflows-divide-and-conquer.html#cb220-16"></a><span class="co">## estimate_models    : estimates all regressions</span></span>
-<span id="cb220-17"><a href="subworkflows-divide-and-conquer.html#cb220-17"></a><span class="ex">rule</span> estimate_models:</span>
-<span id="cb220-18"><a href="subworkflows-divide-and-conquer.html#cb220-18"></a>    <span class="ex">input</span>:</span>
-<span id="cb220-19"><a href="subworkflows-divide-and-conquer.html#cb220-19"></a>        <span class="ex">expand</span>(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb220-20"><a href="subworkflows-divide-and-conquer.html#cb220-20"></a>                    <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb220-21"><a href="subworkflows-divide-and-conquer.html#cb220-21"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
-<span id="cb220-22"><a href="subworkflows-divide-and-conquer.html#cb220-22"></a></span>
-<span id="cb220-23"><a href="subworkflows-divide-and-conquer.html#cb220-23"></a><span class="co">## ols_models         : recipe for estimating a single regression (cannot be called)</span></span>
-<span id="cb220-24"><a href="subworkflows-divide-and-conquer.html#cb220-24"></a><span class="ex">rule</span> ols_model:</span>
-<span id="cb220-25"><a href="subworkflows-divide-and-conquer.html#cb220-25"></a>    <span class="ex">input</span>:</span>
-<span id="cb220-26"><a href="subworkflows-divide-and-conquer.html#cb220-26"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;estimate_ols_model.R&quot;</span>,</span>
-<span id="cb220-27"><a href="subworkflows-divide-and-conquer.html#cb220-27"></a>        <span class="ex">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),</span>
-<span id="cb220-28"><a href="subworkflows-divide-and-conquer.html#cb220-28"></a>        <span class="ex">model</span>  = config[<span class="st">&quot;src_model_specs&quot;</span>] + <span class="st">&quot;{iModel}.json&quot;</span>,</span>
-<span id="cb220-29"><a href="subworkflows-divide-and-conquer.html#cb220-29"></a>        <span class="ex">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>]  + <span class="st">&quot;{iSubset}.json&quot;</span></span>
-<span id="cb220-30"><a href="subworkflows-divide-and-conquer.html#cb220-30"></a>    <span class="ex">output</span>:</span>
-<span id="cb220-31"><a href="subworkflows-divide-and-conquer.html#cb220-31"></a>        <span class="ex">model_est</span> = config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
-<span id="cb220-32"><a href="subworkflows-divide-and-conquer.html#cb220-32"></a>    <span class="ex">log</span>:</span>
-<span id="cb220-33"><a href="subworkflows-divide-and-conquer.html#cb220-33"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;analysis/{iModel}_ols_{iSubset}.Rout&quot;</span></span>
-<span id="cb220-34"><a href="subworkflows-divide-and-conquer.html#cb220-34"></a>    <span class="ex">shell</span>:</span>
-<span id="cb220-35"><a href="subworkflows-divide-and-conquer.html#cb220-35"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb220-36"><a href="subworkflows-divide-and-conquer.html#cb220-36"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb220-37"><a href="subworkflows-divide-and-conquer.html#cb220-37"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb220-38"><a href="subworkflows-divide-and-conquer.html#cb220-38"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb220-39"><a href="subworkflows-divide-and-conquer.html#cb220-39"></a><span class="st">            --out {output.model_est} \</span></span>
-<span id="cb220-40"><a href="subworkflows-divide-and-conquer.html#cb220-40"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb232"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb232-1"><a href="subworkflows-divide-and-conquer.html#cb232-1"></a><span class="co"># subworkflow - analysis</span></span>
+<span id="cb232-2"><a href="subworkflows-divide-and-conquer.html#cb232-2"></a><span class="co">#</span></span>
+<span id="cb232-3"><a href="subworkflows-divide-and-conquer.html#cb232-3"></a><span class="co"># @yourname</span></span>
+<span id="cb232-4"><a href="subworkflows-divide-and-conquer.html#cb232-4"></a><span class="co">#</span></span>
+<span id="cb232-5"><a href="subworkflows-divide-and-conquer.html#cb232-5"></a></span>
+<span id="cb232-6"><a href="subworkflows-divide-and-conquer.html#cb232-6"></a><span class="co"># --- Importing Configuration Files --- #</span></span>
+<span id="cb232-7"><a href="subworkflows-divide-and-conquer.html#cb232-7"></a></span>
+<span id="cb232-8"><a href="subworkflows-divide-and-conquer.html#cb232-8"></a><span class="ex">configfile</span>: <span class="st">&quot;config.yaml&quot;</span></span>
+<span id="cb232-9"><a href="subworkflows-divide-and-conquer.html#cb232-9"></a></span>
+<span id="cb232-10"><a href="subworkflows-divide-and-conquer.html#cb232-10"></a><span class="co"># --- Sub Workflows --- #</span></span>
+<span id="cb232-11"><a href="subworkflows-divide-and-conquer.html#cb232-11"></a><span class="ex">subworkflow</span> data_mgt:</span>
+<span id="cb232-12"><a href="subworkflows-divide-and-conquer.html#cb232-12"></a>   <span class="ex">workdir</span>: config[<span class="st">&quot;sub2root&quot;</span>] + config[<span class="st">&quot;ROOT&quot;</span>]</span>
+<span id="cb232-13"><a href="subworkflows-divide-and-conquer.html#cb232-13"></a>   <span class="ex">snakefile</span>:  config[<span class="st">&quot;sub2root&quot;</span>]+ config[<span class="st">&quot;src_data_mgt&quot;</span>] + <span class="st">&quot;Snakefile&quot;</span></span>
+<span id="cb232-14"><a href="subworkflows-divide-and-conquer.html#cb232-14"></a></span>
+<span id="cb232-15"><a href="subworkflows-divide-and-conquer.html#cb232-15"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb232-16"><a href="subworkflows-divide-and-conquer.html#cb232-16"></a><span class="co">## estimate_models    : estimates all regressions</span></span>
+<span id="cb232-17"><a href="subworkflows-divide-and-conquer.html#cb232-17"></a><span class="ex">rule</span> estimate_models:</span>
+<span id="cb232-18"><a href="subworkflows-divide-and-conquer.html#cb232-18"></a>    <span class="ex">input</span>:</span>
+<span id="cb232-19"><a href="subworkflows-divide-and-conquer.html#cb232-19"></a>        <span class="ex">expand</span>(config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb232-20"><a href="subworkflows-divide-and-conquer.html#cb232-20"></a>                    <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb232-21"><a href="subworkflows-divide-and-conquer.html#cb232-21"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb232-22"><a href="subworkflows-divide-and-conquer.html#cb232-22"></a></span>
+<span id="cb232-23"><a href="subworkflows-divide-and-conquer.html#cb232-23"></a><span class="co">## ols_models         : recipe for estimating a single regression (cannot be called)</span></span>
+<span id="cb232-24"><a href="subworkflows-divide-and-conquer.html#cb232-24"></a><span class="ex">rule</span> ols_model:</span>
+<span id="cb232-25"><a href="subworkflows-divide-and-conquer.html#cb232-25"></a>    <span class="ex">input</span>:</span>
+<span id="cb232-26"><a href="subworkflows-divide-and-conquer.html#cb232-26"></a>        <span class="ex">script</span> = config[<span class="st">&quot;src_analysis&quot;</span>] + <span class="st">&quot;estimate_ols_model.R&quot;</span>,</span>
+<span id="cb232-27"><a href="subworkflows-divide-and-conquer.html#cb232-27"></a>        <span class="ex">data</span>   = data_mgt(config[<span class="st">&quot;out_data&quot;</span>] + <span class="st">&quot;mrw_complete.csv&quot;</span>),</span>
+<span id="cb232-28"><a href="subworkflows-divide-and-conquer.html#cb232-28"></a>        <span class="ex">model</span>  = config[<span class="st">&quot;src_model_specs&quot;</span>] + <span class="st">&quot;{iModel}.json&quot;</span>,</span>
+<span id="cb232-29"><a href="subworkflows-divide-and-conquer.html#cb232-29"></a>        <span class="ex">subset</span> = config[<span class="st">&quot;src_data_specs&quot;</span>]  + <span class="st">&quot;{iSubset}.json&quot;</span></span>
+<span id="cb232-30"><a href="subworkflows-divide-and-conquer.html#cb232-30"></a>    <span class="ex">output</span>:</span>
+<span id="cb232-31"><a href="subworkflows-divide-and-conquer.html#cb232-31"></a>        <span class="ex">model_est</span> = config[<span class="st">&quot;out_analysis&quot;</span>] + <span class="st">&quot;{iModel}_ols_{iSubset}.rds&quot;</span>,</span>
+<span id="cb232-32"><a href="subworkflows-divide-and-conquer.html#cb232-32"></a>    <span class="ex">log</span>:</span>
+<span id="cb232-33"><a href="subworkflows-divide-and-conquer.html#cb232-33"></a>        <span class="ex">config</span>[<span class="st">&quot;log&quot;</span>] + <span class="st">&quot;analysis/{iModel}_ols_{iSubset}.Rout&quot;</span></span>
+<span id="cb232-34"><a href="subworkflows-divide-and-conquer.html#cb232-34"></a>    <span class="ex">shell</span>:</span>
+<span id="cb232-35"><a href="subworkflows-divide-and-conquer.html#cb232-35"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb232-36"><a href="subworkflows-divide-and-conquer.html#cb232-36"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb232-37"><a href="subworkflows-divide-and-conquer.html#cb232-37"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb232-38"><a href="subworkflows-divide-and-conquer.html#cb232-38"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb232-39"><a href="subworkflows-divide-and-conquer.html#cb232-39"></a><span class="st">            --out {output.model_est} \</span></span>
+<span id="cb232-40"><a href="subworkflows-divide-and-conquer.html#cb232-40"></a><span class="st">            &gt;&amp; {log}&quot;</span></span></code></pre></div>
 <p>Now if we run snakemake again:</p>
-<div class="sourceCode" id="cb221"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb221-1"><a href="subworkflows-divide-and-conquer.html#cb221-1"></a>$ <span class="ex">snakemake</span></span></code></pre></div>
+<div class="sourceCode" id="cb233"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb233-1"><a href="subworkflows-divide-and-conquer.html#cb233-1"></a>$ <span class="ex">snakemake</span></span></code></pre></div>
 <p>Our build runs from start to finish.</p>
 <div id="exercise-more-subworkflows" class="section level3 unnumbered exercise">
 <h3>Exercise: More Subworkflows</h3>
@@ -921,8 +918,8 @@ are successfully created.</p>
 <code>snakemake help</code> looks like.</p>
 <p>To bring our <code>help</code> rule back into shape, replace the shell command
 in the <code>help</code> rule with:</p>
-<div class="sourceCode" id="cb222"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb222-1"><a href="subworkflows-divide-and-conquer.html#cb222-1"></a><span class="fu">find</span> . -type f -name <span class="st">&#39;Snakefile&#39;</span> <span class="kw">|</span> <span class="fu">tac</span> <span class="kw">|</span> <span class="fu">xargs</span> sed -n <span class="st">&#39;s/^##//p&#39;</span> \</span>
-<span id="cb222-2"><a href="subworkflows-divide-and-conquer.html#cb222-2"></a>            <span class="op">&gt;</span> <span class="dt">{output}</span></span></code></pre></div>
+<div class="sourceCode" id="cb234"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb234-1"><a href="subworkflows-divide-and-conquer.html#cb234-1"></a><span class="fu">find</span> . -type f -name <span class="st">&#39;Snakefile&#39;</span> <span class="kw">|</span> <span class="fu">tac</span> <span class="kw">|</span> <span class="fu">xargs</span> sed -n <span class="st">&#39;s/^##//p&#39;</span> \</span>
+<span id="cb234-2"><a href="subworkflows-divide-and-conquer.html#cb234-2"></a>            <span class="op">&gt;</span> <span class="dt">{output}</span></span></code></pre></div>
 <p>Explain exactly what this command is doing.
 (Look for help in ‘usual’ places).</p>
 <p>Next, update the inputs of the <code>help</code> rule so that the dependencies are correct.</p>

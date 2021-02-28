@@ -187,14 +187,11 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.5" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#our-workflow-in-graphs"><i class="fa fa-check"></i><b>3.5</b> Our Workflow in Graphs</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html"><i class="fa fa-check"></i><b>4</b> Working With Multiple Rules</a><ul>
-<li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a second rule</a><ul>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-rules"><i class="fa fa-check"></i>Exercise: Creating Rules</a></li>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution"><i class="fa fa-check"></i>Solution</a></li>
-</ul></li>
-<li class="chapter" data-level="4.2" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#clean-rules"><i class="fa fa-check"></i><b>4.2</b> Clean Rules</a><ul>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-cleaning-rules"><i class="fa fa-check"></i>Exercise: Creating Cleaning Rules</a></li>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution-1"><i class="fa fa-check"></i>Solution</a></li>
-</ul></li>
+<li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a Second Rule</a></li>
+<li class="chapter" data-level="4.2" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#rule-order-matters"><i class="fa fa-check"></i><b>4.2</b> Rule Order Matters</a></li>
+<li class="chapter" data-level="4.3" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#dependencies-between-rules"><i class="fa fa-check"></i><b>4.3</b> Dependencies Between Rules</a></li>
+<li class="chapter" data-level="4.4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#clean-rules"><i class="fa fa-check"></i><b>4.4</b> Clean Rules</a></li>
+<li class="chapter" data-level="4.5" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#our-workflow-in-graphs-1"><i class="fa fa-check"></i><b>4.5</b> Our Workflow in Graphs</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="target-rules.html"><a href="target-rules.html"><i class="fa fa-check"></i><b>5</b> Target Rules</a><ul>
 <li class="chapter" data-level="5.1" data-path="target-rules.html"><a href="target-rules.html#where-we-are-now"><i class="fa fa-check"></i><b>5.1</b> Where we are now?</a></li>
@@ -350,11 +347,11 @@ Follow instructions <a href="https://itsfoss.com/install-bash-on-windows/">here<
 <div id="installing-snakemake" class="section level3 unnumbered">
 <h3>Installing Snakemake</h3>
 <p>Inside your terminal window enter the following command and press <code>Return</code></p>
-<div class="sourceCode" id="cb223"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb223-1"><a href="installation-guide.html#cb223-1"></a><span class="ex">pip3</span> install snakemake</span></code></pre></div>
+<div class="sourceCode" id="cb235"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb235-1"><a href="installation-guide.html#cb235-1"></a><span class="ex">pip3</span> install snakemake</span></code></pre></div>
 <p>you may need to replace <code>pip3</code> with <code>pip</code></p>
 <p>If you get an installation error here, the the following commands sequentially:</p>
-<div class="sourceCode" id="cb224"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb224-1"><a href="installation-guide.html#cb224-1"></a><span class="ex">pip</span> install datrie</span>
-<span id="cb224-2"><a href="installation-guide.html#cb224-2"></a><span class="ex">pip</span> install snakemake</span></code></pre></div>
+<div class="sourceCode" id="cb236"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb236-1"><a href="installation-guide.html#cb236-1"></a><span class="ex">pip</span> install datrie</span>
+<span id="cb236-2"><a href="installation-guide.html#cb236-2"></a><span class="ex">pip</span> install snakemake</span></code></pre></div>
 <p>If you are still having issues:</p>
 <ul>
 <li>If you are completing this tutorial as part of a live workshop, raise your hand</li>
@@ -375,29 +372,29 @@ To install either:</p>
 <li>Open Rstudio</li>
 <li>Copy and paste the following lines into the R console:</li>
 </ul>
-<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="installation-guide.html#cb225-1"></a>to_install &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;dplyr&quot;</span>,</span>
-<span id="cb225-2"><a href="installation-guide.html#cb225-2"></a>                <span class="st">&quot;ggplot2&quot;</span>,</span>
-<span id="cb225-3"><a href="installation-guide.html#cb225-3"></a>                <span class="st">&quot;haven&quot;</span>,</span>
-<span id="cb225-4"><a href="installation-guide.html#cb225-4"></a>                <span class="st">&quot;magrittr&quot;</span>,</span>
-<span id="cb225-5"><a href="installation-guide.html#cb225-5"></a>                <span class="st">&quot;optparse&quot;</span>,</span>
-<span id="cb225-6"><a href="installation-guide.html#cb225-6"></a>                <span class="st">&quot;purrr&quot;</span>,</span>
-<span id="cb225-7"><a href="installation-guide.html#cb225-7"></a>                <span class="st">&quot;readr&quot;</span>,</span>
-<span id="cb225-8"><a href="installation-guide.html#cb225-8"></a>                <span class="st">&quot;rjson&quot;</span>,</span>
-<span id="cb225-9"><a href="installation-guide.html#cb225-9"></a>                <span class="st">&quot;rlist&quot;</span>,</span>
-<span id="cb225-10"><a href="installation-guide.html#cb225-10"></a>                <span class="st">&quot;stargazer&quot;</span>,</span>
-<span id="cb225-11"><a href="installation-guide.html#cb225-11"></a>                <span class="st">&quot;tibble&quot;</span>,</span>
-<span id="cb225-12"><a href="installation-guide.html#cb225-12"></a>                )</span>
-<span id="cb225-13"><a href="installation-guide.html#cb225-13"></a></span>
-<span id="cb225-14"><a href="installation-guide.html#cb225-14"></a><span class="kw">install.packages</span>(to_install, <span class="dt">repos =</span> <span class="st">&quot;https://cloud.r-project.org/&quot;</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="installation-guide.html#cb237-1"></a>to_install &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;dplyr&quot;</span>,</span>
+<span id="cb237-2"><a href="installation-guide.html#cb237-2"></a>                <span class="st">&quot;ggplot2&quot;</span>,</span>
+<span id="cb237-3"><a href="installation-guide.html#cb237-3"></a>                <span class="st">&quot;haven&quot;</span>,</span>
+<span id="cb237-4"><a href="installation-guide.html#cb237-4"></a>                <span class="st">&quot;magrittr&quot;</span>,</span>
+<span id="cb237-5"><a href="installation-guide.html#cb237-5"></a>                <span class="st">&quot;optparse&quot;</span>,</span>
+<span id="cb237-6"><a href="installation-guide.html#cb237-6"></a>                <span class="st">&quot;purrr&quot;</span>,</span>
+<span id="cb237-7"><a href="installation-guide.html#cb237-7"></a>                <span class="st">&quot;readr&quot;</span>,</span>
+<span id="cb237-8"><a href="installation-guide.html#cb237-8"></a>                <span class="st">&quot;rjson&quot;</span>,</span>
+<span id="cb237-9"><a href="installation-guide.html#cb237-9"></a>                <span class="st">&quot;rlist&quot;</span>,</span>
+<span id="cb237-10"><a href="installation-guide.html#cb237-10"></a>                <span class="st">&quot;stargazer&quot;</span>,</span>
+<span id="cb237-11"><a href="installation-guide.html#cb237-11"></a>                <span class="st">&quot;tibble&quot;</span>,</span>
+<span id="cb237-12"><a href="installation-guide.html#cb237-12"></a>                )</span>
+<span id="cb237-13"><a href="installation-guide.html#cb237-13"></a></span>
+<span id="cb237-14"><a href="installation-guide.html#cb237-14"></a><span class="kw">install.packages</span>(to_install, <span class="dt">repos =</span> <span class="st">&quot;https://cloud.r-project.org/&quot;</span>)</span></code></pre></div></li>
 <li>A command line alternative:
 <ul>
 <li>Open your bash terminal and change directory to the folder called <code>snakemake-econ-r-learner</code> you downloaded in Chapter XX.</li>
 </ul>
-<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="installation-guide.html#cb226-1"></a>cd PATH<span class="op">/</span>TO<span class="op">/</span>snakemake<span class="op">-</span>econ<span class="op">-</span>r<span class="op">-</span>learner</span></code></pre></div>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="installation-guide.html#cb238-1"></a>cd PATH<span class="op">/</span>TO<span class="op">/</span>snakemake<span class="op">-</span>econ<span class="op">-</span>r<span class="op">-</span>learner</span></code></pre></div>
 <ul>
 <li>Run type the following command into the terminal and press <code>Return</code>:</li>
 </ul>
-<div class="sourceCode" id="cb227"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb227-1"><a href="installation-guide.html#cb227-1"></a><span class="ex">Rscript</span> install_r_packages.R</span></code></pre></div></li>
+<div class="sourceCode" id="cb239"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb239-1"><a href="installation-guide.html#cb239-1"></a><span class="ex">Rscript</span> install_r_packages.R</span></code></pre></div></li>
 </ol>
 </div>
 </div>
@@ -422,7 +419,7 @@ To open a terminal session:</p>
 <div id="installing-snakemake-1" class="section level3 unnumbered">
 <h3>Installing Snakemake</h3>
 <p>Inside your terminal window enter the following command and press <code>Return</code></p>
-<div class="sourceCode" id="cb228"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb228-1"><a href="installation-guide.html#cb228-1"></a><span class="ex">pip3</span> install snakemake</span></code></pre></div>
+<div class="sourceCode" id="cb240"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb240-1"><a href="installation-guide.html#cb240-1"></a><span class="ex">pip3</span> install snakemake</span></code></pre></div>
 <p>you may need to replace <code>pip3</code> with <code>pip</code></p>
 <div id="installing-r-1" class="section level4 unnumbered">
 <h4>Installing <code>R</code></h4>
@@ -438,29 +435,29 @@ To install either:</p>
 <li>Open Rstudio</li>
 <li>Copy and paste the following lines into the R console:</li>
 </ul>
-<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="installation-guide.html#cb229-1"></a>to_install &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;dplyr&quot;</span>,</span>
-<span id="cb229-2"><a href="installation-guide.html#cb229-2"></a>                <span class="st">&quot;ggplot2&quot;</span>,</span>
-<span id="cb229-3"><a href="installation-guide.html#cb229-3"></a>                <span class="st">&quot;haven&quot;</span>,</span>
-<span id="cb229-4"><a href="installation-guide.html#cb229-4"></a>                <span class="st">&quot;magrittr&quot;</span>,</span>
-<span id="cb229-5"><a href="installation-guide.html#cb229-5"></a>                <span class="st">&quot;optparse&quot;</span>,</span>
-<span id="cb229-6"><a href="installation-guide.html#cb229-6"></a>                <span class="st">&quot;purrr&quot;</span>,</span>
-<span id="cb229-7"><a href="installation-guide.html#cb229-7"></a>                <span class="st">&quot;readr&quot;</span>,</span>
-<span id="cb229-8"><a href="installation-guide.html#cb229-8"></a>                <span class="st">&quot;rjson&quot;</span>,</span>
-<span id="cb229-9"><a href="installation-guide.html#cb229-9"></a>                <span class="st">&quot;rlist&quot;</span>,</span>
-<span id="cb229-10"><a href="installation-guide.html#cb229-10"></a>                <span class="st">&quot;stargazer&quot;</span>,</span>
-<span id="cb229-11"><a href="installation-guide.html#cb229-11"></a>                <span class="st">&quot;tibble&quot;</span>,</span>
-<span id="cb229-12"><a href="installation-guide.html#cb229-12"></a>                )</span>
-<span id="cb229-13"><a href="installation-guide.html#cb229-13"></a></span>
-<span id="cb229-14"><a href="installation-guide.html#cb229-14"></a><span class="kw">install.packages</span>(to_install, <span class="dt">repos =</span> <span class="st">&quot;https://cloud.r-project.org/&quot;</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="installation-guide.html#cb241-1"></a>to_install &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;dplyr&quot;</span>,</span>
+<span id="cb241-2"><a href="installation-guide.html#cb241-2"></a>                <span class="st">&quot;ggplot2&quot;</span>,</span>
+<span id="cb241-3"><a href="installation-guide.html#cb241-3"></a>                <span class="st">&quot;haven&quot;</span>,</span>
+<span id="cb241-4"><a href="installation-guide.html#cb241-4"></a>                <span class="st">&quot;magrittr&quot;</span>,</span>
+<span id="cb241-5"><a href="installation-guide.html#cb241-5"></a>                <span class="st">&quot;optparse&quot;</span>,</span>
+<span id="cb241-6"><a href="installation-guide.html#cb241-6"></a>                <span class="st">&quot;purrr&quot;</span>,</span>
+<span id="cb241-7"><a href="installation-guide.html#cb241-7"></a>                <span class="st">&quot;readr&quot;</span>,</span>
+<span id="cb241-8"><a href="installation-guide.html#cb241-8"></a>                <span class="st">&quot;rjson&quot;</span>,</span>
+<span id="cb241-9"><a href="installation-guide.html#cb241-9"></a>                <span class="st">&quot;rlist&quot;</span>,</span>
+<span id="cb241-10"><a href="installation-guide.html#cb241-10"></a>                <span class="st">&quot;stargazer&quot;</span>,</span>
+<span id="cb241-11"><a href="installation-guide.html#cb241-11"></a>                <span class="st">&quot;tibble&quot;</span>,</span>
+<span id="cb241-12"><a href="installation-guide.html#cb241-12"></a>                )</span>
+<span id="cb241-13"><a href="installation-guide.html#cb241-13"></a></span>
+<span id="cb241-14"><a href="installation-guide.html#cb241-14"></a><span class="kw">install.packages</span>(to_install, <span class="dt">repos =</span> <span class="st">&quot;https://cloud.r-project.org/&quot;</span>)</span></code></pre></div></li>
 <li>A command line alternative:
 <ul>
 <li>Open your terminal and change directory to the folder called <code>snakemake-econ-r-learner</code> you downloaded in Chapter XX.</li>
 </ul>
-<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="installation-guide.html#cb230-1"></a>cd PATH<span class="op">/</span>TO<span class="op">/</span>snakemake<span class="op">-</span>econ<span class="op">-</span>r<span class="op">-</span>learner</span></code></pre></div>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="installation-guide.html#cb242-1"></a>cd PATH<span class="op">/</span>TO<span class="op">/</span>snakemake<span class="op">-</span>econ<span class="op">-</span>r<span class="op">-</span>learner</span></code></pre></div>
 <ul>
 <li>Run type the following command into the terminal and press <code>Return</code>:</li>
 </ul>
-<div class="sourceCode" id="cb231"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb231-1"><a href="installation-guide.html#cb231-1"></a><span class="ex">Rscript</span> install_r_packages.R</span></code></pre></div></li>
+<div class="sourceCode" id="cb243"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb243-1"><a href="installation-guide.html#cb243-1"></a><span class="ex">Rscript</span> install_r_packages.R</span></code></pre></div></li>
 </ol>
 </div>
 </div>
@@ -479,10 +476,10 @@ On Ubuntu style flavours, <code>Ctrl</code> + <code>Alt</code> + <code>T</code> 
 <ul>
 <li>Here’s how to add the deadsnakes ppa and install Python 3.8</li>
 </ul>
-<div class="sourceCode" id="cb232"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb232-1"><a href="installation-guide.html#cb232-1"></a>$ <span class="fu">sudo</span> apt-get install software-properties-common</span>
-<span id="cb232-2"><a href="installation-guide.html#cb232-2"></a>$ <span class="fu">sudo</span> add-apt-repository ppa:deadsnakes/ppa</span>
-<span id="cb232-3"><a href="installation-guide.html#cb232-3"></a>$ <span class="fu">sudo</span> apt-get update</span>
-<span id="cb232-4"><a href="installation-guide.html#cb232-4"></a>$ <span class="fu">sudo</span> apt-get install python3.8</span></code></pre></div>
+<div class="sourceCode" id="cb244"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb244-1"><a href="installation-guide.html#cb244-1"></a>$ <span class="fu">sudo</span> apt-get install software-properties-common</span>
+<span id="cb244-2"><a href="installation-guide.html#cb244-2"></a>$ <span class="fu">sudo</span> add-apt-repository ppa:deadsnakes/ppa</span>
+<span id="cb244-3"><a href="installation-guide.html#cb244-3"></a>$ <span class="fu">sudo</span> apt-get update</span>
+<span id="cb244-4"><a href="installation-guide.html#cb244-4"></a>$ <span class="fu">sudo</span> apt-get install python3.8</span></code></pre></div>
 <div id="installing-r-2" class="section level4 unnumbered">
 <h4>Installing <code>R</code></h4>
 <p>We provide instructions on how to install R <a href="https://pp4rs.github.io/2020-uzh-installation-guide/r">here</a></p>
@@ -497,29 +494,29 @@ To install either:</p>
 <li>Open Rstudio</li>
 <li>Copy and paste the following lines into the R console:</li>
 </ul>
-<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="installation-guide.html#cb233-1"></a>to_install &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;dplyr&quot;</span>,</span>
-<span id="cb233-2"><a href="installation-guide.html#cb233-2"></a>                <span class="st">&quot;ggplot2&quot;</span>,</span>
-<span id="cb233-3"><a href="installation-guide.html#cb233-3"></a>                <span class="st">&quot;haven&quot;</span>,</span>
-<span id="cb233-4"><a href="installation-guide.html#cb233-4"></a>                <span class="st">&quot;magrittr&quot;</span>,</span>
-<span id="cb233-5"><a href="installation-guide.html#cb233-5"></a>                <span class="st">&quot;optparse&quot;</span>,</span>
-<span id="cb233-6"><a href="installation-guide.html#cb233-6"></a>                <span class="st">&quot;purrr&quot;</span>,</span>
-<span id="cb233-7"><a href="installation-guide.html#cb233-7"></a>                <span class="st">&quot;readr&quot;</span>,</span>
-<span id="cb233-8"><a href="installation-guide.html#cb233-8"></a>                <span class="st">&quot;rjson&quot;</span>,</span>
-<span id="cb233-9"><a href="installation-guide.html#cb233-9"></a>                <span class="st">&quot;rlist&quot;</span>,</span>
-<span id="cb233-10"><a href="installation-guide.html#cb233-10"></a>                <span class="st">&quot;stargazer&quot;</span>,</span>
-<span id="cb233-11"><a href="installation-guide.html#cb233-11"></a>                <span class="st">&quot;tibble&quot;</span>,</span>
-<span id="cb233-12"><a href="installation-guide.html#cb233-12"></a>                )</span>
-<span id="cb233-13"><a href="installation-guide.html#cb233-13"></a></span>
-<span id="cb233-14"><a href="installation-guide.html#cb233-14"></a><span class="kw">install.packages</span>(to_install, <span class="dt">repos =</span> <span class="st">&quot;https://cloud.r-project.org/&quot;</span>)</span></code></pre></div></li>
+<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="installation-guide.html#cb245-1"></a>to_install &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;dplyr&quot;</span>,</span>
+<span id="cb245-2"><a href="installation-guide.html#cb245-2"></a>                <span class="st">&quot;ggplot2&quot;</span>,</span>
+<span id="cb245-3"><a href="installation-guide.html#cb245-3"></a>                <span class="st">&quot;haven&quot;</span>,</span>
+<span id="cb245-4"><a href="installation-guide.html#cb245-4"></a>                <span class="st">&quot;magrittr&quot;</span>,</span>
+<span id="cb245-5"><a href="installation-guide.html#cb245-5"></a>                <span class="st">&quot;optparse&quot;</span>,</span>
+<span id="cb245-6"><a href="installation-guide.html#cb245-6"></a>                <span class="st">&quot;purrr&quot;</span>,</span>
+<span id="cb245-7"><a href="installation-guide.html#cb245-7"></a>                <span class="st">&quot;readr&quot;</span>,</span>
+<span id="cb245-8"><a href="installation-guide.html#cb245-8"></a>                <span class="st">&quot;rjson&quot;</span>,</span>
+<span id="cb245-9"><a href="installation-guide.html#cb245-9"></a>                <span class="st">&quot;rlist&quot;</span>,</span>
+<span id="cb245-10"><a href="installation-guide.html#cb245-10"></a>                <span class="st">&quot;stargazer&quot;</span>,</span>
+<span id="cb245-11"><a href="installation-guide.html#cb245-11"></a>                <span class="st">&quot;tibble&quot;</span>,</span>
+<span id="cb245-12"><a href="installation-guide.html#cb245-12"></a>                )</span>
+<span id="cb245-13"><a href="installation-guide.html#cb245-13"></a></span>
+<span id="cb245-14"><a href="installation-guide.html#cb245-14"></a><span class="kw">install.packages</span>(to_install, <span class="dt">repos =</span> <span class="st">&quot;https://cloud.r-project.org/&quot;</span>)</span></code></pre></div></li>
 <li>A command line alternative:
 <ul>
 <li>Open your bash terminal and change directory to the folder called <code>snakemake-econ-r-learner</code> you downloaded in Chapter XX.</li>
 </ul>
-<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="installation-guide.html#cb234-1"></a>cd PATH<span class="op">/</span>TO<span class="op">/</span>snakemake<span class="op">-</span>econ<span class="op">-</span>r<span class="op">-</span>learner</span></code></pre></div>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="installation-guide.html#cb246-1"></a>cd PATH<span class="op">/</span>TO<span class="op">/</span>snakemake<span class="op">-</span>econ<span class="op">-</span>r<span class="op">-</span>learner</span></code></pre></div>
 <ul>
 <li>Run type the following command into the terminal and press <code>Return</code>:</li>
 </ul>
-<div class="sourceCode" id="cb235"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb235-1"><a href="installation-guide.html#cb235-1"></a><span class="ex">Rscript</span> install_r_packages.R</span></code></pre></div></li>
+<div class="sourceCode" id="cb247"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb247-1"><a href="installation-guide.html#cb247-1"></a><span class="ex">Rscript</span> install_r_packages.R</span></code></pre></div></li>
 </ol>
 
 </div>

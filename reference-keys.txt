@@ -22,7 +22,10 @@ no-redundant-executions
 our-workflow-in-graphs
 working-with-multiple-rules
 creating-a-second-rule
+rule-order-matters
+dependencies-between-rules
 clean-rules
+our-workflow-in-graphs-1
 target-rules
 where-we-are-now
 how-snakemake-determines-the-build-order-when-multiple-rules-are-present

@@ -187,14 +187,11 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.5" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#our-workflow-in-graphs"><i class="fa fa-check"></i><b>3.5</b> Our Workflow in Graphs</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html"><i class="fa fa-check"></i><b>4</b> Working With Multiple Rules</a><ul>
-<li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a second rule</a><ul>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-rules"><i class="fa fa-check"></i>Exercise: Creating Rules</a></li>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution"><i class="fa fa-check"></i>Solution</a></li>
-</ul></li>
-<li class="chapter" data-level="4.2" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#clean-rules"><i class="fa fa-check"></i><b>4.2</b> Clean Rules</a><ul>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-cleaning-rules"><i class="fa fa-check"></i>Exercise: Creating Cleaning Rules</a></li>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution-1"><i class="fa fa-check"></i>Solution</a></li>
-</ul></li>
+<li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a Second Rule</a></li>
+<li class="chapter" data-level="4.2" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#rule-order-matters"><i class="fa fa-check"></i><b>4.2</b> Rule Order Matters</a></li>
+<li class="chapter" data-level="4.3" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#dependencies-between-rules"><i class="fa fa-check"></i><b>4.3</b> Dependencies Between Rules</a></li>
+<li class="chapter" data-level="4.4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#clean-rules"><i class="fa fa-check"></i><b>4.4</b> Clean Rules</a></li>
+<li class="chapter" data-level="4.5" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#our-workflow-in-graphs-1"><i class="fa fa-check"></i><b>4.5</b> Our Workflow in Graphs</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="target-rules.html"><a href="target-rules.html"><i class="fa fa-check"></i><b>5</b> Target Rules</a><ul>
 <li class="chapter" data-level="5.1" data-path="target-rules.html"><a href="target-rules.html#where-we-are-now"><i class="fa fa-check"></i><b>5.1</b> Where we are now?</a></li>
@@ -337,187 +334,187 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>In this chapter we will create a rule which generates all the regression tables in <span class="citation">Mankiw, Romer, and Weil (<a href="#ref-mrw" role="doc-biblioref">1992</a>)</span>.</p>
 <div id="the-state-of-the-snakefile" class="section level2">
 <h2><span class="header-section-number">9.1</span> The State of the Snakefile</h2>
-<div class="sourceCode" id="cb128"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb128-1"><a href="make-tables.html#cb128-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span> </span>
-<span id="cb128-2"><a href="make-tables.html#cb128-2"></a></span>
-<span id="cb128-3"><a href="make-tables.html#cb128-3"></a><span class="co"># note this filter is only needed coz we are running an older version of the src files, will be updated soon</span></span>
-<span id="cb128-4"><a href="make-tables.html#cb128-4"></a><span class="ex">DATA_SUBSET</span> = glob_wildcards(<span class="st">&quot;src/data-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb128-5"><a href="make-tables.html#cb128-5"></a><span class="ex">DATA_SUBSET</span> = list(filter(lambda x: x.startswith(<span class="st">&quot;subset&quot;</span>), <span class="ex">DATA_SUBSET</span>))</span>
-<span id="cb128-6"><a href="make-tables.html#cb128-6"></a></span>
-<span id="cb128-7"><a href="make-tables.html#cb128-7"></a><span class="ex">PLOTS</span> = glob_wildcards(<span class="st">&quot;src/figures/{fname}.R&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb128-8"><a href="make-tables.html#cb128-8"></a></span>
-<span id="cb128-9"><a href="make-tables.html#cb128-9"></a><span class="co">##############################################</span></span>
-<span id="cb128-10"><a href="make-tables.html#cb128-10"></a><span class="co"># OLS TARGET</span></span>
-<span id="cb128-11"><a href="make-tables.html#cb128-11"></a><span class="co">##############################################</span></span>
-<span id="cb128-12"><a href="make-tables.html#cb128-12"></a></span>
-<span id="cb128-13"><a href="make-tables.html#cb128-13"></a><span class="ex">rule</span> run_models:</span>
-<span id="cb128-14"><a href="make-tables.html#cb128-14"></a>    <span class="ex">input</span>:</span>
-<span id="cb128-15"><a href="make-tables.html#cb128-15"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
-<span id="cb128-16"><a href="make-tables.html#cb128-16"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
-<span id="cb128-17"><a href="make-tables.html#cb128-17"></a>                    <span class="ex">iModel</span> = MODELS)</span>
-<span id="cb128-18"><a href="make-tables.html#cb128-18"></a></span>
-<span id="cb128-19"><a href="make-tables.html#cb128-19"></a><span class="co">##############################################</span></span>
-<span id="cb128-20"><a href="make-tables.html#cb128-20"></a><span class="co"># OLS RULES</span></span>
-<span id="cb128-21"><a href="make-tables.html#cb128-21"></a><span class="co">##############################################</span></span>
-<span id="cb128-22"><a href="make-tables.html#cb128-22"></a></span>
-<span id="cb128-23"><a href="make-tables.html#cb128-23"></a><span class="ex">rule</span> model:</span>
-<span id="cb128-24"><a href="make-tables.html#cb128-24"></a>    <span class="ex">input</span>:</span>
-<span id="cb128-25"><a href="make-tables.html#cb128-25"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
-<span id="cb128-26"><a href="make-tables.html#cb128-26"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb128-27"><a href="make-tables.html#cb128-27"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
-<span id="cb128-28"><a href="make-tables.html#cb128-28"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
-<span id="cb128-29"><a href="make-tables.html#cb128-29"></a>    <span class="ex">output</span>:</span>
-<span id="cb128-30"><a href="make-tables.html#cb128-30"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
-<span id="cb128-31"><a href="make-tables.html#cb128-31"></a>    <span class="ex">shell</span>:</span>
-<span id="cb128-32"><a href="make-tables.html#cb128-32"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb128-33"><a href="make-tables.html#cb128-33"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb128-34"><a href="make-tables.html#cb128-34"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb128-35"><a href="make-tables.html#cb128-35"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb128-36"><a href="make-tables.html#cb128-36"></a><span class="st">            --out {output.estimate}&quot;</span></span>
-<span id="cb128-37"><a href="make-tables.html#cb128-37"></a></span>
-<span id="cb128-38"><a href="make-tables.html#cb128-38"></a><span class="co">##############################################</span></span>
-<span id="cb128-39"><a href="make-tables.html#cb128-39"></a><span class="co"># figs TARGET</span></span>
-<span id="cb128-40"><a href="make-tables.html#cb128-40"></a><span class="co">##############################################</span></span>
-<span id="cb128-41"><a href="make-tables.html#cb128-41"></a></span>
-<span id="cb128-42"><a href="make-tables.html#cb128-42"></a><span class="ex">rule</span> make_figures:</span>
-<span id="cb128-43"><a href="make-tables.html#cb128-43"></a>    <span class="ex">input</span>:</span>
-<span id="cb128-44"><a href="make-tables.html#cb128-44"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb128-45"><a href="make-tables.html#cb128-45"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
-<span id="cb128-46"><a href="make-tables.html#cb128-46"></a></span>
-<span id="cb128-47"><a href="make-tables.html#cb128-47"></a><span class="co">##############################################</span></span>
-<span id="cb128-48"><a href="make-tables.html#cb128-48"></a><span class="co"># MAKING FIGS</span></span>
-<span id="cb128-49"><a href="make-tables.html#cb128-49"></a><span class="co">##############################################</span></span>
-<span id="cb128-50"><a href="make-tables.html#cb128-50"></a></span>
-<span id="cb128-51"><a href="make-tables.html#cb128-51"></a><span class="ex">rule</span> figure:</span>
-<span id="cb128-52"><a href="make-tables.html#cb128-52"></a>    <span class="ex">input</span>:</span>
-<span id="cb128-53"><a href="make-tables.html#cb128-53"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
-<span id="cb128-54"><a href="make-tables.html#cb128-54"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb128-55"><a href="make-tables.html#cb128-55"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
-<span id="cb128-56"><a href="make-tables.html#cb128-56"></a>    <span class="ex">output</span>:</span>
-<span id="cb128-57"><a href="make-tables.html#cb128-57"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
-<span id="cb128-58"><a href="make-tables.html#cb128-58"></a>    <span class="ex">shell</span>:</span>
-<span id="cb128-59"><a href="make-tables.html#cb128-59"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb128-60"><a href="make-tables.html#cb128-60"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb128-61"><a href="make-tables.html#cb128-61"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb128-62"><a href="make-tables.html#cb128-62"></a><span class="st">            --out {output.fig}&quot;</span></span>
-<span id="cb128-63"><a href="make-tables.html#cb128-63"></a></span>
-<span id="cb128-64"><a href="make-tables.html#cb128-64"></a><span class="co">##############################################</span></span>
-<span id="cb128-65"><a href="make-tables.html#cb128-65"></a><span class="co"># DATA MANAGEMENT</span></span>
-<span id="cb128-66"><a href="make-tables.html#cb128-66"></a><span class="co">##############################################</span></span>
-<span id="cb128-67"><a href="make-tables.html#cb128-67"></a></span>
-<span id="cb128-68"><a href="make-tables.html#cb128-68"></a><span class="ex">rule</span> gen_regression_vars:</span>
-<span id="cb128-69"><a href="make-tables.html#cb128-69"></a>    <span class="ex">input</span>:</span>
-<span id="cb128-70"><a href="make-tables.html#cb128-70"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
-<span id="cb128-71"><a href="make-tables.html#cb128-71"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
-<span id="cb128-72"><a href="make-tables.html#cb128-72"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
-<span id="cb128-73"><a href="make-tables.html#cb128-73"></a>    <span class="ex">output</span>:</span>
-<span id="cb128-74"><a href="make-tables.html#cb128-74"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
-<span id="cb128-75"><a href="make-tables.html#cb128-75"></a>    <span class="ex">shell</span>:</span>
-<span id="cb128-76"><a href="make-tables.html#cb128-76"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb128-77"><a href="make-tables.html#cb128-77"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb128-78"><a href="make-tables.html#cb128-78"></a><span class="st">            --param {input.param} \</span></span>
-<span id="cb128-79"><a href="make-tables.html#cb128-79"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb128-80"><a href="make-tables.html#cb128-80"></a></span>
-<span id="cb128-81"><a href="make-tables.html#cb128-81"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb128-82"><a href="make-tables.html#cb128-82"></a>    <span class="ex">input</span>:</span>
-<span id="cb128-83"><a href="make-tables.html#cb128-83"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb128-84"><a href="make-tables.html#cb128-84"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
-<span id="cb128-85"><a href="make-tables.html#cb128-85"></a>    <span class="ex">output</span>:</span>
-<span id="cb128-86"><a href="make-tables.html#cb128-86"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb128-87"><a href="make-tables.html#cb128-87"></a>    <span class="ex">shell</span>:</span>
-<span id="cb128-88"><a href="make-tables.html#cb128-88"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb128-89"><a href="make-tables.html#cb128-89"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb128-90"><a href="make-tables.html#cb128-90"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb128-91"><a href="make-tables.html#cb128-91"></a></span>
-<span id="cb128-92"><a href="make-tables.html#cb128-92"></a></span>
-<span id="cb128-93"><a href="make-tables.html#cb128-93"></a></span>
-<span id="cb128-94"><a href="make-tables.html#cb128-94"></a><span class="co">##############################################</span></span>
-<span id="cb128-95"><a href="make-tables.html#cb128-95"></a><span class="co"># CLEANING RULES</span></span>
-<span id="cb128-96"><a href="make-tables.html#cb128-96"></a><span class="co">##############################################</span></span>
-<span id="cb128-97"><a href="make-tables.html#cb128-97"></a></span>
-<span id="cb128-98"><a href="make-tables.html#cb128-98"></a><span class="ex">rule</span> clean:</span>
-<span id="cb128-99"><a href="make-tables.html#cb128-99"></a>    <span class="ex">shell</span>:</span>
-<span id="cb128-100"><a href="make-tables.html#cb128-100"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
-<span id="cb128-101"><a href="make-tables.html#cb128-101"></a></span>
-<span id="cb128-102"><a href="make-tables.html#cb128-102"></a><span class="ex">rule</span> clean_data:</span>
-<span id="cb128-103"><a href="make-tables.html#cb128-103"></a>    <span class="ex">shell</span>:</span>
-<span id="cb128-104"><a href="make-tables.html#cb128-104"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
-<span id="cb128-105"><a href="make-tables.html#cb128-105"></a></span>
-<span id="cb128-106"><a href="make-tables.html#cb128-106"></a><span class="ex">rule</span> clean_analysis:</span>
-<span id="cb128-107"><a href="make-tables.html#cb128-107"></a>    <span class="ex">shell</span>:</span>
-<span id="cb128-108"><a href="make-tables.html#cb128-108"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb140"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb140-1"><a href="make-tables.html#cb140-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span> </span>
+<span id="cb140-2"><a href="make-tables.html#cb140-2"></a></span>
+<span id="cb140-3"><a href="make-tables.html#cb140-3"></a><span class="co"># note this filter is only needed coz we are running an older version of the src files, will be updated soon</span></span>
+<span id="cb140-4"><a href="make-tables.html#cb140-4"></a><span class="ex">DATA_SUBSET</span> = glob_wildcards(<span class="st">&quot;src/data-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb140-5"><a href="make-tables.html#cb140-5"></a><span class="ex">DATA_SUBSET</span> = list(filter(lambda x: x.startswith(<span class="st">&quot;subset&quot;</span>), <span class="ex">DATA_SUBSET</span>))</span>
+<span id="cb140-6"><a href="make-tables.html#cb140-6"></a></span>
+<span id="cb140-7"><a href="make-tables.html#cb140-7"></a><span class="ex">PLOTS</span> = glob_wildcards(<span class="st">&quot;src/figures/{fname}.R&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb140-8"><a href="make-tables.html#cb140-8"></a></span>
+<span id="cb140-9"><a href="make-tables.html#cb140-9"></a><span class="co">##############################################</span></span>
+<span id="cb140-10"><a href="make-tables.html#cb140-10"></a><span class="co"># OLS TARGET</span></span>
+<span id="cb140-11"><a href="make-tables.html#cb140-11"></a><span class="co">##############################################</span></span>
+<span id="cb140-12"><a href="make-tables.html#cb140-12"></a></span>
+<span id="cb140-13"><a href="make-tables.html#cb140-13"></a><span class="ex">rule</span> run_models:</span>
+<span id="cb140-14"><a href="make-tables.html#cb140-14"></a>    <span class="ex">input</span>:</span>
+<span id="cb140-15"><a href="make-tables.html#cb140-15"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
+<span id="cb140-16"><a href="make-tables.html#cb140-16"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
+<span id="cb140-17"><a href="make-tables.html#cb140-17"></a>                    <span class="ex">iModel</span> = MODELS)</span>
+<span id="cb140-18"><a href="make-tables.html#cb140-18"></a></span>
+<span id="cb140-19"><a href="make-tables.html#cb140-19"></a><span class="co">##############################################</span></span>
+<span id="cb140-20"><a href="make-tables.html#cb140-20"></a><span class="co"># OLS RULES</span></span>
+<span id="cb140-21"><a href="make-tables.html#cb140-21"></a><span class="co">##############################################</span></span>
+<span id="cb140-22"><a href="make-tables.html#cb140-22"></a></span>
+<span id="cb140-23"><a href="make-tables.html#cb140-23"></a><span class="ex">rule</span> model:</span>
+<span id="cb140-24"><a href="make-tables.html#cb140-24"></a>    <span class="ex">input</span>:</span>
+<span id="cb140-25"><a href="make-tables.html#cb140-25"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb140-26"><a href="make-tables.html#cb140-26"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb140-27"><a href="make-tables.html#cb140-27"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
+<span id="cb140-28"><a href="make-tables.html#cb140-28"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb140-29"><a href="make-tables.html#cb140-29"></a>    <span class="ex">output</span>:</span>
+<span id="cb140-30"><a href="make-tables.html#cb140-30"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
+<span id="cb140-31"><a href="make-tables.html#cb140-31"></a>    <span class="ex">shell</span>:</span>
+<span id="cb140-32"><a href="make-tables.html#cb140-32"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb140-33"><a href="make-tables.html#cb140-33"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb140-34"><a href="make-tables.html#cb140-34"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb140-35"><a href="make-tables.html#cb140-35"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb140-36"><a href="make-tables.html#cb140-36"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb140-37"><a href="make-tables.html#cb140-37"></a></span>
+<span id="cb140-38"><a href="make-tables.html#cb140-38"></a><span class="co">##############################################</span></span>
+<span id="cb140-39"><a href="make-tables.html#cb140-39"></a><span class="co"># figs TARGET</span></span>
+<span id="cb140-40"><a href="make-tables.html#cb140-40"></a><span class="co">##############################################</span></span>
+<span id="cb140-41"><a href="make-tables.html#cb140-41"></a></span>
+<span id="cb140-42"><a href="make-tables.html#cb140-42"></a><span class="ex">rule</span> make_figures:</span>
+<span id="cb140-43"><a href="make-tables.html#cb140-43"></a>    <span class="ex">input</span>:</span>
+<span id="cb140-44"><a href="make-tables.html#cb140-44"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb140-45"><a href="make-tables.html#cb140-45"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
+<span id="cb140-46"><a href="make-tables.html#cb140-46"></a></span>
+<span id="cb140-47"><a href="make-tables.html#cb140-47"></a><span class="co">##############################################</span></span>
+<span id="cb140-48"><a href="make-tables.html#cb140-48"></a><span class="co"># MAKING FIGS</span></span>
+<span id="cb140-49"><a href="make-tables.html#cb140-49"></a><span class="co">##############################################</span></span>
+<span id="cb140-50"><a href="make-tables.html#cb140-50"></a></span>
+<span id="cb140-51"><a href="make-tables.html#cb140-51"></a><span class="ex">rule</span> figure:</span>
+<span id="cb140-52"><a href="make-tables.html#cb140-52"></a>    <span class="ex">input</span>:</span>
+<span id="cb140-53"><a href="make-tables.html#cb140-53"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
+<span id="cb140-54"><a href="make-tables.html#cb140-54"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb140-55"><a href="make-tables.html#cb140-55"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
+<span id="cb140-56"><a href="make-tables.html#cb140-56"></a>    <span class="ex">output</span>:</span>
+<span id="cb140-57"><a href="make-tables.html#cb140-57"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
+<span id="cb140-58"><a href="make-tables.html#cb140-58"></a>    <span class="ex">shell</span>:</span>
+<span id="cb140-59"><a href="make-tables.html#cb140-59"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb140-60"><a href="make-tables.html#cb140-60"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb140-61"><a href="make-tables.html#cb140-61"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb140-62"><a href="make-tables.html#cb140-62"></a><span class="st">            --out {output.fig}&quot;</span></span>
+<span id="cb140-63"><a href="make-tables.html#cb140-63"></a></span>
+<span id="cb140-64"><a href="make-tables.html#cb140-64"></a><span class="co">##############################################</span></span>
+<span id="cb140-65"><a href="make-tables.html#cb140-65"></a><span class="co"># DATA MANAGEMENT</span></span>
+<span id="cb140-66"><a href="make-tables.html#cb140-66"></a><span class="co">##############################################</span></span>
+<span id="cb140-67"><a href="make-tables.html#cb140-67"></a></span>
+<span id="cb140-68"><a href="make-tables.html#cb140-68"></a><span class="ex">rule</span> gen_regression_vars:</span>
+<span id="cb140-69"><a href="make-tables.html#cb140-69"></a>    <span class="ex">input</span>:</span>
+<span id="cb140-70"><a href="make-tables.html#cb140-70"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
+<span id="cb140-71"><a href="make-tables.html#cb140-71"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
+<span id="cb140-72"><a href="make-tables.html#cb140-72"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
+<span id="cb140-73"><a href="make-tables.html#cb140-73"></a>    <span class="ex">output</span>:</span>
+<span id="cb140-74"><a href="make-tables.html#cb140-74"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
+<span id="cb140-75"><a href="make-tables.html#cb140-75"></a>    <span class="ex">shell</span>:</span>
+<span id="cb140-76"><a href="make-tables.html#cb140-76"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb140-77"><a href="make-tables.html#cb140-77"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb140-78"><a href="make-tables.html#cb140-78"></a><span class="st">            --param {input.param} \</span></span>
+<span id="cb140-79"><a href="make-tables.html#cb140-79"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb140-80"><a href="make-tables.html#cb140-80"></a></span>
+<span id="cb140-81"><a href="make-tables.html#cb140-81"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb140-82"><a href="make-tables.html#cb140-82"></a>    <span class="ex">input</span>:</span>
+<span id="cb140-83"><a href="make-tables.html#cb140-83"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb140-84"><a href="make-tables.html#cb140-84"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb140-85"><a href="make-tables.html#cb140-85"></a>    <span class="ex">output</span>:</span>
+<span id="cb140-86"><a href="make-tables.html#cb140-86"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb140-87"><a href="make-tables.html#cb140-87"></a>    <span class="ex">shell</span>:</span>
+<span id="cb140-88"><a href="make-tables.html#cb140-88"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb140-89"><a href="make-tables.html#cb140-89"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb140-90"><a href="make-tables.html#cb140-90"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb140-91"><a href="make-tables.html#cb140-91"></a></span>
+<span id="cb140-92"><a href="make-tables.html#cb140-92"></a></span>
+<span id="cb140-93"><a href="make-tables.html#cb140-93"></a></span>
+<span id="cb140-94"><a href="make-tables.html#cb140-94"></a><span class="co">##############################################</span></span>
+<span id="cb140-95"><a href="make-tables.html#cb140-95"></a><span class="co"># CLEANING RULES</span></span>
+<span id="cb140-96"><a href="make-tables.html#cb140-96"></a><span class="co">##############################################</span></span>
+<span id="cb140-97"><a href="make-tables.html#cb140-97"></a></span>
+<span id="cb140-98"><a href="make-tables.html#cb140-98"></a><span class="ex">rule</span> clean:</span>
+<span id="cb140-99"><a href="make-tables.html#cb140-99"></a>    <span class="ex">shell</span>:</span>
+<span id="cb140-100"><a href="make-tables.html#cb140-100"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
+<span id="cb140-101"><a href="make-tables.html#cb140-101"></a></span>
+<span id="cb140-102"><a href="make-tables.html#cb140-102"></a><span class="ex">rule</span> clean_data:</span>
+<span id="cb140-103"><a href="make-tables.html#cb140-103"></a>    <span class="ex">shell</span>:</span>
+<span id="cb140-104"><a href="make-tables.html#cb140-104"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
+<span id="cb140-105"><a href="make-tables.html#cb140-105"></a></span>
+<span id="cb140-106"><a href="make-tables.html#cb140-106"></a><span class="ex">rule</span> clean_analysis:</span>
+<span id="cb140-107"><a href="make-tables.html#cb140-107"></a>    <span class="ex">shell</span>:</span>
+<span id="cb140-108"><a href="make-tables.html#cb140-108"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
 </div>
 <div id="building-a-single-table" class="section level2">
 <h2><span class="header-section-number">9.2</span> Building a single table</h2>
 <p>Let us first start by making a single, explicit rule to create our first table.</p>
 <p>You can find the R script which does this under <code>src/tables/regression_table.R</code>.
 As always, we start by using the help function to learn the necessary input parameters the script expects:</p>
-<div class="sourceCode" id="cb129"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb129-1"><a href="make-tables.html#cb129-1"></a><span class="ex">Rscript</span> src/table/regression_table.R --help</span></code></pre></div>
-<div class="sourceCode" id="cb130"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb130-1"><a href="make-tables.html#cb130-1"></a><span class="ex">Usage</span>: src/tables/regression_table.R [options]</span>
-<span id="cb130-2"><a href="make-tables.html#cb130-2"></a></span>
-<span id="cb130-3"><a href="make-tables.html#cb130-3"></a><span class="ex">Options</span>:</span>
-<span id="cb130-4"><a href="make-tables.html#cb130-4"></a>        <span class="ex">-s</span> CHARACTER, --spec=CHARACTER</span>
-<span id="cb130-5"><a href="make-tables.html#cb130-5"></a>                <span class="ex">a</span> json dictionary of table parameters</span>
-<span id="cb130-6"><a href="make-tables.html#cb130-6"></a></span>
-<span id="cb130-7"><a href="make-tables.html#cb130-7"></a>        <span class="ex">-o</span> CHARACTER, --out=CHARACTER</span>
-<span id="cb130-8"><a href="make-tables.html#cb130-8"></a>                <span class="ex">output</span> file name [default = out.tex]</span>
-<span id="cb130-9"><a href="make-tables.html#cb130-9"></a></span>
-<span id="cb130-10"><a href="make-tables.html#cb130-10"></a>        <span class="ex">-h</span>, --help</span>
-<span id="cb130-11"><a href="make-tables.html#cb130-11"></a>                <span class="ex">Show</span> this help message and exit</span></code></pre></div>
+<div class="sourceCode" id="cb141"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb141-1"><a href="make-tables.html#cb141-1"></a><span class="ex">Rscript</span> src/table/regression_table.R --help</span></code></pre></div>
+<div class="sourceCode" id="cb142"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb142-1"><a href="make-tables.html#cb142-1"></a><span class="ex">Usage</span>: src/tables/regression_table.R [options]</span>
+<span id="cb142-2"><a href="make-tables.html#cb142-2"></a></span>
+<span id="cb142-3"><a href="make-tables.html#cb142-3"></a><span class="ex">Options</span>:</span>
+<span id="cb142-4"><a href="make-tables.html#cb142-4"></a>        <span class="ex">-s</span> CHARACTER, --spec=CHARACTER</span>
+<span id="cb142-5"><a href="make-tables.html#cb142-5"></a>                <span class="ex">a</span> json dictionary of table parameters</span>
+<span id="cb142-6"><a href="make-tables.html#cb142-6"></a></span>
+<span id="cb142-7"><a href="make-tables.html#cb142-7"></a>        <span class="ex">-o</span> CHARACTER, --out=CHARACTER</span>
+<span id="cb142-8"><a href="make-tables.html#cb142-8"></a>                <span class="ex">output</span> file name [default = out.tex]</span>
+<span id="cb142-9"><a href="make-tables.html#cb142-9"></a></span>
+<span id="cb142-10"><a href="make-tables.html#cb142-10"></a>        <span class="ex">-h</span>, --help</span>
+<span id="cb142-11"><a href="make-tables.html#cb142-11"></a>                <span class="ex">Show</span> this help message and exit</span></code></pre></div>
 <p>Our model expects two arguments:</p>
 <ul>
 <li><code>--spec</code>, a json dictionary with table parameters. This includes the models this tables contains as well as table specifications such as headers, column names etc.</li>
 <li><code>--out</code>, the output filename the LaTeX code will be saved to</li>
 </ul>
 <p>We will make the first table with <code>table_01.json</code> as the <code>spec</code> argument and an appropriate output filename:</p>
-<div class="sourceCode" id="cb131"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb131-1"><a href="make-tables.html#cb131-1"></a><span class="ex">rule</span> table:</span>
-<span id="cb131-2"><a href="make-tables.html#cb131-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb131-3"><a href="make-tables.html#cb131-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/regression_table.R&quot;</span>,</span>
-<span id="cb131-4"><a href="make-tables.html#cb131-4"></a>        <span class="ex">spec</span>   = <span class="st">&quot;src/table-specs/table_01.json&quot;</span></span>
-<span id="cb131-5"><a href="make-tables.html#cb131-5"></a>    <span class="ex">output</span>:</span>
-<span id="cb131-6"><a href="make-tables.html#cb131-6"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/table_01.tex&quot;</span></span>
-<span id="cb131-7"><a href="make-tables.html#cb131-7"></a>    <span class="ex">shell</span>:</span>
-<span id="cb131-8"><a href="make-tables.html#cb131-8"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb131-9"><a href="make-tables.html#cb131-9"></a><span class="st">            --spec {input.spec} \</span></span>
-<span id="cb131-10"><a href="make-tables.html#cb131-10"></a><span class="st">            --out {output.table}&quot;</span>           </span></code></pre></div>
+<div class="sourceCode" id="cb143"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb143-1"><a href="make-tables.html#cb143-1"></a><span class="ex">rule</span> table:</span>
+<span id="cb143-2"><a href="make-tables.html#cb143-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb143-3"><a href="make-tables.html#cb143-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/regression_table.R&quot;</span>,</span>
+<span id="cb143-4"><a href="make-tables.html#cb143-4"></a>        <span class="ex">spec</span>   = <span class="st">&quot;src/table-specs/table_01.json&quot;</span></span>
+<span id="cb143-5"><a href="make-tables.html#cb143-5"></a>    <span class="ex">output</span>:</span>
+<span id="cb143-6"><a href="make-tables.html#cb143-6"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/table_01.tex&quot;</span></span>
+<span id="cb143-7"><a href="make-tables.html#cb143-7"></a>    <span class="ex">shell</span>:</span>
+<span id="cb143-8"><a href="make-tables.html#cb143-8"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb143-9"><a href="make-tables.html#cb143-9"></a><span class="st">            --spec {input.spec} \</span></span>
+<span id="cb143-10"><a href="make-tables.html#cb143-10"></a><span class="st">            --out {output.table}&quot;</span>           </span></code></pre></div>
 <p>If all model files have been created in the last chapter, then this rule should run through with a single executed task via</p>
-<div class="sourceCode" id="cb132"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb132-1"><a href="make-tables.html#cb132-1"></a><span class="ex">snakemake</span> --cores 1 table</span></code></pre></div>
+<div class="sourceCode" id="cb144"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb144-1"><a href="make-tables.html#cb144-1"></a><span class="ex">snakemake</span> --cores 1 table</span></code></pre></div>
 <p>Additional to the usual Snakemake output, the LaTeX code of the table is printed to the screen.</p>
 <p>Let us check that the table has been successfully created in the <code>out/tables</code> folder:</p>
-<div class="sourceCode" id="cb133"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb133-1"><a href="make-tables.html#cb133-1"></a><span class="fu">ls</span> out/tables</span></code></pre></div>
-<div class="sourceCode" id="cb134"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb134-1"><a href="make-tables.html#cb134-1"></a><span class="ex">table_01.tex</span></span></code></pre></div>
+<div class="sourceCode" id="cb145"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb145-1"><a href="make-tables.html#cb145-1"></a><span class="fu">ls</span> out/tables</span></code></pre></div>
+<div class="sourceCode" id="cb146"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb146-1"><a href="make-tables.html#cb146-1"></a><span class="ex">table_01.tex</span></span></code></pre></div>
 <p>Nice, let us now clean our output folder and try to execute the table rule again.</p>
-<div class="sourceCode" id="cb135"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb135-1"><a href="make-tables.html#cb135-1"></a><span class="ex">snakemake</span> --cores 1 clean</span>
-<span id="cb135-2"><a href="make-tables.html#cb135-2"></a><span class="ex">snakemake</span> --cores 1 table</span></code></pre></div>
-<div class="sourceCode" id="cb136"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb136-1"><a href="make-tables.html#cb136-1"></a>[<span class="ex">...</span>]</span>
-<span id="cb136-2"><a href="make-tables.html#cb136-2"></a></span>
-<span id="cb136-3"><a href="make-tables.html#cb136-3"></a>[<span class="ex">Sat</span> Feb 20 21:19:20 2021]</span>
-<span id="cb136-4"><a href="make-tables.html#cb136-4"></a><span class="ex">rule</span> table:</span>
-<span id="cb136-5"><a href="make-tables.html#cb136-5"></a>    <span class="ex">input</span>: src/tables/regression_table.R, src/table-specs/table_01.json</span>
-<span id="cb136-6"><a href="make-tables.html#cb136-6"></a>    <span class="ex">output</span>: out/tables/table_01.tex</span>
-<span id="cb136-7"><a href="make-tables.html#cb136-7"></a>    <span class="ex">jobid</span>: 0</span>
-<span id="cb136-8"><a href="make-tables.html#cb136-8"></a></span>
-<span id="cb136-9"><a href="make-tables.html#cb136-9"></a>[<span class="ex">...</span>]</span>
-<span id="cb136-10"><a href="make-tables.html#cb136-10"></a></span>
-<span id="cb136-11"><a href="make-tables.html#cb136-11"></a><span class="ex">In</span> gzfile(file, <span class="st">&quot;rb&quot;</span>) <span class="bu">:</span>  </span>
-<span id="cb136-12"><a href="make-tables.html#cb136-12"></a>  <span class="ex">cannot</span> open compressed file <span class="st">&#39;/Users/ubergm/Documents/projects/snakemake/snakemake-econ-r-learner/out/analysis/model_solow.subset_nonoil.rds&#39;</span>,  </span>
-<span id="cb136-13"><a href="make-tables.html#cb136-13"></a>  <span class="ex">probable</span> reason <span class="st">&#39;No such file or directory&#39;</span>  </span>
-<span id="cb136-14"><a href="make-tables.html#cb136-14"></a><span class="ex">Execution</span> stopped</span>
-<span id="cb136-15"><a href="make-tables.html#cb136-15"></a></span>
-<span id="cb136-16"><a href="make-tables.html#cb136-16"></a>[<span class="ex">Sat</span> Feb 20 21:19:20 2021]</span>
-<span id="cb136-17"><a href="make-tables.html#cb136-17"></a><span class="ex">Error</span> in rule table:</span>
-<span id="cb136-18"><a href="make-tables.html#cb136-18"></a>    <span class="ex">jobid</span>: 0</span>
-<span id="cb136-19"><a href="make-tables.html#cb136-19"></a>    <span class="ex">output</span>: out/tables/table_01.tex</span>
-<span id="cb136-20"><a href="make-tables.html#cb136-20"></a>    <span class="ex">shell</span>:</span>
-<span id="cb136-21"><a href="make-tables.html#cb136-21"></a>        <span class="ex">Rscript</span> src/tables/regression_table.R  </span>
-<span id="cb136-22"><a href="make-tables.html#cb136-22"></a>        <span class="ex">--spec</span> src/table-specs/table_01.json  </span>
-<span id="cb136-23"><a href="make-tables.html#cb136-23"></a>        <span class="ex">--out</span> out/tables/table_01.tex  </span>
-<span id="cb136-24"><a href="make-tables.html#cb136-24"></a>        <span class="kw">(</span><span class="ex">one</span> of the commands exited with non-zero exit code<span class="kw">;</span>  </span>
-<span id="cb136-25"><a href="make-tables.html#cb136-25"></a>        <span class="ex">note</span> that snakemake uses bash strict mode!<span class="kw">)</span></span>
-<span id="cb136-26"><a href="make-tables.html#cb136-26"></a></span>
-<span id="cb136-27"><a href="make-tables.html#cb136-27"></a><span class="ex">Shutting</span> down, this might take some time.  </span>
-<span id="cb136-28"><a href="make-tables.html#cb136-28"></a><span class="ex">Exiting</span> because a job execution failed. Look above for error message  </span>
-<span id="cb136-29"><a href="make-tables.html#cb136-29"></a><span class="ex">Complete</span> log: /Users/ubergm/Documents/projects/snakemake/  </span>
-<span id="cb136-30"><a href="make-tables.html#cb136-30"></a><span class="ex">snakemake-econ-r-learner/.snakemake/log/2021-02-20T211920.004018.snakemake.log</span></span></code></pre></div>
+<div class="sourceCode" id="cb147"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb147-1"><a href="make-tables.html#cb147-1"></a><span class="ex">snakemake</span> --cores 1 clean</span>
+<span id="cb147-2"><a href="make-tables.html#cb147-2"></a><span class="ex">snakemake</span> --cores 1 table</span></code></pre></div>
+<div class="sourceCode" id="cb148"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb148-1"><a href="make-tables.html#cb148-1"></a>[<span class="ex">...</span>]</span>
+<span id="cb148-2"><a href="make-tables.html#cb148-2"></a></span>
+<span id="cb148-3"><a href="make-tables.html#cb148-3"></a>[<span class="ex">Sat</span> Feb 20 21:19:20 2021]</span>
+<span id="cb148-4"><a href="make-tables.html#cb148-4"></a><span class="ex">rule</span> table:</span>
+<span id="cb148-5"><a href="make-tables.html#cb148-5"></a>    <span class="ex">input</span>: src/tables/regression_table.R, src/table-specs/table_01.json</span>
+<span id="cb148-6"><a href="make-tables.html#cb148-6"></a>    <span class="ex">output</span>: out/tables/table_01.tex</span>
+<span id="cb148-7"><a href="make-tables.html#cb148-7"></a>    <span class="ex">jobid</span>: 0</span>
+<span id="cb148-8"><a href="make-tables.html#cb148-8"></a></span>
+<span id="cb148-9"><a href="make-tables.html#cb148-9"></a>[<span class="ex">...</span>]</span>
+<span id="cb148-10"><a href="make-tables.html#cb148-10"></a></span>
+<span id="cb148-11"><a href="make-tables.html#cb148-11"></a><span class="ex">In</span> gzfile(file, <span class="st">&quot;rb&quot;</span>) <span class="bu">:</span>  </span>
+<span id="cb148-12"><a href="make-tables.html#cb148-12"></a>  <span class="ex">cannot</span> open compressed file <span class="st">&#39;/Users/ubergm/Documents/projects/snakemake/snakemake-econ-r-learner/out/analysis/model_solow.subset_nonoil.rds&#39;</span>,  </span>
+<span id="cb148-13"><a href="make-tables.html#cb148-13"></a>  <span class="ex">probable</span> reason <span class="st">&#39;No such file or directory&#39;</span>  </span>
+<span id="cb148-14"><a href="make-tables.html#cb148-14"></a><span class="ex">Execution</span> stopped</span>
+<span id="cb148-15"><a href="make-tables.html#cb148-15"></a></span>
+<span id="cb148-16"><a href="make-tables.html#cb148-16"></a>[<span class="ex">Sat</span> Feb 20 21:19:20 2021]</span>
+<span id="cb148-17"><a href="make-tables.html#cb148-17"></a><span class="ex">Error</span> in rule table:</span>
+<span id="cb148-18"><a href="make-tables.html#cb148-18"></a>    <span class="ex">jobid</span>: 0</span>
+<span id="cb148-19"><a href="make-tables.html#cb148-19"></a>    <span class="ex">output</span>: out/tables/table_01.tex</span>
+<span id="cb148-20"><a href="make-tables.html#cb148-20"></a>    <span class="ex">shell</span>:</span>
+<span id="cb148-21"><a href="make-tables.html#cb148-21"></a>        <span class="ex">Rscript</span> src/tables/regression_table.R  </span>
+<span id="cb148-22"><a href="make-tables.html#cb148-22"></a>        <span class="ex">--spec</span> src/table-specs/table_01.json  </span>
+<span id="cb148-23"><a href="make-tables.html#cb148-23"></a>        <span class="ex">--out</span> out/tables/table_01.tex  </span>
+<span id="cb148-24"><a href="make-tables.html#cb148-24"></a>        <span class="kw">(</span><span class="ex">one</span> of the commands exited with non-zero exit code<span class="kw">;</span>  </span>
+<span id="cb148-25"><a href="make-tables.html#cb148-25"></a>        <span class="ex">note</span> that snakemake uses bash strict mode!<span class="kw">)</span></span>
+<span id="cb148-26"><a href="make-tables.html#cb148-26"></a></span>
+<span id="cb148-27"><a href="make-tables.html#cb148-27"></a><span class="ex">Shutting</span> down, this might take some time.  </span>
+<span id="cb148-28"><a href="make-tables.html#cb148-28"></a><span class="ex">Exiting</span> because a job execution failed. Look above for error message  </span>
+<span id="cb148-29"><a href="make-tables.html#cb148-29"></a><span class="ex">Complete</span> log: /Users/ubergm/Documents/projects/snakemake/  </span>
+<span id="cb148-30"><a href="make-tables.html#cb148-30"></a><span class="ex">snakemake-econ-r-learner/.snakemake/log/2021-02-20T211920.004018.snakemake.log</span></span></code></pre></div>
 <p>We got an error.
 Looking at the R output, we see that the file <code>out/analysis/model_solow.subset_nonoil.rds</code> could not be found.
 Why is this?</p>
@@ -530,31 +527,31 @@ We just need to include the model inputs from the <code>run_models</code> target
 This tells Snakemake to create all models before creating the regression table.</p>
 <p>Copying this part and adding it as <code>{input.models}</code> makes our table rule a target for the model outputs.
 We should end up with a rule like this:</p>
-<div class="sourceCode" id="cb137"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb137-1"><a href="make-tables.html#cb137-1"></a><span class="ex">rule</span> table:</span>
-<span id="cb137-2"><a href="make-tables.html#cb137-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb137-3"><a href="make-tables.html#cb137-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/regression_table.R&quot;</span>,</span>
-<span id="cb137-4"><a href="make-tables.html#cb137-4"></a>        <span class="ex">spec</span>   = <span class="st">&quot;src/table-specs/table_01.json&quot;</span>,</span>
-<span id="cb137-5"><a href="make-tables.html#cb137-5"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
-<span id="cb137-6"><a href="make-tables.html#cb137-6"></a>                        <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb137-7"><a href="make-tables.html#cb137-7"></a>                        <span class="ex">iSubset</span> = DATA_SUBSET)        </span>
-<span id="cb137-8"><a href="make-tables.html#cb137-8"></a>    <span class="ex">output</span>:</span>
-<span id="cb137-9"><a href="make-tables.html#cb137-9"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/table_01.tex&quot;</span></span>
-<span id="cb137-10"><a href="make-tables.html#cb137-10"></a>    <span class="ex">shell</span>:</span>
-<span id="cb137-11"><a href="make-tables.html#cb137-11"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb137-12"><a href="make-tables.html#cb137-12"></a><span class="st">            --spec {input.spec} \</span></span>
-<span id="cb137-13"><a href="make-tables.html#cb137-13"></a><span class="st">            --out {output.table}&quot;</span>           </span></code></pre></div>
+<div class="sourceCode" id="cb149"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb149-1"><a href="make-tables.html#cb149-1"></a><span class="ex">rule</span> table:</span>
+<span id="cb149-2"><a href="make-tables.html#cb149-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb149-3"><a href="make-tables.html#cb149-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/regression_table.R&quot;</span>,</span>
+<span id="cb149-4"><a href="make-tables.html#cb149-4"></a>        <span class="ex">spec</span>   = <span class="st">&quot;src/table-specs/table_01.json&quot;</span>,</span>
+<span id="cb149-5"><a href="make-tables.html#cb149-5"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
+<span id="cb149-6"><a href="make-tables.html#cb149-6"></a>                        <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb149-7"><a href="make-tables.html#cb149-7"></a>                        <span class="ex">iSubset</span> = DATA_SUBSET)        </span>
+<span id="cb149-8"><a href="make-tables.html#cb149-8"></a>    <span class="ex">output</span>:</span>
+<span id="cb149-9"><a href="make-tables.html#cb149-9"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/table_01.tex&quot;</span></span>
+<span id="cb149-10"><a href="make-tables.html#cb149-10"></a>    <span class="ex">shell</span>:</span>
+<span id="cb149-11"><a href="make-tables.html#cb149-11"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb149-12"><a href="make-tables.html#cb149-12"></a><span class="st">            --spec {input.spec} \</span></span>
+<span id="cb149-13"><a href="make-tables.html#cb149-13"></a><span class="st">            --out {output.table}&quot;</span>           </span></code></pre></div>
 <p>Let us clean and rerun the rule:</p>
-<div class="sourceCode" id="cb138"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb138-1"><a href="make-tables.html#cb138-1"></a><span class="ex">snakemake</span> --cores 1 clean</span>
-<span id="cb138-2"><a href="make-tables.html#cb138-2"></a><span class="ex">snakemake</span> --cores 1 table</span></code></pre></div>
+<div class="sourceCode" id="cb150"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb150-1"><a href="make-tables.html#cb150-1"></a><span class="ex">snakemake</span> --cores 1 clean</span>
+<span id="cb150-2"><a href="make-tables.html#cb150-2"></a><span class="ex">snakemake</span> --cores 1 table</span></code></pre></div>
 <p>Checking the output folder again, we see that all models</p>
-<div class="sourceCode" id="cb139"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb139-1"><a href="make-tables.html#cb139-1"></a><span class="fu">ls</span> out/analysis</span></code></pre></div>
-<div class="sourceCode" id="cb140"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb140-1"><a href="make-tables.html#cb140-1"></a><span class="ex">model_aug_cc.subset_intermediate.rds</span>        model_aug_cc_restr.subset_nonoil.rds     model_aug_solow.subset_oecd.rds            model_cc.subset_intermediate.rds     model_solow.subset_nonoil.rds          model_solow_restr.subset_oecd.rds</span>
-<span id="cb140-2"><a href="make-tables.html#cb140-2"></a><span class="ex">model_aug_cc.subset_nonoil.rds</span>          model_aug_cc_restr.subset_oecd.rds       model_aug_solow_restr.subset_intermediate.rds  model_cc.subset_nonoil.rds       model_solow.subset_oecd.rds            model_ucc.subset_intermediate.rds</span>
-<span id="cb140-3"><a href="make-tables.html#cb140-3"></a><span class="ex">model_aug_cc.subset_oecd.rds</span>            model_aug_solow.subset_intermediate.rds  model_aug_solow_restr.subset_nonoil.rds        model_cc.subset_oecd.rds         model_solow_restr.subset_intermediate.rds  model_ucc.subset_nonoil.rds</span>
-<span id="cb140-4"><a href="make-tables.html#cb140-4"></a><span class="ex">model_aug_cc_restr.subset_intermediate.rds</span>  model_aug_solow.subset_nonoil.rds        model_aug_solow_restr.subset_oecd.rds      model_solow.subset_intermediate.rds  model_solow_restr.subset_nonoil.rds        model_ucc.subset_oecd.rds</span></code></pre></div>
+<div class="sourceCode" id="cb151"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb151-1"><a href="make-tables.html#cb151-1"></a><span class="fu">ls</span> out/analysis</span></code></pre></div>
+<div class="sourceCode" id="cb152"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb152-1"><a href="make-tables.html#cb152-1"></a><span class="ex">model_aug_cc.subset_intermediate.rds</span>        model_aug_cc_restr.subset_nonoil.rds     model_aug_solow.subset_oecd.rds            model_cc.subset_intermediate.rds     model_solow.subset_nonoil.rds          model_solow_restr.subset_oecd.rds</span>
+<span id="cb152-2"><a href="make-tables.html#cb152-2"></a><span class="ex">model_aug_cc.subset_nonoil.rds</span>          model_aug_cc_restr.subset_oecd.rds       model_aug_solow_restr.subset_intermediate.rds  model_cc.subset_nonoil.rds       model_solow.subset_oecd.rds            model_ucc.subset_intermediate.rds</span>
+<span id="cb152-3"><a href="make-tables.html#cb152-3"></a><span class="ex">model_aug_cc.subset_oecd.rds</span>            model_aug_solow.subset_intermediate.rds  model_aug_solow_restr.subset_nonoil.rds        model_cc.subset_oecd.rds         model_solow_restr.subset_intermediate.rds  model_ucc.subset_nonoil.rds</span>
+<span id="cb152-4"><a href="make-tables.html#cb152-4"></a><span class="ex">model_aug_cc_restr.subset_intermediate.rds</span>  model_aug_solow.subset_nonoil.rds        model_aug_solow_restr.subset_oecd.rds      model_solow.subset_intermediate.rds  model_solow_restr.subset_nonoil.rds        model_ucc.subset_oecd.rds</span></code></pre></div>
 <p>and the table</p>
-<div class="sourceCode" id="cb141"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb141-1"><a href="make-tables.html#cb141-1"></a><span class="fu">ls</span> out/tables</span></code></pre></div>
-<div class="sourceCode" id="cb142"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb142-1"><a href="make-tables.html#cb142-1"></a><span class="ex">table_01.tex</span></span></code></pre></div>
+<div class="sourceCode" id="cb153"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb153-1"><a href="make-tables.html#cb153-1"></a><span class="fu">ls</span> out/tables</span></code></pre></div>
+<div class="sourceCode" id="cb154"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb154-1"><a href="make-tables.html#cb154-1"></a><span class="ex">table_01.tex</span></span></code></pre></div>
 <p>have been successfully created.</p>
 </div>
 <div id="building-all-tables-at-once" class="section level2">
@@ -578,41 +575,41 @@ You will practice this in the following exercise.</p>
 <div id="solution-6" class="section level3 unnumbered solution">
 <h3>Solution</h3>
 <p>Putting Steps 1-3 together should give us these three new parts:</p>
-<div class="sourceCode" id="cb143"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb143-1"><a href="make-tables.html#cb143-1"></a><span class="ex">TABLES</span> = glob_wildcards(<span class="st">&quot;src/table-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb143-2"><a href="make-tables.html#cb143-2"></a></span>
-<span id="cb143-3"><a href="make-tables.html#cb143-3"></a><span class="ex">rule</span> make_tables:</span>
-<span id="cb143-4"><a href="make-tables.html#cb143-4"></a>    <span class="ex">input</span>:</span>
-<span id="cb143-5"><a href="make-tables.html#cb143-5"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
-<span id="cb143-6"><a href="make-tables.html#cb143-6"></a>                <span class="ex">iTable</span> = TABLES)</span>
-<span id="cb143-7"><a href="make-tables.html#cb143-7"></a></span>
-<span id="cb143-8"><a href="make-tables.html#cb143-8"></a><span class="ex">rule</span> table:</span>
-<span id="cb143-9"><a href="make-tables.html#cb143-9"></a>    <span class="ex">input</span>:</span>
-<span id="cb143-10"><a href="make-tables.html#cb143-10"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/regression_table.R&quot;</span>,</span>
-<span id="cb143-11"><a href="make-tables.html#cb143-11"></a>        <span class="ex">spec</span>   = <span class="st">&quot;src/table-specs/{iTable}.json&quot;</span>,</span>
-<span id="cb143-12"><a href="make-tables.html#cb143-12"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
-<span id="cb143-13"><a href="make-tables.html#cb143-13"></a>                        <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb143-14"><a href="make-tables.html#cb143-14"></a>                        <span class="ex">iSubset</span> = DATA_SUBSET),</span>
-<span id="cb143-15"><a href="make-tables.html#cb143-15"></a>    <span class="ex">output</span>:</span>
-<span id="cb143-16"><a href="make-tables.html#cb143-16"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/{iTable}.tex&quot;</span></span>
-<span id="cb143-17"><a href="make-tables.html#cb143-17"></a>    <span class="ex">shell</span>:</span>
-<span id="cb143-18"><a href="make-tables.html#cb143-18"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb143-19"><a href="make-tables.html#cb143-19"></a><span class="st">            --spec {input.spec} \</span></span>
-<span id="cb143-20"><a href="make-tables.html#cb143-20"></a><span class="st">            --out {output.table}&quot;</span></span>
-<span id="cb143-21"><a href="make-tables.html#cb143-21"></a>[<span class="ex">...</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb155"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb155-1"><a href="make-tables.html#cb155-1"></a><span class="ex">TABLES</span> = glob_wildcards(<span class="st">&quot;src/table-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb155-2"><a href="make-tables.html#cb155-2"></a></span>
+<span id="cb155-3"><a href="make-tables.html#cb155-3"></a><span class="ex">rule</span> make_tables:</span>
+<span id="cb155-4"><a href="make-tables.html#cb155-4"></a>    <span class="ex">input</span>:</span>
+<span id="cb155-5"><a href="make-tables.html#cb155-5"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
+<span id="cb155-6"><a href="make-tables.html#cb155-6"></a>                <span class="ex">iTable</span> = TABLES)</span>
+<span id="cb155-7"><a href="make-tables.html#cb155-7"></a></span>
+<span id="cb155-8"><a href="make-tables.html#cb155-8"></a><span class="ex">rule</span> table:</span>
+<span id="cb155-9"><a href="make-tables.html#cb155-9"></a>    <span class="ex">input</span>:</span>
+<span id="cb155-10"><a href="make-tables.html#cb155-10"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/regression_table.R&quot;</span>,</span>
+<span id="cb155-11"><a href="make-tables.html#cb155-11"></a>        <span class="ex">spec</span>   = <span class="st">&quot;src/table-specs/{iTable}.json&quot;</span>,</span>
+<span id="cb155-12"><a href="make-tables.html#cb155-12"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
+<span id="cb155-13"><a href="make-tables.html#cb155-13"></a>                        <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb155-14"><a href="make-tables.html#cb155-14"></a>                        <span class="ex">iSubset</span> = DATA_SUBSET),</span>
+<span id="cb155-15"><a href="make-tables.html#cb155-15"></a>    <span class="ex">output</span>:</span>
+<span id="cb155-16"><a href="make-tables.html#cb155-16"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/{iTable}.tex&quot;</span></span>
+<span id="cb155-17"><a href="make-tables.html#cb155-17"></a>    <span class="ex">shell</span>:</span>
+<span id="cb155-18"><a href="make-tables.html#cb155-18"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb155-19"><a href="make-tables.html#cb155-19"></a><span class="st">            --spec {input.spec} \</span></span>
+<span id="cb155-20"><a href="make-tables.html#cb155-20"></a><span class="st">            --out {output.table}&quot;</span></span>
+<span id="cb155-21"><a href="make-tables.html#cb155-21"></a>[<span class="ex">...</span>]</span></code></pre></div>
 <ol start="4" style="list-style-type: decimal">
 <li>Clean your output folder.</li>
 </ol>
-<div class="sourceCode" id="cb144"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb144-1"><a href="make-tables.html#cb144-1"></a><span class="ex">snakemake</span> --cores 1 clean</span></code></pre></div>
+<div class="sourceCode" id="cb156"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb156-1"><a href="make-tables.html#cb156-1"></a><span class="ex">snakemake</span> --cores 1 clean</span></code></pre></div>
 <ol start="5" style="list-style-type: decimal">
 <li>Run the <code>make_tables</code> rule.</li>
 </ol>
-<div class="sourceCode" id="cb145"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb145-1"><a href="make-tables.html#cb145-1"></a><span class="ex">snakemake</span> --cores 1 make_tables</span></code></pre></div>
+<div class="sourceCode" id="cb157"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb157-1"><a href="make-tables.html#cb157-1"></a><span class="ex">snakemake</span> --cores 1 make_tables</span></code></pre></div>
 <ol start="6" style="list-style-type: decimal">
 <li>Verify that all six tables have been created in the output folder.</li>
 </ol>
-<div class="sourceCode" id="cb146"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb146-1"><a href="make-tables.html#cb146-1"></a><span class="fu">ls</span> out/tables</span></code></pre></div>
+<div class="sourceCode" id="cb158"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb158-1"><a href="make-tables.html#cb158-1"></a><span class="fu">ls</span> out/tables</span></code></pre></div>
 <p>The expected output are the six table files:</p>
-<div class="sourceCode" id="cb147"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb147-1"><a href="make-tables.html#cb147-1"></a><span class="ex">table_01.tex</span>  table_02.tex  table_03.tex  table_04.tex  table_05.tex  table_06.tex</span></code></pre></div>
+<div class="sourceCode" id="cb159"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb159-1"><a href="make-tables.html#cb159-1"></a><span class="ex">table_01.tex</span>  table_02.tex  table_03.tex  table_04.tex  table_05.tex  table_06.tex</span></code></pre></div>
 
 </div>
 </div>

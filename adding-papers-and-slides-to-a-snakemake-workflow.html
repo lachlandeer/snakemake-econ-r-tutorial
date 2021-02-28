@@ -187,14 +187,11 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.5" data-path="initial-steps-with-snakemake.html"><a href="initial-steps-with-snakemake.html#our-workflow-in-graphs"><i class="fa fa-check"></i><b>3.5</b> Our Workflow in Graphs</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html"><i class="fa fa-check"></i><b>4</b> Working With Multiple Rules</a><ul>
-<li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a second rule</a><ul>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-rules"><i class="fa fa-check"></i>Exercise: Creating Rules</a></li>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution"><i class="fa fa-check"></i>Solution</a></li>
-</ul></li>
-<li class="chapter" data-level="4.2" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#clean-rules"><i class="fa fa-check"></i><b>4.2</b> Clean Rules</a><ul>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#exercise-creating-cleaning-rules"><i class="fa fa-check"></i>Exercise: Creating Cleaning Rules</a></li>
-<li class="chapter" data-level="" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#solution-1"><i class="fa fa-check"></i>Solution</a></li>
-</ul></li>
+<li class="chapter" data-level="4.1" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#creating-a-second-rule"><i class="fa fa-check"></i><b>4.1</b> Creating a Second Rule</a></li>
+<li class="chapter" data-level="4.2" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#rule-order-matters"><i class="fa fa-check"></i><b>4.2</b> Rule Order Matters</a></li>
+<li class="chapter" data-level="4.3" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#dependencies-between-rules"><i class="fa fa-check"></i><b>4.3</b> Dependencies Between Rules</a></li>
+<li class="chapter" data-level="4.4" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#clean-rules"><i class="fa fa-check"></i><b>4.4</b> Clean Rules</a></li>
+<li class="chapter" data-level="4.5" data-path="working-with-multiple-rules.html"><a href="working-with-multiple-rules.html#our-workflow-in-graphs-1"><i class="fa fa-check"></i><b>4.5</b> Our Workflow in Graphs</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="target-rules.html"><a href="target-rules.html"><i class="fa fa-check"></i><b>5</b> Target Rules</a><ul>
 <li class="chapter" data-level="5.1" data-path="target-rules.html"><a href="target-rules.html#where-we-are-now"><i class="fa fa-check"></i><b>5.1</b> Where we are now?</a></li>
@@ -340,132 +337,132 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="state-of-our-snakefile" class="section level2">
 <h2><span class="header-section-number">11.2</span> State of Our Snakefile</h2>
-<div class="sourceCode" id="cb155"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb155-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span> </span>
-<span id="cb155-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-2"></a></span>
-<span id="cb155-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-3"></a><span class="co"># note this filter is only needed coz we are running an older version of the src files, will be updated soon</span></span>
-<span id="cb155-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-4"></a><span class="ex">DATA_SUBSET</span> = glob_wildcards(<span class="st">&quot;src/data-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb155-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-5"></a><span class="ex">DATA_SUBSET</span> = list(filter(lambda x: x.startswith(<span class="st">&quot;subset&quot;</span>), <span class="ex">DATA_SUBSET</span>))</span>
-<span id="cb155-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-6"></a></span>
-<span id="cb155-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-7"></a><span class="ex">PLOTS</span> = glob_wildcards(<span class="st">&quot;src/figures/{fname}.R&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb155-8"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-8"></a></span>
-<span id="cb155-9"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-9"></a><span class="ex">TABLES</span> = glob_wildcards(<span class="st">&quot;src/table-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb155-10"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-10"></a></span>
-<span id="cb155-11"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-11"></a></span>
-<span id="cb155-12"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-12"></a><span class="co">##############################################</span></span>
-<span id="cb155-13"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-13"></a><span class="co"># TARGETS</span></span>
-<span id="cb155-14"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-14"></a><span class="co">##############################################</span></span>
-<span id="cb155-15"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-15"></a></span>
-<span id="cb155-16"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-16"></a><span class="ex">rule</span> all:</span>
-<span id="cb155-17"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-17"></a>    <span class="ex">input</span>:</span>
-<span id="cb155-18"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-18"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb155-19"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-19"></a>                    <span class="ex">iFigure</span> = PLOTS),</span>
-<span id="cb155-20"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-20"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
-<span id="cb155-21"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-21"></a>                    <span class="ex">iTable</span> = TABLES) </span>
-<span id="cb155-22"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-22"></a></span>
-<span id="cb155-23"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-23"></a><span class="ex">rule</span> make_tables:</span>
-<span id="cb155-24"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-24"></a>    <span class="ex">input</span>:</span>
-<span id="cb155-25"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-25"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
-<span id="cb155-26"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-26"></a>                <span class="ex">iTable</span> = TABLES)</span>
-<span id="cb155-27"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-27"></a></span>
-<span id="cb155-28"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-28"></a><span class="ex">rule</span> run_models:</span>
-<span id="cb155-29"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-29"></a>    <span class="ex">input</span>:</span>
-<span id="cb155-30"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-30"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
-<span id="cb155-31"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-31"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
-<span id="cb155-32"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-32"></a>                    <span class="ex">iModel</span> = MODELS)</span>
-<span id="cb155-33"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-33"></a></span>
-<span id="cb155-34"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-34"></a><span class="ex">rule</span> make_figures:</span>
-<span id="cb155-35"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-35"></a>    <span class="ex">input</span>:</span>
-<span id="cb155-36"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-36"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb155-37"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-37"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
-<span id="cb155-38"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-38"></a></span>
-<span id="cb155-39"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-39"></a></span>
-<span id="cb155-40"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-40"></a><span class="co">##############################################</span></span>
-<span id="cb155-41"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-41"></a><span class="co"># INTERMEDIATE RULES</span></span>
-<span id="cb155-42"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-42"></a><span class="co">##############################################</span></span>
-<span id="cb155-43"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-43"></a></span>
-<span id="cb155-44"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-44"></a><span class="co"># table: build one table</span></span>
-<span id="cb155-45"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-45"></a><span class="ex">rule</span> table:</span>
-<span id="cb155-46"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-46"></a>    <span class="ex">input</span>:</span>
-<span id="cb155-47"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-47"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/regression_table.R&quot;</span>,</span>
-<span id="cb155-48"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-48"></a>        <span class="ex">spec</span>   = <span class="st">&quot;src/table-specs/{iTable}.json&quot;</span>,</span>
-<span id="cb155-49"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-49"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
-<span id="cb155-50"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-50"></a>                        <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb155-51"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-51"></a>                        <span class="ex">iSubset</span> = DATA_SUBSET),</span>
-<span id="cb155-52"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-52"></a>    <span class="ex">output</span>:</span>
-<span id="cb155-53"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-53"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/{iTable}.tex&quot;</span></span>
-<span id="cb155-54"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-54"></a>    <span class="ex">shell</span>:</span>
-<span id="cb155-55"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-55"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb155-56"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-56"></a><span class="st">            --spec {input.spec} \</span></span>
-<span id="cb155-57"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-57"></a><span class="st">            --out {output.table}&quot;</span></span>
-<span id="cb155-58"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-58"></a></span>
-<span id="cb155-59"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-59"></a><span class="ex">rule</span> model:</span>
-<span id="cb155-60"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-60"></a>    <span class="ex">input</span>:</span>
-<span id="cb155-61"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-61"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
-<span id="cb155-62"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-62"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb155-63"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-63"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
-<span id="cb155-64"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-64"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
-<span id="cb155-65"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-65"></a>    <span class="ex">output</span>:</span>
-<span id="cb155-66"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-66"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
-<span id="cb155-67"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-67"></a>    <span class="ex">shell</span>:</span>
-<span id="cb155-68"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-68"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb155-69"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-69"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb155-70"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-70"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb155-71"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-71"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb155-72"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-72"></a><span class="st">            --out {output.estimate}&quot;</span></span>
-<span id="cb155-73"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-73"></a></span>
-<span id="cb155-74"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-74"></a><span class="ex">rule</span> figure:</span>
-<span id="cb155-75"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-75"></a>    <span class="ex">input</span>:</span>
-<span id="cb155-76"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-76"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
-<span id="cb155-77"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-77"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb155-78"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-78"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
-<span id="cb155-79"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-79"></a>    <span class="ex">output</span>:</span>
-<span id="cb155-80"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-80"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
-<span id="cb155-81"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-81"></a>    <span class="ex">shell</span>:</span>
-<span id="cb155-82"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-82"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb155-83"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-83"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb155-84"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-84"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb155-85"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-85"></a><span class="st">            --out {output.fig}&quot;</span></span>
-<span id="cb155-86"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-86"></a></span>
-<span id="cb155-87"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-87"></a><span class="ex">rule</span> gen_regression_vars:</span>
-<span id="cb155-88"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-88"></a>    <span class="ex">input</span>:</span>
-<span id="cb155-89"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-89"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
-<span id="cb155-90"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-90"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
-<span id="cb155-91"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-91"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
-<span id="cb155-92"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-92"></a>    <span class="ex">output</span>:</span>
-<span id="cb155-93"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-93"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
-<span id="cb155-94"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-94"></a>    <span class="ex">shell</span>:</span>
-<span id="cb155-95"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-95"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb155-96"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-96"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb155-97"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-97"></a><span class="st">            --param {input.param} \</span></span>
-<span id="cb155-98"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-98"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb155-99"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-99"></a></span>
-<span id="cb155-100"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-100"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb155-101"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-101"></a>    <span class="ex">input</span>:</span>
-<span id="cb155-102"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-102"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb155-103"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-103"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
-<span id="cb155-104"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-104"></a>    <span class="ex">output</span>:</span>
-<span id="cb155-105"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-105"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb155-106"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-106"></a>    <span class="ex">shell</span>:</span>
-<span id="cb155-107"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-107"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb155-108"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-108"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb155-109"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-109"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb155-110"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-110"></a></span>
-<span id="cb155-111"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-111"></a></span>
-<span id="cb155-112"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-112"></a><span class="co">##############################################</span></span>
-<span id="cb155-113"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-113"></a><span class="co"># CLEANING RULES</span></span>
-<span id="cb155-114"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-114"></a><span class="co">##############################################</span></span>
-<span id="cb155-115"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-115"></a></span>
-<span id="cb155-116"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-116"></a><span class="ex">rule</span> clean:</span>
-<span id="cb155-117"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-117"></a>    <span class="ex">shell</span>:</span>
-<span id="cb155-118"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-118"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
-<span id="cb155-119"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-119"></a></span>
-<span id="cb155-120"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-120"></a><span class="ex">rule</span> clean_data:</span>
-<span id="cb155-121"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-121"></a>    <span class="ex">shell</span>:</span>
-<span id="cb155-122"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-122"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
-<span id="cb155-123"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-123"></a></span>
-<span id="cb155-124"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-124"></a><span class="ex">rule</span> clean_analysis:</span>
-<span id="cb155-125"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-125"></a>    <span class="ex">shell</span>:</span>
-<span id="cb155-126"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb155-126"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb167"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb167-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span> </span>
+<span id="cb167-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-2"></a></span>
+<span id="cb167-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-3"></a><span class="co"># note this filter is only needed coz we are running an older version of the src files, will be updated soon</span></span>
+<span id="cb167-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-4"></a><span class="ex">DATA_SUBSET</span> = glob_wildcards(<span class="st">&quot;src/data-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb167-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-5"></a><span class="ex">DATA_SUBSET</span> = list(filter(lambda x: x.startswith(<span class="st">&quot;subset&quot;</span>), <span class="ex">DATA_SUBSET</span>))</span>
+<span id="cb167-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-6"></a></span>
+<span id="cb167-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-7"></a><span class="ex">PLOTS</span> = glob_wildcards(<span class="st">&quot;src/figures/{fname}.R&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb167-8"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-8"></a></span>
+<span id="cb167-9"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-9"></a><span class="ex">TABLES</span> = glob_wildcards(<span class="st">&quot;src/table-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb167-10"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-10"></a></span>
+<span id="cb167-11"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-11"></a></span>
+<span id="cb167-12"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-12"></a><span class="co">##############################################</span></span>
+<span id="cb167-13"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-13"></a><span class="co"># TARGETS</span></span>
+<span id="cb167-14"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-14"></a><span class="co">##############################################</span></span>
+<span id="cb167-15"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-15"></a></span>
+<span id="cb167-16"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-16"></a><span class="ex">rule</span> all:</span>
+<span id="cb167-17"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-17"></a>    <span class="ex">input</span>:</span>
+<span id="cb167-18"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-18"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb167-19"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-19"></a>                    <span class="ex">iFigure</span> = PLOTS),</span>
+<span id="cb167-20"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-20"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
+<span id="cb167-21"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-21"></a>                    <span class="ex">iTable</span> = TABLES) </span>
+<span id="cb167-22"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-22"></a></span>
+<span id="cb167-23"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-23"></a><span class="ex">rule</span> make_tables:</span>
+<span id="cb167-24"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-24"></a>    <span class="ex">input</span>:</span>
+<span id="cb167-25"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-25"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
+<span id="cb167-26"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-26"></a>                <span class="ex">iTable</span> = TABLES)</span>
+<span id="cb167-27"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-27"></a></span>
+<span id="cb167-28"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-28"></a><span class="ex">rule</span> run_models:</span>
+<span id="cb167-29"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-29"></a>    <span class="ex">input</span>:</span>
+<span id="cb167-30"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-30"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
+<span id="cb167-31"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-31"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
+<span id="cb167-32"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-32"></a>                    <span class="ex">iModel</span> = MODELS)</span>
+<span id="cb167-33"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-33"></a></span>
+<span id="cb167-34"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-34"></a><span class="ex">rule</span> make_figures:</span>
+<span id="cb167-35"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-35"></a>    <span class="ex">input</span>:</span>
+<span id="cb167-36"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-36"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb167-37"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-37"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
+<span id="cb167-38"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-38"></a></span>
+<span id="cb167-39"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-39"></a></span>
+<span id="cb167-40"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-40"></a><span class="co">##############################################</span></span>
+<span id="cb167-41"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-41"></a><span class="co"># INTERMEDIATE RULES</span></span>
+<span id="cb167-42"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-42"></a><span class="co">##############################################</span></span>
+<span id="cb167-43"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-43"></a></span>
+<span id="cb167-44"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-44"></a><span class="co"># table: build one table</span></span>
+<span id="cb167-45"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-45"></a><span class="ex">rule</span> table:</span>
+<span id="cb167-46"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-46"></a>    <span class="ex">input</span>:</span>
+<span id="cb167-47"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-47"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/regression_table.R&quot;</span>,</span>
+<span id="cb167-48"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-48"></a>        <span class="ex">spec</span>   = <span class="st">&quot;src/table-specs/{iTable}.json&quot;</span>,</span>
+<span id="cb167-49"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-49"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
+<span id="cb167-50"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-50"></a>                        <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb167-51"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-51"></a>                        <span class="ex">iSubset</span> = DATA_SUBSET),</span>
+<span id="cb167-52"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-52"></a>    <span class="ex">output</span>:</span>
+<span id="cb167-53"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-53"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/{iTable}.tex&quot;</span></span>
+<span id="cb167-54"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-54"></a>    <span class="ex">shell</span>:</span>
+<span id="cb167-55"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-55"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb167-56"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-56"></a><span class="st">            --spec {input.spec} \</span></span>
+<span id="cb167-57"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-57"></a><span class="st">            --out {output.table}&quot;</span></span>
+<span id="cb167-58"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-58"></a></span>
+<span id="cb167-59"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-59"></a><span class="ex">rule</span> model:</span>
+<span id="cb167-60"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-60"></a>    <span class="ex">input</span>:</span>
+<span id="cb167-61"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-61"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb167-62"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-62"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb167-63"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-63"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
+<span id="cb167-64"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-64"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb167-65"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-65"></a>    <span class="ex">output</span>:</span>
+<span id="cb167-66"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-66"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
+<span id="cb167-67"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-67"></a>    <span class="ex">shell</span>:</span>
+<span id="cb167-68"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-68"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb167-69"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-69"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb167-70"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-70"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb167-71"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-71"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb167-72"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-72"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb167-73"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-73"></a></span>
+<span id="cb167-74"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-74"></a><span class="ex">rule</span> figure:</span>
+<span id="cb167-75"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-75"></a>    <span class="ex">input</span>:</span>
+<span id="cb167-76"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-76"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
+<span id="cb167-77"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-77"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb167-78"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-78"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
+<span id="cb167-79"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-79"></a>    <span class="ex">output</span>:</span>
+<span id="cb167-80"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-80"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
+<span id="cb167-81"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-81"></a>    <span class="ex">shell</span>:</span>
+<span id="cb167-82"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-82"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb167-83"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-83"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb167-84"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-84"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb167-85"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-85"></a><span class="st">            --out {output.fig}&quot;</span></span>
+<span id="cb167-86"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-86"></a></span>
+<span id="cb167-87"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-87"></a><span class="ex">rule</span> gen_regression_vars:</span>
+<span id="cb167-88"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-88"></a>    <span class="ex">input</span>:</span>
+<span id="cb167-89"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-89"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
+<span id="cb167-90"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-90"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
+<span id="cb167-91"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-91"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
+<span id="cb167-92"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-92"></a>    <span class="ex">output</span>:</span>
+<span id="cb167-93"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-93"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
+<span id="cb167-94"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-94"></a>    <span class="ex">shell</span>:</span>
+<span id="cb167-95"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-95"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb167-96"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-96"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb167-97"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-97"></a><span class="st">            --param {input.param} \</span></span>
+<span id="cb167-98"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-98"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb167-99"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-99"></a></span>
+<span id="cb167-100"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-100"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb167-101"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-101"></a>    <span class="ex">input</span>:</span>
+<span id="cb167-102"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-102"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb167-103"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-103"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb167-104"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-104"></a>    <span class="ex">output</span>:</span>
+<span id="cb167-105"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-105"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb167-106"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-106"></a>    <span class="ex">shell</span>:</span>
+<span id="cb167-107"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-107"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb167-108"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-108"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb167-109"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-109"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb167-110"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-110"></a></span>
+<span id="cb167-111"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-111"></a></span>
+<span id="cb167-112"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-112"></a><span class="co">##############################################</span></span>
+<span id="cb167-113"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-113"></a><span class="co"># CLEANING RULES</span></span>
+<span id="cb167-114"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-114"></a><span class="co">##############################################</span></span>
+<span id="cb167-115"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-115"></a></span>
+<span id="cb167-116"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-116"></a><span class="ex">rule</span> clean:</span>
+<span id="cb167-117"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-117"></a>    <span class="ex">shell</span>:</span>
+<span id="cb167-118"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-118"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
+<span id="cb167-119"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-119"></a></span>
+<span id="cb167-120"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-120"></a><span class="ex">rule</span> clean_data:</span>
+<span id="cb167-121"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-121"></a>    <span class="ex">shell</span>:</span>
+<span id="cb167-122"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-122"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
+<span id="cb167-123"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-123"></a></span>
+<span id="cb167-124"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-124"></a><span class="ex">rule</span> clean_analysis:</span>
+<span id="cb167-125"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-125"></a>    <span class="ex">shell</span>:</span>
+<span id="cb167-126"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-126"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
 </div>
 <div id="where-we-are" class="section level2">
 <h2><span class="header-section-number">11.3</span> Where We Are</h2>
@@ -489,19 +486,19 @@ In what follows we explore this extension.</p>
 <li>A script to construct the paper, located in <code>src/lib/build_article.R</code><a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a></li>
 </ul>
 <p>This suggests that a rule to build a paper might look like the following:</p>
-<div class="sourceCode" id="cb156"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb156-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb156-1"></a><span class="ex">rule</span> build_paper:</span>
-<span id="cb156-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb156-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb156-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb156-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/lib/build_article.R&quot;</span>,</span>
-<span id="cb156-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb156-4"></a>        <span class="op">&lt;</span><span class="ex">SOME</span> WAY TO ADD TABLES, FIGURES AND PAPER CONTENTS<span class="op">&gt;</span></span>
-<span id="cb156-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb156-5"></a>    <span class="ex">output</span>:</span>
-<span id="cb156-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb156-6"></a>        <span class="ex">pdf</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
-<span id="cb156-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb156-7"></a>    <span class="ex">shell</span>:</span>
-<span id="cb156-8"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb156-8"></a>        <span class="st">&quot;Rscript {input.script} &lt;SOME_CLI_OPTIONS&gt;&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb168"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb168-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb168-1"></a><span class="ex">rule</span> build_paper:</span>
+<span id="cb168-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb168-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb168-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb168-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/lib/build_article.R&quot;</span>,</span>
+<span id="cb168-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb168-4"></a>        <span class="op">&lt;</span><span class="ex">SOME</span> WAY TO ADD TABLES, FIGURES AND PAPER CONTENTS<span class="op">&gt;</span></span>
+<span id="cb168-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb168-5"></a>    <span class="ex">output</span>:</span>
+<span id="cb168-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb168-6"></a>        <span class="ex">pdf</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
+<span id="cb168-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb168-7"></a>    <span class="ex">shell</span>:</span>
+<span id="cb168-8"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb168-8"></a>        <span class="st">&quot;Rscript {input.script} &lt;SOME_CLI_OPTIONS&gt;&quot;</span></span></code></pre></div>
 <p>This is the structure we want to adopt.
 To see how we can flesh out the remaining structure,
 where <code>&lt;SOME...&gt;</code> suggests we need further specification,
 let’s look at what the script <code>src/lib/build_article.R</code> expects as command line arguments:</p>
-<div class="sourceCode" id="cb157"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb157-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb157-1"></a><span class="ex">Rscript</span> src/lib/build_article.R --help</span></code></pre></div>
+<div class="sourceCode" id="cb169"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb169-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb169-1"></a><span class="ex">Rscript</span> src/lib/build_article.R --help</span></code></pre></div>
 <p>which yields:</p>
 <pre class="out"><code>Usage: src/lib/build_article.R [options]
 
@@ -516,22 +513,22 @@ Options:
 <p>This tells us we need to find an Rmarkdown file with the paper metadata.
 Intuitively, the project’s structure tells us we should look for a file in <code>src/paper</code>.
 Let’s do just that:</p>
-<div class="sourceCode" id="cb159"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb159-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb159-1"></a><span class="fu">ls</span> src/paper</span></code></pre></div>
+<div class="sourceCode" id="cb171"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb171-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb171-1"></a><span class="fu">ls</span> src/paper</span></code></pre></div>
 <p>which returns the following:</p>
 <pre class="out"><code>01-intro.Rmd       03-data.Rmd     _bookdown.yml  _output.yml   references.bib
 02-literature.Rmd  04-results.Rmd  index.Rmd      preamble.tex</code></pre>
 <p>There’s a lot there.
 The file we are after is <code>index.Rmd</code>.
 So let’s update our rule <code>build_paper</code> with what we have learned:</p>
-<div class="sourceCode" id="cb161"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb161-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb161-1"></a><span class="ex">rule</span> build_paper:</span>
-<span id="cb161-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb161-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb161-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb161-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/lib/build_article.R&quot;</span>,</span>
-<span id="cb161-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb161-4"></a>        <span class="ex">index</span>  = <span class="st">&quot;src/paper/index.Rmd&quot;</span></span>
-<span id="cb161-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb161-5"></a>        <span class="op">&lt;</span><span class="ex">SOME</span> WAY TO ADD TABLES, FIGURES AND PAPER CONTENTS<span class="op">&gt;</span></span>
-<span id="cb161-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb161-6"></a>    <span class="ex">output</span>:</span>
-<span id="cb161-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb161-7"></a>        <span class="ex">pdf</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
-<span id="cb161-8"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb161-8"></a>    <span class="ex">shell</span>:</span>
-<span id="cb161-9"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb161-9"></a>        <span class="st">&quot;Rscript {input.script} --index {input.index}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb173"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb173-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb173-1"></a><span class="ex">rule</span> build_paper:</span>
+<span id="cb173-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb173-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb173-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb173-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/lib/build_article.R&quot;</span>,</span>
+<span id="cb173-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb173-4"></a>        <span class="ex">index</span>  = <span class="st">&quot;src/paper/index.Rmd&quot;</span></span>
+<span id="cb173-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb173-5"></a>        <span class="op">&lt;</span><span class="ex">SOME</span> WAY TO ADD TABLES, FIGURES AND PAPER CONTENTS<span class="op">&gt;</span></span>
+<span id="cb173-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb173-6"></a>    <span class="ex">output</span>:</span>
+<span id="cb173-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb173-7"></a>        <span class="ex">pdf</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
+<span id="cb173-8"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb173-8"></a>    <span class="ex">shell</span>:</span>
+<span id="cb173-9"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb173-9"></a>        <span class="st">&quot;Rscript {input.script} --index {input.index}&quot;</span></span></code></pre></div>
 <p>Now, there is a lot of other files in <code>src/paper/</code> apart from <code>index.Rmd</code>.
 Here’s a brief summary of what they do:</p>
 <ul>
@@ -550,41 +547,41 @@ This is so a rebuild of the paper is triggered any time we change on of these fi
 We could manually specify each one, or we could use the notion of <code>glob_wildcards</code> to collect the files by name,
 and then use <code>expand()</code> to include all of these files in the rule.
 First, let’s do the <code>glob_wildcards</code> step - we want all files in <code>src/paper</code>:</p>
-<div class="sourceCode" id="cb162"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb162-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb162-1"></a><span class="ex">TABLES</span> = ...</span>
-<span id="cb162-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb162-2"></a></span>
-<span id="cb162-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb162-3"></a><span class="ex">PAPER_FILES</span>  = glob_wildcards(<span class="st">&quot;src/paper/{fname}&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb162-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb162-4"></a></span>
-<span id="cb162-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb162-5"></a><span class="co">##############################################</span></span></code></pre></div>
+<div class="sourceCode" id="cb174"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb174-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb174-1"></a><span class="ex">TABLES</span> = ...</span>
+<span id="cb174-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb174-2"></a></span>
+<span id="cb174-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb174-3"></a><span class="ex">PAPER_FILES</span>  = glob_wildcards(<span class="st">&quot;src/paper/{fname}&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb174-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb174-4"></a></span>
+<span id="cb174-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb174-5"></a><span class="co">##############################################</span></span></code></pre></div>
 <p>And then we update the rule <code>build_paper</code> once more to <code>expand</code> over all files we found in the <code>glob_wildcards</code> step:</p>
-<div class="sourceCode" id="cb163"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb163-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb163-1"></a><span class="ex">rule</span> build_paper:</span>
-<span id="cb163-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb163-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb163-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb163-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/lib/build_article.R&quot;</span>,</span>
-<span id="cb163-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb163-4"></a>        <span class="ex">paper</span>  = PAPER_FILES</span>
-<span id="cb163-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb163-5"></a>        <span class="op">&lt;</span><span class="ex">SOME</span> WAY TO ADD TABLES AND FIGURES<span class="op">&gt;</span></span>
-<span id="cb163-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb163-6"></a>    <span class="ex">output</span>:</span>
-<span id="cb163-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb163-7"></a>        <span class="ex">pdf</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
-<span id="cb163-8"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb163-8"></a>    <span class="ex">shell</span>:</span>
-<span id="cb163-9"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb163-9"></a>        <span class="st">&quot;Rscript {input.script} --index src/paper/index.Rmd&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb175"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb175-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb175-1"></a><span class="ex">rule</span> build_paper:</span>
+<span id="cb175-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb175-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb175-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb175-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/lib/build_article.R&quot;</span>,</span>
+<span id="cb175-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb175-4"></a>        <span class="ex">paper</span>  = PAPER_FILES</span>
+<span id="cb175-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb175-5"></a>        <span class="op">&lt;</span><span class="ex">SOME</span> WAY TO ADD TABLES AND FIGURES<span class="op">&gt;</span></span>
+<span id="cb175-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb175-6"></a>    <span class="ex">output</span>:</span>
+<span id="cb175-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb175-7"></a>        <span class="ex">pdf</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
+<span id="cb175-8"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb175-8"></a>    <span class="ex">shell</span>:</span>
+<span id="cb175-9"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb175-9"></a>        <span class="st">&quot;Rscript {input.script} --index src/paper/index.Rmd&quot;</span></span></code></pre></div>
 <p>Finally we need to add the figures and tables as inputs.
 We’ll use the <code>expand</code> function to iterate over the <code>FIGURES</code> and and <code>TABLES</code> lists we previously created.
 The <code>build_paper</code> rule is now:</p>
-<div class="sourceCode" id="cb164"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb164-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb164-1"></a><span class="ex">rule</span> build_paper:</span>
-<span id="cb164-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb164-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb164-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb164-3"></a>        <span class="ex">script</span>  = <span class="st">&quot;src/lib/build_article.R&quot;</span>,</span>
-<span id="cb164-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb164-4"></a>        <span class="ex">paper</span>   = PAPER_FILES</span>
-<span id="cb164-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb164-5"></a>        <span class="ex">figures</span> = expand(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb164-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb164-6"></a>                    <span class="ex">iFigure</span> = PLOTS),</span>
-<span id="cb164-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb164-7"></a>        <span class="ex">tables</span>  = expand(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
-<span id="cb164-8"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb164-8"></a>                    <span class="ex">iTable</span> = TABLES) </span>
-<span id="cb164-9"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb164-9"></a>    <span class="ex">output</span>:</span>
-<span id="cb164-10"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb164-10"></a>        <span class="ex">pdf</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
-<span id="cb164-11"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb164-11"></a>    <span class="ex">shell</span>:</span>
-<span id="cb164-12"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb164-12"></a>        <span class="st">&quot;Rscript {input.script} --index src/paper/index.Rmd&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb176"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb176-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-1"></a><span class="ex">rule</span> build_paper:</span>
+<span id="cb176-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb176-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-3"></a>        <span class="ex">script</span>  = <span class="st">&quot;src/lib/build_article.R&quot;</span>,</span>
+<span id="cb176-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-4"></a>        <span class="ex">paper</span>   = PAPER_FILES</span>
+<span id="cb176-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-5"></a>        <span class="ex">figures</span> = expand(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb176-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-6"></a>                    <span class="ex">iFigure</span> = PLOTS),</span>
+<span id="cb176-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-7"></a>        <span class="ex">tables</span>  = expand(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
+<span id="cb176-8"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-8"></a>                    <span class="ex">iTable</span> = TABLES) </span>
+<span id="cb176-9"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-9"></a>    <span class="ex">output</span>:</span>
+<span id="cb176-10"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-10"></a>        <span class="ex">pdf</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
+<span id="cb176-11"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-11"></a>    <span class="ex">shell</span>:</span>
+<span id="cb176-12"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-12"></a>        <span class="st">&quot;Rscript {input.script} --index src/paper/index.Rmd&quot;</span></span></code></pre></div>
 <p>To build the rule with Snakemake:</p>
-<div class="sourceCode" id="cb165"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb165-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb165-1"></a><span class="ex">snakemake</span> --cores 1 build_paper</span></code></pre></div>
+<div class="sourceCode" id="cb177"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb177-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb177-1"></a><span class="ex">snakemake</span> --cores 1 build_paper</span></code></pre></div>
 <p>At the conclusion of the run, we see that the file <code>out/paper/paper.pdf</code> is produced.</p>
-<div class="sourceCode" id="cb166"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb166-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb166-1"></a><span class="fu">ls</span> out/paper</span></code></pre></div>
-<div class="sourceCode" id="cb167"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb167-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb167-1"></a><span class="ex">paper.pdf</span>  paper.tex</span></code></pre></div>
+<div class="sourceCode" id="cb178"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb178-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb178-1"></a><span class="fu">ls</span> out/paper</span></code></pre></div>
+<div class="sourceCode" id="cb179"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb179-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb179-1"></a><span class="ex">paper.pdf</span>  paper.tex</span></code></pre></div>
 <p>We also see that the tex file <code>paper.tex</code> is produced.
 This can be useful when it’s time to submit the final version of paper to a journal after acceptance -
 they most likely don’t want all our <code>Rmd</code>s!.</p>
@@ -599,15 +596,15 @@ they most likely don’t want all our <code>Rmd</code>s!.</p>
 The reason is that the <code>build_paper</code> rule has all of the figures and tables included.<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a>
 This suggests we can update the <code>all</code> rule.
 We’ll update it by removing the figures and tables as inputs, and replacing them with the paper we produced:</p>
-<div class="sourceCode" id="cb168"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb168-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb168-1"></a><span class="ex">rule</span> all:</span>
-<span id="cb168-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb168-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb168-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb168-3"></a>        <span class="ex">paper</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb180"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb180-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb180-1"></a><span class="ex">rule</span> all:</span>
+<span id="cb180-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb180-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb180-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb180-3"></a>        <span class="ex">paper</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span></code></pre></div>
 <p>Now when we execute Snakemake with <code>snakemake --cores 1 all</code> it will run the full workflow including the paper build.
 That is, our rule graph becomes:</p>
 <p><img src="img/33-paper-slides/rulegraph-all-with-paper.png" style="display: block; margin: auto;" /></p>
 <p>To see this in action, let’s clean our output directory:</p>
-<div class="sourceCode" id="cb169"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb169-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb169-1"></a><span class="ex">snakemake</span> --cores 1 clean</span></code></pre></div>
-<div class="sourceCode" id="cb170"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb170-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb170-1"></a><span class="ex">snakemake</span> --cores 1 all</span></code></pre></div>
+<div class="sourceCode" id="cb181"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb181-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb181-1"></a><span class="ex">snakemake</span> --cores 1 clean</span></code></pre></div>
+<div class="sourceCode" id="cb182"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb182-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb182-1"></a><span class="ex">snakemake</span> --cores 1 all</span></code></pre></div>
 <p>!! TO DO include snippet from snakemake output.</p>
 <p>The end OR beginning shows that the <code>all</code> rule now builds the paper after running all the data cleaning,
 model estimations, and the figure &amp; table creation.</p>
@@ -635,29 +632,29 @@ and doing something to them via shell command to create new outputs.
 What we have in mind is taking the paper located in <code>out/paper/paper.pdf</code> and copying it to the project’s
 root directory so it is easy to find.</p>
 <p>Let’s do this by adding some additional structure to the <code>all</code> rule:</p>
-<div class="sourceCode" id="cb171"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb171-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb171-1"></a><span class="ex">rule</span> all:</span>
-<span id="cb171-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb171-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb171-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb171-3"></a>        <span class="ex">paper</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
-<span id="cb171-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb171-4"></a>    <span class="ex">output</span>:</span>
-<span id="cb171-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb171-5"></a>        <span class="ex">paper</span> = </span>
-<span id="cb171-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb171-6"></a>    <span class="ex">shell</span>:</span>
-<span id="cb171-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb171-7"></a>        <span class="st">&quot;&lt;MIX IT&gt;&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb183"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb183-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb183-1"></a><span class="ex">rule</span> all:</span>
+<span id="cb183-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb183-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb183-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb183-3"></a>        <span class="ex">paper</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
+<span id="cb183-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb183-4"></a>    <span class="ex">output</span>:</span>
+<span id="cb183-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb183-5"></a>        <span class="ex">paper</span> = </span>
+<span id="cb183-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb183-6"></a>    <span class="ex">shell</span>:</span>
+<span id="cb183-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb183-7"></a>        <span class="st">&quot;&lt;MIX IT&gt;&quot;</span></span></code></pre></div>
 <p>We want to create a copy of the paper, and put it in the root directory, so we can create the output as “paper.pdf.”<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>
 And then we can copy from one directory to another using the <code>cp</code> command.
 The first argument after <code>cp</code> is what we want to copy - in our case <code>{input.paper}</code>,
 and the last is where we want to copy the file to - which is <code>{output.paper}</code> for us.
 Let’s make those changes:</p>
-<div class="sourceCode" id="cb172"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb172-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb172-1"></a><span class="ex">rule</span> all:</span>
-<span id="cb172-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb172-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb172-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb172-3"></a>        <span class="ex">paper</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
-<span id="cb172-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb172-4"></a>    <span class="ex">output</span>:</span>
-<span id="cb172-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb172-5"></a>        <span class="ex">paper</span> = <span class="st">&quot;paper.pdf&quot;</span></span>
-<span id="cb172-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb172-6"></a>    <span class="ex">shell</span>:</span>
-<span id="cb172-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb172-7"></a>        <span class="st">&quot;cp {input.paper} {output.paper}&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb184"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb184-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb184-1"></a><span class="ex">rule</span> all:</span>
+<span id="cb184-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb184-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb184-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb184-3"></a>        <span class="ex">paper</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
+<span id="cb184-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb184-4"></a>    <span class="ex">output</span>:</span>
+<span id="cb184-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb184-5"></a>        <span class="ex">paper</span> = <span class="st">&quot;paper.pdf&quot;</span></span>
+<span id="cb184-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb184-6"></a>    <span class="ex">shell</span>:</span>
+<span id="cb184-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb184-7"></a>        <span class="st">&quot;cp {input.paper} {output.paper}&quot;</span></span></code></pre></div>
 <p>Now run the <code>all</code> rule:</p>
-<div class="sourceCode" id="cb173"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb173-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb173-1"></a><span class="ex">snakemake</span> --cores 1 all</span></code></pre></div>
+<div class="sourceCode" id="cb185"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb185-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb185-1"></a><span class="ex">snakemake</span> --cores 1 all</span></code></pre></div>
 <p>and then look at the contents of the project’s root directory:</p>
-<div class="sourceCode" id="cb174"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb174-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb174-1"></a><span class="fu">ls</span> . </span></code></pre></div>
+<div class="sourceCode" id="cb186"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb186-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb186-1"></a><span class="fu">ls</span> . </span></code></pre></div>
 <pre class="out"><code>find_r_packages.sh    out/       README.md         config.yaml          
 install_r_packages.R  paper.pdf  REQUIREMENTS.txt  sandbox/       Snakefile</code></pre>
 <p>And we can now see a copy of the paper located in the root directory, as desired.
@@ -675,154 +672,154 @@ Did you chose to include all figures and tables as inputs? Why or why not?</p></
 </div>
 <div id="exercise-solution" class="section level3">
 <h3><span class="header-section-number">11.6.2</span> Exercise Solution</h3>
-<div class="sourceCode" id="cb176"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb176-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span> </span>
-<span id="cb176-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-2"></a></span>
-<span id="cb176-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-3"></a><span class="co"># note this filter is only needed coz we are running an older version of the src files, will be updated soon</span></span>
-<span id="cb176-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-4"></a><span class="ex">DATA_SUBSET</span> = glob_wildcards(<span class="st">&quot;src/data-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb176-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-5"></a><span class="ex">DATA_SUBSET</span> = list(filter(lambda x: x.startswith(<span class="st">&quot;subset&quot;</span>), <span class="ex">DATA_SUBSET</span>))</span>
-<span id="cb176-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-6"></a></span>
-<span id="cb176-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-7"></a><span class="ex">PLOTS</span> = glob_wildcards(<span class="st">&quot;src/figures/{fname}.R&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb176-8"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-8"></a></span>
-<span id="cb176-9"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-9"></a><span class="ex">TABLES</span> = glob_wildcards(<span class="st">&quot;src/table-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb176-10"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-10"></a><span class="ex">PAPER_FILES</span>  = glob_wildcards(<span class="st">&quot;src/paper/{fname}&quot;</span>)<span class="ex">.fname</span></span>
-<span id="cb176-11"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-11"></a></span>
-<span id="cb176-12"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-12"></a><span class="co">##############################################</span></span>
-<span id="cb176-13"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-13"></a><span class="co"># TARGETS</span></span>
-<span id="cb176-14"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-14"></a><span class="co">##############################################</span></span>
-<span id="cb176-15"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-15"></a></span>
-<span id="cb176-16"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-16"></a><span class="ex">rule</span> all:</span>
-<span id="cb176-17"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-17"></a>    <span class="ex">input</span>:</span>
-<span id="cb176-18"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-18"></a>        <span class="ex">paper</span>  = <span class="st">&quot;out/paper/paper.pdf&quot;</span>,</span>
-<span id="cb176-19"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-19"></a>        <span class="ex">slides</span> = <span class="st">&quot;out/slides/slides.pdf&quot;</span></span>
-<span id="cb176-20"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-20"></a>    <span class="ex">output</span>:</span>
-<span id="cb176-21"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-21"></a>        <span class="ex">paper</span>  = <span class="st">&quot;paper.pdf&quot;</span>,</span>
-<span id="cb176-22"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-22"></a>        <span class="ex">slides</span> = <span class="st">&quot;slides.pdf&quot;</span></span>
-<span id="cb176-23"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-23"></a>    <span class="ex">shell</span>:</span>
-<span id="cb176-24"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-24"></a>        <span class="st">&quot;cp {input.paper} {output.paper} &amp;&amp; cp {input.slides} {output.slides}&quot;</span></span>
-<span id="cb176-25"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-25"></a></span>
-<span id="cb176-26"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-26"></a><span class="ex">rule</span> make_tables:</span>
-<span id="cb176-27"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-27"></a>    <span class="ex">input</span>:</span>
-<span id="cb176-28"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-28"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
-<span id="cb176-29"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-29"></a>                <span class="ex">iTable</span> = TABLES)</span>
-<span id="cb176-30"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-30"></a></span>
-<span id="cb176-31"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-31"></a><span class="ex">rule</span> run_models:</span>
-<span id="cb176-32"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-32"></a>    <span class="ex">input</span>:</span>
-<span id="cb176-33"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-33"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
-<span id="cb176-34"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-34"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
-<span id="cb176-35"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-35"></a>                    <span class="ex">iModel</span> = MODELS)</span>
-<span id="cb176-36"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-36"></a></span>
-<span id="cb176-37"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-37"></a><span class="ex">rule</span> make_figures:</span>
-<span id="cb176-38"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-38"></a>    <span class="ex">input</span>:</span>
-<span id="cb176-39"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-39"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb176-40"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-40"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
-<span id="cb176-41"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-41"></a></span>
-<span id="cb176-42"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-42"></a></span>
-<span id="cb176-43"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-43"></a><span class="co">##############################################</span></span>
-<span id="cb176-44"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-44"></a><span class="co"># INTERMEDIATE RULES</span></span>
-<span id="cb176-45"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-45"></a><span class="co">##############################################</span></span>
-<span id="cb176-46"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-46"></a></span>
-<span id="cb176-47"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-47"></a><span class="ex">rule</span> build_slides:</span>
-<span id="cb176-48"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-48"></a>    <span class="ex">input</span>:</span>
-<span id="cb176-49"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-49"></a>        <span class="ex">script</span>    = <span class="st">&quot;src/lib/build_slides.R&quot;</span>,</span>
-<span id="cb176-50"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-50"></a>        <span class="ex">index</span>     = <span class="st">&quot;src/slides/slides.Rmd&quot;</span>,</span>
-<span id="cb176-51"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-51"></a>        <span class="ex">table</span>     = <span class="st">&quot;out/tables/table_06.tex&quot;</span>,</span>
-<span id="cb176-52"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-52"></a>        <span class="ex">figure</span>    = <span class="st">&quot;out/figures/unconditional_convergence.pdf&quot;</span>,</span>
-<span id="cb176-53"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-53"></a>        <span class="ex">preamble</span>  = <span class="st">&quot;src/slides/preamble.tex&quot;</span></span>
-<span id="cb176-54"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-54"></a>    <span class="ex">output</span>:</span>
-<span id="cb176-55"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-55"></a>        <span class="ex">pdf</span> = <span class="st">&quot;out/slides/slides.pdf&quot;</span></span>
-<span id="cb176-56"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-56"></a>    <span class="ex">shell</span>:</span>
-<span id="cb176-57"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-57"></a>        <span class="st">&quot;Rscript {input.script} --index {input.index} --output {output.pdf}&quot;</span> </span>
-<span id="cb176-58"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-58"></a></span>
-<span id="cb176-59"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-59"></a><span class="ex">rule</span> build_paper:</span>
-<span id="cb176-60"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-60"></a>    <span class="ex">input</span>:</span>
-<span id="cb176-61"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-61"></a>        <span class="ex">script</span> = <span class="st">&quot;src/lib/build_article.R&quot;</span>,</span>
-<span id="cb176-62"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-62"></a>        <span class="ex">paper</span>  = expand(<span class="st">&quot;src/paper/{iPaper}&quot;</span>,</span>
-<span id="cb176-63"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-63"></a>                          <span class="ex">iPaper</span> = PAPER_FILES),</span>
-<span id="cb176-64"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-64"></a>        <span class="ex">figures</span> = expand(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
-<span id="cb176-65"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-65"></a>                    <span class="ex">iFigure</span> = PLOTS),</span>
-<span id="cb176-66"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-66"></a>        <span class="ex">tables</span>  = expand(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
-<span id="cb176-67"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-67"></a>                    <span class="ex">iTable</span> = TABLES) </span>
-<span id="cb176-68"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-68"></a>    <span class="ex">output</span>:</span>
-<span id="cb176-69"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-69"></a>        <span class="ex">pdf</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
-<span id="cb176-70"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-70"></a>    <span class="ex">shell</span>:</span>
-<span id="cb176-71"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-71"></a>        <span class="st">&quot;Rscript {input.script} --index src/paper/index.Rmd&quot;</span></span>
-<span id="cb176-72"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-72"></a></span>
-<span id="cb176-73"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-73"></a></span>
-<span id="cb176-74"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-74"></a><span class="co"># table: build one table</span></span>
-<span id="cb176-75"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-75"></a><span class="ex">rule</span> table:</span>
-<span id="cb176-76"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-76"></a>    <span class="ex">input</span>:</span>
-<span id="cb176-77"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-77"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/regression_table.R&quot;</span>,</span>
-<span id="cb176-78"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-78"></a>        <span class="ex">spec</span>   = <span class="st">&quot;src/table-specs/{iTable}.json&quot;</span>,</span>
-<span id="cb176-79"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-79"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
-<span id="cb176-80"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-80"></a>                        <span class="ex">iModel</span> = MODELS,</span>
-<span id="cb176-81"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-81"></a>                        <span class="ex">iSubset</span> = DATA_SUBSET),</span>
-<span id="cb176-82"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-82"></a>    <span class="ex">output</span>:</span>
-<span id="cb176-83"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-83"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/{iTable}.tex&quot;</span></span>
-<span id="cb176-84"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-84"></a>    <span class="ex">shell</span>:</span>
-<span id="cb176-85"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-85"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb176-86"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-86"></a><span class="st">            --spec {input.spec} \</span></span>
-<span id="cb176-87"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-87"></a><span class="st">            --out {output.table}&quot;</span></span>
-<span id="cb176-88"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-88"></a></span>
-<span id="cb176-89"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-89"></a><span class="ex">rule</span> model:</span>
-<span id="cb176-90"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-90"></a>    <span class="ex">input</span>:</span>
-<span id="cb176-91"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-91"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
-<span id="cb176-92"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-92"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb176-93"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-93"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
-<span id="cb176-94"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-94"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
-<span id="cb176-95"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-95"></a>    <span class="ex">output</span>:</span>
-<span id="cb176-96"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-96"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
-<span id="cb176-97"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-97"></a>    <span class="ex">shell</span>:</span>
-<span id="cb176-98"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-98"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb176-99"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-99"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb176-100"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-100"></a><span class="st">            --model {input.model} \</span></span>
-<span id="cb176-101"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-101"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb176-102"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-102"></a><span class="st">            --out {output.estimate}&quot;</span></span>
-<span id="cb176-103"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-103"></a></span>
-<span id="cb176-104"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-104"></a><span class="ex">rule</span> figure:</span>
-<span id="cb176-105"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-105"></a>    <span class="ex">input</span>:</span>
-<span id="cb176-106"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-106"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
-<span id="cb176-107"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-107"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
-<span id="cb176-108"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-108"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
-<span id="cb176-109"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-109"></a>    <span class="ex">output</span>:</span>
-<span id="cb176-110"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-110"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
-<span id="cb176-111"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-111"></a>    <span class="ex">shell</span>:</span>
-<span id="cb176-112"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-112"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb176-113"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-113"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb176-114"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-114"></a><span class="st">            --subset {input.subset} \</span></span>
-<span id="cb176-115"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-115"></a><span class="st">            --out {output.fig}&quot;</span></span>
-<span id="cb176-116"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-116"></a></span>
-<span id="cb176-117"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-117"></a><span class="ex">rule</span> gen_regression_vars:</span>
-<span id="cb176-118"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-118"></a>    <span class="ex">input</span>:</span>
-<span id="cb176-119"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-119"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
-<span id="cb176-120"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-120"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
-<span id="cb176-121"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-121"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
-<span id="cb176-122"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-122"></a>    <span class="ex">output</span>:</span>
-<span id="cb176-123"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-123"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
-<span id="cb176-124"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-124"></a>    <span class="ex">shell</span>:</span>
-<span id="cb176-125"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-125"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb176-126"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-126"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb176-127"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-127"></a><span class="st">            --param {input.param} \</span></span>
-<span id="cb176-128"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-128"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb176-129"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-129"></a></span>
-<span id="cb176-130"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-130"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb176-131"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-131"></a>    <span class="ex">input</span>:</span>
-<span id="cb176-132"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-132"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb176-133"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-133"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
-<span id="cb176-134"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-134"></a>    <span class="ex">output</span>:</span>
-<span id="cb176-135"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-135"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb176-136"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-136"></a>    <span class="ex">shell</span>:</span>
-<span id="cb176-137"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-137"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb176-138"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-138"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb176-139"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-139"></a><span class="st">            --out {output.data}&quot;</span></span>
-<span id="cb176-140"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-140"></a></span>
-<span id="cb176-141"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-141"></a></span>
-<span id="cb176-142"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-142"></a><span class="co">##############################################</span></span>
-<span id="cb176-143"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-143"></a><span class="co"># CLEANING RULES</span></span>
-<span id="cb176-144"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-144"></a><span class="co">##############################################</span></span>
-<span id="cb176-145"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-145"></a></span>
-<span id="cb176-146"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-146"></a><span class="ex">rule</span> clean:</span>
-<span id="cb176-147"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-147"></a>    <span class="ex">shell</span>:</span>
-<span id="cb176-148"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb176-148"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb188"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb188-1"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-1"></a><span class="ex">MODELS</span> = glob_wildcards(<span class="st">&quot;src/model-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span> </span>
+<span id="cb188-2"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-2"></a></span>
+<span id="cb188-3"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-3"></a><span class="co"># note this filter is only needed coz we are running an older version of the src files, will be updated soon</span></span>
+<span id="cb188-4"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-4"></a><span class="ex">DATA_SUBSET</span> = glob_wildcards(<span class="st">&quot;src/data-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb188-5"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-5"></a><span class="ex">DATA_SUBSET</span> = list(filter(lambda x: x.startswith(<span class="st">&quot;subset&quot;</span>), <span class="ex">DATA_SUBSET</span>))</span>
+<span id="cb188-6"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-6"></a></span>
+<span id="cb188-7"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-7"></a><span class="ex">PLOTS</span> = glob_wildcards(<span class="st">&quot;src/figures/{fname}.R&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb188-8"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-8"></a></span>
+<span id="cb188-9"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-9"></a><span class="ex">TABLES</span> = glob_wildcards(<span class="st">&quot;src/table-specs/{fname}.json&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb188-10"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-10"></a><span class="ex">PAPER_FILES</span>  = glob_wildcards(<span class="st">&quot;src/paper/{fname}&quot;</span>)<span class="ex">.fname</span></span>
+<span id="cb188-11"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-11"></a></span>
+<span id="cb188-12"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-12"></a><span class="co">##############################################</span></span>
+<span id="cb188-13"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-13"></a><span class="co"># TARGETS</span></span>
+<span id="cb188-14"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-14"></a><span class="co">##############################################</span></span>
+<span id="cb188-15"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-15"></a></span>
+<span id="cb188-16"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-16"></a><span class="ex">rule</span> all:</span>
+<span id="cb188-17"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-17"></a>    <span class="ex">input</span>:</span>
+<span id="cb188-18"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-18"></a>        <span class="ex">paper</span>  = <span class="st">&quot;out/paper/paper.pdf&quot;</span>,</span>
+<span id="cb188-19"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-19"></a>        <span class="ex">slides</span> = <span class="st">&quot;out/slides/slides.pdf&quot;</span></span>
+<span id="cb188-20"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-20"></a>    <span class="ex">output</span>:</span>
+<span id="cb188-21"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-21"></a>        <span class="ex">paper</span>  = <span class="st">&quot;paper.pdf&quot;</span>,</span>
+<span id="cb188-22"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-22"></a>        <span class="ex">slides</span> = <span class="st">&quot;slides.pdf&quot;</span></span>
+<span id="cb188-23"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-23"></a>    <span class="ex">shell</span>:</span>
+<span id="cb188-24"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-24"></a>        <span class="st">&quot;cp {input.paper} {output.paper} &amp;&amp; cp {input.slides} {output.slides}&quot;</span></span>
+<span id="cb188-25"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-25"></a></span>
+<span id="cb188-26"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-26"></a><span class="ex">rule</span> make_tables:</span>
+<span id="cb188-27"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-27"></a>    <span class="ex">input</span>:</span>
+<span id="cb188-28"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-28"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
+<span id="cb188-29"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-29"></a>                <span class="ex">iTable</span> = TABLES)</span>
+<span id="cb188-30"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-30"></a></span>
+<span id="cb188-31"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-31"></a><span class="ex">rule</span> run_models:</span>
+<span id="cb188-32"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-32"></a>    <span class="ex">input</span>:</span>
+<span id="cb188-33"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-33"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
+<span id="cb188-34"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-34"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET,</span>
+<span id="cb188-35"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-35"></a>                    <span class="ex">iModel</span> = MODELS)</span>
+<span id="cb188-36"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-36"></a></span>
+<span id="cb188-37"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-37"></a><span class="ex">rule</span> make_figures:</span>
+<span id="cb188-38"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-38"></a>    <span class="ex">input</span>:</span>
+<span id="cb188-39"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-39"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb188-40"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-40"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
+<span id="cb188-41"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-41"></a></span>
+<span id="cb188-42"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-42"></a></span>
+<span id="cb188-43"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-43"></a><span class="co">##############################################</span></span>
+<span id="cb188-44"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-44"></a><span class="co"># INTERMEDIATE RULES</span></span>
+<span id="cb188-45"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-45"></a><span class="co">##############################################</span></span>
+<span id="cb188-46"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-46"></a></span>
+<span id="cb188-47"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-47"></a><span class="ex">rule</span> build_slides:</span>
+<span id="cb188-48"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-48"></a>    <span class="ex">input</span>:</span>
+<span id="cb188-49"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-49"></a>        <span class="ex">script</span>    = <span class="st">&quot;src/lib/build_slides.R&quot;</span>,</span>
+<span id="cb188-50"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-50"></a>        <span class="ex">index</span>     = <span class="st">&quot;src/slides/slides.Rmd&quot;</span>,</span>
+<span id="cb188-51"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-51"></a>        <span class="ex">table</span>     = <span class="st">&quot;out/tables/table_06.tex&quot;</span>,</span>
+<span id="cb188-52"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-52"></a>        <span class="ex">figure</span>    = <span class="st">&quot;out/figures/unconditional_convergence.pdf&quot;</span>,</span>
+<span id="cb188-53"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-53"></a>        <span class="ex">preamble</span>  = <span class="st">&quot;src/slides/preamble.tex&quot;</span></span>
+<span id="cb188-54"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-54"></a>    <span class="ex">output</span>:</span>
+<span id="cb188-55"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-55"></a>        <span class="ex">pdf</span> = <span class="st">&quot;out/slides/slides.pdf&quot;</span></span>
+<span id="cb188-56"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-56"></a>    <span class="ex">shell</span>:</span>
+<span id="cb188-57"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-57"></a>        <span class="st">&quot;Rscript {input.script} --index {input.index} --output {output.pdf}&quot;</span> </span>
+<span id="cb188-58"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-58"></a></span>
+<span id="cb188-59"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-59"></a><span class="ex">rule</span> build_paper:</span>
+<span id="cb188-60"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-60"></a>    <span class="ex">input</span>:</span>
+<span id="cb188-61"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-61"></a>        <span class="ex">script</span> = <span class="st">&quot;src/lib/build_article.R&quot;</span>,</span>
+<span id="cb188-62"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-62"></a>        <span class="ex">paper</span>  = expand(<span class="st">&quot;src/paper/{iPaper}&quot;</span>,</span>
+<span id="cb188-63"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-63"></a>                          <span class="ex">iPaper</span> = PAPER_FILES),</span>
+<span id="cb188-64"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-64"></a>        <span class="ex">figures</span> = expand(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb188-65"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-65"></a>                    <span class="ex">iFigure</span> = PLOTS),</span>
+<span id="cb188-66"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-66"></a>        <span class="ex">tables</span>  = expand(<span class="st">&quot;out/tables/{iTable}.tex&quot;</span>,</span>
+<span id="cb188-67"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-67"></a>                    <span class="ex">iTable</span> = TABLES) </span>
+<span id="cb188-68"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-68"></a>    <span class="ex">output</span>:</span>
+<span id="cb188-69"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-69"></a>        <span class="ex">pdf</span> = <span class="st">&quot;out/paper/paper.pdf&quot;</span></span>
+<span id="cb188-70"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-70"></a>    <span class="ex">shell</span>:</span>
+<span id="cb188-71"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-71"></a>        <span class="st">&quot;Rscript {input.script} --index src/paper/index.Rmd&quot;</span></span>
+<span id="cb188-72"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-72"></a></span>
+<span id="cb188-73"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-73"></a></span>
+<span id="cb188-74"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-74"></a><span class="co"># table: build one table</span></span>
+<span id="cb188-75"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-75"></a><span class="ex">rule</span> table:</span>
+<span id="cb188-76"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-76"></a>    <span class="ex">input</span>:</span>
+<span id="cb188-77"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-77"></a>        <span class="ex">script</span> = <span class="st">&quot;src/tables/regression_table.R&quot;</span>,</span>
+<span id="cb188-78"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-78"></a>        <span class="ex">spec</span>   = <span class="st">&quot;src/table-specs/{iTable}.json&quot;</span>,</span>
+<span id="cb188-79"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-79"></a>        <span class="ex">models</span> = expand(<span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span>,</span>
+<span id="cb188-80"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-80"></a>                        <span class="ex">iModel</span> = MODELS,</span>
+<span id="cb188-81"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-81"></a>                        <span class="ex">iSubset</span> = DATA_SUBSET),</span>
+<span id="cb188-82"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-82"></a>    <span class="ex">output</span>:</span>
+<span id="cb188-83"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-83"></a>        <span class="ex">table</span> = <span class="st">&quot;out/tables/{iTable}.tex&quot;</span></span>
+<span id="cb188-84"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-84"></a>    <span class="ex">shell</span>:</span>
+<span id="cb188-85"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-85"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb188-86"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-86"></a><span class="st">            --spec {input.spec} \</span></span>
+<span id="cb188-87"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-87"></a><span class="st">            --out {output.table}&quot;</span></span>
+<span id="cb188-88"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-88"></a></span>
+<span id="cb188-89"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-89"></a><span class="ex">rule</span> model:</span>
+<span id="cb188-90"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-90"></a>    <span class="ex">input</span>:</span>
+<span id="cb188-91"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-91"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb188-92"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-92"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb188-93"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-93"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/{iModel}.json&quot;</span>,</span>
+<span id="cb188-94"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-94"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb188-95"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-95"></a>    <span class="ex">output</span>:</span>
+<span id="cb188-96"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-96"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/{iModel}.{iSubset}.rds&quot;</span></span>
+<span id="cb188-97"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-97"></a>    <span class="ex">shell</span>:</span>
+<span id="cb188-98"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-98"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb188-99"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-99"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb188-100"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-100"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb188-101"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-101"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb188-102"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-102"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb188-103"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-103"></a></span>
+<span id="cb188-104"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-104"></a><span class="ex">rule</span> figure:</span>
+<span id="cb188-105"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-105"></a>    <span class="ex">input</span>:</span>
+<span id="cb188-106"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-106"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
+<span id="cb188-107"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-107"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb188-108"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-108"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
+<span id="cb188-109"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-109"></a>    <span class="ex">output</span>:</span>
+<span id="cb188-110"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-110"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
+<span id="cb188-111"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-111"></a>    <span class="ex">shell</span>:</span>
+<span id="cb188-112"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-112"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb188-113"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-113"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb188-114"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-114"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb188-115"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-115"></a><span class="st">            --out {output.fig}&quot;</span></span>
+<span id="cb188-116"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-116"></a></span>
+<span id="cb188-117"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-117"></a><span class="ex">rule</span> gen_regression_vars:</span>
+<span id="cb188-118"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-118"></a>    <span class="ex">input</span>:</span>
+<span id="cb188-119"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-119"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
+<span id="cb188-120"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-120"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
+<span id="cb188-121"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-121"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
+<span id="cb188-122"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-122"></a>    <span class="ex">output</span>:</span>
+<span id="cb188-123"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-123"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
+<span id="cb188-124"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-124"></a>    <span class="ex">shell</span>:</span>
+<span id="cb188-125"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-125"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb188-126"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-126"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb188-127"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-127"></a><span class="st">            --param {input.param} \</span></span>
+<span id="cb188-128"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-128"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb188-129"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-129"></a></span>
+<span id="cb188-130"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-130"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb188-131"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-131"></a>    <span class="ex">input</span>:</span>
+<span id="cb188-132"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-132"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb188-133"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-133"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb188-134"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-134"></a>    <span class="ex">output</span>:</span>
+<span id="cb188-135"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-135"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb188-136"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-136"></a>    <span class="ex">shell</span>:</span>
+<span id="cb188-137"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-137"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb188-138"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-138"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb188-139"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-139"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb188-140"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-140"></a></span>
+<span id="cb188-141"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-141"></a></span>
+<span id="cb188-142"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-142"></a><span class="co">##############################################</span></span>
+<span id="cb188-143"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-143"></a><span class="co"># CLEANING RULES</span></span>
+<span id="cb188-144"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-144"></a><span class="co">##############################################</span></span>
+<span id="cb188-145"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-145"></a></span>
+<span id="cb188-146"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-146"></a><span class="ex">rule</span> clean:</span>
+<span id="cb188-147"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-147"></a>    <span class="ex">shell</span>:</span>
+<span id="cb188-148"><a href="adding-papers-and-slides-to-a-snakemake-workflow.html#cb188-148"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span></code></pre></div>
 </div>
 </div>
 <div id="final-thoughts" class="section level2">
