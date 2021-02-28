@@ -34,12 +34,16 @@ h1, h2, h3, h4 {
 
 
 .book .book-body .page-wrapper .page-inner section.normal h1, 
-.book .book-body .page-wrapper .page-inner section.normal h2, 
+.book .book-body .page-wrapper .page-inner section.normal h2 {
+    margin-top: 2.275em;
+    margin-bottom: 1em;
+}
+
 .book .book-body .page-wrapper .page-inner section.normal h3, 
 .book .book-body .page-wrapper .page-inner section.normal h4, 
 .book .book-body .page-wrapper .page-inner section.normal h5, 
 .book .book-body .page-wrapper .page-inner section.normal h6 {
-    margin-top: 2.275em;
+    margin-top: 1em;
     margin-bottom: 1em;
 }
 
@@ -186,7 +190,7 @@ li.appendix span, li.part span { /* for TOC part names */
   left:10px;
   right:10px;
   position:absolute;
-  top:17px;
+  top:20px;
   font-size: 45px;
 }
 
@@ -209,7 +213,7 @@ li.appendix span, li.part span { /* for TOC part names */
   left:10px;
   right:10px;
   position:absolute;
-  top:17px;
+  top:20px;
   font-size: 45px;
 }
 
@@ -232,7 +236,7 @@ li.appendix span, li.part span { /* for TOC part names */
   left:10px;
   right:10px;
   position:absolute;
-  top:17px;
+  top:20px;
   font-size: 45px;
 }
 
@@ -255,7 +259,7 @@ li.appendix span, li.part span { /* for TOC part names */
   left:10px;
   right:10px;
   position:absolute;
-  top:17px;
+  top:20px;
   font-size: 45px;
 }
 
@@ -278,7 +282,7 @@ li.appendix span, li.part span { /* for TOC part names */
   left:10px;
   right:10px;
   position:absolute;
-  top:25px;
+  top:20px;
   font-size: 45px;
 }
 
@@ -301,6 +305,6 @@ li.appendix span, li.part span { /* for TOC part names */
   left:10px;
   right:10px;
   position:absolute;
-  top:5px;
+  top: 0px;
   font-size: 45px;
 }
