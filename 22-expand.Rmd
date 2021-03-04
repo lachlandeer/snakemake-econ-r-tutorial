@@ -700,7 +700,7 @@ out/data/mrw_renamed.csv        -       rename_vars     -               missing 
 ```
 
 This confirms that our new target and model rules work.
-Snakemake plans to do the data managment steps and build all six model outputs afterwards.
+Snakemake plans to do the data management steps and build all six model outputs afterwards.
 
 The corresponding Snakemake rule graph which shows the rules we execute in our workflow is now:
 
