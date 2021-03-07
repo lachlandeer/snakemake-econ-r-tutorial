@@ -1,6 +1,6 @@
 ---
 title: "Reproducible Data Analytic Workflows with Python and `R`"
-subtitle: "An Extended Tutorial for Researchers in Business, Economics and the Social Sciences"
+subtitle: "An Extended Tutorial for Researchers in Business, Economics, and the Social Sciences"
 author:
     - "Ulrich Bergmann"
     - "Lachlan Deer"
