@@ -266,7 +266,7 @@ TODO: ADD OUTPUT
 
 ::: {- .challenge} 
 
-### Exercise: Exploring the expand function
+### Exercise: Exploring the expand function {-}
 
 @mrw contains three plots.
 Each of these plots use the data subset of 'intermediate' countries.
@@ -294,7 +294,7 @@ Check first, what inputs the scripts expect.
 
 ::: {- .answer} 
 
-### SOLUTION:
+### SOLUTION: {-}
 
 In this problem the three rules `fig1`, `fig2`, and `fig3` only differ in the `{input.model}` they take and the output filename. We therefore have use wildcards in both to unify them.
 The target rule `make_figures` then uses the `expand()` function and a list of the filenames without the `.json` ending to create all three plots.
