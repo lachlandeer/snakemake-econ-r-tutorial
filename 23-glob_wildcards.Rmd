@@ -1,16 +1,26 @@
-# Automating List Construction for Wildcard Expansion
+# Automated Wildcard Lists
 
-## Learning Objectives
+:::{- .objectives} 
+### Overview {-}
 
-TODO!
+**Questions**
 
-## State of the Snakefile
+- Do you we have to define lists by hand?
+- Can Snakemake help us create lists automatically?
 
-TODO: Make this a box + code fold
+**Objectives**
+
+- Learn how to create wildcards from files in the project folder
+- Explain what the `glob_wildcard()` function is and how to ues it
+
+:::
+
+:::{- .prereq}
+### Snakefile Status {-}
 
 To proceed with this chapter, we expect you Snakefile to look as follows:
 
-```{bash, eval = FALSE}
+```{r, engine = 'bash', eval = FALSE}
 # --- Dictionaries --- #
 
 MODELS = [
@@ -111,318 +121,182 @@ rule clean_analysis:
         "rm -rf out/analysis/*"
 ```
 
-In the previous chapter when we wanted to expand a wildcard we manually specified the valued we wanted them to take by constructing a list.
-By doing so, the beginning of our Snakefile looks like this:
+:::
 
-```{r, engine = 'bash', eval = FALSE}
+In the previous chapter we have introduced wildcards to target rules with help of the `expand()` function.
+This required us to construct lists with the values we want the `expand()` function to match manually.
+
+Our `Snakefile` therefore now has three lists of values which we created for this purpose:
+
+```{r, engine = 'out', eval = FALSE}
 MODELS = [
           "model_solow",
           "model_aug_solow"
-          ]
+         ]
 
 DATA_SUBSET = [
-                "subset_oecd",
-                "subset_intermediate",
-                "subset_nonoil"
-                ]
+               "subset_oecd",
+               "subset_intermediate",
+               "subset_nonoil"
+              ]
 
 FIGURES = [
-            "aug_conditional_convergence",
-            "conditional_convergence",
-            "unconditional_convergence"
-            ]
+           "aug_conditional_convergence",
+           "conditional_convergence",
+           "unconditional_convergence"
+          ]
 ```
 
-This is not too problematic when we only have a few values that we want the wildcard to take,
-    but manually specifying long lists can get tedious and is prone to error.
-Snakemake has a built in function, `glob_wildcards` that will help us to remove the manual listing of values that we had to do so far.
+This is not too problematic when we only have a few values that we want the wildcard to take, but manually specifying long lists can get tedious and is prone to error.
+We also have to remember to update the lists manually when we create or rename files in our project folder.
 
-## The `glob_wildcards` Function
+It would be much nicer if the could create target lists automatically from the files present in our project folder.
+This guarantees that the list of target files is always up to data.
 
-Let's start by trying to replace the `MODELS` list that we manually specified with a more automated approach.
-The `glob_wildcards()` function takes one input - the path of the files that we want to search combined with the part of the file name we want to extract written as a wildcard.
-It then looks to find anything that along the specidied path, collecting what it finds along the way.
+Snakemake has a built-in function `glob_wildcards()` that will help us to replace the manual listing of values with an automatic one.
 
-Let's look at `glob_wildcards` in action to get a sense of what will happen.
-Replace our manually specified `MODELS` list with the following code:
+## The `glob_wildcards()` Function
 
-```{r, engine = 'bash', eval = FALSE}
-MODELS = glob_wildcards("src/model-specs/{fname}")
+Let's start by trying to replace the `MODELS` list with a more automated approach.
+The `glob_wildcards()` function takes one input -- the path of the files that we want to search combined with the part of the file name we want to extract as a wildcard.
+It then looks to find matches and collects what it finds along the way.
+
+Let's look at `glob_wildcards()` in action to get a sense of what will happen.
+We replace our manually specified `MODELS` list with the following code:
+
+```{r, engine = 'out', eval = FALSE}
+MODELS = glob_wildcards("src/model-specs/{mname}")
 ```
 
-This says look inside the `src/model-specs/` folder, and return any files we find there.
-`{fname}` is the name of the wildcard we use to tell snakemake we want the filenames from inside the folder.
-The name `fname` itself doesn't matter, we could use whatever we liked, but we decided `{fname}` is suggestive we want filenames so it helps us to understand what the code is doing. 
+This says: "look inside the `src/model-specs/` folder, and return any files you find there".
+`{mname}` is the name of the wildcard we use to tell snakemake we want the filenames from inside the folder.
+The name `{mname}` itself doesn't matter, we can use whatever we like.
+We choose `{mname}` because it suggests we want model names.
 
-Next, we want to look at what is now stored in `MODELS`.
-This is a litle tricker than it should be, but if we add a `print(MODELS)` command in our Snakefile we can get the value printed to screen.
-Let's do that, and then do a dry run.
+Next, to see the results of our matching, we remember that Snakemake will execute any Python 3 code it finds in `Snakefile`.
+We can therefore use the `print()` function to print `MODELS` to the screen.
 
-```{r, engine = 'bash', eval = FALSE}
-MODELS = glob_wildcards("src/model-specs/{fname}")
+Let's add the print statement and do a dry-run:
+
+```{r, engine = 'out', eval = FALSE}
+MODELS = glob_wildcards("src/model-specs/{mname}")
 print(MODELS)
 ```
-then:
-```{r, engine = 'bash', eval = FALSE}
+
+```{r, engine = 'out', eval = FALSE}
 $ snakemake --dryrun
 ```
 
-What we are interested in is the first printed lines (in white text):
+We are interested in the first printed lines (in white text):
+
 ```{r, engine = 'out', eval = FALSE}
 Wildcards(fname=['.gitkeep', 'model_solow.json', 'model_aug_cc_restr.json',
                 'model_solow_restr.json', 'model_cc.json', 'model_ucc.json',
                 'model_aug_solow_restr.json', 'model_aug_cc.json', 'model_aug_solow.json'])
 ```
 
-Here we see that all files are returned.
 Compared to our original `MODELS` list we see three differences
 
-1. There are more .json files, because there is potentially more specifications to run
+1. There are more .json files, because there are more specifications to run than we manually specified before^[You can verify this via `ls src/model-specs`]
 2. There is a .gitkeep file
-3. Each 'fname' ends with .json, which we did't have earlier.
+3. Each `mname` includes the `model_` part of the name and the file ending `.json`, which we didn't have earlier.
 
-(1) is not a problem, it reflects that there is more potential analysis files that we haven't manually specified.
-But (2) and (3) are problematic.
-We can remove the .gitkeep file *and* the .json file endings from the list with one step:
-telling the `glob_wildcards()` function to only return the part of the filename that comes before the .json.
+The first point is nice and shows us that `glob_wildcards()` is working well.
+However, we want to fix points 2 and 3 to make our list compatible with the code we have developed so far.
 
-We do this by updating our `glob_wildcards()` call as follows;
+We can do this in a single step.
+We want `glob_wildcards()` to only match `.json` files whose name starts with `model_` and we do  want to include both bits in the wildcard.
+To do that, we pull both `model_` and `.json` out of the `{fname}` wildcard like so:
 
-```{r, engine = 'bash', eval = FALSE}
-MODELS = glob_wildcards("src/model-specs/{fname}.json")
+```{r, engine = 'out', eval = FALSE}
+MODELS = glob_wildcards("src/model-specs/model_{fname}.json")
 print(MODELS)
 ```
 
-This says store in the list `MODELS` the part of the filename that comes before `.json` for all files in `src/model-specs`.
-The .gitkeep will also not be not returned, because this file does not have a .json ending:
+This says: "store the part of the filename that comes between `model_` and `.json` for all files in `src/model-specs` which begin with `model_` and end in `.json` in the `MODELS` list".
 
 Now let's try the dry run again: 
 
-```{r, engine = 'bash', eval = FALSE}
+```{r, engine = 'out', eval = FALSE}
 $ snakemake --dryrun
 ```
 Now the first line is:
 ```{r, engine = 'out', eval = FALSE}
-Wildcards(fname=['model_solow', 'model_aug_cc_restr',
-                'model_solow_restr', 'model_cc', 'model_ucc',
-                'model_aug_solow_restr', 'model_aug_cc', 'model_aug_solow'])
+Wildcards(mname=['solow', 'aug_cc_restr',
+                'solow_restr', 'cc', 'ucc',
+                'aug_solow_restr', 'aug_cc', 'aug_solow'])
 ```
 
-That's definitely an improvement.
-We note that the dry-run command is still giving us an error though, complaining about missing input files.
-That is because currently `MODELS` is not yet the the list that is was when we manually specified it.^[
-    If one replaces `print(MODELS)` with `print(type(MODELS))` we learn that `MODELS` is currently a `class` object rather than a list.
-    It remains unclear to us as authors why this is what the Snakemake designers made this decision, but we have learned to embrace it.
-    We hope you do too.
+That's looks pretty good.
+However, the dry-run command still gives an error.
+It complains about missing input files.
+
+The reason for this is a technical one:
+The `glob_wildcards()` function does not directly output a list of values.
+It instead returns a `Wildcards` class object which contains the list as an attribute.^[
+    To see this, we can replace `print(MODELS)` with `print(type(MODELS))` and do another dry-run. 
 ]
-The list we want is inside the `Wildcards()` class, and we can see it has the name `fname` which is the name of the wildcard we assigned ourselves.
+We can access the list via the name we have assigned to the wildcard, in our case `mname`.^[
+    Snakemake chooses this behavior because it allows us to assign and access multiple wildcards in a single run of the `glob_wildcard()` function. We could for example use `glob_wildcards("src/model-specs/model_{mname}.{fending}")` to access both the mdeol name and the file ending separately.
+]
+
 
 Our final step is to extract this list so that we can use it like our old `MODELS` list.
 
 We do this as follows:
-```{r, engine = 'bash', eval = FALSE}
-MODELS = glob_wildcards("src/model-specs/{fname}.json").fname
+
+```{r, engine = 'out', eval = FALSE}
+MODELS = glob_wildcards("src/model-specs/model_{mname}.json").mname
 print(MODELS)
 ```
 
-Read this as "get the list called `fname` from inside the Wildcards() object & assign it to the name `MODELS`".
+Read this as "get the list called `mname` from inside the Wildcards object and save it as `MODELS`".
+
 Now if we do a dry-run: 
 
-```{r, engine = 'bash', eval = FALSE}
+```{r, engine = 'out', eval = FALSE}
 $ snakemake --dryrun
 ```
 
 We are returned the following lines at the beginning of the output:
 
 ```{r, engine = 'out', eval = FALSE}
-['model_solow', 'model_aug_cc_restr', 'model_solow_restr',
- 'model_cc', 'model_ucc', 'model_aug_solow_restr',
- 'model_aug_cc', 'model_aug_solow']
+['solow', 'aug_cc_restr', 'solow_restr',
+ 'cc', 'ucc', 'aug_solow_restr',
+ 'aug_cc', 'aug_solow']
 
  ...
 ```
-which looks like the list we had manually entered, but with more elements.
 
-The dry-run output also showed us that there are many steps it wants to run next time it is executed.
-This is because it will want to obtain the output from each of 8 models estimated on all three of the data subsets in `DATA_SUBSET`.
-Recall that in Chapter XX we estimated two models, `aug_solow` and `solow`. 
+which is the list we had manually entered before plus some extra models from @mrw.
+
+The dry-run output also shows us that there are many extra steps to run next time it is executed.
+It now needs to run the steps for all the extra models we have just added.
+It will create the output from each of 8 models estimated on all three of the data subsets in `DATA_SUBSET`.
+So far we have estimated two models, `aug_solow` and `solow`. 
 This means there are six models left to run, each across 3 data sets, for a total of 18 steps.
-If we look through the dry run output we see that is indeed what is going to happen:
+
+The job count of the dry-run output shows us that this exactly what is going to happen:
 
 ```{r, engine = 'out', eval = FALSE}
-Building DAG of jobs...
 Job counts:
         count   jobs
         18      model
         1       run_models
         19
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow_restr.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_aug_solow_restr.subset_oecd.rds
-    jobid: 8
-    wildcards: iModel=model_aug_solow_restr, iSubset=subset_oecd
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow_restr.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_solow_restr.subset_nonoil.rds
-    jobid: 17
-    wildcards: iModel=model_solow_restr, iSubset=subset_nonoil
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc_restr.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_aug_cc_restr.subset_intermediate.rds
-    jobid: 12
-    wildcards: iModel=model_aug_cc_restr, iSubset=subset_intermediate
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow_restr.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_aug_solow_restr.subset_nonoil.rds
-    jobid: 24
-    wildcards: iModel=model_aug_solow_restr, iSubset=subset_nonoil
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_ucc.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_ucc.subset_oecd.rds
-    jobid: 7
-    wildcards: iModel=model_ucc, iSubset=subset_oecd
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_aug_cc.subset_intermediate.rds
-    jobid: 10
-    wildcards: iModel=model_aug_cc, iSubset=subset_intermediate
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_aug_cc.subset_nonoil.rds
-    jobid: 18
-    wildcards: iModel=model_aug_cc, iSubset=subset_nonoil
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc_restr.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_aug_cc_restr.subset_nonoil.rds
-    jobid: 20
-    wildcards: iModel=model_aug_cc_restr, iSubset=subset_nonoil
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_cc.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_cc.subset_oecd.rds
-    jobid: 3
-    wildcards: iModel=model_cc, iSubset=subset_oecd
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow_restr.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_solow_restr.subset_intermediate.rds
-    jobid: 9
-    wildcards: iModel=model_solow_restr, iSubset=subset_intermediate
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_aug_cc.subset_oecd.rds
-    jobid: 2
-    wildcards: iModel=model_aug_cc, iSubset=subset_oecd
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_ucc.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_ucc.subset_intermediate.rds
-    jobid: 15
-    wildcards: iModel=model_ucc, iSubset=subset_intermediate
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_cc_restr.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_aug_cc_restr.subset_oecd.rds
-    jobid: 4
-    wildcards: iModel=model_aug_cc_restr, iSubset=subset_oecd
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_cc.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_cc.subset_nonoil.rds
-    jobid: 19
-    wildcards: iModel=model_cc, iSubset=subset_nonoil
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_aug_solow_restr.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_aug_solow_restr.subset_intermediate.rds
-    jobid: 16
-    wildcards: iModel=model_aug_solow_restr, iSubset=subset_intermediate
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_solow_restr.json, src/data-specs/subset_oecd.json
-    output: out/analysis/model_solow_restr.subset_oecd.rds
-    jobid: 1
-    wildcards: iModel=model_solow_restr, iSubset=subset_oecd
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_cc.json, src/data-specs/subset_intermediate.json
-    output: out/analysis/model_cc.subset_intermediate.rds
-    jobid: 11
-    wildcards: iModel=model_cc, iSubset=subset_intermediate
-
-
-[Fri Feb 19 21:46:25 2021]
-rule model:
-    input: src/analysis/estimate_ols_model.R, out/data/mrw_complete.csv, src/model-specs/model_ucc.json, src/data-specs/subset_nonoil.json
-    output: out/analysis/model_ucc.subset_nonoil.rds
-    jobid: 23
-    wildcards: iModel=model_ucc, iSubset=subset_nonoil
-
-
-[Fri Feb 19 21:46:25 2021]
-localrule run_models:
-    input: out/analysis/model_solow_restr.subset_oecd.rds, out/analysis/model_aug_cc.subset_oecd.rds, out/analysis/model_cc.subset_oecd.rds, out/analysis/model_aug_cc_restr.subset_oecd.rds, out/analysis/model_aug_solow.subset_oecd.rds, out/analysis/model_solow.subset_oecd.rds, out/analysis/model_ucc.subset_oecd.rds, out/analysis/model_aug_solow_restr.subset_oecd.rds, out/analysis/model_solow_restr.subset_intermediate.rds, out/analysis/model_aug_cc.subset_intermediate.rds, out/analysis/model_cc.subset_intermediate.rds, out/analysis/model_aug_cc_restr.subset_intermediate.rds, out/analysis/model_aug_solow.subset_intermediate.rds, out/analysis/model_solow.subset_intermediate.rds, out/analysis/model_ucc.subset_intermediate.rds, out/analysis/model_aug_solow_restr.subset_intermediate.rds, out/analysis/model_solow_restr.subset_nonoil.rds, out/analysis/model_aug_cc.subset_nonoil.rds, out/analysis/model_cc.subset_nonoil.rds, out/analysis/model_aug_cc_restr.subset_nonoil.rds, out/analysis/model_aug_solow.subset_nonoil.rds, out/analysis/model_solow.subset_nonoil.rds, out/analysis/model_ucc.subset_nonoil.rds, out/analysis/model_aug_solow_restr.subset_nonoil.rds
-    jobid: 0
-
-Job counts:
-        count   jobs
-        18      model
-        1       run_models
-        19
-This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
 ```
 
 Let's run Snakemake to get all of the estimates.
-```{r, engine = 'bash', eval = FALSE}
-$ snakemake
+
+```{r, engine = 'out', eval = FALSE}
+$ snakemake --cores 1 run_models
 ```
 
-The power of using `glob_wildcards()` is clear. 
-It's a relatively easy way to construct a list to iterate over as part of a wildcard expansion based on the names of files.
+We see that `glob_wildcards()` are very powerful.
+It's relatively easy way to construct a list of wildcards to iterate over based on the names of files.
+It also allows us to keep our file dependencies up to date without having to remember to update file lists manually.
 
-## Looking at the DAG (redux)
+### Looking at the DAG (redux)
 
 With the addition of all of these new model estimates, Figure XX shows that the project's DAG has expanded in complexity. 
 
@@ -433,114 +307,77 @@ knitr::include_graphics("img/ch-5d/dag.pdf")
 The DAG again makes clear what our workflow is doing.
 Reading from the bottom of the figure upwards:
 
-* Snakemake wants to build the inputs listed in  `run_models`. 
+- Snakemake wants to build the inputs listed in  `run_models`. 
   This is the pairwise combination of all `MODELS` that were found in `src/model-specs` and all `DATA_SUBSETS` found in `src/data-specs` 
-* It can build those inputs by running the `model` rule $8 \times 3 = 24$ times when it iterates over the wildcards
-* To run each model, it needs the clean data, so it needs to run the two data cleaning steps first
+- It can build those inputs by running the `model` rule $8 \times 3 = 24$ times when it iterates over the wildcards
+- To run each model, it needs the cleaned data, so it needs to run the two data managment steps first
 
-!!! REMARK !!!
+::: {- .tip}
 
 Notice (again) how the figures aren't produced automatically. 
 Do you remember why?
 If not, revisit Chapter XX.
 You can build them with `snakemake --cores 1 make_figures`.
-Chapter YY will show us how to get all the outputs build with one run of Snakemake.
+Chapter XX will show us how to get all the outputs build with one run of Snakemake.
 
-### Exercise: Exploring glob_wildcards() {- .exercise}
+:::
 
-The Snakemake file still has two manually specified lists, `DATA_SUBSET` and `PLOTS`.
+::: {- .challenge} 
 
-(a) Use the `glob_wildcards()` function to automate the the list construction.
-(b) Clean the output directory
-(c) Run Snakemake so that all models and all figures have been produced.
+### Exercise: Exploring glob_wildcards() {-}
 
-### Solution
+Our `Snakefile` still has two manually specified lists, `DATA_SUBSET` and `PLOTS`.
 
-Will need to run Snakemake twice `snakemake --cores 1 run_models` and `snakemake --cores 1 make_figures`.
+1. Use the `glob_wildcards()` function to automate the the list construction.
+2. Verify that your globbing works correctly with help of the `--dryrun` option and a `print()` statement
+2. Clean the output directory
+3. Run Snakemake so that all models and all figures are produced.
+
+:::
+
+::: {- .answer} 
+
+### Solution {-}
+
+Our updated lists should look like this:
 
 ```{r, engine = 'bash', eval = FALSE}
 # --- Dictionaries --- #
-MODELS = glob_wildcards("src/model-specs/{fname}.json").fname 
-DATA_SUBSET = glob_wildcards("src/data-specs/{fname}.json").fname
-PLOTS = glob_wildcards("src/figures/{fname}.R").fname
 
-# --- Build Rules --- #
-
-rule run_models:
-    input:
-        expand("out/analysis/{iModel}.{iSubset}.rds",
-                    iSubset = DATA_SUBSET,
-                    iModel = MODELS)
-
-rule model:
-    input:
-        script = "src/analysis/estimate_ols_model.R",
-        data   = "out/data/mrw_complete.csv",
-        model  = "src/model-specs/{iModel}.json",
-        subset = "src/data-specs/{iSubset}.json"
-    output:
-        estimate = "out/analysis/{iModel}.{iSubset}.rds"
-    shell:
-        "Rscript {input.script} \
-            --data {input.data} \
-            --model {input.model} \
-            --subset {input.subset} \
-            --out {output.estimate}"
-
-rule make_figures:
-    input:
-        expand("out/figures/{iFigure}.pdf",
-                    iFigure = PLOTS)
-
-
-rule figure:
-    input:
-        script = "src/figures/{iFigure}.R",
-        data   = "out/data/mrw_complete.csv",
-        subset = "src/data-specs/subset_intermediate.json"
-    output:
-        fig = "out/figures/{iFigure}.pdf"
-    shell:
-        "Rscript {input.script} \
-            --data {input.data} \
-            --subset {input.subset} \
-            --out {output.fig}"
-
-
-rule gen_regression_vars:
-    input:
-        script = "src/data-management/gen_reg_vars.R",
-        data   = "out/data/mrw_renamed.csv",
-        param  = "src/data-specs/param_solow.json"
-    output:
-        data   = "out/data/mrw_complete.csv"
-    shell:
-        "Rscript {input.script} \
-            --data {input.data} \
-            --param {input.param} \
-            --out {output.data}"
-
-rule rename_vars:
-    input:
-        script = "src/data-management/rename_variables.R",
-        data   = "src/data/mrw.dta"
-    output:
-        data = "out/data/mrw_renamed.csv"
-    shell:
-        "Rscript {input.script} \
-            --data {input.data} \
-            --out {output.data}"
-
-
-rule clean:
-    shell:
-        "rm -rf out/*"
-
-rule clean_data:
-    shell:
-        "rm -rf out/data/*"
-
-rule clean_analysis:
-    shell:
-        "rm -rf out/analysis/*"
+MODELS = glob_wildcards("src/model-specs/model_{mname}.json").mname 
+DATA_SUBSET = glob_wildcards("src/data-specs/subset_{sname}.json").sname
+PLOTS = glob_wildcards("src/figures/{pname}.R").pname
 ```
+
+We can confirm they are correct by  adding a print statement in `Snakefile` like so:
+
+
+```{r, engine = 'bash', eval = FALSE}
+# --- Dictionaries --- #
+
+MODELS = glob_wildcards("src/model-specs/model_{mname}.json").mname 
+DATA_SUBSET = glob_wildcards("src/data-specs/subset_{sname}.json").sname
+PLOTS = glob_wildcards("src/figures/{pname}.R").pname
+
+print(MODELS.fname)
+print(DATA_SUBSET.fname)
+print(PLOTS.fname)
+
+[...]
+```
+
+We can use a dry run to print them to screen:
+
+```{r, engine = 'bash', eval = FALSE}
+# --- Dictionaries --- #
+snakemake --dryrun
+```
+
+To build both the models and figures, we need to run snakemake twice:
+
+```{r, engine = 'bash', eval = FALSE}
+snakemake --cores 1 run_models
+snakemake --cores 1 make_figures
+```
+
+:::
