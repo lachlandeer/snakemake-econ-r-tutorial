@@ -1,5 +1,5 @@
 ---
-title: "Reproducible Data Analytic Workflows with Snakemake and `R`"
+title: "Reproducible Data Analytic Workflows with Python and `R`"
 subtitle: "An Extended Tutorial for Researchers in Business, Economics and the Social Sciences"
 author:
     - "Ulrich Bergmann"
@@ -20,56 +20,41 @@ description: "In progress"
 
 ## Why we wrote this tutorial {-}
 
-Empirical research workflows in economics and other social sciences typically take the form of a 
-  set of steps that need to be performed in a given order.
-For example, one may need to run a set of data cleaning and merging scripts one after the other 
-  before creating a set of summary statistics and figures, 
-  and then running some empirical modelling such as a series of linear regressions.
-These linear regression results need to be compiled into tables, 
-   and these tables need to be included in a research paper and a slide deck.
-The number of steps involved in completing an entire project from initial data preparation, 
-  through to analysis and compiling the final results in a document quickly becomes large, 
-  and the inter-relationships between steps complex.
-Our own experience, and discussions with colleagues suggest that such a workflow quickly becomes unwieldy,
-  being both difficult to remember the relationships between steps and 
-  hard to write down in a way that co-authors and our future selves can access 
-  without blood pressures & stress levels rising. 
-  (the latter, at least from our personal experience stems from a degree of laziness 
-   to document our steps *after* we have completed them).
-We found ourselves frustrated with the headaches manual management of our workflow created
-  and searched for better ways of managing our research workflow.
+Empirical research workflows in economics and other social sciences typically take the form of a set of steps that need to be performed in a given order.
+For example, one may need to run a set of data cleaning and merging scripts one after the other before creating a set of summary statistics and figures, and then running some empirical modelling such as a series of linear regressions.
+These linear regression results need to be compiled into tables, and these tables need to be included in a research paper and a slide deck.
 
-This tutorial introduces the Snakemake workflow management system as a way to execute research workflows
-  and manage the dependencies between the succesive steps that make up our workflow.
-We have found the Snakemake system to be the best solution to our various workflow needs across our own research in
-  business, economics and social science due to a combination of its' readabilty 
-  and the ease of scaling up as the project becomes increasingly complex.
-Intuitively you can think of Snakemake workflows as a set of of human readable steps 
-  designed to create a replicable analyses:
-We the researcher will need to write down each step in the form of a 'recipe' - 
-  what goes in, 
-  what comes out, and 
-  how do we combine the inputs to produce an output. 
+The number of steps involved in completing an entire project from initial data preparation, through to analysis and compiling the final results in a document quickly becomes large and the inter-relationships between steps complex.
+
+Our own experience, and discussions with colleagues suggest that such a workflow quickly becomes unwieldy.
+It is difficult to remember the relationships between steps and hard to write them down in a way that co-authors and our future selves can access without blood pressures & stress levels rising. 
+We found ourselves frustrated with the headaches manual management of our workflow created and searched for better ways of managing our research workflow.
+
+This tutorial introduces the Snakemake workflow management system as a way to execute research workflows and manage the dependencies between successive steps that make up our workflow.
+Snakemake is a Python 3 package that is available both via the `conda` and `pip` package management systems available to all Python users.
+
+We have found the Snakemake system to be the best solution to our various workflow needs across our own research in business, economics and social science due to a combination of its' readabilty and the ease of scaling up as the project becomes increasingly complex.
+
+Intuitively you can think of Snakemake workflows as a set of of human readable steps designed to create a replicable analyses.
+We the researcher will need to write down each step in the form of a 'recipe' 
+
+- what goes in, 
+- what comes out, and 
+- how do we combine the inputs to produce an output. 
+
 Once we have written these steps, Snakemake will execute them for us and track the dependencies between steps.
-This means if we update step $x$, for example by changing how we merge data, the .
-Snakemake will then look for other steps in our workflow that would use this updated data, and re-execute them, 
-  *and* any steps further down our analysis that may use this next set of updated outputs.^[
+This means if we update step $x$, for example by changing how we merge data, then Snakemake will then look for other steps in our workflow that would use this updated data and re-execute them *and* any steps further down our analysis automatically.^[
   If this idea of inter-related steps feels unfamilar at this stage,  
   we will formalize this idea in the pages that follow.
   ]
 
-Our hope is that the pages that follow provide a gentle introduction to Snakemake and replicable, automated workflow management.
+Our hope is that this tutorial provides a gentle introduction to Snakemake and replicable, automated workflow management.
 The tutorial assumes no knowledge of Snakemake or other workflow management software.
-Each chapter aims to build up one's knowledge through the means of a guided example 
-  combined with some exercises and solutions.
-Our aim is to build up a working understanding of how to use the software
-  so that at the end of the tutorial the reader could get a new or existing project up and running 
-  using the Snakemake paradigm with minimal additional overheads. 
+Each chapter aims to build up knowledge through guided examples combined with  exercises for which we provide solutions.
+Our aim is to build up a working understanding of how to use the software so that at the end of the tutorial the reader could get a new or existing project up and running using the Snakemake paradigm with minimal additional overhead. 
 
-While this tutorial is targeted at researchers who are considering adopting Snakemake for the first time,
-  we hope it can also serve as a useful reference for people are have some working knowledge of Snakemake.
-We often come back to the material ourselves to find snippets of code to include and adapt 
-  into our own research workflows and anticipate others may do the same.
+While this tutorial is targeted at researchers who are considering adopting Snakemake for the first time, we hope it can also serve as a useful reference for people who have some working knowledge of Snakemake.
+We often come back to the material ourselves to find snippets of code to include and adapt into our own research workflows and anticipate others may do the same.
 
 ## Pre-requisite Knowledge {-}
 
@@ -79,7 +64,7 @@ We have found that familiarity with the following concepts puts you in good stea
 * Working Knowledge of `R`
     * Including writing command line programs, and Dynamic Reports with `knitr` and `rmarkdown`
     * For a quick review see Software Carpentry's ['Programming with R'](https://swcarpentry.github.io/python-novice-inflammation/) Lesson
-* Basic Knowledge of `Python` (Snakemake is written in Python)
+* Basic Knowledge of `Python` (Snakemake is written in Python 3)
     * Data Types, variable creation, lists and dictionaries
     * For a quick review see sections 1, 5 and 12 of of Software Carpentry's ['Programming with Python'](https://swcarpentry.github.io/python-novice-inflammation/) Lesson
 * Basic Working Knowledge of a `bash` terminal
@@ -90,18 +75,15 @@ We have found that familiarity with the following concepts puts you in good stea
 
 ### Template Scripts and Documents {-}
 
-The backbone of our tutorial is a dataset and a set of `R` scripts that need to be executed 
-  in a particular order, and two `Rmarkdown` documents which have template versions of a paper and slides. 
-To approximate a larger research workflow, 
-  some scripts will need to be run multiple times across different configurations.
+The backbone of our tutorial is a dataset and a set of `R` scripts that need to be executed in a particular order for the data analysis. 
+Two additional `Rmarkdown` documents include templates of a paper and presentation slides which we will build alongside the analysis. 
+You will need to download these to work through the tutorial and build up your own Snakemake workflow.
 
-To work through the tutorial - building up your own Snakemake workflow and running the commands yourself on your own computer, 
-  you will need to download these scripts and markdown documents.
 We provide two ways to download these files:
 
 1. Download a zip archive [here](https://github.com/lachlandeer/snakemake-econ-r-learner/archive/master.zip).
    After downloading, proceed to unzip the folder and move it to a location in your computer that you feel comfortable to work with.^[
-    For example, you could move it your , or your Desktop.
+    For example, you could move it your document folder or your Desktop.
    ]
 
 2. Download the template scripts using Git:
@@ -110,15 +92,13 @@ We provide two ways to download these files:
 git clone https://github.com/lachlandeer/snakemake-econ-r-learner.git
 ```
 
-!! TIP !!
+::: {- .tip}
 
-When we have taught this tutorial live in person in the past, 
-  we have created a folder on each learner's computer which we tell them to think of as a "safe space" - 
-  where we can't accidently move, delete or otherwise modify any files on their computer they deem important by accident.
-For example, if learners have a 'coursework' folder, 
-  we ask them to create a new sub-folder called "20YY-MM-programming class", 
-  where YY and MM are the year and month we are giving the class.   
-We then ask them to download this folder / clone the repository inside this space.
+When we have taught this tutorial live in person in the past, we have created a folder on each learner's computer which we tell them to think of as a "safe space" where they can't accidentally move, delete or otherwise modify any files on their computer they deem important by accident.
+For example, if learners have a 'coursework' folder, we ask them to create a new sub-folder called "20YY-MM-programming class", where YY and MM are the year and month we are giving the class.   
+We then ask them to download this folder or clone the repository inside this space.
+
+:::
 
 ### Software Installation {-}
 
@@ -135,25 +115,24 @@ We provide installation instructions in the Appendix.
 
 ## What We Can't Cover {-}
 
-Our goal of providing a gentle introduction to workflow management via Snakemake means that we have deliberately 
-  sacrificed details and .
+Our goal of providing a gentle introduction to workflow management via Snakemake means that we have deliberately sacrificed details.
+
 In particular, we do not cover:
 
+* Basics of Python, R, or shells scripts
 * A detailed discussion about the inner workings of Snakemake
 * A wide-ranging introduction to all of Snakemake's features (which continue to grow)
 
-If you are interested in either of these, we recommend you look at the Snakemake documentation (LINK) 
-  and the supporting technical publication (LINK). 
-We have found each of these references are extremely useful - but quite dense and difficult to process for new-comers. 
+If you are interested in either of these, we recommend you look at the links to materials provided above, the Snakemake documentation (LINK) and the supporting technical publication (LINK). 
+We have found the latter two of these references extremely useful -- but quite dense and difficult to process for new-comers. 
 
 ## Acknowledgements {-}
 
-First and foremost, we would like to thank the Department of Economics at the University of Zurich for giving us 
-  the opportunity to 
+First and foremost, we would like to thank the Department of Economics at the University of Zurich for giving us the opportunity to 
+
 The idea of 
 
-This tutorial is a extension of the idea and implementation of reproducible workflow management 
-  that we taught during these classes.
+This tutorial is a extension of the idea and implementation of reproducible workflow management that we taught during these classes.
 
 We are indebted to the 2016 - 2020 cohorts of the PhD and research assistants who 
 
@@ -161,21 +140,24 @@ Their questions, confused looks and XX have all improved
 
 We would like to thank our colleagues and friends who co-taught the Programming Practices classes at 
 
-Lachlan and Julian were introduced to the concept of workflow management software by Hans-Martin von Gaudecker 
-  during a short course on Effective Programming Practices in 20XX.
-The introduction to Hans-Martin's Templates for "Reproducible Research Projects in Economics" using Waf 
-  and (now) pytask provided much inspiration for the structure of our own template and this tutorial.
+Lachlan and Julian were introduced to the concept of workflow management software by Hans-Martin von Gaudecker during a short course on Effective Programming Practices in 20XX.
+The introduction to Hans-Martin's Templates for "Reproducible Research Projects in Economics" using Waf and (now) pytask provided much inspiration for the structure of our own template and this tutorial.
 
 ## About the Authors {-}
 
-Ulrich Bergmann is ...
+Ulrich Bergmann is a PhD Student in Economics at the University of Zurich.
+He was a visiting researcher at the Cognition and Decision Lab at Columbia University.
+His substantive research interest lie in experimental and behavioral economics where investigates the perceptual underpinnings of context dependent choice and the influence of budget constraints on optimal auction mechanisms.
+Since 2018 he co-leads the "Programming Practices for Research in Economics" initiative, teaching coding skills and reproducible research principles.
+He himself attended Lachlan and Julian's class in 2017.
+In his spare time he enjoys playing basketball and chess.
 
 [Lachlan Deer](https://lachlandeer.github.io/) (Twitter handle: [lachlandeer](https://twitter.com/lachlandeer?lang=en)) is an Assistant Professor of Marketing at Tilburg University,
    a Fellow at the University of Zurich's Centre for Reproducible Science and an instructor and lesson maintainer for the Carpentries Project.
 Prior to joining Tilburg University he was a Postdoctoral Fellow at the University of Chicago Booth School of Business, 
   and completed his PhD in Economics at the University of Zurich in 2019.
 His substantive research interests lie in social media and it's impact on media and entertainment industries, and the role of social media networks in political revolutions.
-From 2016 he is co-lead at of the "Programming Practices for Research in Economics" inititative teaching coding skills and reproducible research principles to early career researchers in economics and business.
+From 2016 he is co-lead at of the "Programming Practices for Research in Economics" initiative teaching coding skills and reproducible research principles to early career researchers in economics and business.
 In his spare time he enjoys strumming his ukelele, improving his caffe latte making skills and building lego models.
 
 
