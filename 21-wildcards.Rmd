@@ -93,7 +93,7 @@ rule solow_oecd:
 
 where `[...]` stands for the bottom part of our Snakefile that we will not modify in this chapter.
 
-## Using wildcards to tidy up our code
+## Using wildcards to tidy up our code {#wildcards-tidying}
 
 Let us now replace the three `solow_` rules by a single rule which we call `solow_model` where the unique parts of the `{input.subset}` and `{output.estimate}` are replaced with our wildcard variable `{iSubset}`.
 
