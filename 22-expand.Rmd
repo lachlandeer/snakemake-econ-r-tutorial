@@ -18,9 +18,6 @@
 
 :::
 
-In the last chapter we have learned how to use wildcards to eliminate unnecessary repetitions in our code.
-In this chapter we will learn how to apply wildcards to our target rules with help of the `expand()` function.
-
 :::{- .prereq}
 ### Snakefile Status {-}
 
@@ -94,6 +91,9 @@ rule clean_analysis:
 
 This will be our starting point for this chapter.
 :::
+
+In the last chapter we have learned how to use wildcards to eliminate unnecessary repetitions in our code.
+Next, we will learn how to apply wildcards to our target rules with help of the `expand()` function.
 
 ## The `expand()` function
 
