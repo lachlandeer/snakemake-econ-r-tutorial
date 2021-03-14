@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 3 Initial Steps with Snakemake | Reproducible Data Analytic Workflows with Snakemake and R</title>
+  <title>Chapter 7 Wildcards in Target Rules | Reproducible Data Analytic Workflows with Snakemake and R</title>
   <meta name="description" content="In progress" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 3 Initial Steps with Snakemake | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta property="og:title" content="Chapter 7 Wildcards in Target Rules | Reproducible Data Analytic Workflows with Snakemake and R" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="lachlandeer/snakemake-econ-r-tutorial" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 3 Initial Steps with Snakemake | Reproducible Data Analytic Workflows with Snakemake and R" />
+  <meta name="twitter:title" content="Chapter 7 Wildcards in Target Rules | Reproducible Data Analytic Workflows with Snakemake and R" />
   
   <meta name="twitter:description" content="In progress" />
   
@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="project-organization.html"/>
-<link rel="next" href="working-with-multiple-rules.html"/>
+<link rel="prev" href="wildcards.html"/>
+<link rel="next" href="automating-list-construction-for-wildcard-expansion.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -1065,286 +1065,516 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="initial-steps-with-snakemake" class="section level1">
-<h1><span class="header-section-number">Chapter 3</span> Initial Steps with Snakemake</h1>
+<div id="wildcards-in-target-rules" class="section level1">
+<h1><span class="header-section-number">Chapter 7</span> Wildcards in Target Rules</h1>
 <div class="unnumbered objectives">
-<h3 id="overview" class="unnumbered">Overview</h3>
+<h3 id="overview-2" class="unnumbered">Overview</h3>
 <p><strong>Questions</strong></p>
 <ul>
-<li>Where and how do we write Snakemake rules?</li>
-<li>How do we execute a rule?</li>
-<li>How can rules interact with input and output files?</li>
-<li>How does Snakemake deal with redundant executions?</li>
+<li>How can we use wildcards to simplify target rules?</li>
+<li>How do we make the build plan explicit in target rules?</li>
+<li>How do we combine more than one wildcard in a single target rule?</li>
 </ul>
 <p><strong>Objectives</strong></p>
 <ul>
-<li>Recognize the key parts of a Snakemake rule.</li>
-<li>Run Snakemake from the shell.</li>
-<li>Explain when and why snakemake executes a rule.</li>
-<li>Understand how to read the output of <code>snakemake --summary</code>.</li>
+<li>Introduce wildcards to target rules</li>
+<li>Explain what the <code>expand()</code> function is and how to ues it</li>
+<li>Learn how to use multiple wildcards in a single rule</li>
 </ul>
 </div>
-<p>Now that we’ve explored the structure of our project, we are ready to start building a fully reproducible pipeline.
-Snakemake expects instructions in a file called <code>Snakefile</code>.
-Typically we put the <code>Snakefile</code> in the project’s main folder (i.e. in <code>./</code>).
-The <code>Snakefile</code> contains a collection of rules that together define the order in which a project will be executed.</p>
-<p>We have added an empty <code>Snakefile</code> in the main project folder.
-You can edit this file in a text editor of your choice.
-In the remainder of this tutorial we will edit the file together, gradually constructing the pipeline which reproduces the results from MRW.</p>
-<div id="writing-our-first-rule" class="section level2">
-<h2><span class="header-section-number">3.1</span> Writing Our First Rule</h2>
-<p>All good software tutorial seem to start with a hello world example, so we’ll follow suit and do the same.
-To do so, we open <code>Snakefile</code> in a text editor of our choice and write the following text into the file:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb20-1"><a href="initial-steps-with-snakemake.html#cb20-1"></a><span class="ex">rule</span> hello_world:</span>
-<span id="cb20-2"><a href="initial-steps-with-snakemake.html#cb20-2"></a>  <span class="ex">shell</span>:</span>
-<span id="cb20-3"><a href="initial-steps-with-snakemake.html#cb20-3"></a>    <span class="st">&#39;echo &quot;Hello World!&quot;&#39;</span></span></code></pre></div>
-<p>The first line in our example defines the name of a <em>rule</em>, in this case <code>hello_world</code>.
-The part following <code>shell</code>: tells Snakemake that this rule executes a shell command, which in our case prints <code>Hello World!</code> to the console.</p>
-<p>The indentation here is important.
-We need the <code>shell</code> command to be indented in one <code>TAB</code> space from rule.
-Additionally we need the shell command <code>'echo "Hello World!"'</code> to be indented on <code>TAB</code> space further than <code>shell</code>.
-Snakemake uses the indentation to figure out different components of the each rule.</p>
-<div class="unnumbered tip">
-<h3 id="snakefiles-are-written-as-python-3-code" class="unnumbered">Snakefiles are Written as Python 3 Code</h3>
-<p>Snakemake instructions are written in Python 3 with the addition of a a few extra objects and methods the Snakemake package provides.
-The structure of our rule will look very familiar to anybody who has written Python functions before.
-The fact that Snakemake is written in Python is why indentation matters.
-This implies that indentation is interpreted by the language and that deviations from correct indentation will result in errors.</p>
-<p>Throughout the rest of the tutorial, those familiar with Python will continue to see similarities to Python code.
-If you do not know Python, there’s no need to worry - our explanations and what you need to follow along will not depend on it.</p>
+<div class="unnumbered prereq">
+<h3 id="snakefile-status-1" class="unnumbered">Snakefile Status</h3>
+<p>After the last chapter our Snakefile should look like this:</p>
+<div class="sourceCode" id="cb96"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb96-1"><a href="wildcards-in-target-rules.html#cb96-1"></a><span class="co"># --- Target Rules --- #</span></span>
+<span id="cb96-2"><a href="wildcards-in-target-rules.html#cb96-2"></a></span>
+<span id="cb96-3"><a href="wildcards-in-target-rules.html#cb96-3"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb96-4"><a href="wildcards-in-target-rules.html#cb96-4"></a>    <span class="ex">input</span>:</span>
+<span id="cb96-5"><a href="wildcards-in-target-rules.html#cb96-5"></a>        <span class="ex">intermediate</span> = <span class="st">&quot;out/analysis/model_solow_subset_intermediate.rds&quot;</span>,</span>
+<span id="cb96-6"><a href="wildcards-in-target-rules.html#cb96-6"></a>        <span class="ex">nonoil</span>       = <span class="st">&quot;out/analysis/model_solow_subset_nonoil.rds&quot;</span>,</span>
+<span id="cb96-7"><a href="wildcards-in-target-rules.html#cb96-7"></a>        <span class="ex">oecd</span>         = <span class="st">&quot;out/analysis/model_solow_subset_oecd.rds&quot;</span></span>
+<span id="cb96-8"><a href="wildcards-in-target-rules.html#cb96-8"></a></span>
+<span id="cb96-9"><a href="wildcards-in-target-rules.html#cb96-9"></a></span>
+<span id="cb96-10"><a href="wildcards-in-target-rules.html#cb96-10"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb96-11"><a href="wildcards-in-target-rules.html#cb96-11"></a></span>
+<span id="cb96-12"><a href="wildcards-in-target-rules.html#cb96-12"></a><span class="ex">rule</span> solow_model:</span>
+<span id="cb96-13"><a href="wildcards-in-target-rules.html#cb96-13"></a>    <span class="ex">input</span>:</span>
+<span id="cb96-14"><a href="wildcards-in-target-rules.html#cb96-14"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb96-15"><a href="wildcards-in-target-rules.html#cb96-15"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb96-16"><a href="wildcards-in-target-rules.html#cb96-16"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb96-17"><a href="wildcards-in-target-rules.html#cb96-17"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_{iSubset}.json&quot;</span></span>
+<span id="cb96-18"><a href="wildcards-in-target-rules.html#cb96-18"></a>    <span class="ex">output</span>:</span>
+<span id="cb96-19"><a href="wildcards-in-target-rules.html#cb96-19"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_subset_{iSubset}.rds&quot;</span></span>
+<span id="cb96-20"><a href="wildcards-in-target-rules.html#cb96-20"></a>    <span class="ex">shell</span>:</span>
+<span id="cb96-21"><a href="wildcards-in-target-rules.html#cb96-21"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb96-22"><a href="wildcards-in-target-rules.html#cb96-22"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb96-23"><a href="wildcards-in-target-rules.html#cb96-23"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb96-24"><a href="wildcards-in-target-rules.html#cb96-24"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb96-25"><a href="wildcards-in-target-rules.html#cb96-25"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb96-26"><a href="wildcards-in-target-rules.html#cb96-26"></a></span>
+<span id="cb96-27"><a href="wildcards-in-target-rules.html#cb96-27"></a><span class="ex">rule</span> gen_regression_vars:</span>
+<span id="cb96-28"><a href="wildcards-in-target-rules.html#cb96-28"></a>    <span class="ex">input</span>:</span>
+<span id="cb96-29"><a href="wildcards-in-target-rules.html#cb96-29"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
+<span id="cb96-30"><a href="wildcards-in-target-rules.html#cb96-30"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
+<span id="cb96-31"><a href="wildcards-in-target-rules.html#cb96-31"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
+<span id="cb96-32"><a href="wildcards-in-target-rules.html#cb96-32"></a>    <span class="ex">output</span>:</span>
+<span id="cb96-33"><a href="wildcards-in-target-rules.html#cb96-33"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
+<span id="cb96-34"><a href="wildcards-in-target-rules.html#cb96-34"></a>    <span class="ex">shell</span>:</span>
+<span id="cb96-35"><a href="wildcards-in-target-rules.html#cb96-35"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb96-36"><a href="wildcards-in-target-rules.html#cb96-36"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb96-37"><a href="wildcards-in-target-rules.html#cb96-37"></a><span class="st">            --param {input.param} \</span></span>
+<span id="cb96-38"><a href="wildcards-in-target-rules.html#cb96-38"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb96-39"><a href="wildcards-in-target-rules.html#cb96-39"></a></span>
+<span id="cb96-40"><a href="wildcards-in-target-rules.html#cb96-40"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb96-41"><a href="wildcards-in-target-rules.html#cb96-41"></a>    <span class="ex">input</span>:</span>
+<span id="cb96-42"><a href="wildcards-in-target-rules.html#cb96-42"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb96-43"><a href="wildcards-in-target-rules.html#cb96-43"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb96-44"><a href="wildcards-in-target-rules.html#cb96-44"></a>    <span class="ex">output</span>:</span>
+<span id="cb96-45"><a href="wildcards-in-target-rules.html#cb96-45"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb96-46"><a href="wildcards-in-target-rules.html#cb96-46"></a>    <span class="ex">shell</span>:</span>
+<span id="cb96-47"><a href="wildcards-in-target-rules.html#cb96-47"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb96-48"><a href="wildcards-in-target-rules.html#cb96-48"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb96-49"><a href="wildcards-in-target-rules.html#cb96-49"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb96-50"><a href="wildcards-in-target-rules.html#cb96-50"></a></span>
+<span id="cb96-51"><a href="wildcards-in-target-rules.html#cb96-51"></a><span class="co"># --- Clean Rules --- #</span></span>
+<span id="cb96-52"><a href="wildcards-in-target-rules.html#cb96-52"></a></span>
+<span id="cb96-53"><a href="wildcards-in-target-rules.html#cb96-53"></a><span class="ex">rule</span> clean:</span>
+<span id="cb96-54"><a href="wildcards-in-target-rules.html#cb96-54"></a>    <span class="ex">shell</span>:</span>
+<span id="cb96-55"><a href="wildcards-in-target-rules.html#cb96-55"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
+<span id="cb96-56"><a href="wildcards-in-target-rules.html#cb96-56"></a></span>
+<span id="cb96-57"><a href="wildcards-in-target-rules.html#cb96-57"></a><span class="ex">rule</span> clean_data:</span>
+<span id="cb96-58"><a href="wildcards-in-target-rules.html#cb96-58"></a>    <span class="ex">shell</span>:</span>
+<span id="cb96-59"><a href="wildcards-in-target-rules.html#cb96-59"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
+<span id="cb96-60"><a href="wildcards-in-target-rules.html#cb96-60"></a></span>
+<span id="cb96-61"><a href="wildcards-in-target-rules.html#cb96-61"></a><span class="ex">rule</span> clean_analysis:</span>
+<span id="cb96-62"><a href="wildcards-in-target-rules.html#cb96-62"></a>    <span class="ex">shell</span>:</span>
+<span id="cb96-63"><a href="wildcards-in-target-rules.html#cb96-63"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
+<p>This will be our starting point for this chapter.</p>
 </div>
-</div>
-<div id="executing-a-rule" class="section level2">
-<h2><span class="header-section-number">3.2</span> Executing a Rule</h2>
-<p>After saving our changes to <code>Snakefile</code>, we can execute the newly created rule by navigating to the project’s main folder and by typing <code>Snakemake --cores 1</code> into the terminal and then hitting <code>RETURN</code>.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb21-1"><a href="initial-steps-with-snakemake.html#cb21-1"></a>$ <span class="ex">snakemake</span> --cores 1</span></code></pre></div>
-<p>By default Snakemake will execute the first rule it encounters in a <code>Snakefile</code>.
-As our file only contains a single rule, it will execute the <code>hello_world</code> rule and print <code>Hello World!</code> to the console together with some additional information about the execution of the work flow:</p>
-<pre class="out"><code>Building DAG of jobs...
-Using shell: /usr/bin/bash
-Provided cores: 1 (use --cores to define parallelism)
-Rules claiming more threads will be scaled down.
-Job counts:
-        count   jobs
-        1       hello_world
-        1
-
-[Fri Feb 26 18:11:00 2021]
-rule hello_world:
-    jobid: 0
-
-Hello World!
-[Fri Feb 26 18:11:00 2021]
-Finished job 0.
-1 of 1 steps (100%) done</code></pre>
-<p>When a file contains more than a single rule, we often want to be more explicit and tell <code>Snakemake</code> to execute a particular rule like so:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb23-1"><a href="initial-steps-with-snakemake.html#cb23-1"></a>$ <span class="ex">snakemake</span> --cores 1 name_of_rule</span></code></pre></div>
-<p>In our case <code>snakemake --cores 1 hello_world</code> will give the same output as the last execution.</p>
-<div class="unnumbered tip">
-<h3 id="cores"><span class="header-section-number">3.2</span> <code>--cores</code></h3>
-<p>At this point you are probably guessing that the long option <code>--cores SOME_NUMBER</code> tells Snakemake how many CPU cores to use when executing a workflow.
-This is correct, and <code>snakemake --cores 1</code> tells Snakemake to use a single core of your computer when it runs.
-Running workflows in parallel, by specifying for example <code>snakemake --cores 4</code> can speed up complex workflows substantially when a workflow’s rules can be easily parallelized.
-In this guide we will execute all workflows with a single core to make the code compatible with all computers.
-You are encouraged play around with the core count yourself to and see what effect this may have.</p>
-</div>
-<div class="unnumbered warning">
-<h3 id="snakefiles-do-not-have-be-be-called-snakefile"><span class="header-section-number">3.2</span> Snakefiles do not have be be called <code>Snakefile</code></h3>
-<p>We do not have to call our Snakefile <code>Snakefile</code>.
-However, if we call it something else, we will need to tell Snakemake where to find the set of rules.</p>
-<p>We can do this with the <code>-s</code> flag.
-For example, if our Snakefile is names <code>SomeSnakefile</code>:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb24-1"><a href="initial-steps-with-snakemake.html#cb24-1"></a>$ <span class="ex">snakemake</span> -s SomeSnakefile --cores 1 name_of_rule</span></code></pre></div>
-<p>Sometimes the suffix <code>.smk</code> is used by researchers to identify Snakefiles not called <code>Snakefile</code>,
-for example <code>install.smk</code></p>
-</div>
-</div>
-<div id="first-steps-in-the-mrw-pipeline" class="section level2">
-<h2><span class="header-section-number">3.3</span> First Steps in the MRW Pipeline</h2>
-<p>Like most empirical research, our project starts with data management and data cleaning steps.
-The data management subdirectory, <code>src/data-management</code> contains two scripts:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb25-1"><a href="initial-steps-with-snakemake.html#cb25-1"></a><span class="fu">ls</span> src/data-management</span></code></pre></div>
-<pre class="out fold-show"><code>rename_variables.R
-gen_reg_vars.R</code></pre>
-<p>which need to be executed sequentially.
-In this chapter, we want to run the script <code>rename_variables.R</code> to tidy up the variable names in our data set.
-In the next chapter, we will then add <code>gen_reg_vars.R</code>, which creates additional variables to be used in subsequent steps.</p>
-<div id="using-the-rscript-command-to-execute-r-scripts" class="section level3">
-<h3><span class="header-section-number">3.3.1</span> Using the <code>Rscript</code> command to execute R scripts</h3>
-<p>We can run any R script with the <code>Rscript</code> shell command.
-The command expects the path to an <code>.R</code> script as the first argument.
-Simple R scripts that do not require additional options can be run as:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb27-1"><a href="initial-steps-with-snakemake.html#cb27-1"></a><span class="ex">Rscript</span> PATH/TO/SCRIPT.R</span></code></pre></div>
-<p>Most scripts in this project have been written to require additional parameters.
-To see what additional parameters are needed, we can run the R script with the <code>--help</code> option.</p>
-<p>Let’s apply this and execute the <code>rename_variables.R</code> script with the <code>--help</code> flag:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb28-1"><a href="initial-steps-with-snakemake.html#cb28-1"></a>$ <span class="ex">Rscript</span> src/data-management/rename_variables.R --help</span></code></pre></div>
-<p>This prints the following output to the console:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb29-1"><a href="initial-steps-with-snakemake.html#cb29-1"></a><span class="ex">Usage</span>: src/data-management/rename_variables.R [options]</span>
-<span id="cb29-2"><a href="initial-steps-with-snakemake.html#cb29-2"></a></span>
-<span id="cb29-3"><a href="initial-steps-with-snakemake.html#cb29-3"></a><span class="ex">Options</span>:</span>
-<span id="cb29-4"><a href="initial-steps-with-snakemake.html#cb29-4"></a>    <span class="ex">-d</span> CHARACTER, --data=CHARACTER</span>
-<span id="cb29-5"><a href="initial-steps-with-snakemake.html#cb29-5"></a>        <span class="ex">stata</span> dataset file name</span>
-<span id="cb29-6"><a href="initial-steps-with-snakemake.html#cb29-6"></a></span>
-<span id="cb29-7"><a href="initial-steps-with-snakemake.html#cb29-7"></a>    <span class="ex">-o</span> CHARACTER, --out=CHARACTER</span>
-<span id="cb29-8"><a href="initial-steps-with-snakemake.html#cb29-8"></a>        <span class="ex">output</span> file name [default = out.csv]</span>
-<span id="cb29-9"><a href="initial-steps-with-snakemake.html#cb29-9"></a></span>
-<span id="cb29-10"><a href="initial-steps-with-snakemake.html#cb29-10"></a>    <span class="ex">-h</span>, --help</span>
-<span id="cb29-11"><a href="initial-steps-with-snakemake.html#cb29-11"></a>        <span class="ex">Show</span> this help message and exit</span></code></pre></div>
-<p>This suggests the script expects</p>
-<ol style="list-style-type: decimal">
-<li>a <code>--data</code> option which defines the filepath to a Stata data set.
-This is the input dataset which the script transforms.
-For us, this will be the file <code>src/data/mrw.dta</code></li>
-<li>a <code>--out</code> option which defines the filepath the transformed data set will be saved.
-We will save the output to the file <code>out/data/mrw_renamed.csv</code></li>
-</ol>
-<p>Let’s set up our first rule for the MRW pipeline using the structure we learned from the <code>hello_world</code> rule.
-We will name the rule <code>rename_vars</code> and place it at the top of our Snakefile:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="initial-steps-with-snakemake.html#cb30-1"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb30-2"><a href="initial-steps-with-snakemake.html#cb30-2"></a>  <span class="ex">shell</span>:</span>
-<span id="cb30-3"><a href="initial-steps-with-snakemake.html#cb30-3"></a>    <span class="st">&quot;Rscript src/data-management/rename_variables.R \</span></span>
-<span id="cb30-4"><a href="initial-steps-with-snakemake.html#cb30-4"></a><span class="st">        --data src/data/mrw.dta \</span></span>
-<span id="cb30-5"><a href="initial-steps-with-snakemake.html#cb30-5"></a><span class="st">        --out out/data/mrw_renamed.csv&quot;</span></span></code></pre></div>
-<p>Note that <code>\</code> in the shell command allows us to write the command over several lines for better readability.
-They can be omitted when we write the command in a single line.</p>
-<p>Now if we run Snakemake:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb31-1"><a href="initial-steps-with-snakemake.html#cb31-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
-<p>We see that Snakemake executes the script for us, printing output to screen and saving the output file as expected.
-Used this way, we can see that a Snakemake rule is an instruction on how to execute part of a project’s code.
-This is true, but it can be even more powerful than that.</p>
-</div>
-<div id="the-input-and-output-arguments" class="section level3">
-<h3><span class="header-section-number">3.3.2</span> The <code>input</code> and <code>output</code> arguments</h3>
-<p>Our current <code>rename_vars</code> rule was simple - it specified one shell command.
-We can add some further structure to this rule by specifying <strong>input</strong> and <strong>output</strong> files in a different manner.
-We are going to specify rules in the following format:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb32-1"><a href="initial-steps-with-snakemake.html#cb32-1"></a><span class="ex">rule</span> rule_name:</span>
-<span id="cb32-2"><a href="initial-steps-with-snakemake.html#cb32-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb32-3"><a href="initial-steps-with-snakemake.html#cb32-3"></a>        <span class="ex">input_name1</span> = <span class="st">&quot;PATH/TO/input_one&quot;</span>,</span>
-<span id="cb32-4"><a href="initial-steps-with-snakemake.html#cb32-4"></a>        <span class="ex">input_name2</span> = <span class="st">&quot;PATH/TO/input_two&quot;</span></span>
-<span id="cb32-5"><a href="initial-steps-with-snakemake.html#cb32-5"></a>    <span class="ex">output</span>:</span>
-<span id="cb32-6"><a href="initial-steps-with-snakemake.html#cb32-6"></a>        <span class="ex">output_name1</span> = <span class="st">&quot;PATH/TO/SAVE/output_one&quot;</span>,</span>
-<span id="cb32-7"><a href="initial-steps-with-snakemake.html#cb32-7"></a>        <span class="ex">output_name2</span> = <span class="st">&quot;PATH/TO/SAVE/output_two&quot;</span></span>
-<span id="cb32-8"><a href="initial-steps-with-snakemake.html#cb32-8"></a>    <span class="ex">shell</span>:</span>
-<span id="cb32-9"><a href="initial-steps-with-snakemake.html#cb32-9"></a>        <span class="st">&quot;HOW TO MIX IT ALL TOGETHER&quot;</span></span></code></pre></div>
-<p>In this format, a Snakemake rule can be thought of as the recipe that combines the inputs to produce the outputs.
-We can think of the <code>input</code> as ingredients, the <code>output</code> as the finished dish and the <code>shell</code> part as the recipe itself.
-<code>Snakemake</code> expects these components to be provided in a particular way so that it knows what to do with the information we provide.</p>
-<p>Snakemake rules can have as many inputs and outputs as the rule needs to function.
-Each input and each output are given names, for example <code>input_name1</code> which takes the value to the file path and name of the input file.
-It is important to wrap each of these paths into quotations, and to separate each of the multiple inputs and outputs with a comma, <code>,</code>.</p>
-</div>
-<div id="a-rule-to-rename-variables." class="section level3">
-<h3><span class="header-section-number">3.3.3</span> A rule to rename variables.</h3>
-<p>Let’s now use the input and output syntax to update the <code>rename_vars</code> rule from above.
-The rule will use the <code>rename_variables.R</code> script as a first input.
-Let us therefore rename the first input into <code>script</code> and replace the right hand side with the path to the <code>rename_variables.R</code> script which we have used before when we printed the script’s help function.</p>
-<p>Our <code>rename_vars</code> rule should now look something like this:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb33-1"><a href="initial-steps-with-snakemake.html#cb33-1"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb33-2"><a href="initial-steps-with-snakemake.html#cb33-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb33-3"><a href="initial-steps-with-snakemake.html#cb33-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb33-4"><a href="initial-steps-with-snakemake.html#cb33-4"></a>        <span class="ex">input_name2</span> = <span class="st">&quot;PATH/TO/input_two&quot;</span></span>
-<span id="cb33-5"><a href="initial-steps-with-snakemake.html#cb33-5"></a>    <span class="ex">output</span>:</span>
-<span id="cb33-6"><a href="initial-steps-with-snakemake.html#cb33-6"></a>        <span class="ex">output_name1</span> = <span class="st">&quot;PATH/TO/SAVE/output_one&quot;</span>,</span>
-<span id="cb33-7"><a href="initial-steps-with-snakemake.html#cb33-7"></a>        <span class="ex">output_name2</span> = <span class="st">&quot;PATH/TO/SAVE/output_two&quot;</span></span>
-<span id="cb33-8"><a href="initial-steps-with-snakemake.html#cb33-8"></a>    <span class="ex">shell</span>:</span>
-<span id="cb33-9"><a href="initial-steps-with-snakemake.html#cb33-9"></a>        <span class="st">&quot;Rscript src/data-management/rename_variables.R \</span></span>
-<span id="cb33-10"><a href="initial-steps-with-snakemake.html#cb33-10"></a><span class="st">        --data src/data/mrw.dta \</span></span>
-<span id="cb33-11"><a href="initial-steps-with-snakemake.html#cb33-11"></a><span class="st">        --out out/data/mrw_renamed.csv&quot;</span></span></code></pre></div>
-<p>Next, we want to add any additional inputs and also specify any outputs that the file produces.
-From the <code>help</code> output we know the script expects a Stata dataset as an additional input, which we can find in the <code>src/data/</code> folder.
-We rename the second input into <code>data</code> and replace the right hand side with the path to <span class="citation">Mankiw, Romer, and Weil (<a href="#ref-mrw" role="doc-biblioref">1992</a>)</span>’s Stata dataset.
-Finally, we replace the first output name with <code>data</code> and define an appropriate output file path as the right hand side.
-This is the location our transformed data will be saved to.</p>
-<p>After these steps, our rule should look something like this:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb34-1"><a href="initial-steps-with-snakemake.html#cb34-1"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb34-2"><a href="initial-steps-with-snakemake.html#cb34-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb34-3"><a href="initial-steps-with-snakemake.html#cb34-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb34-4"><a href="initial-steps-with-snakemake.html#cb34-4"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
-<span id="cb34-5"><a href="initial-steps-with-snakemake.html#cb34-5"></a>    <span class="ex">output</span>:</span>
-<span id="cb34-6"><a href="initial-steps-with-snakemake.html#cb34-6"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb34-7"><a href="initial-steps-with-snakemake.html#cb34-7"></a>    <span class="ex">shell</span>:</span>
-<span id="cb34-8"><a href="initial-steps-with-snakemake.html#cb34-8"></a>        <span class="st">&quot;Rscript src/data-management/rename_variables.R \</span></span>
-<span id="cb34-9"><a href="initial-steps-with-snakemake.html#cb34-9"></a><span class="st">        --data src/data/mrw.dta \</span></span>
-<span id="cb34-10"><a href="initial-steps-with-snakemake.html#cb34-10"></a><span class="st">        --out out/data/mrw_renamed.csv&quot;</span></span></code></pre></div>
-<p>After saving we can execute our new rule via:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb35-1"><a href="initial-steps-with-snakemake.html#cb35-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
-<p>Snakemake will give us some console output informing us about the execution of our rule.
-A successful execution will be displayed through green text ending in</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb36-1"><a href="initial-steps-with-snakemake.html#cb36-1"></a><span class="ex">TODO</span>: Make green</span>
-<span id="cb36-2"><a href="initial-steps-with-snakemake.html#cb36-2"></a><span class="ex">Finished</span> job 0.</span>
-<span id="cb36-3"><a href="initial-steps-with-snakemake.html#cb36-3"></a><span class="ex">1</span> of 1 steps (100%) <span class="kw">done</span></span></code></pre></div>
-<p>If the execution was successful, we can look into our output directory to see if anything has happened:</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb37-1"><a href="initial-steps-with-snakemake.html#cb37-1"></a>$ <span class="fu">ls</span> out/data/</span></code></pre></div>
-<p>which yields</p>
-<pre class="out fold-show"><code>mrw_renamed.csv</code></pre>
-<p>Our file has been created as we expected.</p>
-<p>Looking at our rule, there is a bit of repetition.
-In the <code>shell</code> section, we repeat the full filepath of all the files use before in the <code>input</code> and <code>output</code> sections.
-Snakemake does not require us to write these paths twice.
-We can refer to the inputs and outputs in the shell part of our rule via the names we assigned to them.
-For example, we can refer to the script “src/data-management/rename_variables.R” as <code>{input.script}</code>,
-and the data which is the output as <code>{output.data}</code></p>
-<p>Putting it all together will give us the following rule:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb39-1"><a href="initial-steps-with-snakemake.html#cb39-1"></a><span class="ex">rule</span> rename_vars:</span>
-<span id="cb39-2"><a href="initial-steps-with-snakemake.html#cb39-2"></a>    <span class="ex">input</span>:</span>
-<span id="cb39-3"><a href="initial-steps-with-snakemake.html#cb39-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
-<span id="cb39-4"><a href="initial-steps-with-snakemake.html#cb39-4"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
-<span id="cb39-5"><a href="initial-steps-with-snakemake.html#cb39-5"></a>    <span class="ex">output</span>:</span>
-<span id="cb39-6"><a href="initial-steps-with-snakemake.html#cb39-6"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
-<span id="cb39-7"><a href="initial-steps-with-snakemake.html#cb39-7"></a>    <span class="ex">shell</span>:</span>
-<span id="cb39-8"><a href="initial-steps-with-snakemake.html#cb39-8"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
-<span id="cb39-9"><a href="initial-steps-with-snakemake.html#cb39-9"></a><span class="st">            --data {input.data} \</span></span>
-<span id="cb39-10"><a href="initial-steps-with-snakemake.html#cb39-10"></a><span class="st">            --out {output.data}&quot;</span></span></code></pre></div>
-<p>Now let’s run the rule once more:</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb40-1"><a href="initial-steps-with-snakemake.html#cb40-1"></a>$ <span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
-<p>We see the following output:</p>
-<pre class="out fold-show"><code>Building DAG of jobs...
-Nothing to be done.</code></pre>
-<p>This is not an error, it simply says that Snakemake doesn’t need to run the rule again.
-It’s time to think about why that could be the case.</p>
-</div>
-</div>
-<div id="no-redundant-executions" class="section level2">
-<h2><span class="header-section-number">3.4</span> No Redundant Executions</h2>
-<p>To understand the status of the project as seen by Snakemake, we can use the <strong>summary</strong> option of Snakemake:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb42-1"><a href="initial-steps-with-snakemake.html#cb42-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
-<p>In our case the following output is printed to the console:</p>
-<pre class="out fold-show"><code>Building DAG of jobs...
-output_file                       date                    rule      version  log-file(s)    status  plan
-out/data/mrw_renamed.csv    Thu Jan 10 20:31:08 2019    rename_vars    -                     ok     no update
+<p>In the last chapter we have learned how to use wildcards to eliminate unnecessary repetitions in our code.
+Next, we will learn how to apply wildcards to our target rules with help of the <code>expand()</code> function.</p>
+<div id="the-expand-function" class="section level2">
+<h2><span class="header-section-number">7.1</span> The <code>expand()</code> function</h2>
+<p>When we look at our target rule:</p>
+<pre class="out"><code>rule solow_target:
+    input:
+        intermediate = &quot;out/analysis/model_solow_subset_intermediate.rds&quot;,
+        nonoil       = &quot;out/analysis/model_solow_subset_nonoil.rds&quot;,
+        oecd         = &quot;out/analysis/model_solow_subset_oecd.rds&quot;</code></pre>
+<p>We can see that the inputs have a very similar structure:</p>
+<ul>
+<li>The inputs live on the same path <code>out/analysis/</code></li>
+<li>The filenames of each input begin with <code>model_solow_subset</code> and end with <code>.rds</code>.</li>
+</ul>
+<p>They only differ in the name of the subset of data we are using: <code>intermediate</code>, <code>nonoil</code>, and <code>oecd</code>.</p>
+<p>After what we learned in the <a href="./wildcards.html">previous chapter on wildcards</a>, we should be thinking that there must be a way to reduce the repetition.
+Let’s try simply adding a wildcard for the varying part of the input files.
+We can do this by condensing the three inputs in <code>solow_target</code> into one as follows:</p>
+<pre class="out"><code>rule solow_target:
+    input:
+        models = &quot;out/analysis/model_solow_subset_{iSubset}.rds&quot;,
 </code></pre>
-<p>Snakemake tells us the status of the output file of the <code>rename_vars</code> rule is <code>ok</code> and that it plans not to update the file.</p>
-<p>Now, let us see what happens if we update one of the input files.
-The following command updates the time that <code>rename_variables.R</code> was last edited without changing the actual content of the file:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb44-1"><a href="initial-steps-with-snakemake.html#cb44-1"></a>$ <span class="fu">touch</span> src/data-management/rename_variables.R</span></code></pre></div>
-<p>Running the summary command again</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb45-1"><a href="initial-steps-with-snakemake.html#cb45-1"></a>$ <span class="ex">snakemake</span> --summary</span></code></pre></div>
-<p>yields the following output:</p>
-<pre class="out fold-show"><code>Building DAG of jobs...
-output_file                        date                    rule     version log-file(s)      status                plan
-out/data/mrw_renamed.csv    Thu Jan 10 20:31:08 2019    rename_vars    -                updated input files update pending</code></pre>
-<p>Snakemake has detected that one input file is more recent than the output file.
-It therefore will execute the rule when asked to do so.</p>
-<p>Running the rule again via:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb47-1"><a href="initial-steps-with-snakemake.html#cb47-1"></a><span class="ex">snakemake</span> --cores 1 rename_vars</span></code></pre></div>
-<p>will execute the rule.</p>
-<p>We see one major advantage of Snakemake over alternative ways to execute projects.
-Snakemake keeps track of updates to input files and dependencies between files.This allows Snakemake to only re-runs a rule if an input has changed.
-This means we no longer have to think about when we last ran a script and if we need to run it again.
-Snakemake’s management of dependencies will turn out to be quite advantageous as we develop a larger project.
-No longer do we need to think about order of execution and when to re-run files.<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></p>
+<p>To see if this has any bite, and would work as we intuitively think it might we will want to run Snakemake.
+Before we do, let’s clean the output folder and start afresh:</p>
+<pre class="out"><code>$ snakemake --cores 1 clean</code></pre>
+<p>Then, we run our new target rule with the wildcard we added:</p>
+<pre class="out"><code>$ snakemake --cores 1 solow_target</code></pre>
+<p>This didn’t do as we intuitively had hoped.
+Instead we get the following error:</p>
+<pre class="out"><code>Building DAG of jobs...
+WildcardError in line 12 of /home/lachlan/teaching/snakemake-econ-r-learner/Snakefile:
+Wildcards in input files cannot be determined from output files:
+&#39;iSubset&#39;</code></pre>
+<p>Recall that Snakemake won’t run a target rule that contains a wildcard because it does not know how to resolve it.<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>
+Snakemake doesn’t know that <code>{iSubset}</code> should first be replaced with <code>oecd</code>, then with <code>intermediate</code>, and finally with <code>nonoil</code>.
+It is our job to be a bit more explicit and tell Snakemake that this is what we want to happen.</p>
+<p>Snakemake has a functionality that allows us to tell it how to take a wildcard and replace it with a specific set of values.
+The <code>expand()</code> function provides this for us.
+As the name suggests its job is to expand a wildcard by replacing it iteratively with specified values.</p>
+<p>We can use the <code>expand()</code> function as follows:</p>
+<pre class="out"><code>rule solow_target:
+    input:
+        expand(&quot;out/analysis/model_solow_subset_{iSubset}.rds&quot;,
+                    iSubset = DATA_SUBSET)</code></pre>
+<p>This tells Snakemake to replace the wildcard <code>{iSubset}</code> with values from an object we have called <code>DATA_SUBSET</code>.
+We now have to replace <code>DATA_SUBSET</code> with a <strong>list</strong> of values that we want to substitute in for<code>{iSubset}</code>.</p>
 </div>
-<div id="our-workflow-in-graphs" class="section level2">
-<h2><span class="header-section-number">3.5</span> Our Workflow in Graphs</h2>
-<p>Throughout Parts II to IV we are going to build up our workflow to reproduce MRW’s analysis pipeline.
-In our motivation chapter we explained how our final workflow should be a connection between a set of rules,which we have depicted graphically as:</p>
-<p><img src="img/01-motivation/rulegraph.png" style="display: block; margin: auto;" /></p>
-<p>So far, we have constructed the first of those blocks an our set of rules in our current workflow looks like this:</p>
-<p><img src="img/11-initial-steps/rulegraph.png" style="display: block; margin: auto;" /></p>
-<p>We have made the first step in the data analysis pipeline.
-Let’s continue creating new steps in the next chapter.</p>
+<div id="using-expand-with-a-list" class="section level2">
+<h2><span class="header-section-number">7.2</span> Using <code>expand()</code> with a List</h2>
+<p>In Python and Snakemake lists can be thought of as a container that store many values.
+We create a list by putting the values we want inside square brackets and separating the values with commas.
+In our case, a list of the three subsets of the data looks like this: <code>["nonoil", "oecd", "intermediate"]</code>.</p>
+<p>Let us replace <code>DATA_SUBSET</code> with our new list of subset names:</p>
+<pre class="out"><code>rule solow_target:
+    input:
+        expand(&quot;out/analysis/model_solow_subset_{iSubset}.rds&quot;,
+                    iSubset = [&quot;nonoil&quot;, &quot;oecd&quot;, &quot;intermediate&quot;])</code></pre>
+<p>We use the <code>--summary</code> option of Snakemake to see the build plan:</p>
+<pre class="out"><code>$ snakemake --summary</code></pre>
+<pre class="out"><code>output_file     date    rule    version log-file(s)     status  plan
+out/analysis/model_solow_subset_nonoil.rds         -       solow_model     -               missing update pending
+out/analysis/model_solow_subset_oecd.rds           -       solow_model     -               missing update pending
+out/analysis/model_solow_subset_intermediate.rds   -       solow_model     -               missing update pending
+out/data/mrw_complete.csv       -       gen_regression_vars     -               missing update pending
+out/data/mrw_renamed.csv        -       rename_vars     -               missing update pending</code></pre>
+<p>The first three lines show us that Snakemake plans to build the three files <code>out/analysis/model_solow_subset_nonoil.rds</code>, <code>out/analysis/model_solow_subset_oecd.rds</code>, <code>out/analysis/model_solow_subset_intermediate.rds</code> from our original target rule.
+This means Snakemake has indeed replaced the wildcard <code>iSubset</code> with the correct three values just like we wanted.<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>
+We have successfully simplified our target rule.</p>
+<div class="unnumbered tip">
+<h3 id="adding-python-3-code-outside-of-snakemake-rules" class="unnumbered">Adding Python 3 Code Outside of Snakemake Rules</h3>
+<p>Snakemake accepts any Python 3 code outside of rules.
+You can add Python 3 lists or functions anywhere in a Snakefile.
+You can then use the these lists or functions in the Snakemake rules as needed.</p>
+</div>
+<p>So far, we defined the list passed to the expand function at the time we needed it, inside the call to expand function.
+While this makes explicit what values we want the expand function to iterate through, it might be better practice to define the list outside of it.
+What this would mean is to create a list somewhere else in our Snakefile, and then tell Snakemake to use this pre-defined list inside the expand function.</p>
+<p>Let us see this idea in action.
+We will create our list of data subsets at the beginning of our Snakefile and then reference it in the rule <code>solow_target</code>.
+Create a list called <code>DATA_SUBSET</code> at the beginning of the Snakefile as follows:<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a></p>
+<pre class="out"><code>DATA_SUBSET = [&quot;oecd&quot;, &quot;intermediate&quot;, &quot;nonoil&quot;]</code></pre>
+<p>We then need to refer to the list by name inside our <code>expand()</code> function.
+To do so, we replace the explicit list we had before with the name of our newly constructed <code>DATA_SUBSET</code> list:</p>
+<pre class="out"><code>rule solow_target:
+    input:
+        expand(&quot;out/analysis/model_solow_subset_{iSubset}.rds&quot;,
+                    iSubset = DATA_SUBSET)</code></pre>
+<p>Now us execute our rule:</p>
+<pre class="out"><code>$ snakemake --cores 1 </code></pre>
+<p>The last part of the output from the Snakemake rule is:</p>
+<pre class="out"><code>TODO: Add Output</code></pre>
+<p>Nice, everything seems to have worked.
+If we look into our output folder, we should now see the three output models:</p>
+<pre class="out"><code>ls out/analysis</code></pre>
+<pre class="out"><code>model_solow_subset_nonoil.rds 
+model_solow_subset_oecd.rds 
+model_solow_subset_intermediate.rds </code></pre>
+<p>Why might we have advocated for creating lists outside of the expand function?
+There are at least the following three reasons you might want to do so:</p>
+<ol style="list-style-type: decimal">
+<li>If we want to re-use the same list of values in another rule, we would have to write the list again or copy and paste it into the second rule.
+As before, this introduces extra room for errors.</li>
+<li>It can be hard to find the lists we are iterating over when we read through the Snakefile.
+Putting all lists we are using at the top of <code>Snakefile</code> makes this easier.</li>
+<li>In the next chapter we will introduce a new function which allows us to construct lists which we pass to <code>expand()</code> from the files in our project automatically.
+For this task it will be very advantageous to define lists outside of rules.</li>
+</ol>
+<div class="unnumbered challenge">
+<h3 id="exercise-exploring-the-expand-function" class="unnumbered">Exercise: Exploring the expand function</h3>
+<p><span class="citation">Mankiw, Romer, and Weil (<a href="#ref-mrw" role="doc-biblioref">1992</a>)</span> contains three plots.
+Each of these plots use the data subset of ‘intermediate’ countries.
+The <code>src/figures/</code> subdirectory contains three scripts which correspond to the three plots in the paper.<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a></p>
+<p>It is your task to use what you have learned so far to create a workflow to produce the figures.
+To do so, follow the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Write three rules <code>fig1</code>, <code>fig2</code> and <code>fig3</code> to produce each figure.
+Each figure should be saved to the following output filepath <code>out/figures/SCRIPTNAME.pdf</code></li>
+<li>Create a list called <code>PLOTS</code> that contains the file names of each of the three plot scripts (without the path or the <code>.json</code> file ending).</li>
+<li>Use what you have learned about <strong>wildcards</strong> to simplify the three rules <code>fig1</code>, <code>fig2</code>, and <code>fig3</code> into a single rule called <code>figures</code>. What part of the rule needs a wildcard?</li>
+<li>Use the <code>expand()</code> function to create a target rule named <code>make_figures</code>.</li>
+<li>Use the summary function to check that all three figures are planned to be created correctly.</li>
+<li>Create all three figures with a single execution of<code>snakemake --cores 1 figs_target</code>.</li>
+<li>Make sure that the files have been written to the output folder.</li>
+</ol>
+<p>HINT:
+The scripts are written in such a way that they accept exactly the same options.
+Check first, what inputs the scripts expect.</p>
+</div>
+<div class="unnumbered answer">
+<h3 id="solution-3" class="unnumbered">SOLUTION:</h3>
+<p>In this problem the three rules <code>fig1</code>, <code>fig2</code>, and <code>fig3</code> only differ in the <code>{input.model}</code> they take and the output filename. We therefore have use wildcards in both to unify them.
+The target rule <code>make_figures</code> then uses the <code>expand()</code> function and a list of the filenames without the <code>.json</code> ending to create all three plots.</p>
+<p>After completing all steps. your <code>Snakefile</code> should look something like this:</p>
+<div class="sourceCode" id="cb112"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb112-1"><a href="wildcards-in-target-rules.html#cb112-1"></a><span class="co"># --- Dictionaries --- #</span></span>
+<span id="cb112-2"><a href="wildcards-in-target-rules.html#cb112-2"></a></span>
+<span id="cb112-3"><a href="wildcards-in-target-rules.html#cb112-3"></a><span class="ex">DATA_SUBSET</span> = [<span class="st">&quot;oecd&quot;</span>,</span>
+<span id="cb112-4"><a href="wildcards-in-target-rules.html#cb112-4"></a>               <span class="st">&quot;intermediate&quot;</span>,</span>
+<span id="cb112-5"><a href="wildcards-in-target-rules.html#cb112-5"></a>               <span class="st">&quot;nonoil&quot;</span></span>
+<span id="cb112-6"><a href="wildcards-in-target-rules.html#cb112-6"></a>]</span>
+<span id="cb112-7"><a href="wildcards-in-target-rules.html#cb112-7"></a></span>
+<span id="cb112-8"><a href="wildcards-in-target-rules.html#cb112-8"></a><span class="ex">PLOTS</span> = [</span>
+<span id="cb112-9"><a href="wildcards-in-target-rules.html#cb112-9"></a>    <span class="st">&quot;aug_conditional_convergence&quot;</span>,</span>
+<span id="cb112-10"><a href="wildcards-in-target-rules.html#cb112-10"></a>    <span class="st">&quot;conditional_convergence&quot;</span>,</span>
+<span id="cb112-11"><a href="wildcards-in-target-rules.html#cb112-11"></a>    <span class="st">&quot;unconditional_convergence&quot;</span></span>
+<span id="cb112-12"><a href="wildcards-in-target-rules.html#cb112-12"></a>]</span>
+<span id="cb112-13"><a href="wildcards-in-target-rules.html#cb112-13"></a></span>
+<span id="cb112-14"><a href="wildcards-in-target-rules.html#cb112-14"></a></span>
+<span id="cb112-15"><a href="wildcards-in-target-rules.html#cb112-15"></a><span class="co"># --- Target Rules --- #</span></span>
+<span id="cb112-16"><a href="wildcards-in-target-rules.html#cb112-16"></a></span>
+<span id="cb112-17"><a href="wildcards-in-target-rules.html#cb112-17"></a><span class="ex">rule</span> make_figures:</span>
+<span id="cb112-18"><a href="wildcards-in-target-rules.html#cb112-18"></a>    <span class="ex">input</span>:</span>
+<span id="cb112-19"><a href="wildcards-in-target-rules.html#cb112-19"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span>,</span>
+<span id="cb112-20"><a href="wildcards-in-target-rules.html#cb112-20"></a>                    <span class="ex">iFigure</span> = PLOTS)</span>
+<span id="cb112-21"><a href="wildcards-in-target-rules.html#cb112-21"></a></span>
+<span id="cb112-22"><a href="wildcards-in-target-rules.html#cb112-22"></a><span class="ex">rule</span> solow_target:</span>
+<span id="cb112-23"><a href="wildcards-in-target-rules.html#cb112-23"></a>    <span class="ex">input</span>:</span>
+<span id="cb112-24"><a href="wildcards-in-target-rules.html#cb112-24"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_solow_subset_{iSubset}.rds&quot;</span>,</span>
+<span id="cb112-25"><a href="wildcards-in-target-rules.html#cb112-25"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span>
+<span id="cb112-26"><a href="wildcards-in-target-rules.html#cb112-26"></a></span>
+<span id="cb112-27"><a href="wildcards-in-target-rules.html#cb112-27"></a></span>
+<span id="cb112-28"><a href="wildcards-in-target-rules.html#cb112-28"></a><span class="co"># --- Build Rules --- #</span></span>
+<span id="cb112-29"><a href="wildcards-in-target-rules.html#cb112-29"></a></span>
+<span id="cb112-30"><a href="wildcards-in-target-rules.html#cb112-30"></a><span class="ex">rule</span> figures:</span>
+<span id="cb112-31"><a href="wildcards-in-target-rules.html#cb112-31"></a>    <span class="ex">input</span>:</span>
+<span id="cb112-32"><a href="wildcards-in-target-rules.html#cb112-32"></a>        <span class="ex">script</span> = <span class="st">&quot;src/figures/{iFigure}.R&quot;</span>,</span>
+<span id="cb112-33"><a href="wildcards-in-target-rules.html#cb112-33"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb112-34"><a href="wildcards-in-target-rules.html#cb112-34"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_intermediate.json&quot;</span></span>
+<span id="cb112-35"><a href="wildcards-in-target-rules.html#cb112-35"></a>    <span class="ex">output</span>:</span>
+<span id="cb112-36"><a href="wildcards-in-target-rules.html#cb112-36"></a>        <span class="ex">fig</span> = <span class="st">&quot;out/figures/{iFigure}.pdf&quot;</span></span>
+<span id="cb112-37"><a href="wildcards-in-target-rules.html#cb112-37"></a>    <span class="ex">shell</span>:</span>
+<span id="cb112-38"><a href="wildcards-in-target-rules.html#cb112-38"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb112-39"><a href="wildcards-in-target-rules.html#cb112-39"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb112-40"><a href="wildcards-in-target-rules.html#cb112-40"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb112-41"><a href="wildcards-in-target-rules.html#cb112-41"></a><span class="st">            --out {output.fig}&quot;</span></span>
+<span id="cb112-42"><a href="wildcards-in-target-rules.html#cb112-42"></a></span>
+<span id="cb112-43"><a href="wildcards-in-target-rules.html#cb112-43"></a><span class="ex">rule</span> solow_model:</span>
+<span id="cb112-44"><a href="wildcards-in-target-rules.html#cb112-44"></a>    <span class="ex">input</span>:</span>
+<span id="cb112-45"><a href="wildcards-in-target-rules.html#cb112-45"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb112-46"><a href="wildcards-in-target-rules.html#cb112-46"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb112-47"><a href="wildcards-in-target-rules.html#cb112-47"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_solow.json&quot;</span>,</span>
+<span id="cb112-48"><a href="wildcards-in-target-rules.html#cb112-48"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/{iSubset}.json&quot;</span></span>
+<span id="cb112-49"><a href="wildcards-in-target-rules.html#cb112-49"></a>    <span class="ex">output</span>:</span>
+<span id="cb112-50"><a href="wildcards-in-target-rules.html#cb112-50"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_solow_{iSubset}.rds&quot;</span></span>
+<span id="cb112-51"><a href="wildcards-in-target-rules.html#cb112-51"></a>    <span class="ex">shell</span>:</span>
+<span id="cb112-52"><a href="wildcards-in-target-rules.html#cb112-52"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb112-53"><a href="wildcards-in-target-rules.html#cb112-53"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb112-54"><a href="wildcards-in-target-rules.html#cb112-54"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb112-55"><a href="wildcards-in-target-rules.html#cb112-55"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb112-56"><a href="wildcards-in-target-rules.html#cb112-56"></a><span class="st">            --out {output.estimate}&quot;</span></span>
+<span id="cb112-57"><a href="wildcards-in-target-rules.html#cb112-57"></a></span>
+<span id="cb112-58"><a href="wildcards-in-target-rules.html#cb112-58"></a><span class="ex">rule</span> gen_regression_vars:</span>
+<span id="cb112-59"><a href="wildcards-in-target-rules.html#cb112-59"></a>    <span class="ex">input</span>:</span>
+<span id="cb112-60"><a href="wildcards-in-target-rules.html#cb112-60"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/gen_reg_vars.R&quot;</span>,</span>
+<span id="cb112-61"><a href="wildcards-in-target-rules.html#cb112-61"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span>,</span>
+<span id="cb112-62"><a href="wildcards-in-target-rules.html#cb112-62"></a>        <span class="ex">param</span>  = <span class="st">&quot;src/data-specs/param_solow.json&quot;</span></span>
+<span id="cb112-63"><a href="wildcards-in-target-rules.html#cb112-63"></a>    <span class="ex">output</span>:</span>
+<span id="cb112-64"><a href="wildcards-in-target-rules.html#cb112-64"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span></span>
+<span id="cb112-65"><a href="wildcards-in-target-rules.html#cb112-65"></a>    <span class="ex">shell</span>:</span>
+<span id="cb112-66"><a href="wildcards-in-target-rules.html#cb112-66"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb112-67"><a href="wildcards-in-target-rules.html#cb112-67"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb112-68"><a href="wildcards-in-target-rules.html#cb112-68"></a><span class="st">            --param {input.param} \</span></span>
+<span id="cb112-69"><a href="wildcards-in-target-rules.html#cb112-69"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb112-70"><a href="wildcards-in-target-rules.html#cb112-70"></a></span>
+<span id="cb112-71"><a href="wildcards-in-target-rules.html#cb112-71"></a><span class="ex">rule</span> rename_vars:</span>
+<span id="cb112-72"><a href="wildcards-in-target-rules.html#cb112-72"></a>    <span class="ex">input</span>:</span>
+<span id="cb112-73"><a href="wildcards-in-target-rules.html#cb112-73"></a>        <span class="ex">script</span> = <span class="st">&quot;src/data-management/rename_variables.R&quot;</span>,</span>
+<span id="cb112-74"><a href="wildcards-in-target-rules.html#cb112-74"></a>        <span class="ex">data</span>   = <span class="st">&quot;src/data/mrw.dta&quot;</span></span>
+<span id="cb112-75"><a href="wildcards-in-target-rules.html#cb112-75"></a>    <span class="ex">output</span>:</span>
+<span id="cb112-76"><a href="wildcards-in-target-rules.html#cb112-76"></a>        <span class="ex">data</span> = <span class="st">&quot;out/data/mrw_renamed.csv&quot;</span></span>
+<span id="cb112-77"><a href="wildcards-in-target-rules.html#cb112-77"></a>    <span class="ex">shell</span>:</span>
+<span id="cb112-78"><a href="wildcards-in-target-rules.html#cb112-78"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb112-79"><a href="wildcards-in-target-rules.html#cb112-79"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb112-80"><a href="wildcards-in-target-rules.html#cb112-80"></a><span class="st">            --out {output.data}&quot;</span></span>
+<span id="cb112-81"><a href="wildcards-in-target-rules.html#cb112-81"></a></span>
+<span id="cb112-82"><a href="wildcards-in-target-rules.html#cb112-82"></a></span>
+<span id="cb112-83"><a href="wildcards-in-target-rules.html#cb112-83"></a><span class="co"># --- Clean Rules --- #</span></span>
+<span id="cb112-84"><a href="wildcards-in-target-rules.html#cb112-84"></a></span>
+<span id="cb112-85"><a href="wildcards-in-target-rules.html#cb112-85"></a><span class="ex">rule</span> clean:</span>
+<span id="cb112-86"><a href="wildcards-in-target-rules.html#cb112-86"></a>    <span class="ex">shell</span>:</span>
+<span id="cb112-87"><a href="wildcards-in-target-rules.html#cb112-87"></a>        <span class="st">&quot;rm -rf out/*&quot;</span></span>
+<span id="cb112-88"><a href="wildcards-in-target-rules.html#cb112-88"></a></span>
+<span id="cb112-89"><a href="wildcards-in-target-rules.html#cb112-89"></a><span class="ex">rule</span> clean_data:</span>
+<span id="cb112-90"><a href="wildcards-in-target-rules.html#cb112-90"></a>    <span class="ex">shell</span>:</span>
+<span id="cb112-91"><a href="wildcards-in-target-rules.html#cb112-91"></a>        <span class="st">&quot;rm -rf out/data/*&quot;</span></span>
+<span id="cb112-92"><a href="wildcards-in-target-rules.html#cb112-92"></a></span>
+<span id="cb112-93"><a href="wildcards-in-target-rules.html#cb112-93"></a><span class="ex">rule</span> clean_analysis:</span>
+<span id="cb112-94"><a href="wildcards-in-target-rules.html#cb112-94"></a>    <span class="ex">shell</span>:</span>
+<span id="cb112-95"><a href="wildcards-in-target-rules.html#cb112-95"></a>        <span class="st">&quot;rm -rf out/analysis/*&quot;</span></span></code></pre></div>
+<p>You can check the summary via</p>
+<div class="sourceCode" id="cb113"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb113-1"><a href="wildcards-in-target-rules.html#cb113-1"></a><span class="ex">snakemake</span> --summary make_figures </span></code></pre></div>
+<p>run the rule via</p>
+<div class="sourceCode" id="cb114"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb114-1"><a href="wildcards-in-target-rules.html#cb114-1"></a><span class="ex">snakemake</span> --cores 1 make_figures</span></code></pre></div>
+<p>and check the output via</p>
+<div class="sourceCode" id="cb115"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb115-1"><a href="wildcards-in-target-rules.html#cb115-1"></a><span class="fu">ls</span> out/figures</span></code></pre></div>
+</div>
+</div>
+<div id="estimating-a-new-model" class="section level2">
+<h2><span class="header-section-number">7.3</span> Estimating a New Model</h2>
+<p>So far we have estimated the basic Solow model.
+<span class="citation">Mankiw, Romer, and Weil (<a href="#ref-mrw" role="doc-biblioref">1992</a>)</span> also estimate an augmented version of the Solow model which adds human capital.
+You can find the regression model required to estimate the augmented model in <code>src/model-specs/model_aug_solow.json</code>.</p>
+<p>We can estimate this regression model across each of the three data sets by creating two new rules:</p>
+<ul>
+<li><code>aug_solow_model</code> - a rule that specifies how to estimate the regression model
+<ul>
+<li>This should be conceptually very similar ot the <code>solow_model</code> rule</li>
+</ul></li>
+<li><code>aug_solow_target</code> - a target rule, using the <code>expand()</code> function to estimate the augmented solow model across the datasets specified in DATA_SUBSET.
+<ul>
+<li>This will look very similar to the <code>solow_target</code> rule.</li>
+</ul></li>
+</ul>
+<p>Let’s first create the <code>aug_solow_model</code> rule:</p>
+<div class="sourceCode" id="cb116"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb116-1"><a href="wildcards-in-target-rules.html#cb116-1"></a><span class="ex">rule</span> aug_solow_model:</span>
+<span id="cb116-2"><a href="wildcards-in-target-rules.html#cb116-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb116-3"><a href="wildcards-in-target-rules.html#cb116-3"></a>        <span class="ex">script</span> = <span class="st">&quot;src/analysis/estimate_ols_model.R&quot;</span>,</span>
+<span id="cb116-4"><a href="wildcards-in-target-rules.html#cb116-4"></a>        <span class="ex">data</span>   = <span class="st">&quot;out/data/mrw_complete.csv&quot;</span>,</span>
+<span id="cb116-5"><a href="wildcards-in-target-rules.html#cb116-5"></a>        <span class="ex">model</span>  = <span class="st">&quot;src/model-specs/model_aug_solow.json&quot;</span>,</span>
+<span id="cb116-6"><a href="wildcards-in-target-rules.html#cb116-6"></a>        <span class="ex">subset</span> = <span class="st">&quot;src/data-specs/subset_{iSubset}.json&quot;</span></span>
+<span id="cb116-7"><a href="wildcards-in-target-rules.html#cb116-7"></a>    <span class="ex">output</span>:</span>
+<span id="cb116-8"><a href="wildcards-in-target-rules.html#cb116-8"></a>        <span class="ex">estimate</span> = <span class="st">&quot;out/analysis/model_aug_solow_subset_{iSubset}.rds&quot;</span></span>
+<span id="cb116-9"><a href="wildcards-in-target-rules.html#cb116-9"></a>    <span class="ex">shell</span>:</span>
+<span id="cb116-10"><a href="wildcards-in-target-rules.html#cb116-10"></a>        <span class="st">&quot;Rscript {input.script} \</span></span>
+<span id="cb116-11"><a href="wildcards-in-target-rules.html#cb116-11"></a><span class="st">            --data {input.data} \</span></span>
+<span id="cb116-12"><a href="wildcards-in-target-rules.html#cb116-12"></a><span class="st">            --model {input.model} \</span></span>
+<span id="cb116-13"><a href="wildcards-in-target-rules.html#cb116-13"></a><span class="st">            --subset {input.subset} \</span></span>
+<span id="cb116-14"><a href="wildcards-in-target-rules.html#cb116-14"></a><span class="st">            --out {output.estimate}&quot;</span></span></code></pre></div>
+<p>And then the <code>aug_solow_target</code>:</p>
+<div class="sourceCode" id="cb117"><pre class="sourceCode bash fold-show"><code class="sourceCode bash"><span id="cb117-1"><a href="wildcards-in-target-rules.html#cb117-1"></a><span class="ex">rule</span> aug_solow_target:</span>
+<span id="cb117-2"><a href="wildcards-in-target-rules.html#cb117-2"></a>    <span class="ex">input</span>:</span>
+<span id="cb117-3"><a href="wildcards-in-target-rules.html#cb117-3"></a>        <span class="ex">expand</span>(<span class="st">&quot;out/analysis/model_aug_solow_subset_{iSubset}.rds&quot;</span>,</span>
+<span id="cb117-4"><a href="wildcards-in-target-rules.html#cb117-4"></a>                    <span class="ex">iSubset</span> = DATA_SUBSET)</span></code></pre></div>
+<p>Finally, we can estimate the new regression model by executing the <code>aug_solow_target</code> rule with Snakemake:</p>
+<pre class="out"><code>snakemake --cores 1 aug_solow_target</code></pre>
+</div>
+<div id="expanding-multiple-wildcards" class="section level2">
+<h2><span class="header-section-number">7.4</span> Expanding Multiple Wildcards</h2>
+<p>The rules used to estimate the standard Solow model and the augmented Solow model are identical except for the model they use.</p>
+<p>The only difference between the <code>aug_solow_target</code> and <code>solow_target</code> rules is that the filename differs by three letters: <code>out/analysis/model_aug_solow_{iSubset}.rds</code> versus
+<code>out/analysis/model_solow_{iSubset}.rds</code>.</p>
+<pre class="out fold-show"><code>
+rule solow_target:
+    input:
+        expand(&quot;out/analysis/model_solow_subset_{iSubset}.rds&quot;,
+                    iSubset = DATA_SUBSET)
+
+rule aug_solow_target:
+    input:
+        expand(&quot;out/analysis/model_aug_solow_subset_{iSubset}.rds&quot;,
+                    iSubset = DATA_SUBSET)
+</code></pre>
+<p>And, when we look at <code>aug_solow_model</code> and compare it to <code>solow_model</code> we again see only small differences:
+the model changes from <code>model_aug_solow.json</code> to <code>model_solow.json</code> and the outputs change in a similar way.</p>
+<pre class="out fold-show"><code>rule solow_model:
+    input:
+        script = &quot;src/analysis/estimate_ols_model.R&quot;,
+        data   = &quot;out/data/mrw_complete.csv&quot;,
+        model  = &quot;src/model-specs/model_solow.json&quot;,
+        subset = &quot;src/data-specs/subset_{iSubset}.json&quot;
+    output:
+        estimate = &quot;out/analysis/model_solow_subset_{iSubset}.rds&quot;
+    shell:
+        &quot;Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}&quot;
+
+rule aug_solow_model:
+    input:
+        script = &quot;src/analysis/estimate_ols_model.R&quot;,
+        data   = &quot;out/data/mrw_complete.csv&quot;,
+        model  = &quot;src/model-specs/model_aug_solow.json&quot;,
+        subset = &quot;src/data-specs/subset_{iSubset}.json&quot;
+    output:
+        estimate = &quot;out/analysis/model_aug_solow_subset_{iSubset}.rds&quot;
+    shell:
+        &quot;Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}&quot;</code></pre>
+<p>We want to exploit this similarity and condense these four rules into two:</p>
+<ul>
+<li>a rule that estimates the model, named <code>model</code>, and</li>
+<li>a target rule that will run each specification, named <code>run_models</code>.</li>
+</ul>
+<p>Let’s do this in reverse order, i.e. starting with creating the <code>run_models</code> target rule.</p>
+<div id="unifying-the-target-rules" class="section level3">
+<h3><span class="header-section-number">7.4.1</span> Unifying the Target Rules</h3>
+<p>First, we are going to take our two rules <code>aug_solow_target</code> and <code>solow_target</code> and replace them with one rule.
+To do this, we remove the existing rules and replace them with the following:</p>
+<pre class="out"><code>rule run_models:
+    input:
+        expand(&quot;out/analysis/model_{iModel}_subset_{iSubset}.rds&quot;,
+                    iSubset = DATA_SUBSET,
+                    iModel = MODELS)</code></pre>
+<p>What this says is <code>run_models</code> wants to create regression estimates for multiple datasets, by iterating through our existing list <code>DATA_SUBSET</code> and
+replacing <code>{iSubset}</code> with each of these values one after the other.
+Furthermore, it wants to create regression estimates across multiple models, by iterating through a list called <code>MODELS</code> and replacing <code>{iModel}</code> with each of these values successively.
+Combined, that means <code>run_models</code> will create regression estimates for each of the pairwise combinations of elements in the <code>DATA_SUBSET</code> and <code>MODELS</code> lists.</p>
+<p>We have not specified the list <code>MODELS</code> yet, so let’s do that now.
+<code>MODELS</code> contains two elements, <code>solow</code> and <code>aug_solow</code> - which are the names of the models we estimate.
+Let’s add this to the top of our Snakefile:</p>
+<pre class="out"><code>MODELS = [
+          &quot;solow&quot;,
+          &quot;aug_solow&quot;
+          ]</code></pre>
+</div>
+<div id="unifying-how-regression-outputs-are-built" class="section level3">
+<h3><span class="header-section-number">7.4.2</span> Unifying How Regression Outputs are Built</h3>
+<p>The rule <code>run_models</code> tells Snakemake what we want to produce.
+Now we have to dictate how these estimates can be produced - i.e. how to we combine data, regression models and R scripts to produce the outputs.
+We are going to replace the two rules <code>solow_model</code> and <code>aug_solow_model</code> with one rule <code>model</code> that can estimate <em>both</em> regression models.
+To do this, we generalize these existing rules.
+The <code>{input.model}</code> is what needs generalization - instead of taking the value <code>model_solow.json</code> OR <code>model_aug_solow.json</code> it will take a wildcard value <code>model_{iModel}.json</code>.
+This should give us the following:<a href="#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a></p>
+<pre class="out"><code>rule model:
+    input:
+        script = &quot;src/analysis/estimate_ols_model.R&quot;,
+        data   = &quot;out/data/mrw_complete.csv&quot;,
+        model  = &quot;src/model-specs/model_{iModel}.json&quot;,
+        subset = &quot;src/data-specs/subset_{iSubset}.json&quot;
+    output:
+        estimate = &quot;out/analysis/model_{iModel}_subset_{iSubset}.rds&quot;
+    shell:
+        &quot;Rscript {input.script} \
+            --data {input.data} \
+            --model {input.model} \
+            --subset {input.subset} \
+            --out {output.estimate}&quot;</code></pre>
+<p>Now the rule <code>model</code> can estimate an OLS model using different regression specification by substituting a value into <code>{iModel}</code>, and across different data sets by substituting a value into <code>{iSubset}</code>.
+The target rule we created above, tells Snakemake which values to substitute.</p>
+</div>
+<div id="running-the-new-rule" class="section level3">
+<h3><span class="header-section-number">7.4.3</span> Running the New Rule</h3>
+<p>To see this new rule in action, let’s start by cleaning our output folder to start fresh:</p>
+<div class="sourceCode" id="cb124"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb124-1"><a href="wildcards-in-target-rules.html#cb124-1"></a><span class="ex">snakemake</span> --clean</span></code></pre></div>
+<p>Before running Snakemake let’s look at the summary information from Snakemake:</p>
+<pre class="out"><code>$ snakemake --summary</code></pre>
+<p>which yields:</p>
+<pre class="out"><code>output_file     date    rule    version log-file(s)     status  plan
+out/analysis/model_solow_subset_oecd.rds        -       -       -       -       missing update pending
+out/analysis/model_aug_solow_subset_oecd.rds    -       -       -       -       missing update pending
+out/analysis/model_solow_subset_intermediate.rds        -       -       -       -       missing update pending
+out/analysis/model_aug_solow_subset_intermediate.rds    -       -       -       -       missing update pending
+out/analysis/model_solow_subset_nonoil.rds      -       -       -       -       missing update pending
+out/analysis/model_aug_solow_subset_nonoil.rds  -       -       -       -       missing update pending
+out/data/mrw_complete.csv       -       gen_regression_vars     -               missing update pending
+out/data/mrw_renamed.csv        -       rename_vars     -               missing update pending</code></pre>
+<p>This confirms that our new target and model rules work.
+Snakemake plans to do the data management steps and build all six model outputs afterwards.</p>
+<p>Let’s now execute our target rule:</p>
+<pre class="out"><code>$ snakemake --cores 1 run_models</code></pre>
+<div class="unnumbered tip">
+<p>Notice how the figures aren’t produced automatically.
+Do you remember why?
+If not, revisit the previous chapter.
+You can build them with <code>snakemake --cores 1 make_figures</code></p>
+</div>
+</div>
+</div>
+<div id="our-workflow-in-graphs-2" class="section level2">
+<h2><span class="header-section-number">7.5</span> Our Workflow in Graphs</h2>
+<p>We’ve make some good progess in this chapter using <code>expand()</code> to reduce replication in our Snakefile.
+The Snakemake rule graph which shows the rules we execute in our workflow is now:</p>
+<p><img src="img/22-expand/rulegraph.png" /><!-- --></p>
+<p>This says to run the rule <code>run_models</code> - Snakemake expands wildcards and builds the regression outputs using the <code>models</code> rule.
+Before the models are run, the data cleaning steps are completed in order.</p>
+<p>We can get an even more insightful perspective on what Snakemake is doing under the hood by looking at the DAG:</p>
+<p><img src="img/22-expand/dag.png" /><!-- --></p>
+<p>The DAG makes even clearer what our workflow is doing:</p>
+<ul>
+<li>Snakemake wants to build the inputs listed in <code>run_models</code></li>
+<li>It can build those inputs by running the <code>model</code> rule six times when it iterates over the wildcards</li>
+<li>To run each model, it needs the clean data, so it needs to run the two data cleaning steps first</li>
+</ul>
+<p>Notice that the rule graph and DAG don’t show us how the figures are created.
+This is because the rule that generates figures, <code>make_figures</code> is not the first rule in the Snakefile.
+For the sake of completeness, the rulegraph for how figures are made is:</p>
+<p><img src="img/22-expand/rulegraph_figures.png" /><!-- --></p>
+<p>And the DAG is:</p>
+<p><img src="img/22-expand/dag_figures.png" /><!-- --></p>
+<p>We leave it to the interested reader to provide themselves a verbal understanding of what these graphs mean in terms of workflow execution.</p>
 
 </div>
 </div>
@@ -1356,9 +1586,20 @@ Let’s continue creating new steps in the next chapter.</p>
 </div>
 <div class="footnotes">
 <hr />
-<ol start="8">
-<li id="fn8"><p>
-Or, when to comment out chunks of a large script because “we don’t need to update that bit.”<a href="initial-steps-with-snakemake.html#fnref8" class="footnote-back">↩︎</a></p></li>
+<ol start="9">
+<li id="fn9"><p>
+If this doesn’t feel like a familar argument to you, review the material from the previous chapter <a href="wildcards.html#wildcards-tidying">here</a>.<a href="wildcards-in-target-rules.html#fnref9" class="footnote-back">↩︎</a></p></li>
+<li id="fn10"><p>
+Note that the <code>--summary</code> command did not throw an error message.
+This means we have solved the <code>WildcardError</code> we began with.<a href="wildcards-in-target-rules.html#fnref10" class="footnote-back">↩︎</a></p></li>
+<li id="fn11"><p>
+We capitalize lists that we iterate over to separate them from other parts of code.
+This is not essential but makes life a bit easier sometimes.
+Whenever you see a capitalized name, you know it is a list that we want to iterate over.<a href="wildcards-in-target-rules.html#fnref11" class="footnote-back">↩︎</a></p></li>
+<li id="fn12"><p>
+This is not entirely true, we are yet to figure out how to get the y-axis range from the original paper.<a href="wildcards-in-target-rules.html#fnref12" class="footnote-back">↩︎</a></p></li>
+<li id="fn13"><p>
+Instead of typing out this new rule <code>models</code> and deleting <code>solow_model</code> and <code>aug_solow_model</code>, you could delete the rule <code>aug_solow_model</code> and modify the <code>solow_rule</code> so that it looks like this.<a href="wildcards-in-target-rules.html#fnref13" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
             </section>
@@ -1366,8 +1607,8 @@ Or, when to comment out chunks of a large script because “we don’t need to u
           </div>
         </div>
       </div>
-<a href="project-organization.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="working-with-multiple-rules.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="wildcards.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="automating-list-construction-for-wildcard-expansion.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -1398,7 +1639,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/lachlandeer/snakemake-econ-r/edit/master/11-initial_steps.Rmd",
+"link": "https://github.com/lachlandeer/snakemake-econ-r/edit/master/22-expand.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -1409,7 +1650,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["https://github.com/lachlandeer/snakemake-econ-r/raw/master/11-initial_steps.Rmd"],
+"download": ["https://github.com/lachlandeer/snakemake-econ-r/raw/master/22-expand.Rmd"],
 "toc": {
 "collapse": "section"
 }
