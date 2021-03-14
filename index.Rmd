@@ -1,6 +1,6 @@
 ---
-title: "Reproducible Data Analytic Workflows with Python and R"
-subtitle: "An Extended Tutorial for Researchers in Business, Economics, and the Social Sciences"
+title: "Reproducible Data Analytic Workflows for Economics"
+subtitle: "An Introduction to Snakemake"
 author:
     - "Ulrich Bergmann"
     - "Lachlan Deer"
