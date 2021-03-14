@@ -657,22 +657,40 @@ You can build them with `snakemake --cores 1 make_figures`
 
 ## Our Workflow in Graphs 
 
-The corresponding Snakemake rule graph which shows the rules we execute in our workflow is now:
+We've make some good progess in this chapter using `expand()` to reduce replication in our Snakefile.
+The Snakemake rule graph which shows the rules we execute in our workflow is now:
 
-```{r, fig.align="center", echo=FALSE}
-knitr::include_graphics("img/ch-5c/rulegraph.pdf")
+```{r, echo=FALSE}
+knitr::include_graphics("img/22-expand/rulegraph.png")
 ```
 
-And the DAG is:
+This says to run the rule `run_models` - Snakemake expands wildcards and builds the regression outputs using the `models` rule.
+Before the models are run, the data cleaning steps are completed in order.
 
-```{r, fig.align="center", echo=FALSE}
-knitr::include_graphics("img/ch-5c/dag.pdf")
+We can get an even more insightful perspective on what Snakemake is doing under the hood by looking at the DAG:
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/22-expand/dag.png")
 ```
 
-The DAG makes crystal clear what our workflow is doing:
+The DAG makes even clearer what our workflow is doing:
 
 * Snakemake wants to build the inputs listed in  `run_models`
 * It can build those inputs by running the `model` rule six times when it iterates over the wildcards
 * To run each model, it needs the clean data, so it needs to run the two data cleaning steps first
 
+Notice that the rule graph and DAG don't show us how the figures are created. 
+This is because the rule that generates figures, `make_figures` is not the first rule in the Snakefile.
+For the sake of completeness, the rulegraph for how figures are made is:
 
+```{r, echo=FALSE}
+knitr::include_graphics("img/22-expand/rulegraph_figures.png")
+```
+
+And the DAG is:
+
+```{r, echo=FALSE}
+knitr::include_graphics("img/22-expand/dag_figures.png")
+```
+
+We leave it to the interested reader to provide themselves a verbal understanding of what these graphs mean in terms of workflow execution.
